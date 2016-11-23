@@ -1,5 +1,17 @@
-# vortexjs
-Synerty's observable data serialisation and transport code. (TypeScript Client)
+# VortexJS
+
+Synerty's observable, routable, data serialisation and transport code.
+
+Why PY at the end? To be consistent with VortexJS, which is the Browser side package.
+See https://github.com/Synerty/vortexpy
+
+The "vortex" is designed to transport "Payloads" from a web browser (VortexJS) to a
+twisted web server (VortexPY). There is also a python client for python client to python server
+communication.
+
+
+See the VortexPY project for more details.
+https://github.com/Synerty/vortexpy
 
 
 ## Scaffolding
