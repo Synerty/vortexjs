@@ -1,15 +1,12 @@
-import payloadIO from "./PayloadIO";
-import Payload, {IPayloadFilt} from "./Payload";
+import {payloadIO} from "./PayloadIO";
+import {Payload, IPayloadFilt} from "./Payload";
 import {assert} from "./UtilMisc";
 import "./UtilArray";
-import {Ng2CompLifecycleEvent} from "./Ng2CompLifecycleEvent";
+import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
 import {Observer, Observable} from "rxjs"; // Ensure it's included and defined
 
-export interface IPayloadEndpointCallback {
-    (payload: Payload): string | null;
-}
 
-export default class PayloadEndpoint {
+export class PayloadEndpoint {
     private _observable: Observable<Payload>;
     private _observer: Observer<Payload>;
 
@@ -17,7 +14,7 @@ export default class PayloadEndpoint {
     private _lastPayloadDate: Date | null;
     private _processLatestOnly: boolean;
 
-    constructor(component: Ng2CompLifecycleEvent,
+    constructor(component: ComponentLifecycleEventEmitter,
                 filter: IPayloadFilt,
                 processLatestOnly: boolean = false) {
         let self = this;
@@ -60,7 +57,7 @@ export default class PayloadEndpoint {
      * @return null, or if the function is overloaded, you could return STOP_PROCESSING
      * from PayloadIO, which will tell it to stop processing further endpoints.
      */
-    process = function (payload: Payload): null | string {
+    process(payload: Payload): null | string {
         if (!this.checkFilt(payload))
             return null;
 
@@ -69,7 +66,7 @@ export default class PayloadEndpoint {
         return null;
     };
 
-    private checkFilt = function (payload): boolean {
+    private checkFilt(payload): boolean {
         let self = this;
         for (let key in self._filt) {
             if (!self._filt.hasOwnProperty(key))
@@ -89,7 +86,7 @@ export default class PayloadEndpoint {
         return true;
     };
 
-    private shutdown = function () {
+    shutdown() {
         let self = this;
         payloadIO.remove(self);
     };

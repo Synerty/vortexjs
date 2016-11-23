@@ -6,8 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 var SerialiseUtil_1 = require("./SerialiseUtil");
 var Jsonable_1 = require("./Jsonable");
-require("../js_util/RapuiStubs");
-var _1_Util_1 = require("../js_util/1_Util");
+var UtilMisc_1 = require("./UtilMisc");
 /**
  *
  * This class is serialised and tranferred over the vortex to the server.
@@ -18,11 +17,11 @@ var Payload = (function (_super) {
      * Payload
      * This class is serialised and tranferred over the vortex to the server.
      * @param filt The filter that the server handler is listening for
-     * @param replyFilt The reply filter is used if the payload needs to return to a
      * different location @depreciated
      */
-    function Payload(filt) {
+    function Payload(filt, tuples) {
         if (filt === void 0) { filt = {}; }
+        if (tuples === void 0) { tuples = []; }
         _super.call(this);
         var self = this;
         self.__rapuiSerialiseType__ = SerialiseUtil_1.default.T_RAPUI_PAYLOAD;
@@ -48,7 +47,7 @@ var Payload = (function (_super) {
     Payload.prototype._fromJson = function (jsonStr) {
         var self = this;
         var jsonDict = JSON.parse(jsonStr);
-        _1_Util_1.assert(jsonDict[Jsonable_1.default.JSON_CLASS_TYPE] === self.__rapuiSerialiseType__);
+        UtilMisc_1.assert(jsonDict[Jsonable_1.default.JSON_CLASS_TYPE] === self.__rapuiSerialiseType__);
         return self.fromJsonDict(jsonDict);
     };
     Payload.prototype._toJson = function () {
@@ -85,5 +84,4 @@ var Payload = (function (_super) {
     Payload.vortexUuidKey = "__vortexUuid__";
     return Payload;
 }(Jsonable_1.default));
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = Payload;
+exports.Payload = Payload;

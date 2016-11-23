@@ -1,12 +1,14 @@
-import Payload, {IPayloadFilt} from "./Payload";
-import payloadIO from "./PayloadIO";
-import {rapuiClientEcho} from "./PayloadFiterKeys";
+import {Payload, IPayloadFilt} from "./Payload";
+import {payloadIO} from "./PayloadIO";
+import {rapuiClientEcho} from "./PayloadFilterKeys";
 import {getFiltStr, dateStr, bind} from "./UtilMisc";
 import {Injectable} from "@angular/core";
 import {Tuple} from "./Tuple";
-import {Ng2CompLifecycleEvent} from "./Ng2CompLifecycleEvent";
+import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
 import {Observable} from "rxjs";
-import PayloadEndpoint from "./PayloadEndpoint";
+import {PayloadEndpoint} from "./PayloadEndpoint";
+import {TupleLoader, IFilterUpdateCallable} from "./TupleLoader";
+import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 
 /**
  * Server response timeout in milliseconds
@@ -18,7 +20,7 @@ export let SERVER_RESPONSE_TIMEOUT = 20000;
 export class VortexService {
     private vortex: Vortex;
 
-    constructor() {
+    constructor(private balloonMsg: Ng2BalloonMsgService) {
         let self = this;
         self.vortex = new Vortex();
     }
@@ -43,29 +45,22 @@ export class VortexService {
         self.vortex.send(payload);
     }
 
-    createEndpointObservable(component: Ng2CompLifecycleEvent,
+    createEndpointObservable(component: ComponentLifecycleEventEmitter,
                              filter: IPayloadFilt,
                              processLatestOnly: boolean = false): Observable<Payload> {
         let endpoint = new PayloadEndpoint(component, filter, processLatestOnly);
 
-        return endpoint.observer();
+        return endpoint.observable;
     }
 
-    createTupleLoader(component: Ng2CompLifecycleEvent,
-                 vortex:Vortex,
-                payloadFilt: IPayloadFilt,
-        {
-            tupleType,
-            vortexSendFilt,
-            objName = "data",
-            objId,
-            scopeObjIdName,
-            scopeSetObjIdFunc,
-            loadOnInit = true,
-            loadOnIdChange = true,
-            dataIsArray = false,
-            actionPostfix
-        }: INg2TupleLoaderParams) {)
+    createTupleLoader(component: ComponentLifecycleEventEmitter,
+                      filterUpdateCallable: IFilterUpdateCallable) {
+        return new TupleLoader(this.vortex,
+            component,
+            filterUpdateCallable,
+            this.balloonMsg
+        );
+    }
 }
 
 export class Vortex {
@@ -334,8 +329,3 @@ class VortexConnection {
     }
 
 }
-
-
-// ###########################################################################
-
-// ###########################################################################

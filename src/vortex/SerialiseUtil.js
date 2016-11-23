@@ -1,11 +1,10 @@
 /*
- * ############################################################################### #
+ * ###############################################################################
  * Common Serialisation functions
  * ###############################################################################
  */
 "use strict";
-var UtilDict_1 = require("../js_util/UtilDict");
-require("../js_util/UtilArray");
+var UtilMisc_1 = require("./UtilMisc");
 var SerialiseUtil = (function () {
     function SerialiseUtil() {
     }
@@ -89,7 +88,7 @@ var SerialiseUtil = (function () {
                     return false;
             }
             else if (type1 === SerialiseUtil.T_DICT) {
-                var isEqual = self.rapuiEquals(field1, field2, UtilDict_1.default.dictKeysFromObject(field1), UtilDict_1.default.dictKeysFromObject(field2));
+                var isEqual = self.rapuiEquals(field1, field2, UtilMisc_1.dictKeysFromObject(field1), UtilMisc_1.dictKeysFromObject(field2));
                 if (!isEqual)
                     return false;
             }

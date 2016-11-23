@@ -4,6 +4,9 @@ import Jsonable from "./Jsonable";
 import {assert} from "./UtilMisc";
 
 
+// Typedef for require
+declare let require:any;
+
 /**
  * IPayloadFilt
  * This interface defines the structure for a valid payload filter.
@@ -17,7 +20,7 @@ export interface IPayloadFilt {
  *
  * This class is serialised and tranferred over the vortex to the server.
  */
-export default class Payload extends Jsonable {
+export class Payload extends Jsonable {
 
     static readonly vortexUuidKey = "__vortexUuid__";
 

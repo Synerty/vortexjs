@@ -1,4 +1,4 @@
-import PayloadEndpoint from "./PayloadEndpoint";
+import {PayloadEndpoint} from "./PayloadEndpoint";
 
 export let STOP_PROCESSING = "STOP_PROCESSING";
 
@@ -34,6 +34,4 @@ class PayloadIO {
 
 }
 
-let payloadIO = new PayloadIO();
-
-export default payloadIO;
+export let payloadIO = new PayloadIO();

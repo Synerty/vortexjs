@@ -5,7 +5,8 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var SerialiseUtil_1 = require("./SerialiseUtil");
-var UtilDict_1 = require("../js_util/UtilDict");
+var UtilMisc_1 = require("./UtilMisc");
+require("./UtilString");
 /**
  * ############################################################################### #
  * JSON Serialisation functions
@@ -63,7 +64,7 @@ var Jsonable = (function (_super) {
          *
          */
         var self = this;
-        var fieldNames = UtilDict_1.default.dictKeysFromObject(jsonDict);
+        var fieldNames = UtilMisc_1.dictKeysFromObject(jsonDict);
         for (var i = 0; i < fieldNames.length; ++i) {
             var name_2 = fieldNames[i];
             if (name_2.startsWith("_"))
@@ -87,7 +88,7 @@ var Jsonable = (function (_super) {
         else if (valueType === SerialiseUtil_1.default.T_DICT) {
             // Treat these like dicts
             convertedValue = {};
-            var keys = UtilDict_1.default.dictKeysFromObject(value);
+            var keys = UtilMisc_1.dictKeysFromObject(value);
             for (var keyIndex = 0; keyIndex < keys.length; ++keyIndex) {
                 var keyName = keys[keyIndex];
                 self.toJsonField(value[keyName], convertedValue, keyName);
@@ -171,7 +172,7 @@ var Jsonable = (function (_super) {
         /* SKIP T_GENERIC_CLASS */
         if (valueType === SerialiseUtil_1.default.T_DICT) {
             var restoredDict = {};
-            var keys = UtilDict_1.default.dictKeysFromObject(value);
+            var keys = UtilMisc_1.dictKeysFromObject(value);
             for (var i = 0; i < keys.length; ++i) {
                 var subName = keys[i];
                 restoredDict[subName] = self.fromJsonField(value[subName]);
@@ -188,7 +189,7 @@ var Jsonable = (function (_super) {
         return self.fromStr(value, valueType);
     };
     Jsonable.JSON_CLASS_TYPE = "_ct";
-    Jsonable.JSON_CLASS = "_c";
+    // private static readonly JSON_CLASS = "_c";
     Jsonable.JSON_TUPLE_TYPE = "_c";
     Jsonable.JSON_FIELD_TYPE = "_ft";
     Jsonable.JSON_FIELD_DATA = "_fd";

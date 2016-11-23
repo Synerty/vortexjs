@@ -1,22 +1,27 @@
-import Ng2TupleLoader from "./TupleLoader";
-import {Ng2CompLifecycleEvent} from "./Ng2CompLifecycleEvent";
+import {TupleLoader} from "./TupleLoader";
+import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
+import {VortexService} from "./Vortex";
 
 
+export class Ang2TupleLoaderTest extends ComponentLifecycleEventEmitter {
 
-export class Ang2TupleLoaderTest extends Ng2CompLifecycleEvent {
-    private vortexData: Ng2TupleLoader;
+    tuples: any[] = [];
+    id: number|null = null;
 
-    constructor() {
+    private loader: TupleLoader;
+
+    constructor(private vortexService: VortexService) {
         super();
-        let self = this;
 
-        self.vortexData = new Ng2TupleLoader(self, {key: "val"}, {
-            objName: "data",
-            loadOnInit: false,
-            loadOnIdChange: false,
-            dataIsArray: false
-        });
+        this.loader = vortexService.createTupleLoader(this,
+            () => {
+                return {
+                    key: "papp_nooop.tuple_loader.items",
+                    id: this.id
+                }
+            });
 
+        this.loader.observable.subscribe(tuples => this.tuples = tuples);
 
     }
 }

@@ -1,6 +1,9 @@
 import SerialiseUtil from "./SerialiseUtil";
 import {dictKeysFromObject} from "./UtilMisc";
+import "./UtilString";
 
+// Typedef for require
+declare let require:any;
 
 /**
  * ############################################################################### #
