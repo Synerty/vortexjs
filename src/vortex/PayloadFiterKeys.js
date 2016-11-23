@@ -1,0 +1,15 @@
+"use strict";
+exports.rapuiServerEcho = "rapuiServerEcho";
+exports.rapuiClientEcho = "rapuiClientEcho";
+exports.rapuiVortexUuid = "rapuiVortexUuid";
+exports.plIdKey = "id";
+exports.plRootIdKey = "rootId";
+exports.plObjectTypeKey = "objectType";
+exports.plParentIdKey = "parentId";
+exports.plParentObjectTypeKey = "parentObjectType";
+exports.plDeleteKey = "delete";
+exports.plIsRoot = "isRoot";
+exports.plIsPopup = "isPopup";
+exports.plCommandKey = "command";
+exports.plTableRowNum = "tableRowNum";
+exports.plShowall = "showAll";
