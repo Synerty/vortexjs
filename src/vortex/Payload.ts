@@ -2,10 +2,11 @@ import {Tuple} from "./Tuple";
 import SerialiseUtil from "./SerialiseUtil";
 import Jsonable from "./Jsonable";
 import {assert} from "./UtilMisc";
+import "./UtilArray";
 
 
 // Typedef for require
-declare let require:any;
+declare let require: any;
 
 /**
  * IPayloadFilt
@@ -18,16 +19,16 @@ export interface IPayloadFilt {
 
 /**
  *
- * This class is serialised and tranferred over the vortex to the server.
+ * This class is serialised and transferred over the vortex to the server.
  */
 export class Payload extends Jsonable {
 
     static readonly vortexUuidKey = "__vortexUuid__";
 
     filt: {};
-    tuples: any[] | Tuple[];
-    result: string | {} | null;
-    date: Date | null;
+    tuples: Array<Tuple|any>;
+    result: string | {} | null = null;
+    date: Date | null = null;
 
     /**
      * Payload
@@ -35,16 +36,15 @@ export class Payload extends Jsonable {
      * @param filt The filter that the server handler is listening for
      * different location @depreciated
      */
-    constructor(filt: {} = {}, tuples: any[] | Tuple[] = []) {
+    constructor(filt: {} = {},
+                tuples: Array<Tuple|any> = new Array<Tuple|any>()) {
         super();
         let self = this;
 
         self.__rapuiSerialiseType__ = SerialiseUtil.T_RAPUI_PAYLOAD;
 
         self.filt = filt;
-        self.tuples = [];
-        self.result = null;
-        self.date = null;
+        self.tuples = tuples;
 
     }
 

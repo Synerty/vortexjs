@@ -66,13 +66,16 @@ export default class SerialiseUtil {
     toRapuiType(value: any): string {
         let self = this;
 
+        if (value == null)
+            return SerialiseUtil.V_NULL;
+
         let TupleMod = require("./Tuple");
         let PayloadMod = require("./Payload");
 
         if (value instanceof TupleMod.Tuple)
             return SerialiseUtil.T_RAPUI_TUPLE;
 
-        if (value instanceof PayloadMod.default)
+        if (value instanceof PayloadMod.Payload)
             return SerialiseUtil.T_RAPUI_PAYLOAD;
 
         if (value instanceof Date)

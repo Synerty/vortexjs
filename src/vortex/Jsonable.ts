@@ -64,6 +64,7 @@ export default class Jsonable extends SerialiseUtil {
 
         if (self._tupleType != null)
             jsonDict[Jsonable.JSON_TUPLE_TYPE] = self._tupleType;
+
         /* This is in the PY version
          else
          jsonDict[JSON_CLASS] = className(self)
@@ -88,17 +89,21 @@ export default class Jsonable extends SerialiseUtil {
          * json dict
          *
          */
-        let self = this;
         let fieldNames = dictKeysFromObject(jsonDict);
 
         for (let i = 0; i < fieldNames.length; ++i) {
             let name = fieldNames[i];
             if (name.startsWith("_"))
                 continue;
-            self[name] = self.fromJsonField(jsonDict[name]);
+            this[name] = this.fromJsonField(jsonDict[name]);
         }
 
-        return self;
+        // This is only required for unit tests new Tuple().fromJsonDict(..)
+        if (jsonDict[Jsonable.JSON_CLASS_TYPE] == SerialiseUtil.T_RAPUI_TUPLE) {
+            this._tupleType = jsonDict[Jsonable.JSON_TUPLE_TYPE];
+        }
+
+        return this;
     }
 
 
@@ -205,7 +210,7 @@ export default class Jsonable extends SerialiseUtil {
             let newTuple = null;
             if (TupleMod.TUPLE_TYPES[tupleType] == null) {
                 let Tuple = require("./Tuple");
-                newTuple = new Tuple(tupleType);
+                newTuple = new TupleMod.Tuple(tupleType);
             } else {
                 // Tuples set their own types, don't pass anything to the constructor
                 newTuple = new TupleMod.TUPLE_TYPES[tupleType]();

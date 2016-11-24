@@ -5,10 +5,18 @@ import {HttpModule} from "@angular/http";
 import {AppComponent} from "./app.component";
 import {VortexService} from "../vortex/Vortex";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
+import { PayloadComponent } from './payload/payload.component';
+import { VortexComponent } from './vortex/vortex.component';
+import { TupleComponent } from './tuple/tuple.component';
+import { PayloadEndpointComponent } from './payload-endpoint/payload-endpoint.component';
 
 @NgModule({
     declarations: [
-        AppComponent
+        AppComponent,
+        PayloadComponent,
+        VortexComponent,
+        TupleComponent,
+        PayloadEndpointComponent
     ],
     imports: [
         BrowserModule,
@@ -20,3 +28,4 @@ import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 })
 export class AppModule {
 }
+

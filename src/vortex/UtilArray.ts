@@ -31,7 +31,7 @@ if (Array.prototype.intersect == null) {
 
 if (Array.prototype.remove == null) {
     Array.prototype.remove = function (objectOrArray: Array<any> | any): Array<any> {
-        if (objectOrArray != null)
+        if (objectOrArray == null)
             return this;
 
         if (objectOrArray instanceof Array) {

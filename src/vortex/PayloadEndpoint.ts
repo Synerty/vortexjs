@@ -26,8 +26,10 @@ export class PayloadEndpoint {
         assert(self._filt != null, "Payload filter is null");
 
         if (self._filt.key == null) {
-            throw new Error("There is no 'key' in the payload filt"
-                + ", There must be one for routing");
+            let e = new Error(`There is no 'key' in the payload filt \
+                , There must be one for routing - ${JSON.stringify(self._filt)}`);
+            console.log(e);
+            throw e;
         }
 
         payloadIO.add(self);

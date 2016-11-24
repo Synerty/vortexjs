@@ -25,6 +25,10 @@ export class VortexService {
         self.vortex = new Vortex();
     }
 
+    reconnect() {
+        this.vortex.reconnect();
+    }
+
     sendTuple(filt: IPayloadFilt | string, tuples: any[] | Tuple[]): void {
         let self = this;
 
@@ -118,18 +122,15 @@ export class Vortex {
             return;
         }
 
-        if (payload == null) {
-            payload = new Payload();
-
-        } else if (payload.filt["key"] == null) {
+        // Empty payloads are like heart beats, don't check them
+        if (! payload.isEmpty() && payload.filt["key"] == null) {
             throw new Error("There is no 'key' in the payload filt"
                 + ", There must be one for routing");
-
         }
 
         let conn = new VortexConnection(self);
         conn.send(payload);
-        console.log(dateStr() + "Sent payload with filt : " + JSON.stringify(payload.filt));
+        // console.log(dateStr() + "Sent payload with filt : " + JSON.stringify(payload.filt));
     }
 
     reconnect(): void {
