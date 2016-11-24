@@ -1,7 +1,26 @@
 {
-  "name": "vortexjs",
+  "name": "@synerty/vortexjs",
   "version": "0.0.0",
+  "description": "Custom obserable data serialisation and routing based on Angular2",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Synerty/vortexjs.git"
+  },
+  "keywords": [
+    "angular2",
+    "synerty",
+    "vortex",
+    "http",
+    "observable",
+    "routing"
+  ],
+  "author": "Synerty Pty Ltd <contact@synerty.com> (https://www.synerty.com)",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Synerty/vortexjs/issues"
+  },
+  "homepage": "https://github.com/Synerty/vortexjs#readme",
   "angular-cli": {},
   "scripts": {
     "start": "ng serve",
@@ -10,7 +29,7 @@
     "pree2e": "webdriver-manager update",
     "e2e": "protractor"
   },
-  "private": true,
+  "private": false,
   "dependencies": {
     "@angular/common": "^2.1.0",
     "@angular/core": "^2.1.0",
