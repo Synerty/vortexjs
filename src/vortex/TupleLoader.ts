@@ -116,7 +116,7 @@ export class TupleLoader {
         }
 
 
-        if (this.lastPayloadFilt == null ||
+        if (this.lastPayloadFilt != null &&
             equal(newFilter, this.lastPayloadFilt, {strict: true})) {
             return;
         }
@@ -218,9 +218,6 @@ export class TupleLoader {
             throw new Error(`Type ${type} is not implemented.`);
         }
 
-        // Start the response timer
-        this.resetTimer();
-
         // Return the promise
         return promise;
     }
@@ -237,7 +234,13 @@ export class TupleLoader {
         // Set the delete key. The server will delete objects with this set.
         this.lastPayloadFilt[plDeleteKey] = true;
 
-        return this.saveOrLoad(TupleLoaderEventEnum.Delete, tuples);
+        let promise = this.saveOrLoad(TupleLoaderEventEnum.Delete, tuples);
+
+        // Remove the delete key
+        delete this.lastPayloadFilt[plDeleteKey];
+
+        return promise;
+
     }
 
     private processPayload(payload: Payload) {
@@ -248,7 +251,7 @@ export class TupleLoader {
         }
 
         // No result, means this was a load
-        if (payload.result === null) {
+        if (payload.result == null) {
             try {
                 this.event.emit(TupleLoaderEventEnum.Load);
             } catch (e) {
@@ -292,7 +295,7 @@ export class TupleLoader {
     }
 
     private resetTimer(): void {
-        this.operationTimeout();
+        this.operationTimeout(false);
     }
 
     private setupTimer(): boolean {
@@ -308,7 +311,7 @@ export class TupleLoader {
         return true;
     }
 
-    private operationTimeout(): void {
+    private operationTimeout(showBaloon:boolean=true): void {
         this.timer = null;
 
         let msg:string = "The server failed to respond, operaton timed out";
@@ -319,7 +322,7 @@ export class TupleLoader {
             this.lastPromise = null;
         }
 
-        this.balloonMsg && this.balloonMsg.showError(msg);
+        showBaloon && this.balloonMsg && this.balloonMsg.showError(msg);
     }
 }
 

@@ -1,0 +1,26 @@
+<h1>TupleLoader - Tests</h1>
+AUTOMATED TESTS are TODO
+<table>
+    <tr>
+        <th>aInt</th>
+        <th>aBoolFalse</th>
+        <th>aString</th>
+        <th>aStrWithUnicode</th>
+    </tr>
+    <tr *ngFor="let tuple of tuples">
+        <td><input type="number" [(ngModel)]="tuple.aInt"></td>
+        <td>
+            <button (click)="tuple.aBoolTrue = !tuple.aBoolTrue">
+                {{tuple.aBoolTrue}}
+            </button>
+        </td>
+        <td><input  [(ngModel)]="tuple.aString"></td>
+        <td><input [(ngModel)]="tuple.aStrWithUnicode"></td>
+    </tr>
+</table>
+
+<button (click)="addNew()">Add New Row</button>
+
+<button (click)="loader.load()">Reset</button>
+<button (click)="loader.save()">Save</button>
+<button (click)="loader.del()">Delete</button>

@@ -23,9 +23,23 @@ There are some unit tests under src/app/[dir], these may be usefull for further 
     ...
     
     @NgModule({
+                ...
+            imports: [
+                ...
+                Ng2BalloonMsgModule
+                ...
+            ],
             ...
             providers: [VortexService, Ng2BalloonMsgService]
             ...
+
+## Add ng2-balloon-msg tag
+
+Add the `ng2-balloon-msg` to your app component HTML file. This allows TupleLoader to
+diplay balloon style messages to the user.
+
+    <ng2-balloon-msg></ng2-balloon-msg>
+
 
 ## Send tuples to the server
 
@@ -161,6 +175,8 @@ The TupleLoader has the following functionality :
 * Sends an initial payload to the server. This should trigger the server to send back 
 the data
 * Sends tuples back to the server to be created, updated and deleted.
+* Handles server response timeouts
+* Shows errors (via @synerty/ng2-balloon-msg)
 
 To receive data from the server, the Component must extend ComponentLifecycleEventEmitter,
 see PayloadEndpoint section above.
