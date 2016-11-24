@@ -7,9 +7,10 @@ var __extends = (this && this.__extends) || function (d, b) {
 var SerialiseUtil_1 = require("./SerialiseUtil");
 var Jsonable_1 = require("./Jsonable");
 var UtilMisc_1 = require("./UtilMisc");
+require("./UtilArray");
 /**
  *
- * This class is serialised and tranferred over the vortex to the server.
+ * This class is serialised and transferred over the vortex to the server.
  */
 var Payload = (function (_super) {
     __extends(Payload, _super);
@@ -21,14 +22,14 @@ var Payload = (function (_super) {
      */
     function Payload(filt, tuples) {
         if (filt === void 0) { filt = {}; }
-        if (tuples === void 0) { tuples = []; }
+        if (tuples === void 0) { tuples = new Array(); }
         _super.call(this);
+        this.result = null;
+        this.date = null;
         var self = this;
         self.__rapuiSerialiseType__ = SerialiseUtil_1.default.T_RAPUI_PAYLOAD;
         self.filt = filt;
-        self.tuples = [];
-        self.result = null;
-        self.date = null;
+        self.tuples = tuples;
     }
     Payload.prototype.isEmpty = function () {
         var self = this;

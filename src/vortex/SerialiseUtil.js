@@ -32,11 +32,13 @@ var SerialiseUtil = (function () {
     };
     SerialiseUtil.prototype.toRapuiType = function (value) {
         var self = this;
+        if (value == null)
+            return SerialiseUtil.V_NULL;
         var TupleMod = require("./Tuple");
         var PayloadMod = require("./Payload");
         if (value instanceof TupleMod.Tuple)
             return SerialiseUtil.T_RAPUI_TUPLE;
-        if (value instanceof PayloadMod.default)
+        if (value instanceof PayloadMod.Payload)
             return SerialiseUtil.T_RAPUI_PAYLOAD;
         if (value instanceof Date)
             return SerialiseUtil.T_DATETIME;

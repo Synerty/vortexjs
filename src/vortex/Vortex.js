@@ -23,6 +23,9 @@ var VortexService = (function () {
         var self = this;
         self.vortex = new Vortex();
     }
+    VortexService.prototype.reconnect = function () {
+        this.vortex.reconnect();
+    };
     VortexService.prototype.sendTuple = function (filt, tuples) {
         var self = this;
         if (typeof filt === "string") {
@@ -41,7 +44,11 @@ var VortexService = (function () {
     VortexService.prototype.createEndpointObservable = function (component, filter, processLatestOnly) {
         if (processLatestOnly === void 0) { processLatestOnly = false; }
         var endpoint = new PayloadEndpoint_1.PayloadEndpoint(component, filter, processLatestOnly);
-        return endpoint.observable;
+        return this.createEndpoint(component, filter, processLatestOnly).observable;
+    };
+    VortexService.prototype.createEndpoint = function (component, filter, processLatestOnly) {
+        if (processLatestOnly === void 0) { processLatestOnly = false; }
+        return new PayloadEndpoint_1.PayloadEndpoint(component, filter, processLatestOnly);
     };
     VortexService.prototype.createTupleLoader = function (component, filterUpdateCallable) {
         return new TupleLoader_1.TupleLoader(this.vortex, component, filterUpdateCallable, this.balloonMsg);
@@ -97,16 +104,14 @@ var Vortex = (function () {
             console.log(UtilMisc_1.dateStr() + "VortexService is closed, Probably due to a login page reload");
             return;
         }
-        if (payload == null) {
-            payload = new Payload_1.Payload();
-        }
-        else if (payload.filt["key"] == null) {
+        // Empty payloads are like heart beats, don't check them
+        if (!payload.isEmpty() && payload.filt["key"] == null) {
             throw new Error("There is no 'key' in the payload filt"
                 + ", There must be one for routing");
         }
         var conn = new VortexConnection(self);
         conn.send(payload);
-        console.log(UtilMisc_1.dateStr() + "Sent payload with filt : " + JSON.stringify(payload.filt));
+        // console.log(dateStr() + "Sent payload with filt : " + JSON.stringify(payload.filt));
     };
     Vortex.prototype.reconnect = function () {
         var self = this;

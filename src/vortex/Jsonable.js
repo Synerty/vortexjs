@@ -63,15 +63,18 @@ var Jsonable = (function (_super) {
          * json dict
          *
          */
-        var self = this;
         var fieldNames = UtilMisc_1.dictKeysFromObject(jsonDict);
         for (var i = 0; i < fieldNames.length; ++i) {
             var name_2 = fieldNames[i];
             if (name_2.startsWith("_"))
                 continue;
-            self[name_2] = self.fromJsonField(jsonDict[name_2]);
+            this[name_2] = this.fromJsonField(jsonDict[name_2]);
         }
-        return self;
+        // This is only required for unit tests new Tuple().fromJsonDict(..)
+        if (jsonDict[Jsonable.JSON_CLASS_TYPE] == SerialiseUtil_1.default.T_RAPUI_TUPLE) {
+            this._tupleType = jsonDict[Jsonable.JSON_TUPLE_TYPE];
+        }
+        return this;
     };
     Jsonable.prototype.toJsonField = function (value, jsonDict, name) {
         if (jsonDict === void 0) { jsonDict = null; }
@@ -156,7 +159,7 @@ var Jsonable = (function (_super) {
             var newTuple = null;
             if (TupleMod.TUPLE_TYPES[tupleType] == null) {
                 var Tuple = require("./Tuple");
-                newTuple = new Tuple(tupleType);
+                newTuple = new TupleMod.Tuple(tupleType);
             }
             else {
                 // Tuples set their own types, don't pass anything to the constructor

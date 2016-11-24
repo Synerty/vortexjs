@@ -13,8 +13,9 @@ var PayloadEndpoint = (function () {
         self._processLatestOnly = processLatestOnly === true;
         UtilMisc_1.assert(self._filt != null, "Payload filter is null");
         if (self._filt.key == null) {
-            throw new Error("There is no 'key' in the payload filt"
-                + ", There must be one for routing");
+            var e = new Error("There is no 'key' in the payload filt                 , There must be one for routing - " + JSON.stringify(self._filt));
+            console.log(e);
+            throw e;
         }
         PayloadIO_1.payloadIO.add(self);
         // Add auto tear downs for angular scopes

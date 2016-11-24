@@ -12,4 +12,6 @@ var Payload_1 = require("./src/vortex/Payload");
 exports.Payload = Payload_1.Payload;
 var Tuple_1 = require("./src/vortex/Tuple");
 exports.Tuple = Tuple_1.Tuple;
+var ComponentLifecycleEventEmitter_1 = require("./src/vortex/ComponentLifecycleEventEmitter");
+exports.ComponentLifecycleEventEmitter = ComponentLifecycleEventEmitter_1.ComponentLifecycleEventEmitter;
 __export(require("./src/vortex/PayloadFilterKeys"));

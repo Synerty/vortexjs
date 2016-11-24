@@ -17,7 +17,7 @@ if (Array.prototype.intersect == null) {
 }
 if (Array.prototype.remove == null) {
     Array.prototype.remove = function (objectOrArray) {
-        if (objectOrArray != null)
+        if (objectOrArray == null)
             return this;
         if (objectOrArray instanceof Array) {
             return this.diff(objectOrArray);

@@ -54,7 +54,13 @@ export class VortexService {
                              processLatestOnly: boolean = false): Observable<Payload> {
         let endpoint = new PayloadEndpoint(component, filter, processLatestOnly);
 
-        return endpoint.observable;
+        return this.createEndpoint(component, filter, processLatestOnly).observable;
+    }
+
+    createEndpoint(component: ComponentLifecycleEventEmitter,
+                   filter: IPayloadFilt,
+                   processLatestOnly: boolean = false): PayloadEndpoint {
+        return new PayloadEndpoint(component, filter, processLatestOnly);
     }
 
     createTupleLoader(component: ComponentLifecycleEventEmitter,
@@ -123,7 +129,7 @@ export class Vortex {
         }
 
         // Empty payloads are like heart beats, don't check them
-        if (! payload.isEmpty() && payload.filt["key"] == null) {
+        if (!payload.isEmpty() && payload.filt["key"] == null) {
             throw new Error("There is no 'key' in the payload filt"
                 + ", There must be one for routing");
         }
