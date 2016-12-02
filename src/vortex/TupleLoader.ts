@@ -108,7 +108,6 @@ export class TupleLoader {
     }
 
     filterChangeCheck(): void {
-        let filt = IPayloadFilt
         // Create a copy
         let newFilter = Object.assign({}, this.filterUpdateCallable());
 
