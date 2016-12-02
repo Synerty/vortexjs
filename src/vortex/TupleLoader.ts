@@ -61,6 +61,7 @@ export interface IFilterUpdateCallable {
  * * "del()"
  */
 export class TupleLoader {
+    private filterUpdateCallable: IFilterUpdateCallable;
 
     private lastPayloadFilt: IPayloadFilt | null = null;
     private lastTuples: any[] | Tuple[] | null = null;
@@ -79,8 +80,14 @@ export class TupleLoader {
 
     constructor(private vortex: Vortex,
                 private component: ComponentLifecycleEventEmitter,
-                private filterUpdateCallable: IFilterUpdateCallable,
+                filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt,
                 private balloonMsg: Ng2BalloonMsgService | null = null) {
+
+        if (filterUpdateCallable instanceof Function) {
+            this.filterUpdateCallable = filterUpdateCallable;
+        } else {
+            this.filterUpdateCallable = (() => { return filterUpdateCallable });
+        }
 
         // Regiseter for the angular docheck
         this.component.doCheckEvent.subscribe(() => this.filterChangeCheck());
@@ -101,6 +108,7 @@ export class TupleLoader {
     }
 
     filterChangeCheck(): void {
+        let filt = IPayloadFilt
         // Create a copy
         let newFilter = Object.assign({}, this.filterUpdateCallable());
 
@@ -311,10 +319,10 @@ export class TupleLoader {
         return true;
     }
 
-    private operationTimeout(showBaloon:boolean=true): void {
+    private operationTimeout(showBaloon: boolean = true): void {
         this.timer = null;
 
-        let msg:string = "The server failed to respond, operaton timed out";
+        let msg: string = "The server failed to respond, operaton timed out";
 
         if (this.lastPromise) {
             msg = `${this.lastPromise.type} Failed, Response Timed out`;
