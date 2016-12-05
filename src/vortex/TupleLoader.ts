@@ -86,11 +86,14 @@ export class TupleLoader {
         if (filterUpdateCallable instanceof Function) {
             this.filterUpdateCallable = filterUpdateCallable;
         } else {
-            this.filterUpdateCallable = (() => { return filterUpdateCallable });
+            this.filterUpdateCallable = (() => {
+                return filterUpdateCallable
+            });
         }
 
         // Regiseter for the angular docheck
-        this.component.doCheckEvent.subscribe(() => this.filterChangeCheck());
+        let doCheckSub = this.component.doCheckEvent
+            .subscribe(() => this.filterChangeCheck());
 
         // Create the observable object
         this._observable = Observable.create(observer => this.observer = observer);
@@ -98,6 +101,15 @@ export class TupleLoader {
         // Call subscribe, otherwise the observer is never created, and we can never call
         // next() on it.
         this._observable.subscribe().unsubscribe();
+
+        // Remove all observers when the component is destroyed.
+        let onDestroySub = this.component.onDestroyEvent.subscribe(() => {
+            for (let observer of this._observable['observers']) {
+                observer.unsubscribe();
+            }
+            doCheckSub.unsubscribe();
+            onDestroySub.unsubscribe();
+        });
     }
 
     /**

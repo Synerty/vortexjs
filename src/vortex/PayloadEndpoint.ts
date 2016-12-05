@@ -91,6 +91,9 @@ export class PayloadEndpoint {
     shutdown() {
         let self = this;
         payloadIO.remove(self);
+        for (let observer of this._observable['observers']) {
+            observer.unsubscribe();
+        }
     };
 
 }
