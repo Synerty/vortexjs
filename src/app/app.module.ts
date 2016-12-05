@@ -12,6 +12,12 @@ import {PayloadEndpointComponent} from "./payload-endpoint/payload-endpoint.comp
 import { TupleLoaderComponent } from './tuple-loader/tuple-loader.component';
 
 @NgModule({
+    imports: [
+        BrowserModule,
+        FormsModule,
+        HttpModule,
+        Ng2BalloonMsgModule
+    ],
     declarations: [
         AppComponent,
         PayloadComponent,
@@ -19,12 +25,6 @@ import { TupleLoaderComponent } from './tuple-loader/tuple-loader.component';
         TupleComponent,
         PayloadEndpointComponent,
         TupleLoaderComponent
-    ],
-    imports: [
-        BrowserModule,
-        FormsModule,
-        HttpModule,
-        Ng2BalloonMsgModule
     ],
     providers: [VortexService, Ng2BalloonMsgService],
     bootstrap: [AppComponent]
