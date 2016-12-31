@@ -104,7 +104,7 @@ export class TupleLoader {
 
         // Remove all observers when the component is destroyed.
         let onDestroySub = this.component.onDestroyEvent.subscribe(() => {
-            if (this._observable['observers'].length) {
+            if (this._observable['observers'] != null) {
                 for (let observer of this._observable['observers']) {
                     observer.unsubscribe();
                 }
