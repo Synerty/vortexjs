@@ -16,7 +16,7 @@ export class Ang2TupleLoaderTest extends ComponentLifecycleEventEmitter {
         this.loader = vortexService.createTupleLoader(this,
             () => {
                 return {
-                    key: "papp_nooop.tuple_loader.items",
+                    key: "plugin_noop.tuple_loader.items",
                     id: this.id
                 }
             });

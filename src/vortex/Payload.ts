@@ -14,7 +14,6 @@ declare let require: any;
  */
 export interface IPayloadFilt {
     key: string;
-    papp?: string;
 }
 
 /**
