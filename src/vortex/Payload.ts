@@ -23,6 +23,7 @@ export interface IPayloadFilt {
 export class Payload extends Jsonable {
 
     static readonly vortexUuidKey = "__vortexUuid__";
+    static readonly vortexNameKey = "__vortexName__";
 
     filt: {};
     tuples: Array<Tuple|any>;

@@ -75,12 +75,13 @@ export class VortexService {
 
 export class Vortex {
 
-    private _buffer: Payload[];
-    private _beatTimer: any;
+    private _beatTimer: any | null = null;
     private _uuid: string;
+    private _name: string;
     private _vortexClosed: boolean;
 
-    private serverVortexUuid: string | null;
+    private serverVortexUuid: string | null = null;
+    private serverVortexName: string | null = null;
 
     /**
      * RapUI VortexService, This class is responsible for sending and receiving payloads to/from
@@ -89,12 +90,9 @@ export class Vortex {
     constructor() {
         let self = this;
 
-        self._buffer = null;
-        self._beatTimer = null;
         self._uuid = self._makeUuid();
+        self._name = "browser";
         self._vortexClosed = false;
-
-        self.serverVortexUuid = null;
 
         self.reconnect();
     }
@@ -109,8 +107,11 @@ export class Vortex {
     }
 
     get uuid() {
-        let self = this;
-        return self._uuid;
+        return this._uuid;
+    }
+
+    get name() {
+        return this._name;
     }
 
     get closed(): boolean {
@@ -180,6 +181,10 @@ export class Vortex {
         if (payload.isEmpty()) {
             if (payload.filt[Payload.vortexUuidKey] != null)
                 self.serverVortexUuid = payload.filt[Payload.vortexUuidKey];
+
+            if (payload.filt[Payload.vortexNameKey] != null)
+                self.serverVortexName = payload.filt[Payload.vortexNameKey];
+
             return;
         }
 
@@ -212,6 +217,7 @@ class VortexConnection {
         let randArg = Math.random() + "." + (new Date()).getTime();
         let args = {
             "vortexUuid": vortex.uuid,
+            "vortexName": vortex.name,
             "__randArg__": randArg
         };
 
