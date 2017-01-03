@@ -74,6 +74,21 @@ export class PayloadEndpoint {
             if (!self._filt.hasOwnProperty(key))
                 continue;
 
+            let left = payload.filt[key];
+            let right = self._filt[key];
+
+            if (typeof left != typeof right)
+                return false;
+
+            // Handle special case for Arrays using our equals method in ArrayUtil
+            if (left instanceof Array) {
+                if (left.sort().equals(right.sort()))
+                    continue;
+                else
+                    return false;
+            }
+
+
             if (payload.filt[key] !== self._filt[key])
                 return false;
         }
