@@ -4,6 +4,7 @@ import Jsonable from "./Jsonable";
 import {assert} from "./UtilMisc";
 import "./UtilArray";
 
+let Buffer = require('buffer').Buffer;
 
 // Typedef for require
 declare let require: any;
@@ -83,7 +84,7 @@ export class Payload extends Jsonable {
     static fromVortexMsg(vortexStr: string): Payload {
 
         // Convert the string to binary
-        let compressedData = atob(vortexStr);
+        let compressedData = new Buffer(vortexStr, 'base64').toString();
 
         // Decompress the payload string
         let pako = require("pako");
@@ -112,6 +113,6 @@ export class Payload extends Jsonable {
         let pako = require("pako");
         let compressedData = pako.deflate(payloadStr, {to: "string"});
 
-        return btoa(compressedData);
+        return new Buffer(compressedData).toString('base64');
     }
 }
