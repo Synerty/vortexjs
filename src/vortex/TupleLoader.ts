@@ -123,7 +123,7 @@ export class TupleLoader {
 
     filterChangeCheck(): void {
         // Create a copy
-        let newFilter = Object.assign({}, this.filterUpdateCallable());
+        let newFilter = (<any>Object).assign({}, this.filterUpdateCallable());
 
         if (newFilter == null) {
             if (this.endpoint != null) {
