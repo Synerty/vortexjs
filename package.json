@@ -1,6 +1,6 @@
 {
   "name": "@synerty/vortexjs",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Custom obserable data serialisation and routing based on Angular2",
   "main": "index.js",
   "repository": {
@@ -35,7 +35,7 @@
     "@angular/core": "^2.x.x",
     "@synerty/ng2-balloon-msg": "^0.1.1",
     "@types/deep-equal": "0.0.30",
-    "buffer": "^5.0.2",
+    "base-64": "^0.1.0",
     "core-js": "^2.4.1",
     "deep-equal": "^1.0.1",
     "pako": "^1.0.4",

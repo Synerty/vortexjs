@@ -4,7 +4,7 @@ import Jsonable from "./Jsonable";
 import {assert} from "./UtilMisc";
 import "./UtilArray";
 
-let Buffer = require('buffer').Buffer;
+var base64 = require('base-64');
 
 // Typedef for require
 declare let require: any;
@@ -35,10 +35,10 @@ export class Payload extends Jsonable {
      * Payload
      * This class is serialised and tranferred over the vortex to the server.
      * @param filt The filter that the server handler is listening for
+     * @param tuples: The tuples to init the Payload with
      * different location @depreciated
      */
-    constructor(filt: {} = {},
-                tuples: Array<Tuple|any> = new Array<Tuple|any>()) {
+    constructor(filt: {} = {}, tuples: Array<Tuple|any> = []) {
         super();
         let self = this;
 
@@ -84,7 +84,7 @@ export class Payload extends Jsonable {
     static fromVortexMsg(vortexStr: string): Payload {
 
         // Convert the string to binary
-        let compressedData = new Buffer(vortexStr, 'base64').toString();
+        let compressedData = base64.decode(vortexStr);
 
         // Decompress the payload string
         let pako = require("pako");
@@ -112,7 +112,6 @@ export class Payload extends Jsonable {
         // Compress it
         let pako = require("pako");
         let compressedData = pako.deflate(payloadStr, {to: "string"});
-
-        return new Buffer(compressedData).toString('base64');
+        return base64.encode(compressedData);
     }
 }

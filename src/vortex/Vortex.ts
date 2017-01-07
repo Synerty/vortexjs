@@ -352,7 +352,13 @@ class VortexConnection {
         let self = this;
         if (self._updateTimer)
             clearInterval(self._updateTimer);
-        console.log("VortexConnection, connection errored out");
+        var msg = "";
+        try {
+            msg = e.toString();
+        } catch (e) {
+        }
+
+        console.log("VortexConnection, connection errored out: " + msg);
     }
 
 }
