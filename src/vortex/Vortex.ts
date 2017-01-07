@@ -31,7 +31,7 @@ export class VortexService {
      *
      * @param url: The new URL for the vortex to use.
      */
-    setVortexUrl(url:srting) {
+    setVortexUrl(url:string) {
         this.vortex.url = url;
     }
 
@@ -95,7 +95,7 @@ export class Vortex {
      * the server.
      */
     constructor() {
-        this._uuid = self._makeUuid();
+        this._uuid = this._makeUuid();
         this._name = "browser";
         this._url = "/vortex";
         this._vortexClosed = false;
