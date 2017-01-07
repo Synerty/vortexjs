@@ -51,7 +51,7 @@ if (Array.prototype.add == null) {
         if (objectOrArray == null)
             return this;
 
-        if (objectOrArray instanceof Array || objectOrArray instanceof NodeList) {
+        if (objectOrArray instanceof Array) {
             for (let i = 0; i < objectOrArray.length; ++i)
                 this.push(objectOrArray[i]);
             return this;

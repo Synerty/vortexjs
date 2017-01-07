@@ -21,8 +21,18 @@ export class VortexService {
     private vortex: Vortex;
 
     constructor(private balloonMsg: Ng2BalloonMsgService) {
-        let self = this;
-        self.vortex = new Vortex();
+        this.vortex = new Vortex();
+    }
+
+    /**
+     * Set Vortex URL
+     *
+     * This method should not be used except in rare cases, such as a NativeScript app.
+     *
+     * @param url: The new URL for the vortex to use.
+     */
+    setVortexUrl(url:srting) {
+        this.vortex.url = url;
     }
 
     reconnect() {
@@ -30,23 +40,19 @@ export class VortexService {
     }
 
     sendTuple(filt: IPayloadFilt | string, tuples: any[] | Tuple[]): void {
-        let self = this;
-
         if (typeof filt === "string") {
             filt = {key: filt};
         }
 
-        self.sendPayload(new Payload(filt, tuples));
+        this.sendPayload(new Payload(filt, tuples));
     }
 
     sendFilt(filt): void {
-        let self = this;
         this.sendPayload(new Payload(filt));
     }
 
     sendPayload(payload): void {
-        let self = this;
-        self.vortex.send(payload);
+        this.vortex.send(payload);
     }
 
     createEndpointObservable(component: ComponentLifecycleEventEmitter,
@@ -78,6 +84,7 @@ export class Vortex {
     private _beatTimer: any | null = null;
     private _uuid: string;
     private _name: string;
+    private _url: string;
     private _vortexClosed: boolean;
 
     private serverVortexUuid: string | null = null;
@@ -88,13 +95,12 @@ export class Vortex {
      * the server.
      */
     constructor() {
-        let self = this;
+        this._uuid = self._makeUuid();
+        this._name = "browser";
+        this._url = "/vortex";
+        this._vortexClosed = false;
 
-        self._uuid = self._makeUuid();
-        self._name = "browser";
-        self._vortexClosed = false;
-
-        self.reconnect();
+        this.reconnect();
     }
 
     private _makeUuid() {
@@ -104,6 +110,15 @@ export class Vortex {
         }
 
         return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, func);
+    }
+
+    get url(): string {
+        return this._url;
+    }
+
+    set url(value: string) {
+        this._url = value;
+        this.reconnect();
     }
 
     get uuid() {
@@ -141,8 +156,7 @@ export class Vortex {
     }
 
     reconnect(): void {
-        let self = this;
-        self.send(new Payload());
+        this.send(new Payload());
     }
 
     private _beat(): void {
@@ -222,7 +236,7 @@ class VortexConnection {
         };
 
         self._http = new XMLHttpRequest();
-        self._http.open("POST", "/vortex" + getFiltStr(args), true);
+        self._http.open("POST",self._vortex.url + getFiltStr(args), true);
 
         self._updateTimer = null;
 
