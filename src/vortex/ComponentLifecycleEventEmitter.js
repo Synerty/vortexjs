@@ -23,13 +23,13 @@ var ComponentLifecycleEventEmitter = (function () {
         if (this.onDestroyEvent['observers'] != null) {
             for (var _i = 0, _a = this.onDestroyEvent['observers']; _i < _a.length; _i++) {
                 var observer = _a[_i];
-                observer.unsubscribe();
+                observer["unsubscribe"]();
             }
         }
         if (this.doCheckEvent['observers'] != null) {
             for (var _b = 0, _c = this.doCheckEvent['observers']; _b < _c.length; _b++) {
                 var observer = _c[_b];
-                observer.unsubscribe();
+                observer["unsubscribe"]();
             }
         }
     };

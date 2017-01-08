@@ -21,13 +21,13 @@ export class ComponentLifecycleEventEmitter implements
 
         if (this.onDestroyEvent['observers'] != null) {
             for (let observer of this.onDestroyEvent['observers']) {
-                (Observer<string>observer).unsubscribe();
+                observer["unsubscribe"]();
             }
         }
 
         if (this.doCheckEvent['observers'] != null) {
             for (let observer of this.doCheckEvent['observers']) {
-                (Observer<string>observer).unsubscribe();
+                observer["unsubscribe"]();
             }
         }
     }
