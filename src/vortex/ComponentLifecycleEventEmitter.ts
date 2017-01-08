@@ -1,4 +1,5 @@
 import {EventEmitter, OnDestroy, OnInit, DoCheck} from "@angular/core";
+import {Observer} from "rxjs";
 
 // Post to here if it works
 // http://stackoverflow.com/questions/34743069/angular2-ngondestroy-emit-event
@@ -19,13 +20,13 @@ export class ComponentLifecycleEventEmitter implements
         this.onDestroyEvent.emit("OnDestroy");
 
         if (this.onDestroyEvent['observers'] != null) {
-            for (let observer of this.onDestroyEvent['observers']) {
+            for (let observer:Observer<string> of this.onDestroyEvent['observers']) {
                 observer.unsubscribe();
             }
         }
 
         if (this.doCheckEvent['observers'] != null) {
-            for (let observer of this.doCheckEvent['observers']) {
+            for (let observer:Observer<string> of this.doCheckEvent['observers']) {
                 observer.unsubscribe();
             }
         }
