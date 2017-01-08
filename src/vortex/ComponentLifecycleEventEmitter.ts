@@ -20,14 +20,14 @@ export class ComponentLifecycleEventEmitter implements
         this.onDestroyEvent.emit("OnDestroy");
 
         if (this.onDestroyEvent['observers'] != null) {
-            for (let observer:Observer<string> of this.onDestroyEvent['observers']) {
-                observer.unsubscribe();
+            for (let observer of this.onDestroyEvent['observers']) {
+                (Observer<string>observer).unsubscribe();
             }
         }
 
         if (this.doCheckEvent['observers'] != null) {
-            for (let observer:Observer<string> of this.doCheckEvent['observers']) {
-                observer.unsubscribe();
+            for (let observer of this.doCheckEvent['observers']) {
+                (Observer<string>observer).unsubscribe();
             }
         }
     }
