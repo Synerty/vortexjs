@@ -1,25 +1,22 @@
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-import { Payload } from "./Payload";
-import { payloadIO } from "./PayloadIO";
-import { rapuiClientEcho } from "./PayloadFilterKeys";
-import { getFiltStr, dateStr, bind } from "./UtilMisc";
-import { Injectable } from "@angular/core";
-import { PayloadEndpoint } from "./PayloadEndpoint";
-import { TupleLoader } from "./TupleLoader";
-import { Ng2BalloonMsgService } from "@synerty/ng2-balloon-msg";
+var Payload_1 = require("./Payload");
+var PayloadIO_1 = require("./PayloadIO");
+var PayloadFilterKeys_1 = require("./PayloadFilterKeys");
+var UtilMisc_1 = require("./UtilMisc");
+var core_1 = require("@angular/core");
+var PayloadEndpoint_1 = require("./PayloadEndpoint");
+var TupleLoader_1 = require("./TupleLoader");
 /**
  * Server response timeout in milliseconds
  * @type {number}
  */
-export var SERVER_RESPONSE_TIMEOUT = 20000;
+exports.SERVER_RESPONSE_TIMEOUT = 20000;
 var VortexService = VortexService_1 = (function () {
     function VortexService(balloonMsg) {
         this.balloonMsg = balloonMsg;
@@ -42,34 +39,33 @@ var VortexService = VortexService_1 = (function () {
         if (typeof filt === "string") {
             filt = { key: filt };
         }
-        this.sendPayload(new Payload(filt, tuples));
+        this.sendPayload(new Payload_1.Payload(filt, tuples));
     };
     VortexService.prototype.sendFilt = function (filt) {
-        this.sendPayload(new Payload(filt));
+        this.sendPayload(new Payload_1.Payload(filt));
     };
     VortexService.prototype.sendPayload = function (payload) {
         this.vortex.send(payload);
     };
     VortexService.prototype.createEndpointObservable = function (component, filter, processLatestOnly) {
         if (processLatestOnly === void 0) { processLatestOnly = false; }
-        var endpoint = new PayloadEndpoint(component, filter, processLatestOnly);
+        var endpoint = new PayloadEndpoint_1.PayloadEndpoint(component, filter, processLatestOnly);
         return this.createEndpoint(component, filter, processLatestOnly).observable;
     };
     VortexService.prototype.createEndpoint = function (component, filter, processLatestOnly) {
         if (processLatestOnly === void 0) { processLatestOnly = false; }
-        return new PayloadEndpoint(component, filter, processLatestOnly);
+        return new PayloadEndpoint_1.PayloadEndpoint(component, filter, processLatestOnly);
     };
     VortexService.prototype.createTupleLoader = function (component, filterUpdateCallable) {
-        return new TupleLoader(this.vortex, component, filterUpdateCallable, this.balloonMsg);
+        return new TupleLoader_1.TupleLoader(this.vortex, component, filterUpdateCallable, this.balloonMsg);
     };
     return VortexService;
 }());
 VortexService.vortexUrl = '/vortex';
 VortexService = VortexService_1 = __decorate([
-    Injectable(),
-    __metadata("design:paramtypes", [Ng2BalloonMsgService])
+    core_1.Injectable()
 ], VortexService);
-export { VortexService };
+exports.VortexService = VortexService;
 var Vortex = (function () {
     /**
      * RapUI VortexService, This class is responsible for sending and receiving payloads to/from
@@ -126,7 +122,7 @@ var Vortex = (function () {
     Vortex.prototype.send = function (payload) {
         var self = this;
         if (self._vortexClosed) {
-            console.log(dateStr() + "VortexService is closed, Probably due to a login page reload");
+            console.log(UtilMisc_1.dateStr() + "VortexService is closed, Probably due to a login page reload");
             return;
         }
         // Empty payloads are like heart beats, don't check them
@@ -139,7 +135,7 @@ var Vortex = (function () {
         // console.log(dateStr() + "Sent payload with filt : " + JSON.stringify(payload.filt));
     };
     Vortex.prototype.reconnect = function () {
-        this.send(new Payload());
+        this.send(new Payload_1.Payload());
     };
     Vortex.prototype._beat = function () {
         var self = this;
@@ -153,7 +149,7 @@ var Vortex = (function () {
     };
     Vortex.prototype._dead = function () {
         var self = this;
-        console.log(dateStr() + "VortexService server heartbeats have timed out");
+        console.log(UtilMisc_1.dateStr() + "VortexService server heartbeats have timed out");
     };
     /**
      * Receive
@@ -164,24 +160,24 @@ var Vortex = (function () {
     Vortex.prototype._receive = function (payload) {
         var self = this;
         self._beat();
-        if (payload.filt.hasOwnProperty(rapuiClientEcho)) {
-            delete payload[rapuiClientEcho];
+        if (payload.filt.hasOwnProperty(PayloadFilterKeys_1.rapuiClientEcho)) {
+            delete payload[PayloadFilterKeys_1.rapuiClientEcho];
             self.send(payload);
         }
         if (payload.isEmpty()) {
-            if (payload.filt[Payload.vortexUuidKey] != null)
-                self.serverVortexUuid = payload.filt[Payload.vortexUuidKey];
-            if (payload.filt[Payload.vortexNameKey] != null)
-                self.serverVortexName = payload.filt[Payload.vortexNameKey];
+            if (payload.filt[Payload_1.Payload.vortexUuidKey] != null)
+                self.serverVortexUuid = payload.filt[Payload_1.Payload.vortexUuidKey];
+            if (payload.filt[Payload_1.Payload.vortexNameKey] != null)
+                self.serverVortexName = payload.filt[Payload_1.Payload.vortexNameKey];
             return;
         }
-        console.log(dateStr() + "Received payload with filt : " + JSON.stringify(payload.filt));
+        console.log(UtilMisc_1.dateStr() + "Received payload with filt : " + JSON.stringify(payload.filt));
         // TODO, Tell the payloadIO the vortexUuid
-        payloadIO.process(payload);
+        PayloadIO_1.payloadIO.process(payload);
     };
     return Vortex;
 }());
-export { Vortex };
+exports.Vortex = Vortex;
 // ############################################################################
 var VortexConnection = (function () {
     function VortexConnection(vortex) {
@@ -194,7 +190,7 @@ var VortexConnection = (function () {
             "__randArg__": randArg
         };
         self._http = new XMLHttpRequest();
-        self._http.open("POST", self._vortex.url + getFiltStr(args), true);
+        self._http.open("POST", self._vortex.url + UtilMisc_1.getFiltStr(args), true);
         self._updateTimer = null;
         // Good events
         self._http.onloadstart = function (e) {
@@ -214,9 +210,9 @@ var VortexConnection = (function () {
             self._received();
         };
         // Bad events
-        self._http.onabort = bind(self, self._error);
-        self._http.onerror = bind(self, self._error);
-        self._http.ontimeout = bind(self, self._error);
+        self._http.onabort = UtilMisc_1.bind(self, self._error);
+        self._http.onerror = UtilMisc_1.bind(self, self._error);
+        self._http.ontimeout = UtilMisc_1.bind(self, self._error);
         self._responseParseIndex = 0;
         self._closing = false;
         self._aborting = false;
@@ -266,7 +262,7 @@ var VortexConnection = (function () {
             // Get the b64encoded string
             var vortexStr = data.substr(0, payloadSeparatorIndex);
             // Create payload object from it
-            var payload = Payload.fromVortexMsg(vortexStr);
+            var payload = Payload_1.Payload.fromVortexMsg(vortexStr);
             // Send to vortex
             self._vortex._receive(payload);
             data = self._http.responseText.substr(self._responseParseIndex);
@@ -296,4 +292,3 @@ var VortexConnection = (function () {
 }());
 VortexConnection.RECONNECT_SIZE_LIMIT = 20 * 1024 * 1024; // 20 megabytes
 var VortexService_1;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/Vortex.js.map

@@ -1,4 +1,5 @@
-export var STOP_PROCESSING = "STOP_PROCESSING";
+"use strict";
+exports.STOP_PROCESSING = "STOP_PROCESSING";
 var PayloadIO = (function () {
     function PayloadIO() {
         var self = this;
@@ -18,11 +19,10 @@ var PayloadIO = (function () {
         // can remove them selves during iteration.
         var endpoints = self._endpoints.slice(0);
         for (var i = 0; i < endpoints.length; ++i) {
-            if (endpoints[i].process(payload) === STOP_PROCESSING)
+            if (endpoints[i].process(payload) === exports.STOP_PROCESSING)
                 break;
         }
     };
     return PayloadIO;
 }());
-export var payloadIO = new PayloadIO();
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/PayloadIO.js.map
+exports.payloadIO = new PayloadIO();
