@@ -17,6 +17,18 @@ export class ComponentLifecycleEventEmitter implements
      */
     ngOnDestroy() {
         this.onDestroyEvent.emit("OnDestroy");
+
+        if (this.onDestroyEvent['observers'] != null) {
+            for (let observer of this.onDestroyEvent['observers']) {
+                observer.unsubscribe();
+            }
+        }
+
+        if (this.doCheckEvent['observers'] != null) {
+            for (let observer of this.doCheckEvent['observers']) {
+                observer.unsubscribe();
+            }
+        }
     }
 
     /**
