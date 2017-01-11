@@ -65,7 +65,6 @@ export abstract class VortexClientABC {
         this._vortexClosed = value;
     }
 
-
     send(payload: Payload | Payload[]): void {
         let self = this;
         if (self.closed) {

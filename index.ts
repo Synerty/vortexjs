@@ -1,5 +1,5 @@
 export {VortexService} from "./src/vortex/VortexService";
-export {VortexServiceStatus} from "./src/vortex/VortexServiceStatus";
+export {VortexStatusService} from "./src/vortex/VortexStatusService";
 export {TupleLoader, IFilterUpdateCallable} from "./src/vortex/TupleLoader";
 export {PayloadEndpoint} from "./src/vortex/PayloadEndpoint";
 export {Payload, IPayloadFilt} from "./src/vortex/Payload";
