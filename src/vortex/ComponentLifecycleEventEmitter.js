@@ -1,16 +1,15 @@
-"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var core_1 = require("@angular/core");
+import { EventEmitter } from "@angular/core";
 // Post to here if it works
 // http://stackoverflow.com/questions/34743069/angular2-ngondestroy-emit-event
 var ComponentLifecycleEventEmitter = (function () {
     function ComponentLifecycleEventEmitter() {
-        this.onDestroyEvent = new core_1.EventEmitter();
-        this.doCheckEvent = new core_1.EventEmitter();
+        this.onDestroyEvent = new EventEmitter();
+        this.doCheckEvent = new EventEmitter();
     }
     /** Angular2 On Destroy
      *
@@ -47,7 +46,7 @@ var ComponentLifecycleEventEmitter = (function () {
     };
     return ComponentLifecycleEventEmitter;
 }());
-exports.ComponentLifecycleEventEmitter = ComponentLifecycleEventEmitter;
+export { ComponentLifecycleEventEmitter };
 // ------------------------------------------------------------------------------------
 // Example usage below
 /**
@@ -62,7 +61,7 @@ var MyComponent = (function (_super) {
     };
     return MyComponent;
 }(ComponentLifecycleEventEmitter));
-exports.MyComponent = MyComponent;
+export { MyComponent };
 /**
  * Example class using a lifecycle observer
  */
@@ -80,3 +79,4 @@ var CompLcObserver = (function () {
     };
     return CompLcObserver;
 }());
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/ComponentLifecycleEventEmitter.js.map

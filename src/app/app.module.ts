@@ -3,7 +3,8 @@ import {NgModule} from "@angular/core";
 import {FormsModule} from "@angular/forms";
 import {HttpModule} from "@angular/http";
 import {AppComponent} from "./app.component";
-import {VortexService} from "../vortex/Vortex";
+import {VortexService} from "../vortex/VortexService";
+import {VortexStatusService} from "../vortex/VortexStatusService";
 import {Ng2BalloonMsgService, Ng2BalloonMsgModule} from "@synerty/ng2-balloon-msg";
 import {PayloadComponent} from "./payload/payload.component";
 import {VortexComponent} from "./vortex/vortex.component";
@@ -26,7 +27,7 @@ import { TupleLoaderComponent } from './tuple-loader/tuple-loader.component';
         PayloadEndpointComponent,
         TupleLoaderComponent
     ],
-    providers: [VortexService, Ng2BalloonMsgService],
+    providers: [VortexService,VortexStatusService, Ng2BalloonMsgService],
     bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -1,6 +1,6 @@
 import {Component, OnInit} from "@angular/core";
 import {TestTuple} from "../tuple/tuple.component";
-import {VortexService} from "../../vortex/Vortex";
+import {VortexService} from "../../vortex/VortexService";
 import {TupleLoader} from "../../vortex/TupleLoader";
 import {ComponentLifecycleEventEmitter} from "../../vortex/ComponentLifecycleEventEmitter";
 

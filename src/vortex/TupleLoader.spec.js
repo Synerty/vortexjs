@@ -1,5 +1,4 @@
 /* tslint:disable:no-unused-variable */
-"use strict";
 //
 // describe('TupleLoader', () => {
 //   beforeEach(() => {
@@ -29,3 +28,4 @@
 //     expect(compiled.querySelector('h1').textContent).toContain('app works!');
 //   }));
 // });
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/TupleLoader.spec.js.map

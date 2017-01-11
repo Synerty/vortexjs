@@ -3,7 +3,7 @@ import {Tuple} from "../../vortex/Tuple";
 import {assert} from "../../vortex/UtilMisc";
 import {Payload} from "../../vortex/Payload";
 import "../../vortex/UtilArray";
-import {VortexService} from "../../vortex/Vortex";
+import {VortexService} from "../../vortex/VortexService";
 
 export class TestTuple extends Tuple {
     aBoolTrue: boolean;

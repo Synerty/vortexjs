@@ -3,8 +3,7 @@
  * Common Serialisation functions
  * ###############################################################################
  */
-"use strict";
-var UtilMisc_1 = require("./UtilMisc");
+import { dictKeysFromObject } from "./UtilMisc";
 var SerialiseUtil = (function () {
     function SerialiseUtil() {
     }
@@ -90,7 +89,7 @@ var SerialiseUtil = (function () {
                     return false;
             }
             else if (type1 === SerialiseUtil.T_DICT) {
-                var isEqual = self.rapuiEquals(field1, field2, UtilMisc_1.dictKeysFromObject(field1), UtilMisc_1.dictKeysFromObject(field2));
+                var isEqual = self.rapuiEquals(field1, field2, dictKeysFromObject(field1), dictKeysFromObject(field2));
                 if (!isEqual)
                     return false;
             }
@@ -107,6 +106,7 @@ var SerialiseUtil = (function () {
     };
     return SerialiseUtil;
 }());
+export default SerialiseUtil;
 SerialiseUtil.T_RAPUI_TUPLE = "rt";
 SerialiseUtil.T_RAPUI_PAYLOAD = "rp";
 SerialiseUtil.T_GENERIC_CLASS = "gen"; // NOT SUPPORTED
@@ -122,5 +122,4 @@ SerialiseUtil.V_NULL = "null";
 SerialiseUtil.V_TRUE = "1";
 SerialiseUtil.V_FALSE = "0";
 SerialiseUtil.ISO8601 = "%Y-%m-%d %H:%M:%S.%f";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = SerialiseUtil;
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/SerialiseUtil.js.map

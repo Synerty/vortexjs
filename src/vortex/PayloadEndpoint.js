@@ -1,8 +1,7 @@
-"use strict";
-var PayloadIO_1 = require("./PayloadIO");
-var UtilMisc_1 = require("./UtilMisc");
-require("./UtilArray");
-var rxjs_1 = require("rxjs"); // Ensure it's included and defined
+import { payloadIO } from "./PayloadIO";
+import { assert } from "./UtilMisc";
+import "./UtilArray";
+import { Observable } from "rxjs"; // Ensure it's included and defined
 var PayloadEndpoint = (function () {
     function PayloadEndpoint(component, filter, processLatestOnly) {
         if (processLatestOnly === void 0) { processLatestOnly = false; }
@@ -11,19 +10,19 @@ var PayloadEndpoint = (function () {
         self._filt = filter;
         self._lastPayloadDate = null;
         self._processLatestOnly = processLatestOnly === true;
-        UtilMisc_1.assert(self._filt != null, "Payload filter is null");
+        assert(self._filt != null, "Payload filter is null");
         if (self._filt.key == null) {
             var e = new Error("There is no 'key' in the payload filt                 , There must be one for routing - " + JSON.stringify(self._filt));
             console.log(e);
             throw e;
         }
-        PayloadIO_1.payloadIO.add(self);
+        payloadIO.add(self);
         // Add auto tear downs for angular scopes
         var subscription = component.onDestroyEvent.subscribe(function () {
             _this.shutdown();
             subscription.unsubscribe();
         });
-        this._observable = rxjs_1.Observable.create(function (observer) { return _this._observer = observer; });
+        this._observable = Observable.create(function (observer) { return _this._observer = observer; });
         // Call subscribe, otherwise the observer is never created, and we can never call
         // next() on it.
         this._observable.subscribe().unsubscribe();
@@ -79,7 +78,7 @@ var PayloadEndpoint = (function () {
     ;
     PayloadEndpoint.prototype.shutdown = function () {
         var self = this;
-        PayloadIO_1.payloadIO.remove(self);
+        payloadIO.remove(self);
         if (this._observable['observers'] != null) {
             for (var _i = 0, _a = this._observable['observers']; _i < _a.length; _i++) {
                 var observer = _a[_i];
@@ -90,4 +89,5 @@ var PayloadEndpoint = (function () {
     ;
     return PayloadEndpoint;
 }());
-exports.PayloadEndpoint = PayloadEndpoint;
+export { PayloadEndpoint };
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/PayloadEndpoint.js.map

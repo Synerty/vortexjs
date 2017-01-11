@@ -1,5 +1,7 @@
-import {Component, OnInit} from "@angular/core";
-import {VortexService} from "../../vortex/Vortex";
+import {Component, OnInit, NgZone} from "@angular/core";
+import {VortexService} from "../../vortex/VortexService";
+import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
+import {VortexStatusService} from "../../vortex/VortexStatusService";
 
 @Component({
     selector: 'app-vortex',
@@ -8,15 +10,32 @@ import {VortexService} from "../../vortex/Vortex";
 })
 export class VortexComponent implements OnInit {
 
-    constructor(public vortexService: VortexService) {
+    httpService: VortexService;
+    webSocketService: VortexService;
+
+    constructor(private statusService: VortexStatusService,
+                private zone: NgZone,
+                private balloonMsg: Ng2BalloonMsgService) {
+
+        this.httpService = new VortexService(statusService, zone, balloonMsg);
+
+        let host = location.host.split(':')[0];
+        VortexService.setVortexUrl(`ws://${host}:8344`);
+        this.webSocketService = new VortexService(statusService, zone, balloonMsg);
     }
 
     ngOnInit() {
     }
 
-    testVortexReconnect() {
-        this.vortexService.reconnect();
-        console.log("Reconnect sent");
+    testVortexHttpReconnect() {
+        this.httpService.reconnect();
+        console.log("HTTP Reconnect sent");
+        return true;
+    }
+
+    testVortexWebSocketReconnect() {
+        this.webSocketService.reconnect();
+        console.log("WebSocket Reconnect sent");
         return true;
     }
 

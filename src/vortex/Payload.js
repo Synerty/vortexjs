@@ -1,13 +1,12 @@
-"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var SerialiseUtil_1 = require("./SerialiseUtil");
-var Jsonable_1 = require("./Jsonable");
-var UtilMisc_1 = require("./UtilMisc");
-require("./UtilArray");
+import SerialiseUtil from "./SerialiseUtil";
+import Jsonable from "./Jsonable";
+import { assert } from "./UtilMisc";
+import "./UtilArray";
 var base64 = require('base-64');
 /**
  *
@@ -29,7 +28,7 @@ var Payload = (function (_super) {
         _this.result = null;
         _this.date = null;
         var self = _this;
-        self.__rapuiSerialiseType__ = SerialiseUtil_1.default.T_RAPUI_PAYLOAD;
+        self.__rapuiSerialiseType__ = SerialiseUtil.T_RAPUI_PAYLOAD;
         self.filt = filt;
         self.tuples = tuples;
         return _this;
@@ -51,7 +50,7 @@ var Payload = (function (_super) {
     Payload.prototype._fromJson = function (jsonStr) {
         var self = this;
         var jsonDict = JSON.parse(jsonStr);
-        UtilMisc_1.assert(jsonDict[Jsonable_1.default.JSON_CLASS_TYPE] === self.__rapuiSerialiseType__);
+        assert(jsonDict[Jsonable.JSON_CLASS_TYPE] === self.__rapuiSerialiseType__);
         return self.fromJsonDict(jsonDict);
     };
     Payload.prototype._toJson = function () {
@@ -86,7 +85,8 @@ var Payload = (function (_super) {
         return base64.encode(compressedData);
     };
     return Payload;
-}(Jsonable_1.default));
+}(Jsonable));
+export { Payload };
 Payload.vortexUuidKey = "__vortexUuid__";
 Payload.vortexNameKey = "__vortexName__";
-exports.Payload = Payload;
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/Payload.js.map

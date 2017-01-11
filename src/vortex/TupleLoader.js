@@ -1,12 +1,11 @@
-"use strict";
-var rxjs_1 = require("rxjs");
-var Payload_1 = require("./Payload");
-var PayloadEndpoint_1 = require("./PayloadEndpoint");
-var core_1 = require("@angular/core");
-var Vortex_1 = require("./Vortex");
-require("deep-equal");
-var PayloadFilterKeys_1 = require("./PayloadFilterKeys");
-var UtilMisc_1 = require("./UtilMisc");
+import { Observable } from "rxjs";
+import { Payload } from "./Payload";
+import { PayloadEndpoint } from "./PayloadEndpoint";
+import { EventEmitter } from "@angular/core";
+import { SERVER_RESPONSE_TIMEOUT } from "./VortexClientABC";
+import "deep-equal";
+import { plDeleteKey } from "./PayloadFilterKeys";
+import { bind } from "./UtilMisc";
 var equal = require('deep-equal');
 // ------------------
 // Some private structures
@@ -44,7 +43,7 @@ var TupleLoader = (function () {
         this.lastTuples = null;
         this.timer = null;
         this.lastPromise = null;
-        this.event = new core_1.EventEmitter();
+        this.event = new EventEmitter();
         this.endpoint = null;
         if (filterUpdateCallable instanceof Function) {
             this.filterUpdateCallable = filterUpdateCallable;
@@ -58,7 +57,7 @@ var TupleLoader = (function () {
         var doCheckSub = this.component.doCheckEvent
             .subscribe(function () { return _this.filterChangeCheck(); });
         // Create the observable object
-        this._observable = rxjs_1.Observable.create(function (observer) { return _this.observer = observer; });
+        this._observable = Observable.create(function (observer) { return _this.observer = observer; });
         // Call subscribe, otherwise the observer is never created, and we can never call
         // next() on it.
         this._observable.subscribe().unsubscribe();
@@ -102,9 +101,9 @@ var TupleLoader = (function () {
             return;
         }
         this.lastPayloadFilt = newFilter;
-        this.endpoint = new PayloadEndpoint_1.PayloadEndpoint(this.component, this.lastPayloadFilt, true);
+        this.endpoint = new PayloadEndpoint(this.component, this.lastPayloadFilt, true);
         this.endpoint.observable.subscribe(function (payload) { return _this.processPayload(payload); });
-        this.vortex.send(new Payload_1.Payload(this.lastPayloadFilt));
+        this.vortex.send(new Payload(this.lastPayloadFilt));
     };
     /**
      * Load Loads the data from a server
@@ -181,7 +180,7 @@ var TupleLoader = (function () {
                 return promise;
             }
             // Save the tuples
-            this.vortex.send(new Payload_1.Payload(this.lastPayloadFilt, this.lastTuples));
+            this.vortex.send(new Payload(this.lastPayloadFilt, this.lastTuples));
         }
         else {
             throw new Error("Type " + type + " is not implemented.");
@@ -200,10 +199,10 @@ var TupleLoader = (function () {
     TupleLoader.prototype.del = function (tuples) {
         if (tuples === void 0) { tuples = null; }
         // Set the delete key. The server will delete objects with this set.
-        this.lastPayloadFilt[PayloadFilterKeys_1.plDeleteKey] = true;
+        this.lastPayloadFilt[plDeleteKey] = true;
         var promise = this.saveOrLoad(TupleLoaderEventEnum.Delete, tuples);
         // Remove the delete key
-        delete this.lastPayloadFilt[PayloadFilterKeys_1.plDeleteKey];
+        delete this.lastPayloadFilt[plDeleteKey];
         return promise;
     };
     TupleLoader.prototype.processPayload = function (payload) {
@@ -223,7 +222,7 @@ var TupleLoader = (function () {
         }
         else if (payload.result === true) {
             try {
-                if (payload.filt.hasOwnProperty(PayloadFilterKeys_1.plDeleteKey)) {
+                if (payload.filt.hasOwnProperty(plDeleteKey)) {
                     this.event.emit(TupleLoaderEventEnum.Delete);
                 }
                 else {
@@ -259,7 +258,7 @@ var TupleLoader = (function () {
             this.balloonMsg && this.balloonMsg.showWarning("We're already processing a request, Action failed");
             return false;
         }
-        self.timer = setTimeout(Vortex_1.SERVER_RESPONSE_TIMEOUT, UtilMisc_1.bind(self, self.operationTimeout));
+        self.timer = setTimeout(SERVER_RESPONSE_TIMEOUT, bind(self, self.operationTimeout));
         return true;
     };
     TupleLoader.prototype.operationTimeout = function (showBaloon) {
@@ -275,4 +274,5 @@ var TupleLoader = (function () {
     };
     return TupleLoader;
 }());
-exports.TupleLoader = TupleLoader;
+export { TupleLoader };
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/TupleLoader.js.map

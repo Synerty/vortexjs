@@ -1,7 +1,7 @@
 import {Component, OnInit} from "@angular/core";
 import {Payload} from "../../vortex/Payload";
 import {TupleComponent} from "../tuple/tuple.component";
-import {VortexService} from "../../vortex/Vortex";
+import {VortexService} from "../../vortex/VortexService";
 import {assert} from "../../vortex/UtilMisc";
 
 @Component({

@@ -3,7 +3,7 @@ import {Payload, IPayloadFilt} from "./Payload";
 import {PayloadEndpoint} from "./PayloadEndpoint";
 import {EventEmitter} from "@angular/core";
 import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
-import {Vortex, SERVER_RESPONSE_TIMEOUT} from "./Vortex";
+import {VortexClientABC, SERVER_RESPONSE_TIMEOUT} from "./VortexClientABC";
 import {Tuple} from "./Tuple";
 import "deep-equal";
 import {plDeleteKey} from "./PayloadFilterKeys";
@@ -78,7 +78,7 @@ export class TupleLoader {
     private observer: Observer<Tuple[] | any[]>;
 
 
-    constructor(private vortex: Vortex,
+    constructor(private vortex: VortexClientABC,
                 private component: ComponentLifecycleEventEmitter,
                 filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt,
                 private balloonMsg: Ng2BalloonMsgService | null = null) {
