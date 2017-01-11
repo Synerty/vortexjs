@@ -65,7 +65,7 @@ export class VortexClientWebsocket extends VortexClientABC {
 
         // If the vortex is shutdown then don't reconnect
         if (this.closed) {
-            this.vortexStatusService.logInfo("Vortex is shutdown");
+            this.vortexStatusService.logInfo("WebSocket, Vortex is shutdown");
             return;
         }
 
@@ -86,7 +86,7 @@ export class VortexClientWebsocket extends VortexClientABC {
         };
 
         // Construct + open the socket
-        this.vortexStatusService.logInfo(`WebSocket connecting to ${this.url}`);
+        this.vortexStatusService.logInfo(`WebSocket, connecting to ${this.url}`);
         this.socket = new this.Socket(this.url + getFiltStr(args), []);
         this.socket.binaryType = "arraybuffer";
         this.socket.addEventListener('open', event => this.onOpen(event));
@@ -97,7 +97,7 @@ export class VortexClientWebsocket extends VortexClientABC {
 
     private onMessage(event) {
         if (event.data.length == null) {
-            this.vortexStatusService.logError("We've received a websocket binary message," +
+            this.vortexStatusService.logError("WebSocket, We've received a websocket binary message," +
                 " we expect a unicode");
             return;
         }
@@ -112,12 +112,12 @@ export class VortexClientWebsocket extends VortexClientABC {
     }
 
     private onClose(event) {
-        this.vortexStatusService.logInfo("WebSocket closed");
+        this.vortexStatusService.logInfo("WebSocket, closed");
         this.createSocket();
     }
 
     private onError(event) {
-        this.vortexStatusService.logError(event.error ? event.error : "No error message");
+        this.vortexStatusService.logError(event.error ? event.error : "WebSocket, No error message");
         // onClose will get called as well
     }
 
