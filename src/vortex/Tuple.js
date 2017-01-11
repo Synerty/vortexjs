@@ -1,10 +1,11 @@
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-import SerialiseUtil from "./SerialiseUtil";
-import Jsonable from "./Jsonable";
+var SerialiseUtil_1 = require("./SerialiseUtil");
+var Jsonable_1 = require("./Jsonable");
 /** Tuples implementation details.
  *
  * We're not going to have fully fledged tuples in the browser. As far as the
@@ -21,11 +22,11 @@ var Tuple = (function (_super) {
         if (tupleType === void 0) { tupleType = null; }
         var _this = _super.call(this) || this;
         var self = _this;
-        self.__rapuiSerialiseType__ = SerialiseUtil.T_RAPUI_TUPLE;
+        self.__rapuiSerialiseType__ = SerialiseUtil_1["default"].T_RAPUI_TUPLE;
         // Instantiate the correct class
-        if (self._tupleType === undefined && TUPLE_TYPES[tupleType] !== undefined) {
+        if (self._tupleType === undefined && exports.TUPLE_TYPES[tupleType] !== undefined) {
             self._tupleType = tupleType;
-            TUPLE_TYPES[tupleType].call(self);
+            exports.TUPLE_TYPES[tupleType].call(self);
         }
         else {
             self._tupleType = tupleType;
@@ -33,11 +34,11 @@ var Tuple = (function (_super) {
         return _this;
     }
     return Tuple;
-}(Jsonable));
-export { Tuple };
-export var TUPLE_TYPES = {};
-export function registerTupleType(Class_) {
+}(Jsonable_1["default"]));
+exports.Tuple = Tuple;
+exports.TUPLE_TYPES = {};
+function registerTupleType(Class_) {
     var inst = new Class_(null);
-    TUPLE_TYPES[inst._tupleType] = Class_;
+    exports.TUPLE_TYPES[inst._tupleType] = Class_;
 }
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/Tuple.js.map
+exports.registerTupleType = registerTupleType;

@@ -2,8 +2,10 @@
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
-var Vortex_1 = require("./src/vortex/Vortex");
-exports.VortexService = Vortex_1.VortexService;
+var VortexService_1 = require("./src/vortex/VortexService");
+exports.VortexService = VortexService_1.VortexService;
+var VortexServiceStatus_1 = require("./src/vortex/VortexServiceStatus");
+exports.VortexServiceStatus = VortexServiceStatus_1.VortexServiceStatus;
 var TupleLoader_1 = require("./src/vortex/TupleLoader");
 exports.TupleLoader = TupleLoader_1.TupleLoader;
 var PayloadEndpoint_1 = require("./src/vortex/PayloadEndpoint");

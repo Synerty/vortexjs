@@ -111,4 +111,3 @@ if (Array.prototype.indexOf == null) {
         return -1;
     };
 }
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/UtilArray.js.map

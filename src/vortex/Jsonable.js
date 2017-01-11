@@ -1,11 +1,12 @@
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-import SerialiseUtil from "./SerialiseUtil";
-import { dictKeysFromObject } from "./UtilMisc";
-import "./UtilString";
+var SerialiseUtil_1 = require("./SerialiseUtil");
+var UtilMisc_1 = require("./UtilMisc");
+require("./UtilString");
 /**
  * ############################################################################### #
  * JSON Serialisation functions
@@ -22,7 +23,7 @@ var Jsonable = (function (_super) {
          */
         var self = _this;
         self.__isJsonable = true;
-        self.__rapuiSerialiseType__ = SerialiseUtil.T_GENERIC_CLASS;
+        self.__rapuiSerialiseType__ = SerialiseUtil_1["default"].T_GENERIC_CLASS;
         return _this;
     }
     Jsonable.prototype._fieldNames = function () {
@@ -63,7 +64,7 @@ var Jsonable = (function (_super) {
          * json dict
          *
          */
-        var fieldNames = dictKeysFromObject(jsonDict);
+        var fieldNames = UtilMisc_1.dictKeysFromObject(jsonDict);
         for (var i = 0; i < fieldNames.length; ++i) {
             var name_2 = fieldNames[i];
             if (name_2.startsWith("_"))
@@ -71,7 +72,7 @@ var Jsonable = (function (_super) {
             this[name_2] = this.fromJsonField(jsonDict[name_2]);
         }
         // This is only required for unit tests new Tuple().fromJsonDict(..)
-        if (jsonDict[Jsonable.JSON_CLASS_TYPE] == SerialiseUtil.T_RAPUI_TUPLE) {
+        if (jsonDict[Jsonable.JSON_CLASS_TYPE] == SerialiseUtil_1["default"].T_RAPUI_TUPLE) {
             this._tupleType = jsonDict[Jsonable.JSON_TUPLE_TYPE];
         }
         return this;
@@ -82,35 +83,35 @@ var Jsonable = (function (_super) {
         var self = this;
         var convertedValue = null;
         var valueType = value == null
-            ? SerialiseUtil.V_NULL
+            ? SerialiseUtil_1["default"].V_NULL
             : self.toRapuiType(value);
-        if (valueType === SerialiseUtil.T_RAPUI_TUPLE
-            || valueType === SerialiseUtil.T_RAPUI_PAYLOAD) {
+        if (valueType === SerialiseUtil_1["default"].T_RAPUI_TUPLE
+            || valueType === SerialiseUtil_1["default"].T_RAPUI_PAYLOAD) {
             convertedValue = value.toJsonDict();
         }
-        else if (valueType === SerialiseUtil.T_DICT) {
+        else if (valueType === SerialiseUtil_1["default"].T_DICT) {
             // Treat these like dicts
             convertedValue = {};
-            var keys = dictKeysFromObject(value);
+            var keys = UtilMisc_1.dictKeysFromObject(value);
             for (var keyIndex = 0; keyIndex < keys.length; ++keyIndex) {
                 var keyName = keys[keyIndex];
                 self.toJsonField(value[keyName], convertedValue, keyName);
             }
         }
-        else if (valueType === SerialiseUtil.T_LIST) {
+        else if (valueType === SerialiseUtil_1["default"].T_LIST) {
             convertedValue = [];
             // List
             for (var i = 0; i < value.length; ++i) {
                 convertedValue.push(self.toJsonField(value[i]));
             }
         }
-        else if (valueType === SerialiseUtil.T_FLOAT
-            || valueType === SerialiseUtil.T_INT
-            || valueType === SerialiseUtil.T_BOOL
-            || valueType === SerialiseUtil.T_STR) {
+        else if (valueType === SerialiseUtil_1["default"].T_FLOAT
+            || valueType === SerialiseUtil_1["default"].T_INT
+            || valueType === SerialiseUtil_1["default"].T_BOOL
+            || valueType === SerialiseUtil_1["default"].T_STR) {
             convertedValue = value;
         }
-        else if (valueType === SerialiseUtil.V_NULL) {
+        else if (valueType === SerialiseUtil_1["default"].V_NULL) {
             convertedValue = null;
         }
         else {
@@ -118,9 +119,9 @@ var Jsonable = (function (_super) {
         }
         // Non standard values need a dict to store their value type attributes
         // Create a sub dict that contains the value and type
-        var jsonStandardTypes = [SerialiseUtil.T_FLOAT, SerialiseUtil.T_STR,
-            SerialiseUtil.T_INT, SerialiseUtil.V_NULL,
-            SerialiseUtil.T_BOOL, SerialiseUtil.T_LIST, SerialiseUtil.T_DICT];
+        var jsonStandardTypes = [SerialiseUtil_1["default"].T_FLOAT, SerialiseUtil_1["default"].T_STR,
+            SerialiseUtil_1["default"].T_INT, SerialiseUtil_1["default"].V_NULL,
+            SerialiseUtil_1["default"].T_BOOL, SerialiseUtil_1["default"].T_LIST, SerialiseUtil_1["default"].T_DICT];
         if (jsonStandardTypes.indexOf(valueType) === -1 && value.__isJsonable !== true) {
             var typedData = {};
             typedData[Jsonable.JSON_FIELD_TYPE] = valueType;
@@ -136,9 +137,9 @@ var Jsonable = (function (_super) {
     Jsonable.prototype.fromJsonField = function (value, valueType) {
         if (valueType === void 0) { valueType = null; }
         var self = this;
-        if (valueType === SerialiseUtil.V_NULL || value == null)
+        if (valueType === SerialiseUtil_1["default"].V_NULL || value == null)
             return null;
-        if (valueType === SerialiseUtil.T_INT)
+        if (valueType === SerialiseUtil_1["default"].T_INT)
             return value;
         if (value[Jsonable.JSON_CLASS_TYPE] != null)
             valueType = value[Jsonable.JSON_CLASS_TYPE];
@@ -146,14 +147,14 @@ var Jsonable = (function (_super) {
         // if there is no type then these are the right types
         if (valueType == null) {
             valueType = self.toRapuiType(value);
-            if ([SerialiseUtil.T_BOOL, SerialiseUtil.T_FLOAT,
-                SerialiseUtil.T_INT, SerialiseUtil.T_STR].indexOf(valueType) !== -1)
+            if ([SerialiseUtil_1["default"].T_BOOL, SerialiseUtil_1["default"].T_FLOAT,
+                SerialiseUtil_1["default"].T_INT, SerialiseUtil_1["default"].T_STR].indexOf(valueType) !== -1)
                 return value;
         }
         if (value[Jsonable.JSON_FIELD_TYPE] != null)
             return self.fromJsonField(value[Jsonable.JSON_FIELD_DATA], value[Jsonable.JSON_FIELD_TYPE]);
         // Tuple
-        if (valueType === SerialiseUtil.T_RAPUI_TUPLE) {
+        if (valueType === SerialiseUtil_1["default"].T_RAPUI_TUPLE) {
             var TupleMod = require("./Tuple");
             var tupleType = value[Jsonable.JSON_TUPLE_TYPE];
             var newTuple = null;
@@ -168,21 +169,21 @@ var Jsonable = (function (_super) {
             return newTuple.fromJsonDict(value);
         }
         // Payload
-        if (valueType === SerialiseUtil.T_RAPUI_PAYLOAD) {
+        if (valueType === SerialiseUtil_1["default"].T_RAPUI_PAYLOAD) {
             var Payload = require("./Payload");
             return new Payload().fromJsonDict(value);
         }
         /* SKIP T_GENERIC_CLASS */
-        if (valueType === SerialiseUtil.T_DICT) {
+        if (valueType === SerialiseUtil_1["default"].T_DICT) {
             var restoredDict = {};
-            var keys = dictKeysFromObject(value);
+            var keys = UtilMisc_1.dictKeysFromObject(value);
             for (var i = 0; i < keys.length; ++i) {
                 var subName = keys[i];
                 restoredDict[subName] = self.fromJsonField(value[subName]);
             }
             return restoredDict;
         }
-        if (valueType === SerialiseUtil.T_LIST) {
+        if (valueType === SerialiseUtil_1["default"].T_LIST) {
             var restoredList = [];
             for (var i = 0; i < value.length; ++i)
                 restoredList.push(self.fromJsonField(value[i]));
@@ -192,11 +193,11 @@ var Jsonable = (function (_super) {
         return self.fromStr(value, valueType);
     };
     return Jsonable;
-}(SerialiseUtil));
-export default Jsonable;
+}(SerialiseUtil_1["default"]));
 Jsonable.JSON_CLASS_TYPE = "_ct";
 // private static readonly JSON_CLASS = "_c";
 Jsonable.JSON_TUPLE_TYPE = "_c";
 Jsonable.JSON_FIELD_TYPE = "_ft";
 Jsonable.JSON_FIELD_DATA = "_fd";
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/Jsonable.js.map
+exports.__esModule = true;
+exports["default"] = Jsonable;
