@@ -248,6 +248,15 @@ Example code for working with a TupleLoader
     }
 
 
+
+
+
+#Change Log
+
+#### 0.3.0
+
+Implemented PY side WebSockets
+
 # Project development info
 
 ## Scaffolding
