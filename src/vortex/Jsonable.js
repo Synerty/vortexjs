@@ -23,7 +23,7 @@ var Jsonable = (function (_super) {
          */
         var self = _this;
         self.__isJsonable = true;
-        self.__rapuiSerialiseType__ = SerialiseUtil_1["default"].T_GENERIC_CLASS;
+        self.__rapuiSerialiseType__ = SerialiseUtil_1.default.T_GENERIC_CLASS;
         return _this;
     }
     Jsonable.prototype._fieldNames = function () {
@@ -72,7 +72,7 @@ var Jsonable = (function (_super) {
             this[name_2] = this.fromJsonField(jsonDict[name_2]);
         }
         // This is only required for unit tests new Tuple().fromJsonDict(..)
-        if (jsonDict[Jsonable.JSON_CLASS_TYPE] == SerialiseUtil_1["default"].T_RAPUI_TUPLE) {
+        if (jsonDict[Jsonable.JSON_CLASS_TYPE] == SerialiseUtil_1.default.T_RAPUI_TUPLE) {
             this._tupleType = jsonDict[Jsonable.JSON_TUPLE_TYPE];
         }
         return this;
@@ -83,13 +83,13 @@ var Jsonable = (function (_super) {
         var self = this;
         var convertedValue = null;
         var valueType = value == null
-            ? SerialiseUtil_1["default"].V_NULL
+            ? SerialiseUtil_1.default.V_NULL
             : self.toRapuiType(value);
-        if (valueType === SerialiseUtil_1["default"].T_RAPUI_TUPLE
-            || valueType === SerialiseUtil_1["default"].T_RAPUI_PAYLOAD) {
+        if (valueType === SerialiseUtil_1.default.T_RAPUI_TUPLE
+            || valueType === SerialiseUtil_1.default.T_RAPUI_PAYLOAD) {
             convertedValue = value.toJsonDict();
         }
-        else if (valueType === SerialiseUtil_1["default"].T_DICT) {
+        else if (valueType === SerialiseUtil_1.default.T_DICT) {
             // Treat these like dicts
             convertedValue = {};
             var keys = UtilMisc_1.dictKeysFromObject(value);
@@ -98,20 +98,20 @@ var Jsonable = (function (_super) {
                 self.toJsonField(value[keyName], convertedValue, keyName);
             }
         }
-        else if (valueType === SerialiseUtil_1["default"].T_LIST) {
+        else if (valueType === SerialiseUtil_1.default.T_LIST) {
             convertedValue = [];
             // List
             for (var i = 0; i < value.length; ++i) {
                 convertedValue.push(self.toJsonField(value[i]));
             }
         }
-        else if (valueType === SerialiseUtil_1["default"].T_FLOAT
-            || valueType === SerialiseUtil_1["default"].T_INT
-            || valueType === SerialiseUtil_1["default"].T_BOOL
-            || valueType === SerialiseUtil_1["default"].T_STR) {
+        else if (valueType === SerialiseUtil_1.default.T_FLOAT
+            || valueType === SerialiseUtil_1.default.T_INT
+            || valueType === SerialiseUtil_1.default.T_BOOL
+            || valueType === SerialiseUtil_1.default.T_STR) {
             convertedValue = value;
         }
-        else if (valueType === SerialiseUtil_1["default"].V_NULL) {
+        else if (valueType === SerialiseUtil_1.default.V_NULL) {
             convertedValue = null;
         }
         else {
@@ -119,9 +119,9 @@ var Jsonable = (function (_super) {
         }
         // Non standard values need a dict to store their value type attributes
         // Create a sub dict that contains the value and type
-        var jsonStandardTypes = [SerialiseUtil_1["default"].T_FLOAT, SerialiseUtil_1["default"].T_STR,
-            SerialiseUtil_1["default"].T_INT, SerialiseUtil_1["default"].V_NULL,
-            SerialiseUtil_1["default"].T_BOOL, SerialiseUtil_1["default"].T_LIST, SerialiseUtil_1["default"].T_DICT];
+        var jsonStandardTypes = [SerialiseUtil_1.default.T_FLOAT, SerialiseUtil_1.default.T_STR,
+            SerialiseUtil_1.default.T_INT, SerialiseUtil_1.default.V_NULL,
+            SerialiseUtil_1.default.T_BOOL, SerialiseUtil_1.default.T_LIST, SerialiseUtil_1.default.T_DICT];
         if (jsonStandardTypes.indexOf(valueType) === -1 && value.__isJsonable !== true) {
             var typedData = {};
             typedData[Jsonable.JSON_FIELD_TYPE] = valueType;
@@ -137,9 +137,9 @@ var Jsonable = (function (_super) {
     Jsonable.prototype.fromJsonField = function (value, valueType) {
         if (valueType === void 0) { valueType = null; }
         var self = this;
-        if (valueType === SerialiseUtil_1["default"].V_NULL || value == null)
+        if (valueType === SerialiseUtil_1.default.V_NULL || value == null)
             return null;
-        if (valueType === SerialiseUtil_1["default"].T_INT)
+        if (valueType === SerialiseUtil_1.default.T_INT)
             return value;
         if (value[Jsonable.JSON_CLASS_TYPE] != null)
             valueType = value[Jsonable.JSON_CLASS_TYPE];
@@ -147,14 +147,14 @@ var Jsonable = (function (_super) {
         // if there is no type then these are the right types
         if (valueType == null) {
             valueType = self.toRapuiType(value);
-            if ([SerialiseUtil_1["default"].T_BOOL, SerialiseUtil_1["default"].T_FLOAT,
-                SerialiseUtil_1["default"].T_INT, SerialiseUtil_1["default"].T_STR].indexOf(valueType) !== -1)
+            if ([SerialiseUtil_1.default.T_BOOL, SerialiseUtil_1.default.T_FLOAT,
+                SerialiseUtil_1.default.T_INT, SerialiseUtil_1.default.T_STR].indexOf(valueType) !== -1)
                 return value;
         }
         if (value[Jsonable.JSON_FIELD_TYPE] != null)
             return self.fromJsonField(value[Jsonable.JSON_FIELD_DATA], value[Jsonable.JSON_FIELD_TYPE]);
         // Tuple
-        if (valueType === SerialiseUtil_1["default"].T_RAPUI_TUPLE) {
+        if (valueType === SerialiseUtil_1.default.T_RAPUI_TUPLE) {
             var TupleMod = require("./Tuple");
             var tupleType = value[Jsonable.JSON_TUPLE_TYPE];
             var newTuple = null;
@@ -169,12 +169,12 @@ var Jsonable = (function (_super) {
             return newTuple.fromJsonDict(value);
         }
         // Payload
-        if (valueType === SerialiseUtil_1["default"].T_RAPUI_PAYLOAD) {
+        if (valueType === SerialiseUtil_1.default.T_RAPUI_PAYLOAD) {
             var Payload = require("./Payload");
             return new Payload().fromJsonDict(value);
         }
         /* SKIP T_GENERIC_CLASS */
-        if (valueType === SerialiseUtil_1["default"].T_DICT) {
+        if (valueType === SerialiseUtil_1.default.T_DICT) {
             var restoredDict = {};
             var keys = UtilMisc_1.dictKeysFromObject(value);
             for (var i = 0; i < keys.length; ++i) {
@@ -183,7 +183,7 @@ var Jsonable = (function (_super) {
             }
             return restoredDict;
         }
-        if (valueType === SerialiseUtil_1["default"].T_LIST) {
+        if (valueType === SerialiseUtil_1.default.T_LIST) {
             var restoredList = [];
             for (var i = 0; i < value.length; ++i)
                 restoredList.push(self.fromJsonField(value[i]));
@@ -193,11 +193,12 @@ var Jsonable = (function (_super) {
         return self.fromStr(value, valueType);
     };
     return Jsonable;
-}(SerialiseUtil_1["default"]));
+}(SerialiseUtil_1.default));
 Jsonable.JSON_CLASS_TYPE = "_ct";
 // private static readonly JSON_CLASS = "_c";
 Jsonable.JSON_TUPLE_TYPE = "_c";
 Jsonable.JSON_FIELD_TYPE = "_ft";
 Jsonable.JSON_FIELD_DATA = "_fd";
-exports.__esModule = true;
-exports["default"] = Jsonable;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = Jsonable;
+//# sourceMappingURL=Jsonable.js.map

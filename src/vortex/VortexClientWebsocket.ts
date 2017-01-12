@@ -6,11 +6,14 @@ import {getFiltStr} from "./UtilMisc";
 
 // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
 
+declare const WebSocket: any;
+declare const MozWebSocket: any;
+
 export class VortexClientWebsocket extends VortexClientABC {
 
     private readonly RECONNECT_BACKOFF = 5000; // Seconds
 
-    private Socket = window['WebSocket'] || window['MozWebSocket'];
+    private Socket = WebSocket || MozWebSocket;
     private socket: WebSocket | null = null;
 
     private lastReconnectDate: number = Date.parse("01-Jan-2017");
@@ -23,7 +26,6 @@ export class VortexClientWebsocket extends VortexClientABC {
                 url: string) {
         super(vortexStatusService, zone, url);
 
-        this.reconnect();
     }
 
     get isReady(): boolean {

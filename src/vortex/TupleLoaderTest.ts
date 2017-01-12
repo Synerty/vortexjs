@@ -1,6 +1,6 @@
 import {TupleLoader} from "./TupleLoader";
 import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
-import {VortexService} from "./Vortex";
+import {VortexService} from "./VortexService";
 
 
 export class Ang2TupleLoaderTest extends ComponentLifecycleEventEmitter {

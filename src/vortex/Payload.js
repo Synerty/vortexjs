@@ -29,7 +29,7 @@ var Payload = (function (_super) {
         _this.result = null;
         _this.date = null;
         var self = _this;
-        self.__rapuiSerialiseType__ = SerialiseUtil_1["default"].T_RAPUI_PAYLOAD;
+        self.__rapuiSerialiseType__ = SerialiseUtil_1.default.T_RAPUI_PAYLOAD;
         self.filt = filt;
         self.tuples = tuples;
         return _this;
@@ -51,7 +51,7 @@ var Payload = (function (_super) {
     Payload.prototype._fromJson = function (jsonStr) {
         var self = this;
         var jsonDict = JSON.parse(jsonStr);
-        UtilMisc_1.assert(jsonDict[Jsonable_1["default"].JSON_CLASS_TYPE] === self.__rapuiSerialiseType__);
+        UtilMisc_1.assert(jsonDict[Jsonable_1.default.JSON_CLASS_TYPE] === self.__rapuiSerialiseType__);
         return self.fromJsonDict(jsonDict);
     };
     Payload.prototype._toJson = function () {
@@ -86,7 +86,8 @@ var Payload = (function (_super) {
         return base64.encode(compressedData);
     };
     return Payload;
-}(Jsonable_1["default"]));
+}(Jsonable_1.default));
 Payload.vortexUuidKey = "__vortexUuid__";
 Payload.vortexNameKey = "__vortexName__";
 exports.Payload = Payload;
+//# sourceMappingURL=Payload.js.map

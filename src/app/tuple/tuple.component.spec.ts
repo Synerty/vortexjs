@@ -1,7 +1,7 @@
 /* tslint:disable:no-unused-variable */
 import {async, ComponentFixture, TestBed} from "@angular/core/testing";
 import {TupleComponent} from "./tuple.component";
-import {VortexService} from "../../vortex/Vortex";
+import {VortexService} from "../../vortex/VortexService";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 
 describe('TupleComponent', () => {

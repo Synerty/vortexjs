@@ -91,3 +91,4 @@ var PayloadEndpoint = (function () {
     return PayloadEndpoint;
 }());
 exports.PayloadEndpoint = PayloadEndpoint;
+//# sourceMappingURL=PayloadEndpoint.js.map

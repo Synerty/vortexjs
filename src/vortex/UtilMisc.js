@@ -90,3 +90,4 @@ function bind(obj, method) {
     };
 }
 exports.bind = bind;
+//# sourceMappingURL=UtilMisc.js.map

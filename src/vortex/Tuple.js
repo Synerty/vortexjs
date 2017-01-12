@@ -22,7 +22,7 @@ var Tuple = (function (_super) {
         if (tupleType === void 0) { tupleType = null; }
         var _this = _super.call(this) || this;
         var self = _this;
-        self.__rapuiSerialiseType__ = SerialiseUtil_1["default"].T_RAPUI_TUPLE;
+        self.__rapuiSerialiseType__ = SerialiseUtil_1.default.T_RAPUI_TUPLE;
         // Instantiate the correct class
         if (self._tupleType === undefined && exports.TUPLE_TYPES[tupleType] !== undefined) {
             self._tupleType = tupleType;
@@ -34,7 +34,7 @@ var Tuple = (function (_super) {
         return _this;
     }
     return Tuple;
-}(Jsonable_1["default"]));
+}(Jsonable_1.default));
 exports.Tuple = Tuple;
 exports.TUPLE_TYPES = {};
 function registerTupleType(Class_) {
@@ -42,3 +42,4 @@ function registerTupleType(Class_) {
     exports.TUPLE_TYPES[inst._tupleType] = Class_;
 }
 exports.registerTupleType = registerTupleType;
+//# sourceMappingURL=Tuple.js.map

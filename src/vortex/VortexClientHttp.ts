@@ -6,7 +6,7 @@ import {VortexStatusService} from "./VortexStatusService";
 
 
 interface ReceivePayloadCallable {
-    (Payload) : void;
+    (Payload): void;
 }
 
 
@@ -21,7 +21,6 @@ export class VortexClientHttp extends VortexClientABC {
                 url: string) {
         super(vortexStatusService, zone, url);
 
-        this.reconnect();
     }
 
 
@@ -31,7 +30,7 @@ export class VortexClientHttp extends VortexClientABC {
         conn.send(payloads);
         // console.log(dateStr() + "Sent payload with filt : " + JSON.stringify(payload.filt));
     }
-    
+
 
 }
 
@@ -50,7 +49,7 @@ class _VortexClientHttpConnection {
 
 
     constructor(private vortex: VortexClientHttp,
-                private receiveCallback:ReceivePayloadCallable) {
+                private receiveCallback: ReceivePayloadCallable) {
         let self = this;
 
         let randArg = Math.random() + "." + (new Date()).getTime();
@@ -96,7 +95,7 @@ class _VortexClientHttpConnection {
         self._aborting = false;
     }
 
-    send(payloads:  Payload[]) {
+    send(payloads: Payload[]) {
         let data = "";
 
         for (let payload of payloads) {

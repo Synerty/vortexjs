@@ -122,5 +122,6 @@ SerialiseUtil.V_NULL = "null";
 SerialiseUtil.V_TRUE = "1";
 SerialiseUtil.V_FALSE = "0";
 SerialiseUtil.ISO8601 = "%Y-%m-%d %H:%M:%S.%f";
-exports.__esModule = true;
-exports["default"] = SerialiseUtil;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = SerialiseUtil;
+//# sourceMappingURL=SerialiseUtil.js.map

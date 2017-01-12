@@ -2,7 +2,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
-import {VortexService} from "../../vortex/Vortex";
+import {VortexService} from "../../vortex/VortexService";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 
 import { PayloadComponent } from './payload.component';
