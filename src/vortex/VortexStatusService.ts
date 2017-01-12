@@ -1,7 +1,11 @@
 import {Injectable, NgZone} from "@angular/core";
 import {Subject} from "rxjs/Subject";
-import {dateStr} from "./UtilMisc";
+import {dateStr, bind} from "./UtilMisc";
 
+// Node compatibility
+let logDebug = console.debug ? bind(console, console.debug) : bind(console, console.log);
+let logInfo = bind(console, console.log);
+let logError = console.error ? bind(console, console.error) : bind(console, console.log);
 
 @Injectable()
 export class VortexStatusService {
@@ -20,7 +24,7 @@ export class VortexStatusService {
         if (online === this.wasOnline)
             return;
 
-        console.debug(dateStr() + "Vortex Status - online: " + online);
+        logDebug(dateStr() + "Vortex Status - online: " + online);
 
         this.zone.run(() => {
             this.isOnline.next(online);
@@ -29,14 +33,14 @@ export class VortexStatusService {
     }
 
     logInfo(message: string) {
-        console.debug(dateStr() + "Vortex Status - info: " + message);
+        logInfo(dateStr() + "Vortex Status - info: " + message);
         this.zone.run(() => {
             this.info.next(message);
         });
     }
 
     logError(message: string) {
-        console.debug(dateStr() + "Vortex Status - error: " + message);
+        logError(dateStr() + "Vortex Status - error: " + message);
         this.zone.run(() => {
             this.errors.next(message);
         });

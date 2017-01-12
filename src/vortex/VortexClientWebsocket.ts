@@ -11,7 +11,7 @@ declare const MozWebSocket: any;
 
 export class VortexClientWebsocket extends VortexClientABC {
 
-    private readonly RECONNECT_BACKOFF = 5000; // Seconds
+    private static readonly RECONNECT_BACKOFF = 5000; // Seconds
 
     private Socket = WebSocket || MozWebSocket;
     private socket: WebSocket | null = null;
@@ -73,9 +73,9 @@ export class VortexClientWebsocket extends VortexClientABC {
 
         // Don't continually reconnect
         let reconnectDiffMs = Date.now() - this.lastReconnectDate;
-        if (reconnectDiffMs < this.RECONNECT_BACKOFF) {
+        if (reconnectDiffMs < VortexClientWebsocket.RECONNECT_BACKOFF) {
             setTimeout(() => this.createSocket(),
-                this.RECONNECT_BACKOFF - reconnectDiffMs + 10);
+                VortexClientWebsocket.RECONNECT_BACKOFF - reconnectDiffMs + 10);
             return;
         }
 

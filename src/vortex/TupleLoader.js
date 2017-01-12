@@ -259,7 +259,7 @@ var TupleLoader = (function () {
             this.balloonMsg && this.balloonMsg.showWarning("We're already processing a request, Action failed");
             return false;
         }
-        self.timer = setTimeout(VortexClientABC_1.SERVER_RESPONSE_TIMEOUT, UtilMisc_1.bind(self, self.operationTimeout));
+        self.timer = setTimeout(UtilMisc_1.bind(self, self.operationTimeout), VortexClientABC_1.SERVER_RESPONSE_TIMEOUT);
         return true;
     };
     TupleLoader.prototype.operationTimeout = function (showBaloon) {

@@ -327,8 +327,8 @@ export class TupleLoader {
             return false;
         }
 
-        self.timer = setTimeout(SERVER_RESPONSE_TIMEOUT,
-            bind(self, self.operationTimeout));
+        self.timer = setTimeout(bind(self, self.operationTimeout),
+            SERVER_RESPONSE_TIMEOUT);
         return true;
     }
 
