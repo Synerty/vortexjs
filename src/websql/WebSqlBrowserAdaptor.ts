@@ -1,5 +1,11 @@
+import {WebSqlFactory, WebSql, WebSqlTransaction, WebSQLAbstract} from "./WebSq";
 declare let openDatabase: any;
 
+export class WebSqlBrowserFactory implements WebSqlFactory {
+    createWebSql(dbName: string, dbSchema: string[]): WebSql {
+        return new WebSqlBrowserAdaptor(dbName, dbSchema);
+    }
+}
 export class WDBException {
     constructor(public message: string) {
     }
@@ -9,28 +15,39 @@ export class WDBException {
     }
 }
 
-class WebSqlBrowserAdaptor implements WebSql {
-    private db: any = null;
-
-    constructor(private dbName: string) {
-
-    }
+class WebSqlBrowserAdaptor extends WebSQLAbstract {
 
     open(): Promise<true> {
         return new Promise<boolean>((resolve, reject) => {
+            if (this.isOpen()) {
+                resolve(this.db);
+                return;
+            }
+
             this.db = openDatabase(this.dbName, "1", this.dbName, 4 * 1024 * 1024);
-            resolve(true);
+            if (this.schemaInstalled) {
+                resolve(true);
+                return;
+            }
+
+            this.installSchema()
+                .catch(reject)
+                .then(() => resolve(true));
         });
     }
 
-    close():void{
+    isOpen(): boolean {
+        return this.db !== null;
+    }
+
+    close(): void {
         this.db = null;
     }
 
     transaction(): Promise<WebSqlTransaction> {
         return new Promise<WebSqlTransaction>((resolve, reject) => {
             this.db.transaction((t) => {
-                resolve(new WebSqlBrowserTransactionWrapper(t));
+                resolve(new WebSqlBrowserTransactionAdaptor(t));
             }, (tx, err) => {
                 reject(err == null ? tx : err);
             });
@@ -38,12 +55,12 @@ class WebSqlBrowserAdaptor implements WebSql {
     }
 }
 
-class WebSqlBrowserTransactionWrapper implements WebSqlTransaction {
+class WebSqlBrowserTransactionAdaptor implements WebSqlTransaction {
     constructor(private websqlTransaction: any) {
 
     }
 
-    executeSql(sql: string, bindParams: any[]|null): Promise<null | any[]> {
+    executeSql(sql: string, bindParams: any[]|null = []): Promise<null | any[]> {
         return new Promise<null | any[]>((resolve, reject) => {
             this.retryExecuteSql(5, sql, bindParams, resolve, reject);
         });
@@ -55,7 +72,12 @@ class WebSqlBrowserTransactionWrapper implements WebSqlTransaction {
         this.websqlTransaction.executeSql(sql, bindParams,
             (transaction, results) => {
                 // ALL GOOD, Return the rows
-                resolve(results.rows);
+                let rowArray = [];
+                for (let i = 0; i < results.rows.length; ++i) {
+                    rowArray.push(results.rows.item(i));
+                }
+
+                resolve(rowArray);
 
             }, (tx, err) => {
                 err = err == null ? tx : err; // Sometimes tx is the err
