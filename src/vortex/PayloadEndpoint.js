@@ -43,20 +43,22 @@ var PayloadEndpoint = (function () {
      * from PayloadIO, which will tell it to stop processing further endpoints.
      */
     PayloadEndpoint.prototype.process = function (payload) {
-        if (!this.checkFilt(payload))
+        if (!this.checkFilt(this._filt, payload.filt))
+            return null;
+        if (!this.checkDate(payload))
             return null;
         this._observer.next(payload);
         return null;
     };
     ;
-    PayloadEndpoint.prototype.checkFilt = function (payload) {
-        var self = this;
-        for (var key in self._filt) {
-            if (!self._filt.hasOwnProperty(key))
-                continue;
-            var left = payload.filt[key];
-            var right = self._filt[key];
-            if (typeof left != typeof right)
+    PayloadEndpoint.prototype.checkFilt = function (leftFilt, rightFilt) {
+        for (var _i = 0, _a = UtilMisc_1.dictKeysFromObject(leftFilt, true); _i < _a.length; _i++) {
+            var key = _a[_i];
+            if (!rightFilt.hasOwnProperty(key))
+                return false;
+            var left = leftFilt[key];
+            var right = rightFilt[key];
+            if (typeof left !== typeof right)
                 return false;
             // Handle special case for Arrays using our equals method in ArrayUtil
             if (left instanceof Array) {
@@ -65,12 +67,23 @@ var PayloadEndpoint = (function () {
                 else
                     return false;
             }
-            if (payload.filt[key] !== self._filt[key])
+            // Handle special case for Arrays using our equals method in ArrayUtil
+            if (left instanceof Object) {
+                if (this.checkFilt(left, right))
+                    continue;
+                else
+                    return false;
+            }
+            if (left !== right)
                 return false;
         }
-        if (self._processLatestOnly) {
-            if (self._lastPayloadDate == null || self._lastPayloadDate < payload.date)
-                self._lastPayloadDate = payload.date;
+        return true;
+    };
+    ;
+    PayloadEndpoint.prototype.checkDate = function (payload) {
+        if (this._processLatestOnly) {
+            if (this._lastPayloadDate == null || this._lastPayloadDate < payload.date)
+                this._lastPayloadDate = payload.date;
             else
                 return false;
         }
@@ -91,4 +104,4 @@ var PayloadEndpoint = (function () {
     return PayloadEndpoint;
 }());
 exports.PayloadEndpoint = PayloadEndpoint;
-//# sourceMappingURL=PayloadEndpoint.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/PayloadEndpoint.js.map

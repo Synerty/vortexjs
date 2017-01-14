@@ -4,10 +4,8 @@ var Payload_1 = require("./Payload");
 var PayloadEndpoint_1 = require("./PayloadEndpoint");
 var core_1 = require("@angular/core");
 var VortexClientABC_1 = require("./VortexClientABC");
-require("deep-equal");
 var PayloadFilterKeys_1 = require("./PayloadFilterKeys");
 var UtilMisc_1 = require("./UtilMisc");
-var equal = require('deep-equal');
 // ------------------
 // Some private structures
 var TupleLoaderEventEnum;
@@ -34,11 +32,12 @@ var TupleLoaderEventEnum;
  * * "del()"
  */
 var TupleLoader = (function () {
-    function TupleLoader(vortex, component, filterUpdateCallable, balloonMsg) {
+    function TupleLoader(vortex, component, zone, filterUpdateCallable, balloonMsg) {
         if (balloonMsg === void 0) { balloonMsg = null; }
         var _this = this;
         this.vortex = vortex;
         this.component = component;
+        this.zone = zone;
         this.balloonMsg = balloonMsg;
         this.lastPayloadFilt = null;
         this.lastTuples = null;
@@ -87,7 +86,7 @@ var TupleLoader = (function () {
     TupleLoader.prototype.filterChangeCheck = function () {
         var _this = this;
         // Create a copy
-        var newFilter = Object.assign({}, this.filterUpdateCallable());
+        var newFilter = UtilMisc_1.extend({}, this.filterUpdateCallable());
         if (newFilter == null) {
             if (this.endpoint != null) {
                 this.endpoint.shutdown();
@@ -98,7 +97,7 @@ var TupleLoader = (function () {
             return;
         }
         if (this.lastPayloadFilt != null &&
-            equal(newFilter, this.lastPayloadFilt, { strict: true })) {
+            UtilMisc_1.deepEqual(newFilter, this.lastPayloadFilt, { strict: true })) {
             return;
         }
         this.lastPayloadFilt = newFilter;
@@ -207,6 +206,7 @@ var TupleLoader = (function () {
         return promise;
     };
     TupleLoader.prototype.processPayload = function (payload) {
+        var _this = this;
         if (this.timer) {
             clearTimeout(this.timer);
             this.timer = null;
@@ -248,7 +248,7 @@ var TupleLoader = (function () {
             this.lastPromise = null;
         }
         this.lastTuples = payload.tuples;
-        this.observer.next(payload.tuples);
+        this.zone.run(function () { return _this.observer.next(payload.tuples); });
     };
     TupleLoader.prototype.resetTimer = function () {
         this.operationTimeout(false);
@@ -276,4 +276,4 @@ var TupleLoader = (function () {
     return TupleLoader;
 }());
 exports.TupleLoader = TupleLoader;
-//# sourceMappingURL=TupleLoader.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/TupleLoader.js.map

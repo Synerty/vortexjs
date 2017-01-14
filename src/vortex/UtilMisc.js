@@ -9,13 +9,16 @@
  * Extract an array of keys from a json object.
  * This will not include keys starting with an underscore.
  *
- * @param obj : The object to get the keys from.
+ * @param obj: The object to get the keys from.
+ * @param includeUnderscore: Should keys with underscores be included?
  * @return A list of keys from the object.
  */
-function dictKeysFromObject(obj) {
+function dictKeysFromObject(obj, includeUnderscore) {
+    if (includeUnderscore === void 0) { includeUnderscore = false; }
     var keys = [];
     for (var k in obj) {
-        if (!k.startsWith("_") && obj.hasOwnProperty(k)) {
+        if ((!k.startsWith("_") || includeUnderscore)
+            && obj.hasOwnProperty(k) && typeof k !== 'function') {
             keys.push(k);
         }
     }
@@ -90,4 +93,11 @@ function bind(obj, method) {
     };
 }
 exports.bind = bind;
-//# sourceMappingURL=UtilMisc.js.map
+// ----------------------------------------------------------------------------
+/* Add a imports for these requires */
+exports.extend = require('extend');
+exports.deepEqual = require('deep-equal');
+exports.deepCopy = require("deep-copy");
+// https://www.npmjs.com/package/json-stable-stringify
+exports.jsonOrderedStringify = require('json-stable-stringify');
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/UtilMisc.js.map

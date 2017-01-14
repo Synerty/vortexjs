@@ -10,7 +10,9 @@ import {PayloadComponent} from "./payload/payload.component";
 import {VortexComponent} from "./vortex/vortex.component";
 import {TupleComponent} from "./tuple/tuple.component";
 import {PayloadEndpointComponent} from "./payload-endpoint/payload-endpoint.component";
-import { TupleLoaderComponent } from './tuple-loader/tuple-loader.component';
+import {TupleLoaderComponent} from "./tuple-loader/tuple-loader.component";
+import {TupleObserverComponent} from "./tuple-observer/tuple-observer.component";
+import {TupleDataObservableName, TupleDataObserver} from "../vortex/TupleDataObserver";
 
 @NgModule({
     imports: [
@@ -25,9 +27,17 @@ import { TupleLoaderComponent } from './tuple-loader/tuple-loader.component';
         VortexComponent,
         TupleComponent,
         PayloadEndpointComponent,
-        TupleLoaderComponent
+        TupleLoaderComponent,
+        TupleObserverComponent
     ],
-    providers: [VortexService,VortexStatusService, Ng2BalloonMsgService],
+    providers: [VortexService, VortexStatusService,
+        Ng2BalloonMsgService,
+        {
+            provide: TupleDataObservableName,
+            useValue: new TupleDataObservableName("vortexTestObservable")
+        },
+        TupleDataObserver
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule {

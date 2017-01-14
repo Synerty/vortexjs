@@ -18,7 +18,7 @@ var VortexClientHttp = (function (_super) {
     }
     VortexClientHttp.prototype.sendPayloads = function (payloads) {
         var _this = this;
-        var conn = new _VortexClientHttpConnection(this, function (payload) { return _this.receive(payload); });
+        var conn = new _VortexClientHttpConnection(this, function (payload) { return _this.receive(payload); }, function () { return _this.beat(); });
         conn.send(payloads);
         // console.log(dateStr() + "Sent payload with filt : " + JSON.stringify(payload.filt));
     };
@@ -27,9 +27,10 @@ var VortexClientHttp = (function (_super) {
 exports.VortexClientHttp = VortexClientHttp;
 // ############################################################################
 var _VortexClientHttpConnection = (function () {
-    function _VortexClientHttpConnection(vortex, receiveCallback) {
+    function _VortexClientHttpConnection(vortex, receiveCallback, vortexBeatCallback) {
         this.vortex = vortex;
         this.receiveCallback = receiveCallback;
+        this.vortexBeatCallback = vortexBeatCallback;
         var self = this;
         var randArg = Math.random() + "." + (new Date()).getTime();
         var args = {
@@ -106,10 +107,15 @@ var _VortexClientHttpConnection = (function () {
             self._responseParseIndex += payloadSeparatorIndex + 1;
             // Get the b64encoded string
             var vortexStr = data.substr(0, payloadSeparatorIndex);
-            // Create payload object from it
-            var payload = Payload_1.Payload.fromVortexMsg(vortexStr);
-            // Send to vortex
-            self.receiveCallback(payload);
+            if (vortexStr.length === 0) {
+                self.vortexBeatCallback();
+            }
+            else {
+                // Create payload object from it
+                var payload = Payload_1.Payload.fromVortexMsg(vortexStr);
+                // Send to vortex
+                self.receiveCallback(payload);
+            }
             data = self._http.responseText.substr(self._responseParseIndex);
             payloadSeparatorIndex = data.indexOf(".");
         }
@@ -136,4 +142,4 @@ var _VortexClientHttpConnection = (function () {
     return _VortexClientHttpConnection;
 }());
 _VortexClientHttpConnection.RECONNECT_SIZE_LIMIT = 20 * 1024 * 1024; // 20 megabytes
-//# sourceMappingURL=VortexClientHttp.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/VortexClientHttp.js.map

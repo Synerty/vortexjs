@@ -1,6 +1,6 @@
 import {payloadIO} from "./PayloadIO";
 import {Payload, IPayloadFilt} from "./Payload";
-import {assert} from "./UtilMisc";
+import {assert, dictKeysFromObject} from "./UtilMisc";
 import "./UtilArray";
 import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
 import {Observer, Observable} from "rxjs"; // Ensure it's included and defined
@@ -10,7 +10,7 @@ export class PayloadEndpoint {
     private _observable: Observable<Payload>;
     private _observer: Observer<Payload>;
 
-    private _filt: {key: string};
+    private _filt: { key: string };
     private _lastPayloadDate: Date | null;
     private _processLatestOnly: boolean;
 
@@ -60,7 +60,10 @@ export class PayloadEndpoint {
      * from PayloadIO, which will tell it to stop processing further endpoints.
      */
     process(payload: Payload): null | string {
-        if (!this.checkFilt(payload))
+        if (!this.checkFilt(this._filt, payload.filt))
+            return null;
+
+        if (!this.checkDate(payload))
             return null;
 
         this._observer.next(payload);
@@ -68,16 +71,16 @@ export class PayloadEndpoint {
         return null;
     };
 
-    private checkFilt(payload): boolean {
-        let self = this;
-        for (let key in self._filt) {
-            if (!self._filt.hasOwnProperty(key))
-                continue;
+    private checkFilt(leftFilt, rightFilt): boolean {
 
-            let left = payload.filt[key];
-            let right = self._filt[key];
+        for (let key of dictKeysFromObject(leftFilt, true)) {
+            if (!rightFilt.hasOwnProperty(key))
+                return false;
 
-            if (typeof left != typeof right)
+            let left = leftFilt[key];
+            let right = rightFilt[key];
+
+            if (typeof left !== typeof right)
                 return false;
 
             // Handle special case for Arrays using our equals method in ArrayUtil
@@ -88,14 +91,26 @@ export class PayloadEndpoint {
                     return false;
             }
 
+            // Handle special case for Arrays using our equals method in ArrayUtil
+            if (left instanceof Object) {
+                if (this.checkFilt(left, right))
+                    continue;
+                else
+                    return false;
+            }
 
-            if (payload.filt[key] !== self._filt[key])
+            if (left !== right)
                 return false;
         }
 
-        if (self._processLatestOnly) {
-            if (self._lastPayloadDate == null || self._lastPayloadDate < payload.date)
-                self._lastPayloadDate = payload.date;
+        return true;
+    };
+
+    private checkDate(payload): boolean {
+
+        if (this._processLatestOnly) {
+            if (this._lastPayloadDate == null || this._lastPayloadDate < payload.date)
+                this._lastPayloadDate = payload.date;
             else
                 return false;
         }

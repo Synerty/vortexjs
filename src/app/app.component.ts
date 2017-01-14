@@ -1,8 +1,5 @@
 import {Component} from "@angular/core";
-import {PayloadEndpointComponent} from "./payload-endpoint/payload-endpoint.component";
-import {TupleComponent} from "./tuple/tuple.component";
-import {VortexComponent} from "./vortex/vortex.component";
-import {PayloadComponent} from "./payload/payload.component";
+import {VortexStatusService} from "../vortex/VortexStatusService";
 
 @Component({
     selector: 'app-root',
@@ -11,4 +8,10 @@ import {PayloadComponent} from "./payload/payload.component";
 })
 export class AppComponent {
     title = "Synerty's VortexJS - testbed app";
+    vortexIsOnline: boolean = false;
+
+    constructor(private vortexStatusService: VortexStatusService) {
+        vortexStatusService.isOnline.subscribe(online => this.vortexIsOnline = online);
+
+    }
 }

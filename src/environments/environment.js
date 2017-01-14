@@ -6,4 +6,4 @@
 exports.environment = {
     production: false
 };
-//# sourceMappingURL=environment.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/environments/environment.js.map

@@ -64,7 +64,7 @@ var VortexService = VortexService_1 = (function () {
         return new PayloadEndpoint_1.PayloadEndpoint(component, filter, processLatestOnly);
     };
     VortexService.prototype.createTupleLoader = function (component, filterUpdateCallable) {
-        return new TupleLoader_1.TupleLoader(this.vortex, component, filterUpdateCallable, this.balloonMsg);
+        return new TupleLoader_1.TupleLoader(this.vortex, component, this.zone, filterUpdateCallable, this.balloonMsg);
     };
     return VortexService;
 }());
@@ -77,4 +77,4 @@ VortexService = VortexService_1 = __decorate([
 ], VortexService);
 exports.VortexService = VortexService;
 var VortexService_1;
-//# sourceMappingURL=VortexService.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/VortexService.js.map

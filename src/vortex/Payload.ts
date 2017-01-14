@@ -15,6 +15,7 @@ declare let require: any;
  */
 export interface IPayloadFilt {
     key: string;
+    [more: string]: any;
 }
 
 /**

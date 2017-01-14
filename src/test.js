@@ -18,4 +18,4 @@ var context = require.context('./', true, /\.spec\.ts/);
 context.keys().map(context);
 // Finally, start Karma to run the tests.
 __karma__.start();
-//# sourceMappingURL=test.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/test.js.map

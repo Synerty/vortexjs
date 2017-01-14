@@ -17,7 +17,7 @@ export class TupleLoaderComponent extends ComponentLifecycleEventEmitter impleme
     constructor(private vortexService: VortexService) {
         super();
 
-        this.tuples = new Array<TestTuple>();
+        this.tuples = [];
 
         this.loader = vortexService.createTupleLoader(this,
             () => {

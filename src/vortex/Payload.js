@@ -90,4 +90,4 @@ var Payload = (function (_super) {
 Payload.vortexUuidKey = "__vortexUuid__";
 Payload.vortexNameKey = "__vortexName__";
 exports.Payload = Payload;
-//# sourceMappingURL=Payload.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/Payload.js.map

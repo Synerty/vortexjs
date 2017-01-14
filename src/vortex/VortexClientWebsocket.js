@@ -100,4 +100,4 @@ var VortexClientWebsocket = (function (_super) {
 }(VortexClientABC_1.VortexClientABC));
 VortexClientWebsocket.RECONNECT_BACKOFF = 5000; // Seconds
 exports.VortexClientWebsocket = VortexClientWebsocket;
-//# sourceMappingURL=VortexClientWebsocket.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/VortexClientWebsocket.js.map

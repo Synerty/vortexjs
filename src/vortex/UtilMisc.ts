@@ -10,13 +10,15 @@
  * Extract an array of keys from a json object.
  * This will not include keys starting with an underscore.
  *
- * @param obj : The object to get the keys from.
+ * @param obj: The object to get the keys from.
+ * @param includeUnderscore: Should keys with underscores be included?
  * @return A list of keys from the object.
  */
-export function dictKeysFromObject(obj: {}): string[] {
+export function dictKeysFromObject(obj: {}, includeUnderscore = false): string[] {
     let keys = [];
     for (let k in obj) {
-        if (!k.startsWith("_") && obj.hasOwnProperty(k)) {
+        if ((!k.startsWith("_") || includeUnderscore)
+            && obj.hasOwnProperty(k) && typeof k !== 'function') {
             keys.push(k);
         }
     }
@@ -103,3 +105,14 @@ export function bind(obj: any, method: any): any {
         return method.apply(obj, arguments);
     };
 }
+
+// ----------------------------------------------------------------------------
+
+/* Add a imports for these requires */
+
+export let extend = require('extend');
+export let deepEqual = require('deep-equal');
+export let deepCopy = require("deep-copy");
+
+// https://www.npmjs.com/package/json-stable-stringify
+export let jsonOrderedStringify = require('json-stable-stringify');

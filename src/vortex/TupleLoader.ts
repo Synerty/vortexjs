@@ -1,16 +1,13 @@
 import {Observable, Observer} from "rxjs";
 import {Payload, IPayloadFilt} from "./Payload";
 import {PayloadEndpoint} from "./PayloadEndpoint";
-import {EventEmitter} from "@angular/core";
+import {EventEmitter, NgZone} from "@angular/core";
 import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
 import {VortexClientABC, SERVER_RESPONSE_TIMEOUT} from "./VortexClientABC";
 import {Tuple} from "./Tuple";
-import "deep-equal";
 import {plDeleteKey} from "./PayloadFilterKeys";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
-import {bind} from "./UtilMisc";
-
-let equal = require('deep-equal');
+import {bind, extend, deepEqual} from "./UtilMisc";
 
 
 // ------------------
@@ -80,6 +77,7 @@ export class TupleLoader {
 
     constructor(private vortex: VortexClientABC,
                 private component: ComponentLifecycleEventEmitter,
+                private zone:NgZone,
                 filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt,
                 private balloonMsg: Ng2BalloonMsgService | null = null) {
 
@@ -123,7 +121,7 @@ export class TupleLoader {
 
     filterChangeCheck(): void {
         // Create a copy
-        let newFilter = (<any>Object).assign({}, this.filterUpdateCallable());
+        let newFilter = extend({}, this.filterUpdateCallable());
 
         if (newFilter == null) {
             if (this.endpoint != null) {
@@ -138,7 +136,7 @@ export class TupleLoader {
 
 
         if (this.lastPayloadFilt != null &&
-            equal(newFilter, this.lastPayloadFilt, {strict: true})) {
+            deepEqual(newFilter, this.lastPayloadFilt, {strict: true})) {
             return;
         }
 
@@ -312,7 +310,7 @@ export class TupleLoader {
         }
 
         this.lastTuples = payload.tuples;
-        this.observer.next(payload.tuples);
+        this.zone.run(() => this.observer.next(payload.tuples));
     }
 
     private resetTimer(): void {

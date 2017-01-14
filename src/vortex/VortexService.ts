@@ -79,6 +79,7 @@ export class VortexService {
                       filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt) {
         return new TupleLoader(this.vortex,
             component,
+            this.zone,
             filterUpdateCallable,
             this.balloonMsg
         );

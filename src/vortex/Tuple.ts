@@ -1,5 +1,7 @@
 import SerialiseUtil from "./SerialiseUtil";
 import Jsonable from "./Jsonable";
+import {deepEqual, deepCopy, dictKeysFromObject} from "./UtilMisc";
+
 
 /** Tuples implementation details.
  *
@@ -13,6 +15,8 @@ import Jsonable from "./Jsonable";
  */
 export class Tuple extends Jsonable {
     public _tupleType: string;
+    private _changeTracking: boolean = false;
+    private _changeTrackingReferenceState: {} | null = null;
 
     constructor(tupleType: string | null = null) {
         super();
@@ -26,8 +30,47 @@ export class Tuple extends Jsonable {
         } else {
             self._tupleType = tupleType;
         }
-
     }
+
+    _tupleName(): string {
+        return this._tupleType;
+    }
+
+    // ---------------
+    // Start change detection code
+
+    _setChangeTracking(on: boolean = true) {
+        this._changeTrackingReferenceState = {};
+        for (let key of dictKeysFromObject(this)) {
+            this._changeTrackingReferenceState[key] = deepCopy(this[key]);
+        }
+        this._changeTracking = on;
+    }
+
+    _detectedChanges(reset: boolean = true): { [name: string]: any } | null {
+        let changes = null;
+        for (let key of dictKeysFromObject(this)) {
+            let old_ = this._changeTrackingReferenceState[key];
+            let new_ = this[key];
+            if (deepEqual(old_, new_))
+                continue;
+
+            if (changes === null)
+                changes = {};
+
+            changes[key] = {
+                "old": old_,
+                "new": new_
+            };
+        }
+
+        if (reset) {
+            this._setChangeTracking(true)
+        }
+
+        return changes
+    }
+
 }
 
 interface ITuple {
@@ -36,7 +79,7 @@ interface ITuple {
 
 export let TUPLE_TYPES = {};
 
-export function registerTupleType(Class_: ITuple) {
-    let inst = new Class_(null);
-    TUPLE_TYPES[inst._tupleType] = Class_;
+export function addTupleType(_Class: Function) {
+    let inst = new (<any>_Class)();
+    TUPLE_TYPES[inst._tupleType] = _Class;
 }

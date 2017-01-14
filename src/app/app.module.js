@@ -21,6 +21,8 @@ var vortex_component_1 = require("./vortex/vortex.component");
 var tuple_component_1 = require("./tuple/tuple.component");
 var payload_endpoint_component_1 = require("./payload-endpoint/payload-endpoint.component");
 var tuple_loader_component_1 = require("./tuple-loader/tuple-loader.component");
+var tuple_observer_component_1 = require("./tuple-observer/tuple-observer.component");
+var TupleDataObserver_1 = require("../vortex/TupleDataObserver");
 var AppModule = (function () {
     function AppModule() {
     }
@@ -40,12 +42,20 @@ AppModule = __decorate([
             vortex_component_1.VortexComponent,
             tuple_component_1.TupleComponent,
             payload_endpoint_component_1.PayloadEndpointComponent,
-            tuple_loader_component_1.TupleLoaderComponent
+            tuple_loader_component_1.TupleLoaderComponent,
+            tuple_observer_component_1.TupleObserverComponent
         ],
-        providers: [VortexService_1.VortexService, VortexStatusService_1.VortexStatusService, ng2_balloon_msg_1.Ng2BalloonMsgService],
+        providers: [VortexService_1.VortexService, VortexStatusService_1.VortexStatusService,
+            ng2_balloon_msg_1.Ng2BalloonMsgService,
+            {
+                provide: TupleDataObserver_1.TupleDataObservableName,
+                useValue: new TupleDataObserver_1.TupleDataObservableName("vortexTestObservable")
+            },
+            TupleDataObserver_1.TupleDataObserver
+        ],
         bootstrap: [app_component_1.AppComponent]
     }),
     __metadata("design:paramtypes", [])
 ], AppModule);
 exports.AppModule = AppModule;
-//# sourceMappingURL=app.module.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/app.module.js.map

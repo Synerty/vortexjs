@@ -29,4 +29,4 @@ describe('VortexComponent', function () {
         expect(component.testVortexWebSocketReconnect()).toBeTruthy();
     });
 });
-//# sourceMappingURL=vortex.component.spec.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/vortex/vortex.component.spec.js.map

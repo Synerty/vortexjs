@@ -23,7 +23,7 @@ var TupleLoaderComponent = (function (_super) {
         var _this = _super.call(this) || this;
         _this.vortexService = vortexService;
         _this.tupleId = 1;
-        _this.tuples = new Array();
+        _this.tuples = [];
         _this.loader = vortexService.createTupleLoader(_this, function () {
             return {
                 id: _this.tupleId,
@@ -51,4 +51,4 @@ TupleLoaderComponent = __decorate([
     __metadata("design:paramtypes", [VortexService_1.VortexService])
 ], TupleLoaderComponent);
 exports.TupleLoaderComponent = TupleLoaderComponent;
-//# sourceMappingURL=tuple-loader.component.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/tuple-loader/tuple-loader.component.js.map
