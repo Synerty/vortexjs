@@ -9,6 +9,10 @@ interface ReceivePayloadCallable {
     (Payload): void;
 }
 
+interface VortexBeatCallable {
+    (): void;
+}
+
 
 export class VortexClientHttp extends VortexClientABC {
 
@@ -26,7 +30,8 @@ export class VortexClientHttp extends VortexClientABC {
 
     sendPayloads(payloads: Payload[]): void {
         let conn = new _VortexClientHttpConnection(this,
-            (payload) => this.receive(payload));
+            (payload) => this.receive(payload),
+            () => this.beat());
         conn.send(payloads);
         // console.log(dateStr() + "Sent payload with filt : " + JSON.stringify(payload.filt));
     }
@@ -49,7 +54,8 @@ class _VortexClientHttpConnection {
 
 
     constructor(private vortex: VortexClientHttp,
-                private receiveCallback: ReceivePayloadCallable) {
+                private receiveCallback: ReceivePayloadCallable,
+                private vortexBeatCallback: VortexBeatCallable) {
         let self = this;
 
         let randArg = Math.random() + "." + (new Date()).getTime();
@@ -146,11 +152,16 @@ class _VortexClientHttpConnection {
             // Get the b64encoded string
             let vortexStr = data.substr(0, payloadSeparatorIndex);
 
-            // Create payload object from it
-            let payload = Payload.fromVortexMsg(vortexStr);
+            if (vortexStr.length === 0) {
+                self.vortexBeatCallback();
 
-            // Send to vortex
-            self.receiveCallback(payload);
+            } else {
+                // Create payload object from it
+                let payload = Payload.fromVortexMsg(vortexStr);
+
+                // Send to vortex
+                self.receiveCallback(payload);
+            }
 
             data = self._http.responseText.substr(self._responseParseIndex);
             payloadSeparatorIndex = data.indexOf(".");
