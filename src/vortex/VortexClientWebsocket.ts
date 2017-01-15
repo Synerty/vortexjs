@@ -104,6 +104,14 @@ export class VortexClientWebsocket extends VortexClientABC {
             return;
         }
 
+        // If the server sends us a '.', that's a heart beat.
+        if (event.data === '.') {
+            this.beat();
+            this.socket != null && this.socket.send('.');
+            return;
+        }
+
+
         let payload = Payload.fromVortexMsg(event.data);
         this.receive(payload);
     }
