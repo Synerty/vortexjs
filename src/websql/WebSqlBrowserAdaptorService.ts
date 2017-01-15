@@ -1,11 +1,14 @@
-import {WebSqlFactory, WebSql, WebSqlTransaction, WebSQLAbstract} from "./WebSq";
+import {Injectable} from "@angular/core";
+import {WebSqlFactoryService, WebSqlService, WebSqlTransaction} from "./WebSqlService";
 declare let openDatabase: any;
 
-export class WebSqlBrowserFactory implements WebSqlFactory {
-    createWebSql(dbName: string, dbSchema: string[]): WebSql {
-        return new WebSqlBrowserAdaptor(dbName, dbSchema);
+@Injectable()
+export class WebSqlBrowserFactoryService implements WebSqlFactoryService {
+    createWebSql(dbName: string, dbSchema: string[]): WebSqlService {
+        return new WebSqlBrowserAdaptorService(dbName, dbSchema);
     }
 }
+
 export class WDBException {
     constructor(public message: string) {
     }
@@ -15,7 +18,12 @@ export class WDBException {
     }
 }
 
-class WebSqlBrowserAdaptor extends WebSQLAbstract {
+@Injectable()
+class WebSqlBrowserAdaptorService extends WebSqlService {
+
+    constructor(protected dbName: string, protected dbSchema: string[]) {
+        super(dbName, dbSchema);
+    }
 
     open(): Promise<true> {
         return new Promise<boolean>((resolve, reject) => {
@@ -37,7 +45,7 @@ class WebSqlBrowserAdaptor extends WebSQLAbstract {
     }
 
     isOpen(): boolean {
-        return this.db !== null;
+        return this.db != null;
     }
 
     close(): void {
@@ -71,6 +79,15 @@ class WebSqlBrowserTransactionAdaptor implements WebSqlTransaction {
 
         this.websqlTransaction.executeSql(sql, bindParams,
             (transaction, results) => {
+                /*
+                 * results:(SQLResultSet) {
+                 *      insertId:0,
+                 *      rows:(SQLResultSetRowList){
+                 *          length:0
+                 *      },
+                 *      rowsAffected:0
+                 *  }
+                 */
                 // ALL GOOD, Return the rows
                 let rowArray = [];
                 for (let i = 0; i < results.rows.length; ++i) {

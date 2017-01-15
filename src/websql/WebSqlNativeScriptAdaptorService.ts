@@ -1,14 +1,21 @@
-import {WebSqlFactory, WebSql, WebSqlTransaction, WebSQLAbstract} from "./WebSq";
+import {Injectable} from "@angular/core";
+
+import {WebSqlFactoryService, WebSqlService, WebSqlTransaction} from "./WebSqlService";
 let NsSqlite = require("nativescript-sqlite");
 
-
-export class WebSqlNativeScriptFactory implements WebSqlFactory {
-    createWebSql(dbName: string, dbSchema: string[]): WebSql {
-        return new WebSqlNativeScriptAdaptor(dbName, dbSchema);
+@Injectable()
+export class WebSqlNativeScriptFactoryService implements WebSqlFactoryService {
+    createWebSql(dbName: string, dbSchema: string[]): WebSqlService {
+        return new WebSqlNativeScriptAdaptorService(dbName, dbSchema);
     }
 }
 
-class WebSqlNativeScriptAdaptor extends WebSQLAbstract  {
+@Injectable()
+class WebSqlNativeScriptAdaptorService extends WebSqlService {
+
+    constructor(protected dbName: string, protected dbSchema: string[]) {
+        super(dbName, dbSchema);
+    }
 
     open(): Promise<true> {
         return new Promise<boolean>((resolve, reject) => {

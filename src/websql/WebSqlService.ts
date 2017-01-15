@@ -1,22 +1,18 @@
-// @Injectable()
-export interface WebSqlFactory {
-    createWebSql(dbName: string, dbSchema: string[]): WebSql;
-}
+import {Injectable} from "@angular/core";
 
-export interface WebSql {
-    open(): Promise<true>;
-    isOpen(): boolean;
-    close(): void;
-    transaction(): Promise<WebSqlTransaction>;
-    runSql(sql: string, bindParams?: any[]|null): Promise<null | any[]>;
-}
 
+@Injectable()
+export abstract class WebSqlFactoryService {
+    abstract createWebSql(dbName: string, dbSchema: string[]): WebSqlService;
+}
 
 export interface WebSqlTransaction {
     executeSql(sql: string, bindParams?: any[]|null): Promise<null | any[]>;
 }
 
-export abstract class WebSQLAbstract implements WebSql {
+
+@Injectable()
+export abstract class WebSqlService {
 
     protected db: any;
     protected schemaInstalled: boolean = false;
@@ -34,7 +30,7 @@ export abstract class WebSQLAbstract implements WebSql {
 
                     // Run SQL Promise
                     // TODO, Handle more than one SQL statement
-                    tx.executeSql(this.schemaInstalled[0])
+                    tx.executeSql(this.dbSchema[0])
                         .catch(reject)
                         .then((data) => {
                             this.schemaInstalled = true;
@@ -53,8 +49,31 @@ export abstract class WebSQLAbstract implements WebSql {
 
     abstract transaction(): Promise<WebSqlTransaction>;
 
+    runSql(sql: string, bindParams: any[] = []): Promise<boolean> {
 
-    runSql(sql: string, bindParams: any[]|null): Promise<null | any[]> {
+        return new Promise<boolean | number>((resolve, reject) => {
+            this.openTransRunSql(sql, bindParams)
+                .catch(reject)
+                .then((result) => {
+                    // if (typeof result === 'number')
+                    //     resolve(result);
+                    // else
+                    resolve(true);
+                });
+        });
+    }
+
+    querySql(sql: string, bindParams: any[] = []): Promise<any[]> {
+
+        return new Promise<any[]>((resolve, reject) => {
+            this.openTransRunSql(sql, bindParams)
+                .catch(reject)
+                .then((rows: any[]) => resolve(rows));
+        });
+    }
+
+
+    private openTransRunSql(sql: string, bindParams: any[]): Promise<null | any[]> {
         return new Promise<null | any[]>((resolve, reject) => {
 
             // Open DB Promise

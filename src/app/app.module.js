@@ -23,6 +23,8 @@ var payload_endpoint_component_1 = require("./payload-endpoint/payload-endpoint.
 var tuple_loader_component_1 = require("./tuple-loader/tuple-loader.component");
 var tuple_observer_component_1 = require("./tuple-observer/tuple-observer.component");
 var TupleDataObserver_1 = require("../vortex/TupleDataObserver");
+var tuple_offline_module_1 = require("./tuple-offline/tuple-offline.module");
+var websql_module_1 = require("./websql/websql.module");
 var AppModule = (function () {
     function AppModule() {
     }
@@ -34,7 +36,9 @@ AppModule = __decorate([
             platform_browser_1.BrowserModule,
             forms_1.FormsModule,
             http_1.HttpModule,
-            ng2_balloon_msg_1.Ng2BalloonMsgModule
+            ng2_balloon_msg_1.Ng2BalloonMsgModule,
+            tuple_offline_module_1.TupleOfflineModule,
+            websql_module_1.WebsqlModule
         ],
         declarations: [
             app_component_1.AppComponent,
@@ -43,7 +47,7 @@ AppModule = __decorate([
             tuple_component_1.TupleComponent,
             payload_endpoint_component_1.PayloadEndpointComponent,
             tuple_loader_component_1.TupleLoaderComponent,
-            tuple_observer_component_1.TupleObserverComponent
+            tuple_observer_component_1.TupleObserverComponent,
         ],
         providers: [VortexService_1.VortexService, VortexStatusService_1.VortexStatusService,
             ng2_balloon_msg_1.Ng2BalloonMsgService,
