@@ -1,0 +1,48 @@
+<h1>TupleDataOfflineObserverService - Tests</h1>
+<p>Load the page, there are two tables of tuples that will load from the server.
+    These will be saved when they load.<br>
+</p>
+<ol>
+    <li>Start the vortexpy server.</li>
+    <li>Start the angular-cli live dev server (npm start).</li>
+    <li>Load the page.</li>
+    <li>Stop the vortexpy server.</li>
+    <li>Reload the page (the page will load but the vortex will be offline.</li>
+    <li>CHECK - You will see the olddata load on the page</li>
+    <li>Start the vortexpy server</li>
+    <li>The vortex will reconnect automatically (DO NOT RELOAD)</li>
+    <li>CHECK - The data should update with the latest data from the server.</li>
+
+</ol>
+Stop the vortexpy server and reload the page from the npm start server<br>
+<h2>Test tuples #1</h2>
+<table class="table table-bordered">
+    <tr>
+        <th>aDate</th>
+        <th>aDict</th>
+        <th>aString</th>
+        <th>aStrWithUnicode</th>
+    </tr>
+    <tr *ngFor="let t of testTuples1">
+        <td>{{t.aDate}}</td>
+        <td>{{t.aDict | json}}</td>
+        <td>{{t.aString}}</td>
+        <td>{{t.aStrWithUnicode}}</td>
+    </tr>
+</table>
+
+<h2>Test tuples #2</h2>
+<table class="table table-bordered">
+    <tr>
+        <th>aDate</th>
+        <th>aDict</th>
+        <th>aString</th>
+        <th>aStrWithUnicode</th>
+    </tr>
+    <tr *ngFor="let t of testTuples2">
+        <td>{{t.aDate}}</td>
+        <td>{{t.aDict | json}}</td>
+        <td>{{t.aString}}</td>
+        <td>{{t.aStrWithUnicode}}</td>
+    </tr>
+</table>

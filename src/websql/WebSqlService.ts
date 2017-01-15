@@ -25,13 +25,19 @@ export abstract class WebSqlService {
         // Open Transaction promise
         return new Promise<boolean>((resolve, reject) => {
             this.transaction()
-                .catch(reject)
+                .catch((err) => {
+                    reject(err);
+                    throw new Error(err);
+                })
                 .then((tx: WebSqlTransaction) => {
 
                     // Run SQL Promise
                     // TODO, Handle more than one SQL statement
                     tx.executeSql(this.dbSchema[0])
-                        .catch(reject)
+                        .catch((err) => {
+                            reject(err);
+                            throw new Error(err);
+                        })
                         .then((data) => {
                             this.schemaInstalled = true;
                             resolve(true)
@@ -53,7 +59,10 @@ export abstract class WebSqlService {
 
         return new Promise<boolean | number>((resolve, reject) => {
             this.openTransRunSql(sql, bindParams)
-                .catch(reject)
+                .catch((err) => {
+                    reject(err);
+                    throw new Error(err);
+                })
                 .then((result) => {
                     // if (typeof result === 'number')
                     //     resolve(result);
@@ -67,7 +76,10 @@ export abstract class WebSqlService {
 
         return new Promise<any[]>((resolve, reject) => {
             this.openTransRunSql(sql, bindParams)
-                .catch(reject)
+                .catch((err) => {
+                    reject(err);
+                    throw new Error(err);
+                })
                 .then((rows: any[]) => resolve(rows));
         });
     }
@@ -78,17 +90,26 @@ export abstract class WebSqlService {
 
             // Open DB Promise
             this.open()
-                .catch(reject)
+                .catch((err) => {
+                    reject(err);
+                    throw new Error(err);
+                })
                 .then(() => {
 
                     // Open Transaction promise
                     this.transaction()
-                        .catch(reject)
+                        .catch((err) => {
+                            reject(err);
+                            throw new Error(err);
+                        })
                         .then((tx: WebSqlTransaction) => {
 
                             // Run SQL Promise
                             tx.executeSql(sql, bindParams)
-                                .catch(reject)
+                                .catch((err) => {
+                                    reject(err);
+                                    throw new Error(err);
+                                })
                                 .then((data) => resolve((<null | any[]>data)));
                         });
                 });

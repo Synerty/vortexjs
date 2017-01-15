@@ -1,3 +1,40 @@
-<p>
-  tuple-offline works!
-</p>
+<div class="container-fluid">
+    <div class="row">
+        <h1>Tuple Offline Service</h1>
+        <p> Loaded data should match sample data, click save then load in that order
+            to run through the test.</p>
+
+        STATUS = {{status}}<br>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            SAMPLE DATA :<br>
+            <table class="table table-bordered">
+                <tr>
+                    <th>testVal1</th>
+                </tr>
+                <tr *ngFor="let t of sampleTupleData">
+                    <td>{{t.testVal1}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-6">
+
+            LOADED DATA :<br>
+            <table class="table table-bordered">
+                <tr>
+                    <th>testVal1</th>
+                </tr>
+                <tr *ngFor="let t of loadedTupleData">
+                    <td>{{t.testVal1}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <button (click)="saveTest()" class="btn btn-default">Save</button>
+        <button (click)="loadTest()" class="btn btn-default">Load</button>
+    </div>
+</div>

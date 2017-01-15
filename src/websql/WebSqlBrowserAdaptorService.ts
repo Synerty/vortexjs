@@ -25,10 +25,10 @@ class WebSqlBrowserAdaptorService extends WebSqlService {
         super(dbName, dbSchema);
     }
 
-    open(): Promise<true> {
+    open(): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             if (this.isOpen()) {
-                resolve(this.db);
+                resolve(true);
                 return;
             }
 
@@ -39,7 +39,10 @@ class WebSqlBrowserAdaptorService extends WebSqlService {
             }
 
             this.installSchema()
-                .catch(reject)
+                .catch((err) => {
+                    reject(err);
+                    throw new Error(err);
+                })
                 .then(() => resolve(true));
         });
     }
@@ -102,13 +105,14 @@ class WebSqlBrowserTransactionAdaptor implements WebSqlTransaction {
                 // Bug in Safari (at least), when the user approves the storage space
                 // The WebSQL still gets the exception
                 // "there was not enough remaining storage space, or the storage quota was reached and the user declined to allow more space"
-                if (retries >= 0 && err.message.indexOf("there was not enough remaining storage space") !== -1) {
+                let noSpaceMsg = "there was not enough remaining storage space";
+                if (retries >= 0 && err.message.indexOf(noSpaceMsg) !== -1) {
                     this.retryExecuteSql(retries - 1, sql, bindParams, resolve, reject);
                     return;
                 }
 
                 // Otherwise, REJECT
-                reject(err == null ? tx : err);
+                reject(err);
 
             }
         );

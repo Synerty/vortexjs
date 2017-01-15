@@ -18,8 +18,8 @@ let databaseSchema = [
 export class WebsqlComponent implements OnInit {
     private webSql: WebSqlService;
     sampleData: string;
-    lastLoaded:string;
-    status:string;
+    lastLoaded: string;
+    status: string;
 
     constructor(webSqlFactory: WebSqlFactoryService) {
         this.webSql = webSqlFactory.createWebSql(datbaseName, databaseSchema);
@@ -30,16 +30,20 @@ export class WebsqlComponent implements OnInit {
     ngOnInit() {
     }
 
-    deleteAllRows() : Promise<boolean> {
+    deleteAllRows(): Promise<boolean> {
         return this.webSql.runSql('DELETE FROM websqlTest')
-            .then(() => this.status="DELETE Promise Resolved");
+            .then(() => {
+                this.status = "DELETE Promise Resolved";
+            });
     }
 
     saveTest(): Promise<boolean> {
         let sql = 'INSERT OR REPLACE INTO websqlTest (data) VALUES (?)';
         let bindParams = [this.sampleData];
         return this.webSql.runSql(sql, bindParams)
-            .then(() => this.status="INSERT Promise Resolved");
+            .then(() => {
+                this.status = "INSERT Promise Resolved";
+            });
     }
 
     loadTest() {
@@ -60,7 +64,7 @@ export class WebsqlComponent implements OnInit {
 
                 });
         })
-            .then(() => this.status="LOAD Promise Resolved");
+            .then(() => this.status = "LOAD Promise Resolved");
     }
 
 }

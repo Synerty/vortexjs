@@ -6,15 +6,15 @@ import {
     TupleOfflineStorageService,
     TupleOfflineStorageNameService
 } from "../../vortex/TupleOfflineStorageService";
-
-import {TupleOfflineComponent} from "./tuple-offline.component";
+import {TupleOfflineObserverComponent} from "./tuple-offline-observer.component";
+import {TupleDataOfflineObserverService} from "../../vortex/TupleDataOfflineObserverService";
 
 @NgModule({
     imports: [
         CommonModule
     ],
-    exports: [TupleOfflineComponent],
-    declarations: [TupleOfflineComponent],
+    declarations: [TupleOfflineObserverComponent],
+    exports: [TupleOfflineObserverComponent],
     providers: [
         {
             provide: WebSqlFactoryService,
@@ -24,8 +24,9 @@ import {TupleOfflineComponent} from "./tuple-offline.component";
             provide: TupleOfflineStorageNameService,
             useValue: new TupleOfflineStorageNameService("tuple-offline-test")
         },
-        TupleOfflineStorageService
+        TupleOfflineStorageService,
+        TupleDataOfflineObserverService
     ]
 })
-export class TupleOfflineModule {
+export class TupleOfflineObserverModule {
 }

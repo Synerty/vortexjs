@@ -12,9 +12,13 @@ import {TupleComponent} from "./tuple/tuple.component";
 import {PayloadEndpointComponent} from "./payload-endpoint/payload-endpoint.component";
 import {TupleLoaderComponent} from "./tuple-loader/tuple-loader.component";
 import {TupleObserverComponent} from "./tuple-observer/tuple-observer.component";
-import {TupleDataObservableName, TupleDataObserver} from "../vortex/TupleDataObserver";
+import {
+    TupleDataObserverService,
+    TupleDataObservableNameService
+} from "../vortex/TupleDataObserverService";
 import {TupleOfflineModule} from "./tuple-offline/tuple-offline.module";
 import {WebsqlModule} from "./websql/websql.module";
+import {TupleOfflineObserverModule} from "./tuple-offline-observer/tuple-offline-observer.module";
 
 @NgModule({
     imports: [
@@ -23,6 +27,7 @@ import {WebsqlModule} from "./websql/websql.module";
         HttpModule,
         Ng2BalloonMsgModule,
         TupleOfflineModule,
+        TupleOfflineObserverModule,
         WebsqlModule
     ],
     declarations: [
@@ -37,10 +42,10 @@ import {WebsqlModule} from "./websql/websql.module";
     providers: [VortexService, VortexStatusService,
         Ng2BalloonMsgService,
         {
-            provide: TupleDataObservableName,
-            useValue: new TupleDataObservableName("vortexTestObservable")
+            provide: TupleDataObservableNameService,
+            useValue: new TupleDataObservableNameService("vortexTestObservable")
         },
-        TupleDataObserver
+        TupleDataObserverService
     ],
     bootstrap: [AppComponent]
 })

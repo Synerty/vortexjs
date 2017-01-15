@@ -9,23 +9,24 @@ import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
 import {extend, dictKeysFromObject} from "./UtilMisc";
 import {VortexStatusService} from "./VortexStatusService";
 
-export class TupleDataObservableName {
+@Injectable()
+export class TupleDataObservableNameService {
     constructor(public name: string) {
 
     }
 }
 
 @Injectable()
-export class TupleDataObserver extends ComponentLifecycleEventEmitter {
-    private obervableName: string;
-    private endpoint: PayloadEndpoint;
-    private filt: IPayloadFilt;
-    private subjectsByTupleSelector: { [tupleSelector: string]: Subject<Tuple[]> } = {};
+export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
+    protected obervableName: string;
+    protected endpoint: PayloadEndpoint;
+    protected filt: IPayloadFilt;
+    protected subjectsByTupleSelector: { [tupleSelector: string]: Subject<Tuple[]> } = {};
 
-    constructor(private vortexService: VortexService,
-                vortexStatusService: VortexStatusService,
-                private zone: NgZone,
-                tupleDataObservableName: TupleDataObservableName) {
+    constructor(protected vortexService: VortexService,
+                protected statusService: VortexStatusService,
+                protected zone: NgZone,
+                tupleDataObservableName: TupleDataObservableNameService) {
         super();
 
         this.obervableName = tupleDataObservableName.name;
@@ -38,7 +39,7 @@ export class TupleDataObserver extends ComponentLifecycleEventEmitter {
         this.endpoint = new PayloadEndpoint(this, this.filt);
         this.endpoint.observable.subscribe((payload) => this.receivePayload(payload));
 
-        let isOnlineSub = vortexStatusService.isOnline
+        let isOnlineSub = statusService.isOnline
             .filter(online => online === true)
             .subscribe(online => this.vortexOnlineChanged());
 
@@ -58,7 +59,7 @@ export class TupleDataObserver extends ComponentLifecycleEventEmitter {
         return newSubject;
     }
 
-    private vortexOnlineChanged() {
+    protected vortexOnlineChanged(): void {
         let tupleSelectors: TupleSelector[] = [];
         for (let key of dictKeysFromObject(this.subjectsByTupleSelector)) {
             tupleSelectors.push(TupleSelector.fromJsonStr(key));
@@ -66,7 +67,7 @@ export class TupleDataObserver extends ComponentLifecycleEventEmitter {
         this.tellServerWeWantData(tupleSelectors);
     }
 
-    private receivePayload(payload) {
+    protected receivePayload(payload): void {
         let tupleSelector = payload.filt.tupleSelector;
         let tsStr = tupleSelector.toOrderedJsonStr();
 
@@ -74,10 +75,16 @@ export class TupleDataObserver extends ComponentLifecycleEventEmitter {
             return;
 
         let subject = this.subjectsByTupleSelector[tsStr];
-        this.zone.run(() => subject.next(payload.tuples));
+        this.notifyObservers(subject, tupleSelector, payload.tuples);
     }
 
-    private tellServerWeWantData(tupleSelectors: TupleSelector[]) {
+    protected notifyObservers(subject: Subject<Tuple[]>,
+                              tupleSelector: TupleSelector,
+                              tuples: Tuple[]): void {
+        this.zone.run(() => subject.next(tuples));
+    }
+
+    protected tellServerWeWantData(tupleSelectors: TupleSelector[]): void {
         let payloads: Payload[] = [];
         for (let tupleSelector of tupleSelectors) {
             let filt = extend({}, {

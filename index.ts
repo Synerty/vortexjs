@@ -6,3 +6,21 @@ export {Payload, IPayloadFilt} from "./src/vortex/Payload";
 export {Tuple} from "./src/vortex/Tuple";
 export {ComponentLifecycleEventEmitter} from "./src/vortex/ComponentLifecycleEventEmitter"
 export * from "./src/vortex/PayloadFilterKeys";
+
+// Tuple Data Observable
+export {
+    TupleDataObserverService,
+    TupleDataObservableNameService
+} from "./src/vortex/TupleDataObserverService";
+
+// Offline Tuple
+export {
+    TupleOfflineStorageService,
+    TupleOfflineStorageNameService
+} from "./src/vortex/TupleOfflineStorageService";
+
+// Offline and Observable
+export {TupleDataOfflineObserverService} from "./src/vortex/TupleDataOfflineObserverService";
+
+// WebSQL
+export {WebSqlFactoryService, WebSqlService} from "./src/websql/WebSqlService";

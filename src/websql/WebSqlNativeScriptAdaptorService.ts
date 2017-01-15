@@ -39,10 +39,16 @@ class WebSqlNativeScriptAdaptorService extends WebSqlService {
                 }
 
                 this.installSchema()
-                    .catch(reject)
+                    .catch((err) => {
+                        reject(err);
+                        throw new Error(err);
+                    })
                     .then(() => resolve(true));
             });
-            dbPromise.catch(reject);
+            dbPromise.catch((err) => {
+                reject(err);
+                throw new Error(err);
+            });
         });
     }
 

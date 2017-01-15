@@ -10,8 +10,7 @@ import {WebsqlComponent} from "./websql.component";
     ],
     exports:[WebsqlComponent],
     declarations: [WebsqlComponent],
-    providers:[
-        {
+    providers:[{
             provide: WebSqlFactoryService,
             useValue: new WebSqlBrowserFactoryService()
         }
