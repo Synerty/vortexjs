@@ -10,6 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require("@angular/core");
 var common_1 = require("@angular/common");
+var WebSqlService_1 = require("../../websql/WebSqlService");
+var WebSqlBrowserAdaptorService_1 = require("../../websql/WebSqlBrowserAdaptorService");
+var TupleOfflineStorageService_1 = require("../../vortex/TupleOfflineStorageService");
+var tuple_offline_component_1 = require("./tuple-offline.component");
 var TupleOfflineModule = (function () {
     function TupleOfflineModule() {
     }
@@ -20,7 +24,19 @@ TupleOfflineModule = __decorate([
         imports: [
             common_1.CommonModule
         ],
-        declarations: []
+        exports: [tuple_offline_component_1.TupleOfflineComponent],
+        declarations: [tuple_offline_component_1.TupleOfflineComponent],
+        providers: [
+            {
+                provide: WebSqlService_1.WebSqlFactoryService,
+                useValue: new WebSqlBrowserAdaptorService_1.WebSqlBrowserFactoryService()
+            },
+            {
+                provide: TupleOfflineStorageService_1.TupleOfflineStorageNameService,
+                useValue: new TupleOfflineStorageService_1.TupleOfflineStorageNameService("tuple-offline-test")
+            },
+            TupleOfflineStorageService_1.TupleOfflineStorageService
+        ]
     }),
     __metadata("design:paramtypes", [])
 ], TupleOfflineModule);

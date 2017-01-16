@@ -23,16 +23,24 @@ var WebsqlComponent = (function () {
     WebsqlComponent.prototype.ngOnInit = function () {
     };
     WebsqlComponent.prototype.deleteAllRows = function () {
-        return this.webSql.runSql('DELETE FROM websqlTest');
+        var _this = this;
+        return this.webSql.runSql('DELETE FROM websqlTest')
+            .then(function () {
+            _this.status = "DELETE Promise Resolved";
+        });
     };
     WebsqlComponent.prototype.saveTest = function () {
+        var _this = this;
         var sql = 'INSERT OR REPLACE INTO websqlTest (data) VALUES (?)';
         var bindParams = [this.sampleData];
-        return this.webSql.runSql(sql, bindParams);
+        return this.webSql.runSql(sql, bindParams)
+            .then(function () {
+            _this.status = "INSERT Promise Resolved";
+        });
     };
     WebsqlComponent.prototype.loadTest = function () {
         var _this = this;
-        var sql = "SELECT data\n                    FROM tuples\n                    LIMIT 1";
+        var sql = 'SELECT data FROM websqlTest LIMIT 1';
         return new Promise(function (resolve, reject) {
             _this.webSql.querySql(sql)
                 .catch(reject)
@@ -45,7 +53,8 @@ var WebsqlComponent = (function () {
                 _this.lastLoaded = row1.data;
                 resolve(row1.data);
             });
-        });
+        })
+            .then(function () { return _this.status = "LOAD Promise Resolved"; });
     };
     return WebsqlComponent;
 }());

@@ -30,12 +30,18 @@ var WebSqlService = (function () {
         // Open Transaction promise
         return new Promise(function (resolve, reject) {
             _this.transaction()
-                .catch(reject)
+                .catch(function (err) {
+                reject(err);
+                throw new Error(err);
+            })
                 .then(function (tx) {
                 // Run SQL Promise
                 // TODO, Handle more than one SQL statement
-                tx.executeSql(_this.schemaInstalled[0])
-                    .catch(reject)
+                tx.executeSql(_this.dbSchema[0])
+                    .catch(function (err) {
+                    reject(err);
+                    throw new Error(err);
+                })
                     .then(function (data) {
                     _this.schemaInstalled = true;
                     resolve(true);
@@ -48,7 +54,10 @@ var WebSqlService = (function () {
         if (bindParams === void 0) { bindParams = []; }
         return new Promise(function (resolve, reject) {
             _this.openTransRunSql(sql, bindParams)
-                .catch(reject)
+                .catch(function (err) {
+                reject(err);
+                throw new Error(err);
+            })
                 .then(function (result) {
                 // if (typeof result === 'number')
                 //     resolve(result);
@@ -62,7 +71,10 @@ var WebSqlService = (function () {
         if (bindParams === void 0) { bindParams = []; }
         return new Promise(function (resolve, reject) {
             _this.openTransRunSql(sql, bindParams)
-                .catch(reject)
+                .catch(function (err) {
+                reject(err);
+                throw new Error(err);
+            })
                 .then(function (rows) { return resolve(rows); });
         });
     };
@@ -71,15 +83,24 @@ var WebSqlService = (function () {
         return new Promise(function (resolve, reject) {
             // Open DB Promise
             _this.open()
-                .catch(reject)
+                .catch(function (err) {
+                reject(err);
+                throw new Error(err);
+            })
                 .then(function () {
                 // Open Transaction promise
                 _this.transaction()
-                    .catch(reject)
+                    .catch(function (err) {
+                    reject(err);
+                    throw new Error(err);
+                })
                     .then(function (tx) {
                     // Run SQL Promise
                     tx.executeSql(sql, bindParams)
-                        .catch(reject)
+                        .catch(function (err) {
+                        reject(err);
+                        throw new Error(err);
+                    })
                         .then(function (data) { return resolve(data); });
                 });
             });

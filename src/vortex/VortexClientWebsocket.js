@@ -81,6 +81,12 @@ var VortexClientWebsocket = (function (_super) {
                 " we expect a unicode");
             return;
         }
+        // If the server sends us a '.', that's a heart beat.
+        if (event.data === '.') {
+            this.beat();
+            this.socket != null && this.socket.send('.');
+            return;
+        }
         var payload = Payload_1.Payload.fromVortexMsg(event.data);
         this.receive(payload);
     };

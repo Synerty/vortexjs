@@ -22,9 +22,10 @@ var tuple_component_1 = require("./tuple/tuple.component");
 var payload_endpoint_component_1 = require("./payload-endpoint/payload-endpoint.component");
 var tuple_loader_component_1 = require("./tuple-loader/tuple-loader.component");
 var tuple_observer_component_1 = require("./tuple-observer/tuple-observer.component");
-var TupleDataObserver_1 = require("../vortex/TupleDataObserver");
+var TupleDataObserverService_1 = require("../vortex/TupleDataObserverService");
 var tuple_offline_module_1 = require("./tuple-offline/tuple-offline.module");
 var websql_module_1 = require("./websql/websql.module");
+var tuple_offline_observer_module_1 = require("./tuple-offline-observer/tuple-offline-observer.module");
 var AppModule = (function () {
     function AppModule() {
     }
@@ -38,6 +39,7 @@ AppModule = __decorate([
             http_1.HttpModule,
             ng2_balloon_msg_1.Ng2BalloonMsgModule,
             tuple_offline_module_1.TupleOfflineModule,
+            tuple_offline_observer_module_1.TupleOfflineObserverModule,
             websql_module_1.WebsqlModule
         ],
         declarations: [
@@ -52,10 +54,10 @@ AppModule = __decorate([
         providers: [VortexService_1.VortexService, VortexStatusService_1.VortexStatusService,
             ng2_balloon_msg_1.Ng2BalloonMsgService,
             {
-                provide: TupleDataObserver_1.TupleDataObservableName,
-                useValue: new TupleDataObserver_1.TupleDataObservableName("vortexTestObservable")
+                provide: TupleDataObserverService_1.TupleDataObservableNameService,
+                useValue: new TupleDataObserverService_1.TupleDataObservableNameService("vortexTestObservable")
             },
-            TupleDataObserver_1.TupleDataObserver
+            TupleDataObserverService_1.TupleDataObserverService
         ],
         bootstrap: [app_component_1.AppComponent]
     }),

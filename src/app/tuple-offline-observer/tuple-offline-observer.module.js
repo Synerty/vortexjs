@@ -12,26 +12,35 @@ var core_1 = require("@angular/core");
 var common_1 = require("@angular/common");
 var WebSqlService_1 = require("../../websql/WebSqlService");
 var WebSqlBrowserAdaptorService_1 = require("../../websql/WebSqlBrowserAdaptorService");
-var websql_component_1 = require("./websql.component");
-var WebsqlModule = (function () {
-    function WebsqlModule() {
+var TupleOfflineStorageService_1 = require("../../vortex/TupleOfflineStorageService");
+var tuple_offline_observer_component_1 = require("./tuple-offline-observer.component");
+var TupleDataOfflineObserverService_1 = require("../../vortex/TupleDataOfflineObserverService");
+var TupleOfflineObserverModule = (function () {
+    function TupleOfflineObserverModule() {
     }
-    return WebsqlModule;
+    return TupleOfflineObserverModule;
 }());
-WebsqlModule = __decorate([
+TupleOfflineObserverModule = __decorate([
     core_1.NgModule({
         imports: [
             common_1.CommonModule
         ],
-        exports: [websql_component_1.WebsqlComponent],
-        declarations: [websql_component_1.WebsqlComponent],
-        providers: [{
+        declarations: [tuple_offline_observer_component_1.TupleOfflineObserverComponent],
+        exports: [tuple_offline_observer_component_1.TupleOfflineObserverComponent],
+        providers: [
+            {
                 provide: WebSqlService_1.WebSqlFactoryService,
                 useValue: new WebSqlBrowserAdaptorService_1.WebSqlBrowserFactoryService()
-            }
+            },
+            {
+                provide: TupleOfflineStorageService_1.TupleOfflineStorageNameService,
+                useValue: new TupleOfflineStorageService_1.TupleOfflineStorageNameService("tuple-offline-test")
+            },
+            TupleOfflineStorageService_1.TupleOfflineStorageService,
+            TupleDataOfflineObserverService_1.TupleDataOfflineObserverService
         ]
     }),
     __metadata("design:paramtypes", [])
-], WebsqlModule);
-exports.WebsqlModule = WebsqlModule;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/websql/websql.module.js.map
+], TupleOfflineObserverModule);
+exports.TupleOfflineObserverModule = TupleOfflineObserverModule;
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/tuple-offline-observer/tuple-offline-observer.module.js.map

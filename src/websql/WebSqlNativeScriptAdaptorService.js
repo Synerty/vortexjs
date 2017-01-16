@@ -58,10 +58,16 @@ var WebSqlNativeScriptAdaptorService = (function (_super) {
                     return;
                 }
                 _this.installSchema()
-                    .catch(reject)
+                    .catch(function (err) {
+                    reject(err);
+                    throw new Error(err);
+                })
                     .then(function () { return resolve(true); });
             });
-            dbPromise.catch(reject);
+            dbPromise.catch(function (err) {
+                reject(err);
+                throw new Error(err);
+            });
         });
     };
     WebSqlNativeScriptAdaptorService.prototype.isOpen = function () {

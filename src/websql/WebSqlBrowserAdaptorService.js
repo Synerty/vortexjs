@@ -50,7 +50,7 @@ var WebSqlBrowserAdaptorService = (function (_super) {
         var _this = this;
         return new Promise(function (resolve, reject) {
             if (_this.isOpen()) {
-                resolve(_this.db);
+                resolve(true);
                 return;
             }
             _this.db = openDatabase(_this.dbName, "1", _this.dbName, 4 * 1024 * 1024);
@@ -59,12 +59,15 @@ var WebSqlBrowserAdaptorService = (function (_super) {
                 return;
             }
             _this.installSchema()
-                .catch(reject)
+                .catch(function (err) {
+                reject(err);
+                throw new Error(err);
+            })
                 .then(function () { return resolve(true); });
         });
     };
     WebSqlBrowserAdaptorService.prototype.isOpen = function () {
-        return this.db !== null;
+        return this.db != null;
     };
     WebSqlBrowserAdaptorService.prototype.close = function () {
         this.db = null;
@@ -99,6 +102,15 @@ var WebSqlBrowserTransactionAdaptor = (function () {
     WebSqlBrowserTransactionAdaptor.prototype.retryExecuteSql = function (retries, sql, bindParams, resolve, reject) {
         var _this = this;
         this.websqlTransaction.executeSql(sql, bindParams, function (transaction, results) {
+            /*
+             * results:(SQLResultSet) {
+             *      insertId:0,
+             *      rows:(SQLResultSetRowList){
+             *          length:0
+             *      },
+             *      rowsAffected:0
+             *  }
+             */
             // ALL GOOD, Return the rows
             var rowArray = [];
             for (var i = 0; i < results.rows.length; ++i) {
@@ -110,12 +122,13 @@ var WebSqlBrowserTransactionAdaptor = (function () {
             // Bug in Safari (at least), when the user approves the storage space
             // The WebSQL still gets the exception
             // "there was not enough remaining storage space, or the storage quota was reached and the user declined to allow more space"
-            if (retries >= 0 && err.message.indexOf("there was not enough remaining storage space") !== -1) {
+            var noSpaceMsg = "there was not enough remaining storage space";
+            if (retries >= 0 && err.message.indexOf(noSpaceMsg) !== -1) {
                 _this.retryExecuteSql(retries - 1, sql, bindParams, resolve, reject);
                 return;
             }
             // Otherwise, REJECT
-            reject(err == null ? tx : err);
+            reject(err);
         });
     };
     return WebSqlBrowserTransactionAdaptor;

@@ -22,18 +22,23 @@ var PayloadEndpoint_1 = require("./PayloadEndpoint");
 var ComponentLifecycleEventEmitter_1 = require("./ComponentLifecycleEventEmitter");
 var UtilMisc_1 = require("./UtilMisc");
 var VortexStatusService_1 = require("./VortexStatusService");
-var TupleDataObservableName = (function () {
-    function TupleDataObservableName(name) {
+var TupleDataObservableNameService = (function () {
+    function TupleDataObservableNameService(name) {
         this.name = name;
     }
-    return TupleDataObservableName;
+    return TupleDataObservableNameService;
 }());
-exports.TupleDataObservableName = TupleDataObservableName;
-var TupleDataObserver = (function (_super) {
-    __extends(TupleDataObserver, _super);
-    function TupleDataObserver(vortexService, vortexStatusService, zone, tupleDataObservableName) {
+TupleDataObservableNameService = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [String])
+], TupleDataObservableNameService);
+exports.TupleDataObservableNameService = TupleDataObservableNameService;
+var TupleDataObserverService = (function (_super) {
+    __extends(TupleDataObserverService, _super);
+    function TupleDataObserverService(vortexService, statusService, zone, tupleDataObservableName) {
         var _this = _super.call(this) || this;
         _this.vortexService = vortexService;
+        _this.statusService = statusService;
         _this.zone = zone;
         _this.subjectsByTupleSelector = {};
         _this.obervableName = tupleDataObservableName.name;
@@ -43,13 +48,13 @@ var TupleDataObserver = (function (_super) {
         };
         _this.endpoint = new PayloadEndpoint_1.PayloadEndpoint(_this, _this.filt);
         _this.endpoint.observable.subscribe(function (payload) { return _this.receivePayload(payload); });
-        var isOnlineSub = vortexStatusService.isOnline
+        var isOnlineSub = statusService.isOnline
             .filter(function (online) { return online === true; })
             .subscribe(function (online) { return _this.vortexOnlineChanged(); });
         _this.onDestroyEvent.subscribe(function () { return isOnlineSub.unsubscribe(); });
         return _this;
     }
-    TupleDataObserver.prototype.subscribeToTupleSelector = function (tupleSelector) {
+    TupleDataObserverService.prototype.subscribeToTupleSelector = function (tupleSelector) {
         this.tellServerWeWantData([tupleSelector]);
         var tsStr = tupleSelector.toOrderedJsonStr();
         if (this.subjectsByTupleSelector.hasOwnProperty(tsStr))
@@ -58,7 +63,7 @@ var TupleDataObserver = (function (_super) {
         this.subjectsByTupleSelector[tsStr] = newSubject;
         return newSubject;
     };
-    TupleDataObserver.prototype.vortexOnlineChanged = function () {
+    TupleDataObserverService.prototype.vortexOnlineChanged = function () {
         var tupleSelectors = [];
         for (var _i = 0, _a = UtilMisc_1.dictKeysFromObject(this.subjectsByTupleSelector); _i < _a.length; _i++) {
             var key = _a[_i];
@@ -66,15 +71,18 @@ var TupleDataObserver = (function (_super) {
         }
         this.tellServerWeWantData(tupleSelectors);
     };
-    TupleDataObserver.prototype.receivePayload = function (payload) {
+    TupleDataObserverService.prototype.receivePayload = function (payload) {
         var tupleSelector = payload.filt.tupleSelector;
         var tsStr = tupleSelector.toOrderedJsonStr();
         if (!this.subjectsByTupleSelector.hasOwnProperty(tsStr))
             return;
         var subject = this.subjectsByTupleSelector[tsStr];
-        this.zone.run(function () { return subject.next(payload.tuples); });
+        this.notifyObservers(subject, tupleSelector, payload.tuples);
     };
-    TupleDataObserver.prototype.tellServerWeWantData = function (tupleSelectors) {
+    TupleDataObserverService.prototype.notifyObservers = function (subject, tupleSelector, tuples) {
+        this.zone.run(function () { return subject.next(tuples); });
+    };
+    TupleDataObserverService.prototype.tellServerWeWantData = function (tupleSelectors) {
         var payloads = [];
         for (var _i = 0, tupleSelectors_1 = tupleSelectors; _i < tupleSelectors_1.length; _i++) {
             var tupleSelector = tupleSelectors_1[_i];
@@ -85,14 +93,14 @@ var TupleDataObserver = (function (_super) {
         }
         this.vortexService.sendPayload(payloads);
     };
-    return TupleDataObserver;
+    return TupleDataObserverService;
 }(ComponentLifecycleEventEmitter_1.ComponentLifecycleEventEmitter));
-TupleDataObserver = __decorate([
+TupleDataObserverService = __decorate([
     core_1.Injectable(),
     __metadata("design:paramtypes", [VortexService_1.VortexService,
         VortexStatusService_1.VortexStatusService,
         core_1.NgZone,
-        TupleDataObservableName])
-], TupleDataObserver);
-exports.TupleDataObserver = TupleDataObserver;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/TupleDataObserver.js.map
+        TupleDataObservableNameService])
+], TupleDataObserverService);
+exports.TupleDataObserverService = TupleDataObserverService;
+//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/TupleDataObserverService.js.map
