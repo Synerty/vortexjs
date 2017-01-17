@@ -41,4 +41,4 @@ TupleSelector = TupleSelector_1 = __decorate([
 ], TupleSelector);
 exports.TupleSelector = TupleSelector;
 var TupleSelector_1;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/TupleSelector.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/TupleSelector.js.map

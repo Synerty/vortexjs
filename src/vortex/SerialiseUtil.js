@@ -124,4 +124,4 @@ SerialiseUtil.V_FALSE = "0";
 SerialiseUtil.ISO8601 = "%Y-%m-%d %H:%M:%S.%f";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = SerialiseUtil;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/SerialiseUtil.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/SerialiseUtil.js.map

@@ -7,4 +7,4 @@ exports.rapuiClientEcho = "rapuiClientEcho";
 exports.rapuiVortexUuid = "rapuiVortexUuid";
 exports.plIdKey = "id";
 exports.plDeleteKey = "delete";
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/PayloadFilterKeys.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/PayloadFilterKeys.js.map

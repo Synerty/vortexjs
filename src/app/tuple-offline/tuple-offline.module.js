@@ -41,4 +41,4 @@ TupleOfflineModule = __decorate([
     __metadata("design:paramtypes", [])
 ], TupleOfflineModule);
 exports.TupleOfflineModule = TupleOfflineModule;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/tuple-offline/tuple-offline.module.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/app/tuple-offline/tuple-offline.module.js.map

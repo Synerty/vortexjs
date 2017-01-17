@@ -80,4 +80,4 @@ var CompLcObserver = (function () {
     };
     return CompLcObserver;
 }());
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/ComponentLifecycleEventEmitter.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/ComponentLifecycleEventEmitter.js.map

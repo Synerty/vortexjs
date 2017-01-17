@@ -110,4 +110,4 @@ PayloadEndpointComponent = __decorate([
     __metadata("design:paramtypes", [])
 ], PayloadEndpointComponent);
 exports.PayloadEndpointComponent = PayloadEndpointComponent;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/payload-endpoint/payload-endpoint.component.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/app/payload-endpoint/payload-endpoint.component.js.map

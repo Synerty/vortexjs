@@ -56,4 +56,4 @@ describe('WebsqlComponent', function () {
         return deferred.promise;
     });
 });
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/websql/websql.component.spec.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/app/websql/websql.component.spec.js.map

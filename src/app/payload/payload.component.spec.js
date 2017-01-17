@@ -29,4 +29,4 @@ describe('PayloadComponent', function () {
         expect(component.testPayloadToFromVortexMsg()).toBeTruthy();
     });
 });
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/payload/payload.component.spec.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/app/payload/payload.component.spec.js.map

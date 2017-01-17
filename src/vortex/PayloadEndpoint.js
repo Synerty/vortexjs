@@ -104,4 +104,4 @@ var PayloadEndpoint = (function () {
     return PayloadEndpoint;
 }());
 exports.PayloadEndpoint = PayloadEndpoint;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/PayloadEndpoint.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/PayloadEndpoint.js.map

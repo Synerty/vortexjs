@@ -47,4 +47,4 @@ VortexComponent = __decorate([
         ng2_balloon_msg_1.Ng2BalloonMsgService])
 ], VortexComponent);
 exports.VortexComponent = VortexComponent;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/vortex/vortex.component.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/app/vortex/vortex.component.js.map

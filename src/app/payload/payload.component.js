@@ -53,4 +53,4 @@ PayloadComponent = __decorate([
     __metadata("design:paramtypes", [VortexService_1.VortexService])
 ], PayloadComponent);
 exports.PayloadComponent = PayloadComponent;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/payload/payload.component.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/app/payload/payload.component.js.map

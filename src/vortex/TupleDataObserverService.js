@@ -103,4 +103,4 @@ TupleDataObserverService = __decorate([
         TupleDataObservableNameService])
 ], TupleDataObserverService);
 exports.TupleDataObserverService = TupleDataObserverService;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/TupleDataObserverService.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/TupleDataObserverService.js.map

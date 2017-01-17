@@ -29,4 +29,4 @@ AppComponent = __decorate([
     __metadata("design:paramtypes", [VortexStatusService_1.VortexStatusService])
 ], AppComponent);
 exports.AppComponent = AppComponent;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/app.component.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/app/app.component.js.map

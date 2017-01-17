@@ -35,4 +35,4 @@ TupleOfflineObserverComponent = __decorate([
     __metadata("design:paramtypes", [TupleDataOfflineObserverService_1.TupleDataOfflineObserverService])
 ], TupleOfflineObserverComponent);
 exports.TupleOfflineObserverComponent = TupleOfflineObserverComponent;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/tuple-offline-observer/tuple-offline-observer.component.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/app/tuple-offline-observer/tuple-offline-observer.component.js.map

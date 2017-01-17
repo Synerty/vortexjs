@@ -102,4 +102,4 @@ var WebSqlNativeScriptTransactionAdaptor = (function () {
     };
     return WebSqlNativeScriptTransactionAdaptor;
 }());
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/websql/WebSqlNativeScriptAdaptorService.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/websql/WebSqlNativeScriptAdaptorService.js.map

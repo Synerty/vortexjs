@@ -17,4 +17,21 @@ exports.Tuple = Tuple_1.Tuple;
 var ComponentLifecycleEventEmitter_1 = require("./src/vortex/ComponentLifecycleEventEmitter");
 exports.ComponentLifecycleEventEmitter = ComponentLifecycleEventEmitter_1.ComponentLifecycleEventEmitter;
 __export(require("./src/vortex/PayloadFilterKeys"));
-//# sourceMappingURL=index.js.map
+// Tuple Data Observable
+var TupleSelector_1 = require("./src/vortex/TupleSelector");
+exports.TupleSelector = TupleSelector_1.TupleSelector;
+var TupleDataObserverService_1 = require("./src/vortex/TupleDataObserverService");
+exports.TupleDataObserverService = TupleDataObserverService_1.TupleDataObserverService;
+exports.TupleDataObservableNameService = TupleDataObserverService_1.TupleDataObservableNameService;
+// Offline Tuple
+var TupleOfflineStorageService_1 = require("./src/vortex/TupleOfflineStorageService");
+exports.TupleOfflineStorageService = TupleOfflineStorageService_1.TupleOfflineStorageService;
+exports.TupleOfflineStorageNameService = TupleOfflineStorageService_1.TupleOfflineStorageNameService;
+// Offline and Observable
+var TupleDataOfflineObserverService_1 = require("./src/vortex/TupleDataOfflineObserverService");
+exports.TupleDataOfflineObserverService = TupleDataOfflineObserverService_1.TupleDataOfflineObserverService;
+// WebSQL
+var WebSqlService_1 = require("./src/websql/WebSqlService");
+exports.WebSqlFactoryService = WebSqlService_1.WebSqlFactoryService;
+exports.WebSqlService = WebSqlService_1.WebSqlService;
+//# sourceMappingURL=/home/peek/project/vortexjs/index.js.map

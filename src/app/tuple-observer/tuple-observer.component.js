@@ -37,4 +37,4 @@ TupleObserverComponent = __decorate([
     __metadata("design:paramtypes", [TupleDataObserverService_1.TupleDataObserverService])
 ], TupleObserverComponent);
 exports.TupleObserverComponent = TupleObserverComponent;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/tuple-observer/tuple-observer.component.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/app/tuple-observer/tuple-observer.component.js.map

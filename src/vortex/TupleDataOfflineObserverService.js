@@ -64,4 +64,4 @@ TupleDataOfflineObserverService = __decorate([
         TupleOfflineStorageService_1.TupleOfflineStorageService])
 ], TupleDataOfflineObserverService);
 exports.TupleDataOfflineObserverService = TupleDataOfflineObserverService;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/TupleDataOfflineObserverService.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/TupleDataOfflineObserverService.js.map

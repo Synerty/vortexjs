@@ -20,4 +20,4 @@ describe('TupleOfflineObserverComponent', function () {
         expect(component).toBeTruthy();
     });
 });
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/tuple-offline-observer/tuple-offline-observer.component.spec.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/app/tuple-offline-observer/tuple-offline-observer.component.spec.js.map

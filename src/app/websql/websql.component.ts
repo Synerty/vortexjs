@@ -30,14 +30,14 @@ export class WebsqlComponent implements OnInit {
     ngOnInit() {
     }
 
-    deleteAllRows(): Promise<boolean> {
+    deleteAllRows(): Promise<void> {
         return this.webSql.runSql('DELETE FROM websqlTest')
             .then(() => {
                 this.status = "DELETE Promise Resolved";
             });
     }
 
-    saveTest(): Promise<boolean> {
+    saveTest(): Promise<void> {
         let sql = 'INSERT OR REPLACE INTO websqlTest (data) VALUES (?)';
         let bindParams = [this.sampleData];
         return this.webSql.runSql(sql, bindParams)

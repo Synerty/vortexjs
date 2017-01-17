@@ -24,4 +24,4 @@ describe('TupleLoaderComponent', function () {
         expect(component).toBeTruthy();
     });
 });
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/tuple-loader/tuple-loader.component.spec.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/app/tuple-loader/tuple-loader.component.spec.js.map

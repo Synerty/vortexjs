@@ -34,4 +34,4 @@ WebsqlModule = __decorate([
     __metadata("design:paramtypes", [])
 ], WebsqlModule);
 exports.WebsqlModule = WebsqlModule;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/websql/websql.module.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/app/websql/websql.module.js.map

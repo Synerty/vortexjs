@@ -26,4 +26,4 @@ var PayloadIO = (function () {
     return PayloadIO;
 }());
 exports.payloadIO = new PayloadIO();
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/PayloadIO.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/PayloadIO.js.map

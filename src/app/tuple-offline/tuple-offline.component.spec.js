@@ -20,4 +20,4 @@ describe('TupleOfflineComponent', function () {
         expect(component).toBeTruthy();
     });
 });
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/tuple-offline/tuple-offline.component.spec.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/app/tuple-offline/tuple-offline.component.spec.js.map

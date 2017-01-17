@@ -67,4 +67,4 @@ WebsqlComponent = __decorate([
     __metadata("design:paramtypes", [WebSqlService_1.WebSqlFactoryService])
 ], WebsqlComponent);
 exports.WebsqlComponent = WebsqlComponent;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/websql/websql.component.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/app/websql/websql.component.js.map

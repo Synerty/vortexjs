@@ -51,4 +51,4 @@ TupleLoaderComponent = __decorate([
     __metadata("design:paramtypes", [VortexService_1.VortexService])
 ], TupleLoaderComponent);
 exports.TupleLoaderComponent = TupleLoaderComponent;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/tuple-loader/tuple-loader.component.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/app/tuple-loader/tuple-loader.component.js.map

@@ -8,6 +8,7 @@ export {ComponentLifecycleEventEmitter} from "./src/vortex/ComponentLifecycleEve
 export * from "./src/vortex/PayloadFilterKeys";
 
 // Tuple Data Observable
+export {TupleSelector} from "./src/vortex/TupleSelector";
 export {
     TupleDataObserverService,
     TupleDataObservableNameService

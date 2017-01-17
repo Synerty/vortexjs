@@ -64,4 +64,4 @@ AppModule = __decorate([
     __metadata("design:paramtypes", [])
 ], AppModule);
 exports.AppModule = AppModule;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/app.module.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/app/app.module.js.map

@@ -57,4 +57,4 @@ describe('AppComponent', function () {
         expect(compiled.querySelector('h1').textContent).toContain(app.title);
     }));
 });
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/app.component.spec.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/app/app.component.spec.js.map

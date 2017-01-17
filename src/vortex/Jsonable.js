@@ -201,4 +201,4 @@ Jsonable.JSON_FIELD_TYPE = "_ft";
 Jsonable.JSON_FIELD_DATA = "_fd";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Jsonable;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/vortex/Jsonable.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/Jsonable.js.map

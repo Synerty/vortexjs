@@ -20,4 +20,4 @@ describe('TupleObserverComponent', function () {
         expect(component).toBeTruthy();
     });
 });
-//# sourceMappingURL=/home/peek/project/vortexjs/src/src/app/tuple-observer/tuple-observer.component.spec.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/app/tuple-observer/tuple-observer.component.spec.js.map
