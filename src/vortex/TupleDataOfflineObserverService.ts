@@ -21,8 +21,6 @@ export class TupleDataOfflineObserverService extends TupleDataObserverService {
                 private tupleOfflineStorageService: TupleOfflineStorageService) {
         super(vortexService, vortexStatusService, zone, tupleDataObservableName);
 
-        this.obervableName = tupleDataObservableName.name;
-
     }
 
     subscribeToTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]> {

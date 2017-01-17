@@ -23,14 +23,16 @@ var ComponentLifecycleEventEmitter_1 = require("./ComponentLifecycleEventEmitter
 var UtilMisc_1 = require("./UtilMisc");
 var VortexStatusService_1 = require("./VortexStatusService");
 var TupleDataObservableNameService = (function () {
-    function TupleDataObservableNameService(name) {
+    function TupleDataObservableNameService(name, additionalFilt) {
+        if (additionalFilt === void 0) { additionalFilt = {}; }
         this.name = name;
+        this.additionalFilt = additionalFilt;
     }
     return TupleDataObservableNameService;
 }());
 TupleDataObservableNameService = __decorate([
     core_1.Injectable(),
-    __metadata("design:paramtypes", [String])
+    __metadata("design:paramtypes", [String, Object])
 ], TupleDataObservableNameService);
 exports.TupleDataObservableNameService = TupleDataObservableNameService;
 var TupleDataObserverService = (function (_super) {
@@ -41,11 +43,10 @@ var TupleDataObserverService = (function (_super) {
         _this.statusService = statusService;
         _this.zone = zone;
         _this.subjectsByTupleSelector = {};
-        _this.obervableName = tupleDataObservableName.name;
-        _this.filt = {
-            "name": _this.obervableName,
+        _this.filt = UtilMisc_1.extend({
+            "name": tupleDataObservableName.name,
             "key": "tupleDataObservable"
-        };
+        }, tupleDataObservableName.additionalFilt);
         _this.endpoint = new PayloadEndpoint_1.PayloadEndpoint(_this, _this.filt);
         _this.endpoint.observable.subscribe(function (payload) { return _this.receivePayload(payload); });
         var isOnlineSub = statusService.isOnline
@@ -55,12 +56,12 @@ var TupleDataObserverService = (function (_super) {
         return _this;
     }
     TupleDataObserverService.prototype.subscribeToTupleSelector = function (tupleSelector) {
-        this.tellServerWeWantData([tupleSelector]);
         var tsStr = tupleSelector.toOrderedJsonStr();
         if (this.subjectsByTupleSelector.hasOwnProperty(tsStr))
             return this.subjectsByTupleSelector.hasOwnProperty[tsStr];
         var newSubject = new rxjs_1.Subject();
         this.subjectsByTupleSelector[tsStr] = newSubject;
+        this.tellServerWeWantData([tupleSelector]);
         return newSubject;
     };
     TupleDataObserverService.prototype.vortexOnlineChanged = function () {

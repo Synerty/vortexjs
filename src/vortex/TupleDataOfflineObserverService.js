@@ -23,7 +23,6 @@ var TupleDataOfflineObserverService = (function (_super) {
     function TupleDataOfflineObserverService(vortexService, vortexStatusService, zone, tupleDataObservableName, tupleOfflineStorageService) {
         var _this = _super.call(this, vortexService, vortexStatusService, zone, tupleDataObservableName) || this;
         _this.tupleOfflineStorageService = tupleOfflineStorageService;
-        _this.obervableName = tupleDataObservableName.name;
         return _this;
     }
     TupleDataOfflineObserverService.prototype.subscribeToTupleSelector = function (tupleSelector) {

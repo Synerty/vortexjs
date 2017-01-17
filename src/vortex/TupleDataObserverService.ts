@@ -11,14 +11,13 @@ import {VortexStatusService} from "./VortexStatusService";
 
 @Injectable()
 export class TupleDataObservableNameService {
-    constructor(public name: string) {
+    constructor(public name: string, public additionalFilt = {}) {
 
     }
 }
 
 @Injectable()
 export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
-    protected obervableName: string;
     protected endpoint: PayloadEndpoint;
     protected filt: IPayloadFilt;
     protected subjectsByTupleSelector: { [tupleSelector: string]: Subject<Tuple[]> } = {};
@@ -29,12 +28,10 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
                 tupleDataObservableName: TupleDataObservableNameService) {
         super();
 
-        this.obervableName = tupleDataObservableName.name;
-
-        this.filt = {
-            "name": this.obervableName,
+        this.filt = extend({
+            "name": tupleDataObservableName.name,
             "key": "tupleDataObservable"
-        };
+        }, tupleDataObservableName.additionalFilt);
 
         this.endpoint = new PayloadEndpoint(this, this.filt);
         this.endpoint.observable.subscribe((payload) => this.receivePayload(payload));
@@ -47,7 +44,6 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
     }
 
     subscribeToTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]> {
-        this.tellServerWeWantData([tupleSelector]);
 
         let tsStr = tupleSelector.toOrderedJsonStr();
         if (this.subjectsByTupleSelector.hasOwnProperty(tsStr))
@@ -55,6 +51,8 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
 
         let newSubject = new Subject<Tuple[]>();
         this.subjectsByTupleSelector[tsStr] = newSubject;
+
+        this.tellServerWeWantData([tupleSelector]);
 
         return newSubject;
     }

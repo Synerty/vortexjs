@@ -157,7 +157,7 @@ var TupleLoader = (function () {
             this.lastPayloadFilt = null;
             this.filterChangeCheck();
             // If there was no filter update, fail
-            if (this.lastPayloadFilt != null) {
+            if (this.lastPayloadFilt == null) {
                 this.lastPromise.reject("There is no payload filter provided, load failed");
                 this.lastPromise = null;
                 return promise;
@@ -168,7 +168,7 @@ var TupleLoader = (function () {
             if (tuples != null)
                 this.lastTuples = tuples;
             // Check if we have tuples to save.
-            if (this.lastTuples != null) {
+            if (this.lastTuples == null) {
                 this.lastPromise.reject("No tuples to save. " +
                     " Provide one to with the save(tuples) call or load some first " +
                     " with the filterUpdateCallable");
