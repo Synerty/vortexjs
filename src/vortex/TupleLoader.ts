@@ -77,7 +77,7 @@ export class TupleLoader {
 
     constructor(private vortex: VortexClientABC,
                 private component: ComponentLifecycleEventEmitter,
-                private zone:NgZone,
+                private zone: NgZone,
                 filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt,
                 private balloonMsg: Ng2BalloonMsgService | null = null) {
 
@@ -204,12 +204,10 @@ export class TupleLoader {
             this.filterChangeCheck();
 
             // If there was no filter update, fail
-            if (this.lastPayloadFilt == null) {
-                setTimeout(() => {
-                    this.lastPromise.reject(
-                        "There is no payload filter provided, load failed");
-                    this.lastPromise = null;
-                }, 0);
+            if (this.lastPayloadFilt != null) {
+                this.lastPromise.reject(
+                    "There is no payload filter provided, load failed");
+                this.lastPromise = null;
                 return promise;
             }
 
@@ -219,14 +217,12 @@ export class TupleLoader {
                 this.lastTuples = tuples;
 
             // Check if we have tuples to save.
-            if (this.lastTuples == null) {
-                setTimeout(() => {
-                    this.lastPromise.reject(
-                        "No tuples to save. " +
-                        " Provide one to with the save(tuples) call or load some first " +
-                        " with the filterUpdateCallable");
-                    this.lastPromise = null;
-                }, 0);
+            if (this.lastTuples != null) {
+                this.lastPromise.reject(
+                    "No tuples to save. " +
+                    " Provide one to with the save(tuples) call or load some first " +
+                    " with the filterUpdateCallable");
+                this.lastPromise = null;
                 return promise;
             }
 
