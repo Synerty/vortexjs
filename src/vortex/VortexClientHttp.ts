@@ -184,10 +184,20 @@ class _VortexClientHttpConnection {
         if (self._updateTimer)
             clearInterval(self._updateTimer);
 
+        if (self._aborting)
+            return;
+
         let msg = "";
-        try {
-            msg = e.toString();
-        } catch (e) {
+
+        if (e.type === 'abort') {
+            msg = "Request was aborted and not by VortexJS";
+
+        } else {
+            try {
+                msg = e.toString();
+            } catch (e) {
+            }
+
         }
 
         this.vortexStatusService.setOnline(false);

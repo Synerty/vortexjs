@@ -132,11 +132,18 @@ var _VortexClientHttpConnection = (function () {
         var self = this;
         if (self._updateTimer)
             clearInterval(self._updateTimer);
+        if (self._aborting)
+            return;
         var msg = "";
-        try {
-            msg = e.toString();
+        if (e.type === 'abort') {
+            msg = "Request was aborted and not by VortexJS";
         }
-        catch (e) {
+        else {
+            try {
+                msg = e.toString();
+            }
+            catch (e) {
+            }
         }
         this.vortexStatusService.setOnline(false);
         this.vortexStatusService.logError(msg);
