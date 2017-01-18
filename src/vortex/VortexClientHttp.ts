@@ -29,9 +29,10 @@ export class VortexClientHttp extends VortexClientABC {
 
 
     sendPayloads(payloads: Payload[]): void {
-        let conn = new _VortexClientHttpConnection(this,
+        let conn = new _VortexClientHttpConnection(this, this.vortexStatusService,
             (payload) => this.receive(payload),
-            () => this.beat());
+            () => this.beat()
+        );
         conn.send(payloads);
         // console.log(dateStr() + "Sent payload with filt : " + JSON.stringify(payload.filt));
     }
@@ -54,6 +55,7 @@ class _VortexClientHttpConnection {
 
 
     constructor(private vortex: VortexClientHttp,
+                private vortexStatusService: VortexStatusService,
                 private receiveCallback: ReceivePayloadCallable,
                 private vortexBeatCallback: VortexBeatCallable) {
         let self = this;
@@ -181,13 +183,17 @@ class _VortexClientHttpConnection {
         let self = this;
         if (self._updateTimer)
             clearInterval(self._updateTimer);
+
         let msg = "";
         try {
             msg = e.toString();
         } catch (e) {
         }
 
-        console.log("VortexConnection, connection errored out: " + msg);
+        this.vortexStatusService.setOnline(false);
+        this.vortexStatusService.logError(msg);
+
+        // console.log("VortexConnection, connection errored out: " + msg);
     }
 
 }

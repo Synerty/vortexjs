@@ -19,12 +19,12 @@ var VortexClientABC = (function () {
         this.beatTimer = null;
         this.serverVortexUuid = null;
         this.serverVortexName = null;
-        this._uuid = this._makeUuid();
+        this._uuid = VortexClientABC.makeUuid();
         this._name = "browser";
         this._url = url;
         this._vortexClosed = false;
     }
-    VortexClientABC.prototype._makeUuid = function () {
+    VortexClientABC.makeUuid = function () {
         function func(c) {
             var r = Math.random() * 16 | 0, v = c === "x" ? r : (r & 0x3 | 0x8);
             return v.toString(16);

@@ -18,7 +18,7 @@ var VortexClientHttp = (function (_super) {
     }
     VortexClientHttp.prototype.sendPayloads = function (payloads) {
         var _this = this;
-        var conn = new _VortexClientHttpConnection(this, function (payload) { return _this.receive(payload); }, function () { return _this.beat(); });
+        var conn = new _VortexClientHttpConnection(this, this.vortexStatusService, function (payload) { return _this.receive(payload); }, function () { return _this.beat(); });
         conn.send(payloads);
         // console.log(dateStr() + "Sent payload with filt : " + JSON.stringify(payload.filt));
     };
@@ -27,8 +27,9 @@ var VortexClientHttp = (function (_super) {
 exports.VortexClientHttp = VortexClientHttp;
 // ############################################################################
 var _VortexClientHttpConnection = (function () {
-    function _VortexClientHttpConnection(vortex, receiveCallback, vortexBeatCallback) {
+    function _VortexClientHttpConnection(vortex, vortexStatusService, receiveCallback, vortexBeatCallback) {
         this.vortex = vortex;
+        this.vortexStatusService = vortexStatusService;
         this.receiveCallback = receiveCallback;
         this.vortexBeatCallback = vortexBeatCallback;
         var self = this;
@@ -137,7 +138,9 @@ var _VortexClientHttpConnection = (function () {
         }
         catch (e) {
         }
-        console.log("VortexConnection, connection errored out: " + msg);
+        this.vortexStatusService.setOnline(false);
+        this.vortexStatusService.logError(msg);
+        // console.log("VortexConnection, connection errored out: " + msg);
     };
     return _VortexClientHttpConnection;
 }());
