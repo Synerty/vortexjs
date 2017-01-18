@@ -29,20 +29,20 @@ export class VortexClientWebsocket extends VortexClientABC {
     }
 
     get isReady(): boolean {
-        return this.socket != null && this.socket.readyState === this.Socket.OPEN
+        return this.socket != null && this.socket.readyState === this.Socket.OPEN;
     }
 
     sendPayloads(payloads: Payload[]): void {
         this.unsentBuffer.add(payloads);
 
-        if (this.socket == null)
+        if (this.isReady)
             this.createSocket();
 
         this.sendMessages();
     }
 
     private sendMessages() {
-        while (this.unsentBuffer.length != 0) {
+        while (this.unsentBuffer.length !== 0) {
             if (!this.isReady)
                 return;
 
@@ -104,7 +104,7 @@ export class VortexClientWebsocket extends VortexClientABC {
             return;
         }
 
-        // If the server sends us a '.', that's a heart beat.
+        // If the server sends us a '.', that's a heart beat, return it.
         if (event.data === '.') {
             this.beat();
             this.socket != null && this.socket.send('.');
@@ -123,7 +123,7 @@ export class VortexClientWebsocket extends VortexClientABC {
 
     private onClose(event) {
         this.vortexStatusService.logInfo("WebSocket, closed");
-        this.createSocket();
+        // The base class will reconnect
     }
 
     private onError(event) {

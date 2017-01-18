@@ -27,12 +27,12 @@ var VortexClientWebsocket = (function (_super) {
     });
     VortexClientWebsocket.prototype.sendPayloads = function (payloads) {
         this.unsentBuffer.add(payloads);
-        if (this.socket == null)
+        if (this.isReady)
             this.createSocket();
         this.sendMessages();
     };
     VortexClientWebsocket.prototype.sendMessages = function () {
-        while (this.unsentBuffer.length != 0) {
+        while (this.unsentBuffer.length !== 0) {
             if (!this.isReady)
                 return;
             var payload = this.unsentBuffer.shift();
@@ -81,7 +81,7 @@ var VortexClientWebsocket = (function (_super) {
                 " we expect a unicode");
             return;
         }
-        // If the server sends us a '.', that's a heart beat.
+        // If the server sends us a '.', that's a heart beat, return it.
         if (event.data === '.') {
             this.beat();
             this.socket != null && this.socket.send('.');
@@ -96,7 +96,7 @@ var VortexClientWebsocket = (function (_super) {
     };
     VortexClientWebsocket.prototype.onClose = function (event) {
         this.vortexStatusService.logInfo("WebSocket, closed");
-        this.createSocket();
+        // The base class will reconnect
     };
     VortexClientWebsocket.prototype.onError = function (event) {
         this.vortexStatusService.logError(event.error ? event.error : "WebSocket, No error message");
