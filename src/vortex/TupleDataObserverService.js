@@ -58,7 +58,7 @@ var TupleDataObserverService = (function (_super) {
     TupleDataObserverService.prototype.subscribeToTupleSelector = function (tupleSelector) {
         var tsStr = tupleSelector.toOrderedJsonStr();
         if (this.subjectsByTupleSelector.hasOwnProperty(tsStr))
-            return this.subjectsByTupleSelector.hasOwnProperty[tsStr];
+            return this.subjectsByTupleSelector[tsStr];
         var newSubject = new rxjs_1.Subject();
         this.subjectsByTupleSelector[tsStr] = newSubject;
         this.tellServerWeWantData([tupleSelector]);

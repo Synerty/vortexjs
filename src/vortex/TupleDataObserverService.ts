@@ -47,7 +47,7 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
 
         let tsStr = tupleSelector.toOrderedJsonStr();
         if (this.subjectsByTupleSelector.hasOwnProperty(tsStr))
-            return this.subjectsByTupleSelector.hasOwnProperty[tsStr];
+            return this.subjectsByTupleSelector[tsStr];
 
         let newSubject = new Subject<Tuple[]>();
         this.subjectsByTupleSelector[tsStr] = newSubject;
