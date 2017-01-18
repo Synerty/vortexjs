@@ -35,7 +35,7 @@ export class VortexClientWebsocket extends VortexClientABC {
     sendPayloads(payloads: Payload[]): void {
         this.unsentBuffer.add(payloads);
 
-        if (this.isReady)
+        if (!this.isReady)
             this.createSocket();
 
         this.sendMessages();

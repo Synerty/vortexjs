@@ -27,7 +27,7 @@ var VortexClientWebsocket = (function (_super) {
     });
     VortexClientWebsocket.prototype.sendPayloads = function (payloads) {
         this.unsentBuffer.add(payloads);
-        if (this.isReady)
+        if (!this.isReady)
             this.createSocket();
         this.sendMessages();
     };
