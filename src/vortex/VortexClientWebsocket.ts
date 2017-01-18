@@ -123,6 +123,8 @@ export class VortexClientWebsocket extends VortexClientABC {
 
     private onClose(event) {
         this.vortexStatusService.logInfo("WebSocket, closed");
+        if (!(this.socket && this.socket.readyState === this.Socket.OPEN))
+            this.vortexStatusService.setOnline(false);
         // The base class will reconnect
     }
 

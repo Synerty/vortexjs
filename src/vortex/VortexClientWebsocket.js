@@ -96,6 +96,8 @@ var VortexClientWebsocket = (function (_super) {
     };
     VortexClientWebsocket.prototype.onClose = function (event) {
         this.vortexStatusService.logInfo("WebSocket, closed");
+        if (!(this.socket && this.socket.readyState === this.Socket.OPEN))
+            this.vortexStatusService.setOnline(false);
         // The base class will reconnect
     };
     VortexClientWebsocket.prototype.onError = function (event) {
