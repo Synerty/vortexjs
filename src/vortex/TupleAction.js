@@ -13,36 +13,24 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var UtilMisc_1 = require("./UtilMisc");
 var Tuple_1 = require("./Tuple");
-// export interface TupleSelectorJsonI {
-//     name: string;
-//     selector: { [name: string]: any };
-// }
-var TupleSelector = TupleSelector_1 = (function (_super) {
-    __extends(TupleSelector, _super);
-    function TupleSelector(name, selector) {
-        var _this = _super.call(this, "vortex.TupleSelector") || this;
-        _this.name = name;
-        _this.selector = selector;
+var TupleSelector_1 = require("./TupleSelector");
+var TupleAction = (function (_super) {
+    __extends(TupleAction, _super);
+    function TupleAction() {
+        var _this = _super.call(this, "vortex.TupleAction") || this;
+        _this.uuid = Date.now() + Math.random();
+        _this.date = new Date();
+        _this.action = null;
+        _this.tupleSelector = new TupleSelector_1.TupleSelector(null, {});
+        _this.tupleChanges = [];
         return _this;
     }
-    TupleSelector.prototype.toOrderedJsonStr = function () {
-        return UtilMisc_1.jsonOrderedStringify({
-            'name': this.name,
-            'selector': this.selector
-        });
-    };
-    TupleSelector.fromJsonStr = function (jsonStr) {
-        var args = JSON.parse(jsonStr);
-        return new TupleSelector_1(args.name, args.selector);
-    };
-    return TupleSelector;
+    return TupleAction;
 }(Tuple_1.Tuple));
-TupleSelector = TupleSelector_1 = __decorate([
+TupleAction = __decorate([
     Tuple_1.addTupleType,
-    __metadata("design:paramtypes", [String, Object])
-], TupleSelector);
-exports.TupleSelector = TupleSelector;
-var TupleSelector_1;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/TupleSelector.js.map
+    __metadata("design:paramtypes", [])
+], TupleAction);
+exports.TupleAction = TupleAction;
+//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/TupleAction.js.map

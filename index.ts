@@ -23,5 +23,14 @@ export {
 // Offline and Observable
 export {TupleDataOfflineObserverService} from "./src/vortex/TupleDataOfflineObserverService";
 
+// Tuple Actions
+export {TupleAction, TupleActionChangeI} from "./src/vortex/TupleAction";
+export {
+    TupleActionService,
+    TupleActionNameService
+} from "./src/vortex/TupleActionService";
+export {TupleActionOfflineService} from "./src/vortex/TupleActionOfflineService";
+
 // WebSQL
 export {WebSqlFactoryService, WebSqlService} from "./src/websql/WebSqlService";
+

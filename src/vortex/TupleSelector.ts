@@ -1,17 +1,17 @@
 import {jsonOrderedStringify} from "./UtilMisc";
 import {Tuple, addTupleType} from "./Tuple";
 
-export interface TupleSelectorJsonI {
-    name: string;
-    selector: { [name: string]: any };
-}
+// export interface TupleSelectorJsonI {
+//     name: string;
+//     selector: { [name: string]: any };
+// }
 
 @addTupleType
 export class TupleSelector extends Tuple {
 
     constructor(public name: string,
                 public selector: { [name: string]: any }) {
-        super("vortex.TupleSelector")
+        super("vortex.TupleSelector");
 
     }
 

@@ -23,6 +23,13 @@ var VortexStatusService = (function () {
         this.errors = new Subject_1.Subject();
         this.wasOnline = false;
     }
+    Object.defineProperty(VortexStatusService.prototype, "snapshot", {
+        get: function () {
+            return { isOnline: this.wasOnline };
+        },
+        enumerable: true,
+        configurable: true
+    });
     VortexStatusService.prototype.setOnline = function (online) {
         var _this = this;
         if (online === this.wasOnline)

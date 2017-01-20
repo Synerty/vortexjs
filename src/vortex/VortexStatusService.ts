@@ -7,6 +7,10 @@ let logDebug = console.debug ? bind(console, console.debug) : bind(console, cons
 let logInfo = bind(console, console.log);
 let logError = console.error ? bind(console, console.error) : bind(console, console.log);
 
+export interface VortexStatusServiceSnapshot {
+    isOnline: boolean;
+}
+
 @Injectable()
 export class VortexStatusService {
 
@@ -18,6 +22,10 @@ export class VortexStatusService {
 
     constructor(private zone: NgZone) {
 
+    }
+
+    get snapshot(): VortexStatusServiceSnapshot {
+        return {isOnline: this.wasOnline};
     }
 
     setOnline(online: boolean) {

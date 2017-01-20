@@ -30,6 +30,14 @@ exports.TupleOfflineStorageNameService = TupleOfflineStorageService_1.TupleOffli
 // Offline and Observable
 var TupleDataOfflineObserverService_1 = require("./src/vortex/TupleDataOfflineObserverService");
 exports.TupleDataOfflineObserverService = TupleDataOfflineObserverService_1.TupleDataOfflineObserverService;
+// Tuple Actions
+var TupleAction_1 = require("./src/vortex/TupleAction");
+exports.TupleAction = TupleAction_1.TupleAction;
+var TupleActionService_1 = require("./src/vortex/TupleActionService");
+exports.TupleActionService = TupleActionService_1.TupleActionService;
+exports.TupleActionNameService = TupleActionService_1.TupleActionNameService;
+var TupleActionOfflineService_1 = require("./src/vortex/TupleActionOfflineService");
+exports.TupleActionOfflineService = TupleActionOfflineService_1.TupleActionOfflineService;
 // WebSQL
 var WebSqlService_1 = require("./src/websql/WebSqlService");
 exports.WebSqlFactoryService = WebSqlService_1.WebSqlFactoryService;
