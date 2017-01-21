@@ -26,6 +26,8 @@ var TupleDataObserverService_1 = require("../vortex/TupleDataObserverService");
 var tuple_offline_module_1 = require("./tuple-offline/tuple-offline.module");
 var websql_module_1 = require("./websql/websql.module");
 var tuple_offline_observer_module_1 = require("./tuple-offline-observer/tuple-offline-observer.module");
+var tuple_action_module_1 = require("./tuple-action/tuple-action.module");
+var tuple_action_offline_module_1 = require("./tuple-action-offline/tuple-action-offline.module");
 var AppModule = (function () {
     function AppModule() {
     }
@@ -40,7 +42,9 @@ AppModule = __decorate([
             ng2_balloon_msg_1.Ng2BalloonMsgModule,
             tuple_offline_module_1.TupleOfflineModule,
             tuple_offline_observer_module_1.TupleOfflineObserverModule,
-            websql_module_1.WebsqlModule
+            websql_module_1.WebsqlModule,
+            tuple_action_module_1.TupleActionModule,
+            tuple_action_offline_module_1.TupleActionOfflineModule
         ],
         declarations: [
             app_component_1.AppComponent,

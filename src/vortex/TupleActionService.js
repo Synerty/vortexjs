@@ -43,18 +43,14 @@ var TupleActionService = (function () {
      * responded.
      */
     TupleActionService.prototype.pushAction = function (tupleAction) {
-        return this.sendAction(tupleAction);
-    };
-    /** Send Action
-     *
-     * Sends the action to the server, returns a promise with
-     */
-    TupleActionService.prototype.sendAction = function (tupleAction) {
         if (!this.vortexStatus.snapshot.isOnline)
             return Promise.reject("Vortex is offline");
         var payloadResponse = new PayloadResponse_1.PayloadResponse(this.vortexService, this.makePayload(tupleAction));
-        return payloadResponse
-            .then(function (payload) { return payload.tuples[0]; });
+        var convertedPromise = payloadResponse
+            .then(function (payload) {
+            return payload.tuples[0];
+        });
+        return convertedPromise;
     };
     /** Make Payload
      *
@@ -65,7 +61,7 @@ var TupleActionService = (function () {
         var payload = new Payload_1.Payload();
         payload.filt = UtilMisc_1.extend({
             key: "tupleActionProcessorName",
-            actionServiceName: this.tupleActionProcessorName.name
+            name: this.tupleActionProcessorName.name
         }, this.tupleActionProcessorName.additionalFilt);
         payload.tuples = [tupleAction];
         return payload;

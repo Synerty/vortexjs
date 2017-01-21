@@ -13,24 +13,28 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var Tuple_1 = require("./Tuple");
-var TupleSelector_1 = require("./TupleSelector");
-var TupleAction = (function (_super) {
-    __extends(TupleAction, _super);
-    function TupleAction() {
-        var _this = _super.call(this, "vortex.TupleAction") || this;
-        _this.uuid = Date.now() + Math.random();
-        _this.dateTime = new Date();
-        _this.tupleSelector = new TupleSelector_1.TupleSelector(null, {});
-        _this.tupleChanges = [];
-        _this.action = null;
+var Tuple_1 = require("../../vortex/Tuple");
+/** Perform Test Action Tuple
+ *
+ * This tuple is used for testing the action code.
+ *
+ */
+var PerformTestActionTuple = PerformTestActionTuple_1 = (function (_super) {
+    __extends(PerformTestActionTuple, _super);
+    function PerformTestActionTuple() {
+        var _this = _super.call(this, PerformTestActionTuple_1.tupleName) || this;
+        _this.actionDataInt = 0;
+        _this.actionDataUnicode = "";
+        _this.failProcessing = false;
         return _this;
     }
-    return TupleAction;
+    return PerformTestActionTuple;
 }(Tuple_1.Tuple));
-TupleAction = __decorate([
+PerformTestActionTuple.tupleName = 'synerty.vortex.PerformTestActionTuple';
+PerformTestActionTuple = PerformTestActionTuple_1 = __decorate([
     Tuple_1.addTupleType,
     __metadata("design:paramtypes", [])
-], TupleAction);
-exports.TupleAction = TupleAction;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/TupleAction.js.map
+], PerformTestActionTuple);
+exports.PerformTestActionTuple = PerformTestActionTuple;
+var PerformTestActionTuple_1;
+//# sourceMappingURL=/home/peek/project/vortexjs/src/app/tuple-action/PerformTestActionTuple.js.map

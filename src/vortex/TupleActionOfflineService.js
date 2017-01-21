@@ -20,10 +20,11 @@ var TupleActionService_1 = require("./TupleActionService");
 var Payload_1 = require("./Payload");
 var VortexService_1 = require("./VortexService");
 var UtilMisc_1 = require("./UtilMisc");
+var PayloadResponse_1 = require("./PayloadResponse");
 var datbaseName = "tupleActions.sqlite";
 var tableName = "tupleActions";
 var databaseSchema = [
-    "CREATE TABLE IF NOT EXISTS " + tableName + "\n     (\n        id PRIMARY KEY AUTOINCREMENT,\n        scope TEXT,\n        uuid REAL,\n        payload TEXT,\n        UNIQUE (scope, uuid)\n     )"
+    "CREATE TABLE IF NOT EXISTS " + tableName + "\n     (\n        id INTEGER PRIMARY KEY AUTOINCREMENT,\n        scope TEXT,\n        uuid REAL,\n        payload TEXT,\n        UNIQUE (scope, uuid)\n     )"
 ];
 var TupleActionOfflineService = (function (_super) {
     __extends(TupleActionOfflineService, _super);
@@ -32,12 +33,15 @@ var TupleActionOfflineService = (function (_super) {
         _this.tableName = "tupleActions";
         _this.sendingTuple = false;
         _this.SEND_FAIL_RETRY_TIMEOUT = 5000; // milliseconds
+        _this.SERVER_PROCESSING_TIMEOUT = 5000; // milliseconds
         _this.webSql = webSqlFactory.createWebSql(datbaseName, databaseSchema);
         _this.storageName = tupleActionName.name;
         // TODO: Unsubscribe this
         _this.vortexStatus.isOnline
             .filter(function (online) { return online === true; })
             .subscribe(function (online) { return _this.sendNextAction(); });
+        _this.countActions()
+            .then(function () { return _this.sendNextAction(); });
         return _this;
     }
     TupleActionOfflineService.prototype.pushAction = function (tupleAction) {
@@ -49,33 +53,51 @@ var TupleActionOfflineService = (function (_super) {
         var _this = this;
         if (this.sendingTuple)
             return;
+        if (!this.vortexStatus.snapshot.isOnline)
+            return;
+        this.sendingTuple = true;
         // Get the next tuple from the persistent queue
         this.loadNextAction()
             .then(function (tupleAction) {
             // Is the end the end of the queue?
-            if (tupleAction == null)
+            if (tupleAction == null) {
+                _this.sendingTuple = false;
                 return;
-            // No?, ok, lets send the action to the server
-            return _this.sendAction(tupleAction)
-                .then(function (tupleAction) {
-                _this.deleteAction(tupleAction.uuid);
+            }
+            var actionUuid = tupleAction.uuid;
+            return new PayloadResponse_1.PayloadResponse(_this.vortexService, _this.makePayload(tupleAction), PayloadResponse_1.PayloadResponse.RESPONSE_TIMEOUT_SECONDS, // Timeout
+            false // don't check result, only reject if it times out
+            ).then(function (payload) {
+                // If we received a payload, but it has an error message
+                // Log an error, it's out of our hands, move on.
+                var r = payload.result; // success is null or true
+                if (!(r == null || r === true)) {
+                    _this.vortexStatus.logError('Server failed to process Action: ' + payload.result.toString());
+                }
+                _this.deleteAction(actionUuid);
                 _this.sendingTuple = false;
                 _this.sendNextAction();
             });
         })
             .catch(function (err) {
-            _this.vortexStatus.logError("Failed to send TupleAction : " + err);
+            var errStr = JSON.stringify(err);
+            _this.vortexStatus.logError("Failed to send TupleAction : " + errStr);
             _this.sendingTuple = false;
             setTimeout(function () { return _this.sendNextAction(); }, _this.SEND_FAIL_RETRY_TIMEOUT);
             return null; // Handle the error
         });
     };
     TupleActionOfflineService.prototype.storeAction = function (tupleAction) {
+        var _this = this;
         // The payload is a convenient way to serialise and compress the data
         var payloadData = new Payload_1.Payload({}, [tupleAction]).toVortexMsg();
         var sql = "INSERT INTO " + tableName + "\n                    (scope, uuid, payload)\n                    VALUES (?, ?, ?)";
         var bindParams = [this.storageName, tupleAction.uuid, payloadData];
         return this.webSql.runSql(sql, bindParams)
+            .then(function (val) {
+            _this.vortexStatus.incrementQueuedActionCount();
+            return val;
+        })
             .then(function () { return tupleAction; }); //
     };
     TupleActionOfflineService.prototype.loadNextAction = function () {
@@ -84,7 +106,7 @@ var TupleActionOfflineService = (function (_super) {
         return this.webSql.querySql(sql, bindParams)
             .then(function (rows) {
             if (rows.length === 0) {
-                return [];
+                return null;
             }
             var row1 = rows[0];
             var payload = Payload_1.Payload.fromVortexMsg(row1.payload);
@@ -92,11 +114,26 @@ var TupleActionOfflineService = (function (_super) {
             return payload.tuples[0];
         });
     };
+    TupleActionOfflineService.prototype.countActions = function () {
+        var _this = this;
+        var sql = "SELECT count(payload) as count\n                    FROM " + tableName + "\n                    WHERE scope = ?";
+        var bindParams = [this.storageName];
+        return this.webSql.querySql(sql, bindParams)
+            .then(function (rows) {
+            _this.vortexStatus.setQueuedActionCount(rows[0].count);
+        }).catch(function (err) {
+            var errStr = JSON.stringify(err);
+            _this.vortexStatus.logError("Failed to count TupleActions : " + errStr);
+            // Consume error
+        });
+    };
     TupleActionOfflineService.prototype.deleteAction = function (actionUuid) {
+        var _this = this;
         var sql = "DELETE FROM " + tableName + "\n                    WHERE scope=? AND uuid=?";
         var bindParams = [this.storageName, actionUuid];
         return this.webSql.runSql(sql, bindParams)
             .then(function () {
+            _this.vortexStatus.decrementQueuedActionCount();
             return;
         });
     };

@@ -39,8 +39,11 @@ export class TupleActionService {
         let payloadResponse = new PayloadResponse(
             this.vortexService, this.makePayload(tupleAction));
 
-        return payloadResponse
-            .then(payload => payload.tuples[0]);
+        let convertedPromise:any = payloadResponse
+            .then(payload => {
+                return payload.tuples[0];
+            });
+        return convertedPromise;
 
     }
 

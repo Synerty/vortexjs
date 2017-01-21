@@ -43,28 +43,24 @@ var Tuple = (function (_super) {
     // Start change detection code
     Tuple.prototype._setChangeTracking = function (on) {
         if (on === void 0) { on = true; }
-        this._changeTrackingReferenceState = {};
-        for (var _i = 0, _a = UtilMisc_1.dictKeysFromObject(this); _i < _a.length; _i++) {
-            var key = _a[_i];
-            this._changeTrackingReferenceState[key] = UtilMisc_1.deepCopy(this[key]);
-        }
+        this._changeTrackingReferenceState = new Tuple();
+        this._changeTrackingReferenceState.fromJsonDict(this.toJsonDict());
         this._changeTracking = on;
     };
     Tuple.prototype._detectedChanges = function (reset) {
         if (reset === void 0) { reset = true; }
-        var changes = null;
+        var changes = [];
         for (var _i = 0, _a = UtilMisc_1.dictKeysFromObject(this); _i < _a.length; _i++) {
             var key = _a[_i];
             var old_ = this._changeTrackingReferenceState[key];
             var new_ = this[key];
             if (UtilMisc_1.deepEqual(old_, new_))
                 continue;
-            if (changes === null)
-                changes = {};
-            changes[key] = {
-                "old": old_,
-                "new": new_
-            };
+            changes.push({
+                "fieldName": key,
+                "oldValue": old_,
+                "newValue": new_
+            });
         }
         if (reset) {
             this._setChangeTracking(true);

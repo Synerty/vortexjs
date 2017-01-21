@@ -22,10 +22,15 @@ var VortexStatusService = (function () {
         this.info = new Subject_1.Subject();
         this.errors = new Subject_1.Subject();
         this.wasOnline = false;
+        this.queuedActionCount = new Subject_1.Subject();
+        this.lastQueuedTupleActions = 0;
     }
     Object.defineProperty(VortexStatusService.prototype, "snapshot", {
         get: function () {
-            return { isOnline: this.wasOnline };
+            return {
+                isOnline: this.wasOnline,
+                queuedActionCount: this.lastQueuedTupleActions
+            };
         },
         enumerable: true,
         configurable: true
@@ -35,10 +40,25 @@ var VortexStatusService = (function () {
         if (online === this.wasOnline)
             return;
         logDebug(UtilMisc_1.dateStr() + "Vortex Status - online: " + online);
+        this.wasOnline = online;
         this.zone.run(function () {
             _this.isOnline.next(online);
         });
-        this.wasOnline = online;
+    };
+    VortexStatusService.prototype.incrementQueuedActionCount = function () {
+        this.setQueuedActionCount(this.lastQueuedTupleActions + 1);
+    };
+    VortexStatusService.prototype.decrementQueuedActionCount = function () {
+        this.setQueuedActionCount(this.lastQueuedTupleActions - 1);
+    };
+    VortexStatusService.prototype.setQueuedActionCount = function (count) {
+        var _this = this;
+        if (count === this.lastQueuedTupleActions)
+            return;
+        this.lastQueuedTupleActions = count;
+        this.zone.run(function () {
+            _this.queuedActionCount.next(count);
+        });
     };
     VortexStatusService.prototype.logInfo = function (message) {
         var _this = this;
