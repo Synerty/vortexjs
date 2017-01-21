@@ -23,7 +23,7 @@ var TupleAction = (function (_super) {
         _this.dateTime = new Date();
         _this.tupleSelector = new TupleSelector_1.TupleSelector(null, {});
         _this.tupleChanges = [];
-        _this.action = null;
+        _this.data = null;
         return _this;
     }
     return TupleAction;

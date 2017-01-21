@@ -54,7 +54,7 @@ export class TupleActionOfflineComponent implements OnInit {
 
         let tupleAction = new TupleAction();
         tupleAction.tupleSelector.name = PerformTestActionTuple.tupleName;
-        tupleAction.action = "FAIL PLEASE";
+        tupleAction.data = "FAIL PLEASE";
 
         this.tupleActionOfflineService.pushAction(tupleAction)
             .then(() => this.log = `SUCCESS : ${new Date()}`)

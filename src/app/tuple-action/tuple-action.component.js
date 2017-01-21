@@ -37,7 +37,7 @@ var TupleActionComponent = (function () {
         var _this = this;
         var tupleAction = new TupleAction_1.TupleAction();
         tupleAction.tupleSelector.name = PerformTestActionTuple_1.PerformTestActionTuple.tupleName;
-        tupleAction.action = "FAIL PLEASE";
+        tupleAction.data = "FAIL PLEASE";
         this.tupleActionService.pushAction(tupleAction)
             .then(function () { return _this.log = "SUCCESS : " + new Date(); })
             .catch(function (err) { return _this.log = "FAILURE : " + new Date() + "\n" + err; });

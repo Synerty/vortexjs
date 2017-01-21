@@ -8,7 +8,7 @@ export class TupleAction extends Tuple {
     dateTime = new Date();
     tupleSelector: TupleSelector = new TupleSelector(null, {});
     tupleChanges: TupleChangeI[] = [];
-    action: string | null = null;
+    data: any = null;
 
     constructor() {
         super("vortex.TupleAction");
