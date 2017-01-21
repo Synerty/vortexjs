@@ -19,6 +19,8 @@ import {
 import {TupleOfflineModule} from "./tuple-offline/tuple-offline.module";
 import {WebsqlModule} from "./websql/websql.module";
 import {TupleOfflineObserverModule} from "./tuple-offline-observer/tuple-offline-observer.module";
+import {TupleActionModule} from "./tuple-action/tuple-action.module";
+import {TupleActionOfflineModule} from "./tuple-action-offline/tuple-action-offline.module";
 
 @NgModule({
     imports: [
@@ -28,7 +30,9 @@ import {TupleOfflineObserverModule} from "./tuple-offline-observer/tuple-offline
         Ng2BalloonMsgModule,
         TupleOfflineModule,
         TupleOfflineObserverModule,
-        WebsqlModule
+        WebsqlModule,
+        TupleActionModule,
+        TupleActionOfflineModule
     ],
     declarations: [
         AppComponent,

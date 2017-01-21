@@ -6,6 +6,7 @@ import {TupleActionNameService, TupleActionService} from "./TupleActionService";
 import {Payload} from "./Payload";
 import {VortexService} from "./VortexService";
 import {assert} from "./UtilMisc";
+import {PayloadResponse} from "./PayloadResponse";
 
 let datbaseName = "tupleActions.sqlite";
 
@@ -13,7 +14,7 @@ const tableName = "tupleActions";
 let databaseSchema = [
     `CREATE TABLE IF NOT EXISTS ${tableName}
      (
-        id PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         scope TEXT,
         uuid REAL,
         payload TEXT,
@@ -29,6 +30,7 @@ export class TupleActionOfflineService extends TupleActionService {
     private sendingTuple = false;
 
     private SEND_FAIL_RETRY_TIMEOUT = 5000;// milliseconds
+    private SERVER_PROCESSING_TIMEOUT = 5000;// milliseconds
 
     constructor(tupleActionName: TupleActionNameService,
                 vortexService: VortexService,
@@ -43,6 +45,9 @@ export class TupleActionOfflineService extends TupleActionService {
         this.vortexStatus.isOnline
             .filter(online => online === true)
             .subscribe(online => this.sendNextAction());
+
+        this.countActions()
+            .then(() => this.sendNextAction());
     }
 
 
@@ -56,30 +61,48 @@ export class TupleActionOfflineService extends TupleActionService {
         if (this.sendingTuple)
             return;
 
+        if (!this.vortexStatus.snapshot.isOnline)
+            return;
+
+        this.sendingTuple = true;
+
         // Get the next tuple from the persistent queue
         this.loadNextAction()
 
-        // If this was successfull?
+        // If this was successful?
             .then(tupleAction => {
                 // Is the end the end of the queue?
-                if (tupleAction == null)
+                if (tupleAction == null) {
+                    this.sendingTuple = false;
                     return;
+                }
 
-                // No?, ok, lets send the action to the server
-                return this.sendAction(tupleAction)
+                let actionUuid = tupleAction.uuid;
 
-                // Upon a successfull reply from the server...
-                    .then(tupleAction => {
-                        this.deleteAction(tupleAction.uuid);
-                        this.sendingTuple = false;
-                        this.sendNextAction();
-                    })
+                return new PayloadResponse(this.vortexService,
+                    this.makePayload(tupleAction),
+                    PayloadResponse.RESPONSE_TIMEOUT_SECONDS, // Timeout
+                    false // don't check result, only reject if it times out
+                ) .then(payload => {
+                    // If we received a payload, but it has an error message
+                    // Log an error, it's out of our hands, move on.
+                    let r = payload.result; // success is null or true
+                    if (!(r == null || r === true)) {
+                        this.vortexStatus.logError(
+                            'Server failed to process Action: ' + payload.result.toString());
+                    }
+
+                    this.deleteAction(actionUuid);
+                    this.sendingTuple = false;
+                    this.sendNextAction();
+                })
 
             })
 
             // Or catch and handle any of the errors from either loading or sending
             .catch(err => {
-                this.vortexStatus.logError(`Failed to send TupleAction : ${err}`);
+                let errStr = JSON.stringify(err);
+                this.vortexStatus.logError(`Failed to send TupleAction : ${errStr}`);
                 this.sendingTuple = false;
                 setTimeout(() => this.sendNextAction(), this.SEND_FAIL_RETRY_TIMEOUT);
                 return null; // Handle the error
@@ -96,6 +119,10 @@ export class TupleActionOfflineService extends TupleActionService {
         let bindParams = [this.storageName, tupleAction.uuid, payloadData];
 
         return this.webSql.runSql(sql, bindParams)
+            .then((val) => {
+                this.vortexStatus.incrementQueuedActionCount();
+                return val;
+            })
             .then(() => tupleAction); //
     }
 
@@ -110,7 +137,7 @@ export class TupleActionOfflineService extends TupleActionService {
         return this.webSql.querySql(sql, bindParams)
             .then((rows: any[]) => {
                 if (rows.length === 0) {
-                    return [];
+                    return null;
                 }
 
                 let row1 = rows[0];
@@ -123,6 +150,23 @@ export class TupleActionOfflineService extends TupleActionService {
             });
     }
 
+    private countActions(): Promise<void> {
+        let sql = `SELECT count(payload) as count
+                    FROM ${tableName}
+                    WHERE scope = ?`;
+        let bindParams = [this.storageName];
+
+        return this.webSql.querySql(sql, bindParams)
+            .then((rows: any[]) => {
+                this.vortexStatus.setQueuedActionCount(rows[0].count);
+
+            }).catch(err => {
+                let errStr = JSON.stringify(err);
+                this.vortexStatus.logError(`Failed to count TupleActions : ${errStr}`);
+                // Consume error
+            });
+    }
+
     private deleteAction(actionUuid: number): Promise < void > {
         let sql = `DELETE FROM ${tableName}
                     WHERE scope=? AND uuid=?`;
@@ -130,6 +174,7 @@ export class TupleActionOfflineService extends TupleActionService {
 
         return this.webSql.runSql(sql, bindParams)
             .then(() => {
+                this.vortexStatus.decrementQueuedActionCount();
                 return;
             });
 

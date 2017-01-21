@@ -1,0 +1,9 @@
+<h1>TupleActionOfflineService - Tests</h1>
+
+<p *ngIf="vortexIsOnline" class="bg-success">Vortex is Online</p>
+<p *ngIf="!vortexIsOnline" class="bg-danger">Vortex is OFFLINE</p>
+QueuedCount:{{count}}
+<button class="btn btn-default" (click)="sendFail()">Send Fail</button>
+<button class="btn btn-default" (click)="sendSuccess()">Send Success</button><br>
+
+<textarea rows="20" cols="120" [ngModel]="log"></textarea>

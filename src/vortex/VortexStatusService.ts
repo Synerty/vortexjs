@@ -9,6 +9,7 @@ let logError = console.error ? bind(console, console.error) : bind(console, cons
 
 export interface VortexStatusServiceSnapshot {
     isOnline: boolean;
+    queuedActionCount: number;
 }
 
 @Injectable()
@@ -25,7 +26,10 @@ export class VortexStatusService {
     }
 
     get snapshot(): VortexStatusServiceSnapshot {
-        return {isOnline: this.wasOnline};
+        return {
+            isOnline: this.wasOnline,
+            queuedActionCount: this.lastQueuedTupleActions
+        };
     }
 
     setOnline(online: boolean) {
@@ -34,10 +38,32 @@ export class VortexStatusService {
 
         logDebug(dateStr() + "Vortex Status - online: " + online);
 
+        this.wasOnline = online;
         this.zone.run(() => {
             this.isOnline.next(online);
         });
-        this.wasOnline = online;
+    }
+
+
+    queuedActionCount: Subject<number> = new Subject<number>();
+    lastQueuedTupleActions: number = 0;
+
+    incrementQueuedActionCount() {
+        this.setQueuedActionCount(this.lastQueuedTupleActions + 1);
+    }
+
+    decrementQueuedActionCount() {
+        this.setQueuedActionCount(this.lastQueuedTupleActions - 1);
+    }
+
+    setQueuedActionCount(count: number) {
+        if (count === this.lastQueuedTupleActions)
+            return;
+
+        this.lastQueuedTupleActions = count;
+        this.zone.run(() => {
+            this.queuedActionCount.next(count);
+        });
     }
 
     logInfo(message: string) {

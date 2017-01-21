@@ -1,6 +1,13 @@
 import SerialiseUtil from "./SerialiseUtil";
 import Jsonable from "./Jsonable";
-import {deepEqual, deepCopy, dictKeysFromObject} from "./UtilMisc";
+import {deepEqual, dictKeysFromObject} from "./UtilMisc";
+
+
+export interface TupleChangeI {
+    fieldName: string;
+    oldValue: any;
+    newValue: any;
+}
 
 
 /** Tuples implementation details.
@@ -16,7 +23,7 @@ import {deepEqual, deepCopy, dictKeysFromObject} from "./UtilMisc";
 export class Tuple extends Jsonable {
     public _tupleType: string;
     private _changeTracking: boolean = false;
-    private _changeTrackingReferenceState: {} | null = null;
+    private _changeTrackingReferenceState: Tuple | null = null;
 
     constructor(tupleType: string | null = null) {
         super();
@@ -40,28 +47,24 @@ export class Tuple extends Jsonable {
     // Start change detection code
 
     _setChangeTracking(on: boolean = true) {
-        this._changeTrackingReferenceState = {};
-        for (let key of dictKeysFromObject(this)) {
-            this._changeTrackingReferenceState[key] = deepCopy(this[key]);
-        }
+        this._changeTrackingReferenceState = new Tuple();
+        this._changeTrackingReferenceState.fromJsonDict(this.toJsonDict());
         this._changeTracking = on;
     }
 
-    _detectedChanges(reset: boolean = true): { [name: string]: any } | null {
-        let changes = null;
+    _detectedChanges(reset: boolean = true): TupleChangeI[] {
+        let changes = [];
         for (let key of dictKeysFromObject(this)) {
             let old_ = this._changeTrackingReferenceState[key];
             let new_ = this[key];
             if (deepEqual(old_, new_))
                 continue;
 
-            if (changes === null)
-                changes = {};
-
-            changes[key] = {
-                "old": old_,
-                "new": new_
-            };
+            changes.push({
+                "fieldName": key,
+                "oldValue": old_,
+                "newValue": new_
+            });
         }
 
         if (reset) {

@@ -28,8 +28,8 @@ TupleActionNameService = __decorate([
 ], TupleActionNameService);
 exports.TupleActionNameService = TupleActionNameService;
 var TupleActionService = (function () {
-    function TupleActionService(tupleActionName, vortexService, vortexStatus) {
-        this.tupleActionName = tupleActionName;
+    function TupleActionService(tupleActionProcessorName, vortexService, vortexStatus) {
+        this.tupleActionProcessorName = tupleActionProcessorName;
         this.vortexService = vortexService;
         this.vortexStatus = vortexStatus;
     }
@@ -64,9 +64,9 @@ var TupleActionService = (function () {
     TupleActionService.prototype.makePayload = function (tupleAction) {
         var payload = new Payload_1.Payload();
         payload.filt = UtilMisc_1.extend({
-            key: "tupleActionHandler",
-            actionServiceName: this.tupleActionName.name
-        }, this.tupleActionName.additionalFilt);
+            key: "tupleActionProcessorName",
+            actionServiceName: this.tupleActionProcessorName.name
+        }, this.tupleActionProcessorName.additionalFilt);
         payload.tuples = [tupleAction];
         return payload;
     };

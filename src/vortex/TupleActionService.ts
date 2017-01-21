@@ -18,7 +18,7 @@ export class TupleActionNameService {
 @Injectable()
 export class TupleActionService {
 
-    constructor(protected tupleActionName: TupleActionNameService,
+    constructor(protected tupleActionProcessorName: TupleActionNameService,
                 protected vortexService: VortexService,
                 protected vortexStatus: VortexStatusService) {
     }
@@ -33,14 +33,6 @@ export class TupleActionService {
      * responded.
      */
     pushAction(tupleAction: TupleAction): Promise<TupleAction> {
-        return this.sendAction(tupleAction);
-    }
-
-    /** Send Action
-     *
-     * Sends the action to the server, returns a promise with
-     */
-    protected sendAction(tupleAction: TupleAction): Promise<TupleAction> {
         if (!this.vortexStatus.snapshot.isOnline)
             return Promise.reject("Vortex is offline");
 
@@ -62,9 +54,9 @@ export class TupleActionService {
         let payload = new Payload();
 
         payload.filt = extend({
-            key: "tupleActionHandler",
-            actionServiceName: this.tupleActionName.name
-        }, this.tupleActionName.additionalFilt);
+            key: "tupleActionProcessorName",
+            name: this.tupleActionProcessorName.name
+        }, this.tupleActionProcessorName.additionalFilt);
 
         payload.tuples = [tupleAction];
 

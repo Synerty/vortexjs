@@ -24,9 +24,10 @@ import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
  *          .catch((err) => console.log(err));
  *
  */
-export class PayloadResponse extends Promise<Payload> {
+export class PayloadResponse {
 
 
+    public static readonly RESPONSE_TIMEOUT_SECONDS = 10000; // milliseconds
     private static messageIdKey = "PayloadResponse.messageId";
 
     readonly PROCESSING = "Processing";
@@ -41,65 +42,89 @@ export class PayloadResponse extends Promise<Payload> {
     private _lcEmitter: ComponentLifecycleEventEmitter
         = new ComponentLifecycleEventEmitter();
 
+    private promise: Promise<Payload>;
+
     /** Constructor
+     * @param vortexService:
      * @param payload: The payload to mark and send.
      * @param timeout: The timeout to wait for a response - in seconds;
      * @param resultCheck: Should the result of the payload response be checked.
      */
     constructor(vortexService: VortexService,
                 private payload: Payload,
-                private timeout: number = 10.000,
+                private timeout: number = PayloadResponse.RESPONSE_TIMEOUT_SECONDS,
                 private resultCheck: boolean = true) {
-        super((resolve, reject) => {
+        this.promise = new Promise<Payload>((resolve, reject) => {
 
-            // Start the timer
-            let timer = setTimeout(() => {
-                let msg = `Timed out for payload ${payload.filt.toString()}`;
-                console.log(`${dateStr()} ERR: ${msg}`);
-                this._status = this.TIMED_OUT;
-                reject(msg);
-                this._lcEmitter.onDestroyEvent.emit("OnDestroy");
-            }, timeout * 1000);
+        // Start the timer
+        let timer = setTimeout(() => {
+            let filtStr = JSON.stringify(this.payload.filt);
+            let msg = `Timed out for payload ${filtStr}`;
+            console.log(`${dateStr()} ERR: ${msg}`);
+            this._status = this.TIMED_OUT;
+            reject(msg);
+            this._lcEmitter.onDestroyEvent.emit("OnDestroy");
+        }, timeout );
 
-            // Create the endpoint
-            payload.filt[PayloadResponse.messageIdKey] = this._messageId;
-            let endpoint = vortexService.createEndpoint(
-                this._lcEmitter, (<IPayloadFilt>payload.filt));
+        // Create the endpoint
+        this.payload.filt[PayloadResponse.messageIdKey] = this._messageId;
+        let endpoint = vortexService.createEndpoint(
+            this._lcEmitter, (<IPayloadFilt>this.payload.filt));
 
-            // Subscribe
-            endpoint.observable.subscribe((payload) => {
-                clearTimeout(timer);
-                endpoint.shutdown();
+        // Subscribe
+        endpoint.observable.subscribe((payload) => {
+            clearTimeout(timer);
+            endpoint.shutdown();
 
-                let r = payload.result; // success is null or true
-                if (this.resultCheck && !(r == null || r === true)) {
-                    this._status = this.FAILED;
-                    reject(payload.result.toString());
+            let r = payload.result; // success is null or true
+            if (this.resultCheck && !(r == null || r === true)) {
+                this._status = this.FAILED;
+                reject(payload.result.toString());
 
-                } else {
-                    this._status = this.SUCCESS;
-                    resolve(payload);
-                }
+            } else {
+                this._status = this.SUCCESS;
+                resolve(payload);
+            }
 
-                this._lcEmitter.onDestroyEvent.emit("OnDestroy");
-            });
+            this._lcEmitter.onDestroyEvent.emit("OnDestroy");
+        });
 
-            vortexService.sendPayload(payload);
+        vortexService.sendPayload(this.payload);
         });
     }
 
-    /* Is Response Payload
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then(onfulfilled, onrejected = null): Promise<Payload> {
+        return this.promise.then(onfulfilled, onrejected);
+    }
+
+
+
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch(onrejected): Promise<Payload> {
+        return this.promise.catch(onrejected);
+    }
+
+    /** Is Response Payload
      *
      * The PayloadResponse tags the payloads, so it expects a unique message back.
      *
-     * :returns: True if this payload has been tagged by a PayloadResponse class
+     * @returns True if this payload has been tagged by a PayloadResponse class
      */
     static isResponsePayload(payload) {
         return payload.filt.hasOwnProperty(PayloadResponse.messageIdKey);
     }
 
-    get
-    status(this) {
+    get status(this) {
         return this._status;
     }
 }
