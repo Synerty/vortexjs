@@ -50,8 +50,11 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
             "tupleSelector": tupleSelector
         });
 
-        return new PayloadResponse(this.vortexService, new Payload(startFilt))
+        // Optionally typed, No need to worry about the fact that we convert this
+        // and then TypeScript doesn't recignise that data type change
+        let promise: any = new PayloadResponse(this.vortexService, new Payload(startFilt))
             .then(payload => payload.tuples);
+        return promise;
     }
 
     subscribeToTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]> {

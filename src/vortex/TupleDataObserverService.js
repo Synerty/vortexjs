@@ -22,6 +22,7 @@ var PayloadEndpoint_1 = require("./PayloadEndpoint");
 var ComponentLifecycleEventEmitter_1 = require("./ComponentLifecycleEventEmitter");
 var UtilMisc_1 = require("./UtilMisc");
 var VortexStatusService_1 = require("./VortexStatusService");
+var PayloadResponse_1 = require("./PayloadResponse");
 var TupleDataObservableNameService = (function () {
     function TupleDataObservableNameService(name, additionalFilt) {
         if (additionalFilt === void 0) { additionalFilt = {}; }
@@ -55,6 +56,16 @@ var TupleDataObserverService = (function (_super) {
         _this.onDestroyEvent.subscribe(function () { return isOnlineSub.unsubscribe(); });
         return _this;
     }
+    TupleDataObserverService.prototype.pollForTuples = function (tupleSelector) {
+        var startFilt = UtilMisc_1.extend({ "subscribe": false }, this.filt, {
+            "tupleSelector": tupleSelector
+        });
+        // Optionally typed, No need to worry about the fact that we convert this
+        // and then TypeScript doesn't recignise that data type change
+        var promise = new PayloadResponse_1.PayloadResponse(this.vortexService, new Payload_1.Payload(startFilt))
+            .then(function (payload) { return payload.tuples; });
+        return promise;
+    };
     TupleDataObserverService.prototype.subscribeToTupleSelector = function (tupleSelector) {
         var tsStr = tupleSelector.toOrderedJsonStr();
         if (this.subjectsByTupleSelector.hasOwnProperty(tsStr))
@@ -84,12 +95,13 @@ var TupleDataObserverService = (function (_super) {
         this.zone.run(function () { return subject.next(tuples); });
     };
     TupleDataObserverService.prototype.tellServerWeWantData = function (tupleSelectors) {
+        var startFilt = UtilMisc_1.extend({ "subscribe": true }, this.filt);
         var payloads = [];
         for (var _i = 0, tupleSelectors_1 = tupleSelectors; _i < tupleSelectors_1.length; _i++) {
             var tupleSelector = tupleSelectors_1[_i];
-            var filt = UtilMisc_1.extend({}, {
+            var filt = UtilMisc_1.extend({}, startFilt, {
                 "tupleSelector": tupleSelector
-            }, this.filt);
+            });
             payloads.push(new Payload_1.Payload(filt));
         }
         this.vortexService.sendPayload(payloads);
