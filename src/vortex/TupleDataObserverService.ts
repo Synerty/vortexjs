@@ -8,6 +8,7 @@ import {PayloadEndpoint} from "./PayloadEndpoint";
 import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
 import {extend, dictKeysFromObject} from "./UtilMisc";
 import {VortexStatusService} from "./VortexStatusService";
+import {PayloadResponse} from "./PayloadResponse";
 
 @Injectable()
 export class TupleDataObservableNameService {
@@ -41,6 +42,16 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
             .subscribe(online => this.vortexOnlineChanged());
 
         this.onDestroyEvent.subscribe(() => isOnlineSub.unsubscribe());
+    }
+
+    pollForTuples(tupleSelector: TupleSelector): Promise<Tuple[]> {
+
+        let startFilt = extend({"subscribe": false}, this.filt, {
+            "tupleSelector": tupleSelector
+        });
+
+        return new PayloadResponse(this.vortexService, new Payload(startFilt))
+            .then(payload => payload.tuples);
     }
 
     subscribeToTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]> {
@@ -83,11 +94,13 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
     }
 
     protected tellServerWeWantData(tupleSelectors: TupleSelector[]): void {
+        let startFilt = extend({"subscribe": true}, this.filt);
+
         let payloads: Payload[] = [];
         for (let tupleSelector of tupleSelectors) {
-            let filt = extend({}, {
+            let filt = extend({}, startFilt, {
                 "tupleSelector": tupleSelector
-            }, this.filt);
+            });
 
             payloads.push(new Payload(filt));
         }
