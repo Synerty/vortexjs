@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {VortexStatusService} from "./VortexStatusService";
 import {TupleAction} from "./TupleAction";
 import {WebSqlFactoryService, WebSqlService} from "../websql/WebSqlService";
-import {TupleActionNameService, TupleActionService} from "./TupleActionService";
+import {TupleActionPushNameService, TupleActionPushService} from "./TupleActionPushService";
 import {Payload} from "./Payload";
 import {VortexService} from "./VortexService";
 import {assert} from "./UtilMisc";
@@ -23,7 +23,7 @@ let databaseSchema = [
 
 
 @Injectable()
-export class TupleActionOfflineService extends TupleActionService {
+export class TupleActionPushOfflineService extends TupleActionPushService {
     private readonly tableName = "tupleActions";
     private webSql: WebSqlService;
     private storageName: string;
@@ -32,7 +32,7 @@ export class TupleActionOfflineService extends TupleActionService {
     private SEND_FAIL_RETRY_TIMEOUT = 5000;// milliseconds
     private SERVER_PROCESSING_TIMEOUT = 5000;// milliseconds
 
-    constructor(tupleActionName: TupleActionNameService,
+    constructor(tupleActionName: TupleActionPushNameService,
                 vortexService: VortexService,
                 vortexStatus: VortexStatusService,
                 webSqlFactory: WebSqlFactoryService) {

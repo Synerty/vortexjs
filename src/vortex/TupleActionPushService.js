@@ -14,21 +14,21 @@ var VortexService_1 = require("./VortexService");
 var PayloadResponse_1 = require("./PayloadResponse");
 var Payload_1 = require("./Payload");
 var UtilMisc_1 = require("./UtilMisc");
-var TupleActionNameService = (function () {
-    function TupleActionNameService(name, additionalFilt) {
+var TupleActionPushNameService = (function () {
+    function TupleActionPushNameService(name, additionalFilt) {
         if (additionalFilt === void 0) { additionalFilt = {}; }
         this.name = name;
         this.additionalFilt = additionalFilt;
     }
-    return TupleActionNameService;
+    return TupleActionPushNameService;
 }());
-TupleActionNameService = __decorate([
+TupleActionPushNameService = __decorate([
     core_1.Injectable(),
     __metadata("design:paramtypes", [String, Object])
-], TupleActionNameService);
-exports.TupleActionNameService = TupleActionNameService;
-var TupleActionService = (function () {
-    function TupleActionService(tupleActionProcessorName, vortexService, vortexStatus) {
+], TupleActionPushNameService);
+exports.TupleActionPushNameService = TupleActionPushNameService;
+var TupleActionPushService = (function () {
+    function TupleActionPushService(tupleActionProcessorName, vortexService, vortexStatus) {
         this.tupleActionProcessorName = tupleActionProcessorName;
         this.vortexService = vortexService;
         this.vortexStatus = vortexStatus;
@@ -42,7 +42,7 @@ var TupleActionService = (function () {
      * If pushed directly to the server, the promise will resolve when the server has
      * responded.
      */
-    TupleActionService.prototype.pushAction = function (tupleAction) {
+    TupleActionPushService.prototype.pushAction = function (tupleAction) {
         if (!this.vortexStatus.snapshot.isOnline)
             return Promise.reject("Vortex is offline");
         var payloadResponse = new PayloadResponse_1.PayloadResponse(this.vortexService, this.makePayload(tupleAction));
@@ -57,7 +57,7 @@ var TupleActionService = (function () {
      * This make the payload that we send to the server.
      *
      */
-    TupleActionService.prototype.makePayload = function (tupleAction) {
+    TupleActionPushService.prototype.makePayload = function (tupleAction) {
         var payload = new Payload_1.Payload();
         payload.filt = UtilMisc_1.extend({
             key: "tupleActionProcessorName",
@@ -66,13 +66,13 @@ var TupleActionService = (function () {
         payload.tuples = [tupleAction];
         return payload;
     };
-    return TupleActionService;
+    return TupleActionPushService;
 }());
-TupleActionService = __decorate([
+TupleActionPushService = __decorate([
     core_1.Injectable(),
-    __metadata("design:paramtypes", [TupleActionNameService,
+    __metadata("design:paramtypes", [TupleActionPushNameService,
         VortexService_1.VortexService,
         VortexStatusService_1.VortexStatusService])
-], TupleActionService);
-exports.TupleActionService = TupleActionService;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/TupleActionService.js.map
+], TupleActionPushService);
+exports.TupleActionPushService = TupleActionPushService;
+//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/TupleActionPushService.js.map

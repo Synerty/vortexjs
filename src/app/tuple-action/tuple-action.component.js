@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require("@angular/core");
-var TupleActionService_1 = require("../../vortex/TupleActionService");
+var TupleActionPushService_1 = require("../../vortex/TupleActionPushService");
 var TupleAction_1 = require("../../vortex/TupleAction");
 var PerformTestActionTuple_1 = require("./PerformTestActionTuple");
 var TupleActionComponent = (function () {
@@ -50,7 +50,7 @@ TupleActionComponent = __decorate([
         templateUrl: './tuple-action.component.html',
         styleUrls: ['./tuple-action.component.css']
     }),
-    __metadata("design:paramtypes", [TupleActionService_1.TupleActionService])
+    __metadata("design:paramtypes", [TupleActionPushService_1.TupleActionPushService])
 ], TupleActionComponent);
 exports.TupleActionComponent = TupleActionComponent;
 //# sourceMappingURL=/home/peek/project/vortexjs/src/app/tuple-action/tuple-action.component.js.map

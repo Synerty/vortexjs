@@ -8,7 +8,7 @@ import {extend} from "./UtilMisc";
 
 
 @Injectable()
-export class TupleActionNameService {
+export class TupleActionPushNameService {
     constructor(public name: string, public additionalFilt = {}) {
 
     }
@@ -16,9 +16,9 @@ export class TupleActionNameService {
 
 
 @Injectable()
-export class TupleActionService {
+export class TupleActionPushService {
 
-    constructor(protected tupleActionProcessorName: TupleActionNameService,
+    constructor(protected tupleActionProcessorName: TupleActionPushNameService,
                 protected vortexService: VortexService,
                 protected vortexStatus: VortexStatusService) {
     }

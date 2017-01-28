@@ -1,8 +1,8 @@
 import {NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {TupleActionOfflineComponent} from "./tuple-action-offline.component";
-import {TupleActionNameService} from "../../vortex/TupleActionService";
-import {TupleActionOfflineService} from "../../vortex/TupleActionOfflineService";
+import {TupleActionPushNameService} from "../../vortex/TupleActionPushService";
+import {TupleActionPushOfflineService} from "../../vortex/TupleActionPushOfflineService";
 import {FormsModule} from "@angular/forms";
 
 @NgModule({
@@ -16,10 +16,10 @@ import {FormsModule} from "@angular/forms";
     declarations: [TupleActionOfflineComponent],
     providers: [
         {
-            provide: TupleActionNameService,
-            useValue: new TupleActionNameService("vortexTestActions")
+            provide: TupleActionPushNameService,
+            useValue: new TupleActionPushNameService("vortexTestActions")
         },
-        TupleActionOfflineService
+        TupleActionPushOfflineService
     ]
 })
 export class TupleActionOfflineModule {

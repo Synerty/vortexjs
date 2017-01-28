@@ -1,5 +1,5 @@
 import {Component, OnInit} from "@angular/core";
-import {TupleActionService} from "../../vortex/TupleActionService";
+import {TupleActionPushService} from "../../vortex/TupleActionPushService";
 import {TupleAction} from "../../vortex/TupleAction";
 import {PerformTestActionTuple} from "./PerformTestActionTuple";
 
@@ -12,7 +12,7 @@ export class TupleActionComponent implements OnInit {
 
     log: string = "Not started";
 
-    constructor(private tupleActionService: TupleActionService) {
+    constructor(private tupleActionService: TupleActionPushService) {
     }
 
     ngOnInit() {

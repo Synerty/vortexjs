@@ -1,3 +1,4 @@
+
 export {VortexService} from "./src/vortex/VortexService";
 export {VortexStatusService} from "./src/vortex/VortexStatusService";
 export {TupleLoader, IFilterUpdateCallable} from "./src/vortex/TupleLoader";
@@ -23,13 +24,20 @@ export {
 // Offline and Observable
 export {TupleDataOfflineObserverService} from "./src/vortex/TupleDataOfflineObserverService";
 
-// Tuple Actions
+// Tuple Actions Pushers
 export {TupleAction} from "./src/vortex/TupleAction";
 export {
-    TupleActionService,
-    TupleActionNameService
-} from "./src/vortex/TupleActionService";
-export {TupleActionOfflineService} from "./src/vortex/TupleActionOfflineService";
+    TupleActionPushService,
+    TupleActionPushNameService
+} from "./src/vortex/TupleActionPushService";
+export {TupleActionPushOfflineService} from "./src/vortex/TupleActionPushOfflineService";
+
+// Tuple Actions Processors
+export {
+    TupleActionProcessorNameService,
+    TupleActionProcessorService
+} from "./src/vortex/TupleActionProcessorService";
+export {TupleActionProcessorDelegateABC} from "./src/vortex/TupleActionProcessorDelegate";
 
 // WebSQL
 export {WebSqlFactoryService, WebSqlService} from "./src/websql/WebSqlService";

@@ -2,9 +2,9 @@ import {NgModule} from "@angular/core";
 import {CommonModule} from "@angular/common";
 import {TupleActionComponent} from "./tuple-action.component";
 import {
-    TupleActionNameService,
-    TupleActionService
-} from "../../vortex/TupleActionService";
+    TupleActionPushNameService,
+    TupleActionPushService
+} from "../../vortex/TupleActionPushService";
 import {FormsModule} from "@angular/forms";
 
 @NgModule({
@@ -18,10 +18,10 @@ import {FormsModule} from "@angular/forms";
     declarations: [TupleActionComponent],
     providers: [
         {
-            provide: TupleActionNameService,
-            useValue: new TupleActionNameService("vortexTestActions")
+            provide: TupleActionPushNameService,
+            useValue: new TupleActionPushNameService("vortexTestActions")
         },
-        TupleActionService
+        TupleActionPushService
     ]
 })
 export class TupleActionModule {

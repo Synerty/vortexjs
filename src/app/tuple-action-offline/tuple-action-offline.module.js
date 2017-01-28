@@ -11,8 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require("@angular/core");
 var common_1 = require("@angular/common");
 var tuple_action_offline_component_1 = require("./tuple-action-offline.component");
-var TupleActionService_1 = require("../../vortex/TupleActionService");
-var TupleActionOfflineService_1 = require("../../vortex/TupleActionOfflineService");
+var TupleActionPushService_1 = require("../../vortex/TupleActionPushService");
+var TupleActionPushOfflineService_1 = require("../../vortex/TupleActionPushOfflineService");
 var forms_1 = require("@angular/forms");
 var TupleActionOfflineModule = (function () {
     function TupleActionOfflineModule() {
@@ -31,10 +31,10 @@ TupleActionOfflineModule = __decorate([
         declarations: [tuple_action_offline_component_1.TupleActionOfflineComponent],
         providers: [
             {
-                provide: TupleActionService_1.TupleActionNameService,
-                useValue: new TupleActionService_1.TupleActionNameService("vortexTestActions")
+                provide: TupleActionPushService_1.TupleActionPushNameService,
+                useValue: new TupleActionPushService_1.TupleActionPushNameService("vortexTestActions")
             },
-            TupleActionOfflineService_1.TupleActionOfflineService
+            TupleActionPushOfflineService_1.TupleActionPushOfflineService
         ]
     }),
     __metadata("design:paramtypes", [])

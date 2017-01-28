@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require("@angular/core");
 var TupleAction_1 = require("../../vortex/TupleAction");
-var TupleActionOfflineService_1 = require("../../vortex/TupleActionOfflineService");
+var TupleActionPushOfflineService_1 = require("../../vortex/TupleActionPushOfflineService");
 var VortexStatusService_1 = require("../../vortex/VortexStatusService");
 var PerformTestActionTuple_1 = require("../tuple-action/PerformTestActionTuple");
 var TupleActionOfflineComponent = (function () {
@@ -62,7 +62,7 @@ TupleActionOfflineComponent = __decorate([
         templateUrl: './tuple-action-offline.component.html',
         styleUrls: ['./tuple-action-offline.component.css']
     }),
-    __metadata("design:paramtypes", [TupleActionOfflineService_1.TupleActionOfflineService,
+    __metadata("design:paramtypes", [TupleActionPushOfflineService_1.TupleActionPushOfflineService,
         VortexStatusService_1.VortexStatusService])
 ], TupleActionOfflineComponent);
 exports.TupleActionOfflineComponent = TupleActionOfflineComponent;

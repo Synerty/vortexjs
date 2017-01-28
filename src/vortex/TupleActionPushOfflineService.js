@@ -16,7 +16,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require("@angular/core");
 var VortexStatusService_1 = require("./VortexStatusService");
 var WebSqlService_1 = require("../websql/WebSqlService");
-var TupleActionService_1 = require("./TupleActionService");
+var TupleActionPushService_1 = require("./TupleActionPushService");
 var Payload_1 = require("./Payload");
 var VortexService_1 = require("./VortexService");
 var UtilMisc_1 = require("./UtilMisc");
@@ -26,9 +26,9 @@ var tableName = "tupleActions";
 var databaseSchema = [
     "CREATE TABLE IF NOT EXISTS " + tableName + "\n     (\n        id INTEGER PRIMARY KEY AUTOINCREMENT,\n        scope TEXT,\n        uuid REAL,\n        payload TEXT,\n        UNIQUE (scope, uuid)\n     )"
 ];
-var TupleActionOfflineService = (function (_super) {
-    __extends(TupleActionOfflineService, _super);
-    function TupleActionOfflineService(tupleActionName, vortexService, vortexStatus, webSqlFactory) {
+var TupleActionPushOfflineService = (function (_super) {
+    __extends(TupleActionPushOfflineService, _super);
+    function TupleActionPushOfflineService(tupleActionName, vortexService, vortexStatus, webSqlFactory) {
         var _this = _super.call(this, tupleActionName, vortexService, vortexStatus) || this;
         _this.tableName = "tupleActions";
         _this.sendingTuple = false;
@@ -44,12 +44,12 @@ var TupleActionOfflineService = (function (_super) {
             .then(function () { return _this.sendNextAction(); });
         return _this;
     }
-    TupleActionOfflineService.prototype.pushAction = function (tupleAction) {
+    TupleActionPushOfflineService.prototype.pushAction = function (tupleAction) {
         var p = this.storeAction(tupleAction);
         this.sendNextAction();
         return p;
     };
-    TupleActionOfflineService.prototype.sendNextAction = function () {
+    TupleActionPushOfflineService.prototype.sendNextAction = function () {
         var _this = this;
         if (this.sendingTuple)
             return;
@@ -87,7 +87,7 @@ var TupleActionOfflineService = (function (_super) {
             return null; // Handle the error
         });
     };
-    TupleActionOfflineService.prototype.storeAction = function (tupleAction) {
+    TupleActionPushOfflineService.prototype.storeAction = function (tupleAction) {
         var _this = this;
         // The payload is a convenient way to serialise and compress the data
         var payloadData = new Payload_1.Payload({}, [tupleAction]).toVortexMsg();
@@ -100,7 +100,7 @@ var TupleActionOfflineService = (function (_super) {
         })
             .then(function () { return tupleAction; }); //
     };
-    TupleActionOfflineService.prototype.loadNextAction = function () {
+    TupleActionPushOfflineService.prototype.loadNextAction = function () {
         var sql = "SELECT payload\n                    FROM " + tableName + "\n                    WHERE scope = ?\n                    ORDER BY id\n                    LIMIT 1";
         var bindParams = [this.storageName];
         return this.webSql.querySql(sql, bindParams)
@@ -114,7 +114,7 @@ var TupleActionOfflineService = (function (_super) {
             return payload.tuples[0];
         });
     };
-    TupleActionOfflineService.prototype.countActions = function () {
+    TupleActionPushOfflineService.prototype.countActions = function () {
         var _this = this;
         var sql = "SELECT count(payload) as count\n                    FROM " + tableName + "\n                    WHERE scope = ?";
         var bindParams = [this.storageName];
@@ -127,7 +127,7 @@ var TupleActionOfflineService = (function (_super) {
             // Consume error
         });
     };
-    TupleActionOfflineService.prototype.deleteAction = function (actionUuid) {
+    TupleActionPushOfflineService.prototype.deleteAction = function (actionUuid) {
         var _this = this;
         var sql = "DELETE FROM " + tableName + "\n                    WHERE scope=? AND uuid=?";
         var bindParams = [this.storageName, actionUuid];
@@ -137,14 +137,14 @@ var TupleActionOfflineService = (function (_super) {
             return;
         });
     };
-    return TupleActionOfflineService;
-}(TupleActionService_1.TupleActionService));
-TupleActionOfflineService = __decorate([
+    return TupleActionPushOfflineService;
+}(TupleActionPushService_1.TupleActionPushService));
+TupleActionPushOfflineService = __decorate([
     core_1.Injectable(),
-    __metadata("design:paramtypes", [TupleActionService_1.TupleActionNameService,
+    __metadata("design:paramtypes", [TupleActionPushService_1.TupleActionPushNameService,
         VortexService_1.VortexService,
         VortexStatusService_1.VortexStatusService,
         WebSqlService_1.WebSqlFactoryService])
-], TupleActionOfflineService);
-exports.TupleActionOfflineService = TupleActionOfflineService;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/TupleActionOfflineService.js.map
+], TupleActionPushOfflineService);
+exports.TupleActionPushOfflineService = TupleActionPushOfflineService;
+//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/TupleActionPushOfflineService.js.map

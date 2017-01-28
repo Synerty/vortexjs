@@ -1,10 +1,10 @@
-import {Payload, IPayloadFilt} from "./Payload";
+import {IPayloadFilt, Payload} from "./Payload";
 import {Injectable, NgZone} from "@angular/core";
 import {Tuple} from "./Tuple";
 import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
 import {Observable} from "rxjs";
 import {PayloadEndpoint} from "./PayloadEndpoint";
-import {TupleLoader, IFilterUpdateCallable} from "./TupleLoader";
+import {IFilterUpdateCallable, TupleLoader} from "./TupleLoader";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 import {VortexStatusService} from "./VortexStatusService";
 import {VortexClientABC} from "./VortexClientABC";
@@ -46,8 +46,8 @@ export class VortexService {
     }
 
     sendTuple(filt: IPayloadFilt | string, tuples: any[] | Tuple[]): void {
-        if (typeof filt === "string"
-        ) { filt = {key: filt};
+        if (typeof filt === "string") {
+            filt = {key: filt};
         }
 
         this.sendPayload(new Payload(filt, tuples));

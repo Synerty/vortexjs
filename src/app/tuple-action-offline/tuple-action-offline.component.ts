@@ -1,6 +1,6 @@
 import {Component, OnInit} from "@angular/core";
 import {TupleAction} from "../../vortex/TupleAction";
-import {TupleActionOfflineService} from "../../vortex/TupleActionOfflineService";
+import {TupleActionPushOfflineService} from "../../vortex/TupleActionPushOfflineService";
 import {VortexStatusService} from "../../vortex/VortexStatusService";
 import {PerformTestActionTuple} from "../tuple-action/PerformTestActionTuple";
 
@@ -15,7 +15,7 @@ export class TupleActionOfflineComponent implements OnInit {
     count: number = -1;
     vortexIsOnline: boolean = false;
 
-    constructor(private tupleActionOfflineService: TupleActionOfflineService,
+    constructor(private tupleActionOfflineService: TupleActionPushOfflineService,
                 private vortexStatusService: VortexStatusService) {
 
         // TODO: Unsubscribe this
