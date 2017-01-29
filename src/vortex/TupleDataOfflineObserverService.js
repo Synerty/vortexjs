@@ -41,6 +41,16 @@ var TupleDataOfflineObserverService = (function (_super) {
         });
         return subject;
     };
+    /** Update Offline State
+     *
+     * This method updates the offline stored data, which will be used until the next
+     * update from the server comes along.
+     * @param tupleSelector: The tuple selector to update tuples for
+     * @param tuples: The new data to store
+     */
+    TupleDataOfflineObserverService.prototype.updateOfflineState = function (tupleSelector, tuples) {
+        this.tupleOfflineStorageService.saveTuples(tupleSelector, tuples);
+    };
     TupleDataOfflineObserverService.prototype.notifyObservers = function (subject, tupleSelector, tuples) {
         var _this = this;
         // Pass the data on

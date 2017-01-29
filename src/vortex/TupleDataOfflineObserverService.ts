@@ -6,8 +6,8 @@ import {TupleSelector} from "./TupleSelector";
 import {VortexStatusService} from "./VortexStatusService";
 import {TupleOfflineStorageService} from "./TupleOfflineStorageService";
 import {
-    TupleDataObserverService,
-    TupleDataObservableNameService
+    TupleDataObservableNameService,
+    TupleDataObserverService
 } from "./TupleDataObserverService";
 
 
@@ -36,8 +36,8 @@ export class TupleDataOfflineObserverService extends TupleDataObserverService {
         });
 
         this.tupleOfflineStorageService.loadTuples(tupleSelector)
-            // If the subscription is active, the server hasn't responded
-            // when we emit, it will unsubscribe.
+        // If the subscription is active, the server hasn't responded
+        // when we emit, it will unsubscribe.
             .then((tuples: Tuple[]) => subscriptionActive != null && subject.next(tuples))
             .catch(err => {
                 this.statusService.logError(`loadTuples failed : ${err}`);
@@ -45,6 +45,17 @@ export class TupleDataOfflineObserverService extends TupleDataObserverService {
             });
 
         return subject;
+    }
+
+    /** Update Offline State
+     *
+     * This method updates the offline stored data, which will be used until the next
+     * update from the server comes along.
+     * @param tupleSelector: The tuple selector to update tuples for
+     * @param tuples: The new data to store
+     */
+    updateOfflineState(tupleSelector: TupleSelector, tuples: Tuple[]): void {
+        this.tupleOfflineStorageService.saveTuples(tupleSelector, tuples);
     }
 
     protected notifyObservers(subject: Subject < Tuple[] >,
