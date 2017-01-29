@@ -42,7 +42,7 @@ export class TupleActionPushService {
 
         let convertedPromise:any = payloadResponse
             .then(payload => {
-                return payload.tuples[0];
+                return payload.tuples;
             });
         return convertedPromise;
 

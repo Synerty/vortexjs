@@ -94,7 +94,6 @@ export class TupleActionProcessorService extends ComponentLifecycleEventEmitter 
 
 
     private callback(tuples, replyFilt: {}, tupleName: string) {
-        console.log(replyFilt);
         let payload = new Payload(replyFilt, tuples);
 
         this.vortexService.sendPayload(payload);
