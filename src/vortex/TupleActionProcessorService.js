@@ -76,7 +76,7 @@ var TupleActionProcessorService = (function (_super) {
         UtilMisc_1.assert(payload.tuples.length === 1, "TupleActionProcessor:" + this.tupleActionProcessorName.name
             + ("Expected 1 tuples, received " + payload.tuples.length));
         var tupleAction = payload.tuples[0];
-        var tupleName = tupleAction.tupleSelector.name;
+        var tupleName = tupleAction._tupleName();
         var delegate = null;
         var processor = this._tupleProcessorsByTupleName[tupleName];
         if (processor != null) {

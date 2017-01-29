@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import {VortexStatusService} from "./VortexStatusService";
-import {TupleAction} from "./TupleAction";
+import {TupleActionABC} from "./TupleAction";
+import {Tuple} from "./Tuple";
 import {VortexService} from "./VortexService";
 import {PayloadResponse} from "./PayloadResponse";
 import {Payload} from "./Payload";
@@ -32,7 +33,7 @@ export class TupleActionPushService {
      * If pushed directly to the server, the promise will resolve when the server has
      * responded.
      */
-    pushAction(tupleAction: TupleAction): Promise<TupleAction> {
+    pushAction(tupleAction: TupleActionABC): Promise<Tuple[]> {
         if (!this.vortexStatus.snapshot.isOnline)
             return Promise.reject("Vortex is offline");
 
@@ -52,7 +53,7 @@ export class TupleActionPushService {
      * This make the payload that we send to the server.
      *
      */
-    protected makePayload(tupleAction: TupleAction): Payload {
+    protected makePayload(tupleAction: TupleActionABC): Payload {
 
         let payload = new Payload();
 

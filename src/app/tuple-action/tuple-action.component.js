@@ -26,7 +26,7 @@ var TupleActionComponent = (function () {
         testTuple._setChangeTracking();
         testTuple.actionDataInt = 112;
         testTuple.actionDataUnicode = "something";
-        var tupleAction = new TupleAction_1.TupleAction();
+        var tupleAction = new TupleAction_1.TupleUpdateAction();
         tupleAction.tupleSelector.name = testTuple._tupleName();
         tupleAction.tupleChanges = testTuple._detectedChanges();
         this.tupleActionService.pushAction(tupleAction)
@@ -35,8 +35,8 @@ var TupleActionComponent = (function () {
     };
     TupleActionComponent.prototype.sendFail = function () {
         var _this = this;
-        var tupleAction = new TupleAction_1.TupleAction();
-        tupleAction.tupleSelector.name = PerformTestActionTuple_1.PerformTestActionTuple.tupleName;
+        var tupleAction = new TupleAction_1.TupleGenericAction();
+        tupleAction.key = PerformTestActionTuple_1.PerformTestActionTuple.tupleName;
         tupleAction.data = "FAIL PLEASE";
         this.tupleActionService.pushAction(tupleAction)
             .then(function () { return _this.log = "SUCCESS : " + new Date(); })

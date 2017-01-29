@@ -25,7 +25,7 @@ export {
 export {TupleDataOfflineObserverService} from "./src/vortex/TupleDataOfflineObserverService";
 
 // Tuple Actions Pushers
-export {TupleAction} from "./src/vortex/TupleAction";
+export {TupleActionABC, TupleUpdateAction, TupleGenericAction} from "./src/vortex/TupleAction";
 export {
     TupleActionPushService,
     TupleActionPushNameService
@@ -42,3 +42,5 @@ export {TupleActionProcessorDelegateABC} from "./src/vortex/TupleActionProcessor
 // WebSQL
 export {WebSqlFactoryService, WebSqlService} from "./src/websql/WebSqlService";
 
+// Utility functions
+export {assert, extend} from "./src/vortex/UtilMisc";

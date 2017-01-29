@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import {VortexStatusService} from "./VortexStatusService";
-import {TupleAction} from "./TupleAction";
+import {TupleActionABC} from "./TupleAction";
+import {Tuple} from "./Tuple";
 import {WebSqlFactoryService, WebSqlService} from "../websql/WebSqlService";
 import {TupleActionPushNameService, TupleActionPushService} from "./TupleActionPushService";
 import {Payload} from "./Payload";
@@ -51,7 +52,7 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
     }
 
 
-    pushAction(tupleAction: TupleAction): Promise<TupleAction> {
+    pushAction(tupleAction: TupleActionABC): Promise<Tuple[]> {
         let p = this.storeAction(tupleAction);
         this.sendNextAction();
         return p;
@@ -109,7 +110,7 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
             });
     }
 
-    private storeAction(tupleAction: TupleAction): Promise < TupleAction > {
+    private storeAction(tupleAction: TupleActionABC): Promise < Tuple[] > {
         // The payload is a convenient way to serialise and compress the data
         let payloadData = new Payload({}, [tupleAction]).toVortexMsg();
 
@@ -123,10 +124,10 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
                 this.vortexStatus.incrementQueuedActionCount();
                 return val;
             })
-            .then(() => tupleAction); //
+            .then(() => [tupleAction]); //
     }
 
-    private loadNextAction(): Promise<TupleAction> {
+    private loadNextAction(): Promise<TupleActionABC> {
         let sql = `SELECT payload
                     FROM ${tableName}
                     WHERE scope = ?

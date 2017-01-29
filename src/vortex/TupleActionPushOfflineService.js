@@ -98,7 +98,7 @@ var TupleActionPushOfflineService = (function (_super) {
             _this.vortexStatus.incrementQueuedActionCount();
             return val;
         })
-            .then(function () { return tupleAction; }); //
+            .then(function () { return [tupleAction]; }); //
     };
     TupleActionPushOfflineService.prototype.loadNextAction = function () {
         var sql = "SELECT payload\n                    FROM " + tableName + "\n                    WHERE scope = ?\n                    ORDER BY id\n                    LIMIT 1";

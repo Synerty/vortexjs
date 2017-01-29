@@ -33,7 +33,9 @@ var TupleDataOfflineObserverService_1 = require("./src/vortex/TupleDataOfflineOb
 exports.TupleDataOfflineObserverService = TupleDataOfflineObserverService_1.TupleDataOfflineObserverService;
 // Tuple Actions Pushers
 var TupleAction_1 = require("./src/vortex/TupleAction");
-exports.TupleAction = TupleAction_1.TupleAction;
+exports.TupleActionABC = TupleAction_1.TupleActionABC;
+exports.TupleUpdateAction = TupleAction_1.TupleUpdateAction;
+exports.TupleGenericAction = TupleAction_1.TupleGenericAction;
 var TupleActionPushService_1 = require("./src/vortex/TupleActionPushService");
 exports.TupleActionPushService = TupleActionPushService_1.TupleActionPushService;
 exports.TupleActionPushNameService = TupleActionPushService_1.TupleActionPushNameService;
@@ -49,4 +51,8 @@ exports.TupleActionProcessorDelegateABC = TupleActionProcessorDelegate_1.TupleAc
 var WebSqlService_1 = require("./src/websql/WebSqlService");
 exports.WebSqlFactoryService = WebSqlService_1.WebSqlFactoryService;
 exports.WebSqlService = WebSqlService_1.WebSqlService;
+// Utility functions
+var UtilMisc_1 = require("./src/vortex/UtilMisc");
+exports.assert = UtilMisc_1.assert;
+exports.extend = UtilMisc_1.extend;
 //# sourceMappingURL=/home/peek/project/vortexjs/index.js.map

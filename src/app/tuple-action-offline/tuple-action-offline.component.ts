@@ -1,5 +1,5 @@
 import {Component, OnInit} from "@angular/core";
-import {TupleAction} from "../../vortex/TupleAction";
+import {TupleUpdateAction, TupleGenericAction} from "../../vortex/TupleAction";
 import {TupleActionPushOfflineService} from "../../vortex/TupleActionPushOfflineService";
 import {VortexStatusService} from "../../vortex/VortexStatusService";
 import {PerformTestActionTuple} from "../tuple-action/PerformTestActionTuple";
@@ -41,7 +41,7 @@ export class TupleActionOfflineComponent implements OnInit {
         testTuple.actionDataUnicode = "something";
 
 
-        let tupleAction = new TupleAction();
+        let tupleAction = new TupleUpdateAction();
         tupleAction.tupleSelector.name = testTuple._tupleName();
         tupleAction.tupleChanges = testTuple._detectedChanges();
 
@@ -52,8 +52,8 @@ export class TupleActionOfflineComponent implements OnInit {
 
     sendFail() {
 
-        let tupleAction = new TupleAction();
-        tupleAction.tupleSelector.name = PerformTestActionTuple.tupleName;
+        let tupleAction = new TupleGenericAction();
+        tupleAction.key = PerformTestActionTuple.tupleName;
         tupleAction.data = "FAIL PLEASE";
 
         this.tupleActionOfflineService.pushAction(tupleAction)

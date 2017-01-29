@@ -4,7 +4,7 @@ import {TupleActionProcessorDelegateABC} from "./TupleActionProcessorDelegate";
 import {assert, extend} from "./UtilMisc";
 import {VortexService} from "./VortexService";
 import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
-import {TupleAction} from "./TupleAction";
+import {TupleUpdateAction, TupleGenericAction} from "./TupleAction";
 import {VortexStatusService} from "./VortexStatusService";
 import {Injectable} from "@angular/core";
 
@@ -72,7 +72,7 @@ export class TupleActionProcessorService extends ComponentLifecycleEventEmitter 
 
         let tupleAction = payload.tuples[0];
 
-        let tupleName = tupleAction.tupleSelector.name;
+        let tupleName = tupleAction._tupleName();
 
         let delegate = null;
         let processor = this._tupleProcessorsByTupleName[tupleName];
