@@ -94,7 +94,6 @@ var TupleActionProcessorService = (function (_super) {
         promise.catch(function (err) { return _this.errback(err, payload.filt, tupleName); });
     };
     TupleActionProcessorService.prototype.callback = function (tuples, replyFilt, tupleName) {
-        console.log(replyFilt);
         var payload = new Payload_1.Payload(replyFilt, tuples);
         this.vortexService.sendPayload(payload);
     };

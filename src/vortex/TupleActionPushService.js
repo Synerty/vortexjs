@@ -48,7 +48,7 @@ var TupleActionPushService = (function () {
         var payloadResponse = new PayloadResponse_1.PayloadResponse(this.vortexService, this.makePayload(tupleAction));
         var convertedPromise = payloadResponse
             .then(function (payload) {
-            return payload.tuples[0];
+            return payload.tuples;
         });
         return convertedPromise;
     };
