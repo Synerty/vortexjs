@@ -11,7 +11,7 @@ declare const MozWebSocket: any;
 
 export class VortexClientWebsocket extends VortexClientABC {
 
-    private static readonly RECONNECT_BACKOFF = 5000; // Seconds
+    private static readonly RECONNECT_BACKOFF = 5000; // milliseconds
 
     private Socket = WebSocket || MozWebSocket;
     private socket: WebSocket | null = null;

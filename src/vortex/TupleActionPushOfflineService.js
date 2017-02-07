@@ -32,8 +32,10 @@ var TupleActionPushOfflineService = (function (_super) {
         var _this = _super.call(this, tupleActionName, vortexService, vortexStatus) || this;
         _this.tableName = "tupleActions";
         _this.sendingTuple = false;
+        _this.lastSendFailTime = null;
         _this.SEND_FAIL_RETRY_TIMEOUT = 5000; // milliseconds
         _this.SERVER_PROCESSING_TIMEOUT = 5000; // milliseconds
+        _this.SEND_FAIL_RETRY_BACKOFF = 5000; // milliseconds
         _this.webSql = webSqlFactory.createWebSql(datbaseName, databaseSchema);
         _this.storageName = tupleActionName.name;
         // TODO: Unsubscribe this
@@ -55,6 +57,19 @@ var TupleActionPushOfflineService = (function (_super) {
             return;
         if (!this.vortexStatus.snapshot.isOnline)
             return;
+        // Don't continually retry, if we have a last send fail, ensure we wait
+        // {SEND_FAIL_RETRY_BACKOFF} before sending again.
+        if (this.lastSendFailTime != null) {
+            var reconnectDiffMs = Date.now() - this.lastSendFailTime;
+            if (reconnectDiffMs < this.SEND_FAIL_RETRY_BACKOFF) {
+                // +10ms to ensure we're just out of the backoff time.
+                setTimeout(function () { return _this.sendNextAction(); }, this.SEND_FAIL_RETRY_BACKOFF - reconnectDiffMs + 10);
+                return;
+            }
+            else {
+                this.lastSendFailTime = null;
+            }
+        }
         this.sendingTuple = true;
         // Get the next tuple from the persistent queue
         this.loadNextAction()
@@ -80,6 +95,7 @@ var TupleActionPushOfflineService = (function (_super) {
             });
         })
             .catch(function (err) {
+            _this.lastSendFailTime = Date.now();
             var errStr = JSON.stringify(err);
             _this.vortexStatus.logError("Failed to send TupleAction : " + errStr);
             _this.sendingTuple = false;

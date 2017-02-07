@@ -29,9 +29,11 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
     private webSql: WebSqlService;
     private storageName: string;
     private sendingTuple = false;
+    private lastSendFailTime:null | number = null;
 
     private SEND_FAIL_RETRY_TIMEOUT = 5000;// milliseconds
     private SERVER_PROCESSING_TIMEOUT = 5000;// milliseconds
+    private SEND_FAIL_RETRY_BACKOFF = 5000; // milliseconds
 
     constructor(tupleActionName: TupleActionPushNameService,
                 vortexService: VortexService,
@@ -41,6 +43,7 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
 
         this.webSql = webSqlFactory.createWebSql(datbaseName, databaseSchema);
         this.storageName = tupleActionName.name;
+
 
         // TODO: Unsubscribe this
         this.vortexStatus.isOnline
@@ -64,6 +67,23 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
 
         if (!this.vortexStatus.snapshot.isOnline)
             return;
+
+            // Don't continually retry, if we have a last send fail, ensure we wait
+            // {SEND_FAIL_RETRY_BACKOFF} before sending again.
+        if (this.lastSendFailTime != null) {
+            let reconnectDiffMs = Date.now() - this.lastSendFailTime;
+
+            if (reconnectDiffMs < this.SEND_FAIL_RETRY_BACKOFF) {
+                // +10ms to ensure we're just out of the backoff time.
+                setTimeout(() => this.sendNextAction(),
+                    this.SEND_FAIL_RETRY_BACKOFF - reconnectDiffMs + 10);
+                return;
+
+            } else {
+                this.lastSendFailTime = null;
+
+            }
+        }
 
         this.sendingTuple = true;
 
@@ -102,6 +122,8 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
 
             // Or catch and handle any of the errors from either loading or sending
             .catch(err => {
+                this.lastSendFailTime = Date.now();
+
                 let errStr = JSON.stringify(err);
                 this.vortexStatus.logError(`Failed to send TupleAction : ${errStr}`);
                 this.sendingTuple = false;
