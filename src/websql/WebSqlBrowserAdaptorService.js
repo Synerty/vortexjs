@@ -24,8 +24,7 @@ var WebSqlBrowserFactoryService = (function () {
     return WebSqlBrowserFactoryService;
 }());
 WebSqlBrowserFactoryService = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [])
+    core_1.Injectable()
 ], WebSqlBrowserFactoryService);
 exports.WebSqlBrowserFactoryService = WebSqlBrowserFactoryService;
 var WDBException = (function () {

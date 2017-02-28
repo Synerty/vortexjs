@@ -25,8 +25,7 @@ var WebSqlNativeScriptFactoryService = (function () {
     return WebSqlNativeScriptFactoryService;
 }());
 WebSqlNativeScriptFactoryService = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [])
+    core_1.Injectable()
 ], WebSqlNativeScriptFactoryService);
 exports.WebSqlNativeScriptFactoryService = WebSqlNativeScriptFactoryService;
 var WebSqlNativeScriptAdaptorService = (function (_super) {

@@ -15,8 +15,7 @@ var WebSqlFactoryService = (function () {
     return WebSqlFactoryService;
 }());
 WebSqlFactoryService = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [])
+    core_1.Injectable()
 ], WebSqlFactoryService);
 exports.WebSqlFactoryService = WebSqlFactoryService;
 var WebSqlService = (function () {
