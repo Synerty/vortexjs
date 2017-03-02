@@ -25,6 +25,7 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
 
     constructor(protected vortexService: VortexService,
                 protected statusService: VortexStatusService,
+                protected zone: NgZone,
                 tupleDataObservableName: TupleDataObservableNameService) {
         super();
 
@@ -92,7 +93,7 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
     protected notifyObservers(subject: Subject<Tuple[]>,
                               tupleSelector: TupleSelector,
                               tuples: Tuple[]): void {
-        subject.next(tuples);
+        this.zone.run(() => subject.next(tuples));
     }
 
     protected tellServerWeWantData(tupleSelectors: TupleSelector[]): void {

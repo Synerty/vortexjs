@@ -13,7 +13,7 @@ var TupleLoaderEventEnum;
     TupleLoaderEventEnum[TupleLoaderEventEnum["Load"] = 0] = "Load";
     TupleLoaderEventEnum[TupleLoaderEventEnum["Save"] = 1] = "Save";
     TupleLoaderEventEnum[TupleLoaderEventEnum["Delete"] = 2] = "Delete";
-})(TupleLoaderEventEnum = exports.TupleLoaderEventEnum || (exports.TupleLoaderEventEnum = {}));
+})(TupleLoaderEventEnum || (TupleLoaderEventEnum = {}));
 /**
  * TupleLoader for Angular2 + Synerty Vortex
  *
@@ -32,11 +32,12 @@ var TupleLoaderEventEnum;
  * * "del()"
  */
 var TupleLoader = (function () {
-    function TupleLoader(vortex, component, filterUpdateCallable, balloonMsg) {
+    function TupleLoader(vortex, component, zone, filterUpdateCallable, balloonMsg) {
         if (balloonMsg === void 0) { balloonMsg = null; }
         var _this = this;
         this.vortex = vortex;
         this.component = component;
+        this.zone = zone;
         this.balloonMsg = balloonMsg;
         this.lastPayloadFilt = null;
         this.lastTuples = null;
@@ -201,6 +202,7 @@ var TupleLoader = (function () {
         return promise;
     };
     TupleLoader.prototype.processPayload = function (payload) {
+        var _this = this;
         if (this.timer) {
             clearTimeout(this.timer);
             this.timer = null;
@@ -242,7 +244,7 @@ var TupleLoader = (function () {
             this.lastPromise = null;
         }
         this.lastTuples = payload.tuples;
-        this.observer.next(payload.tuples);
+        this.zone.run(function () { return _this.observer.next(payload.tuples); });
     };
     TupleLoader.prototype.resetTimer = function () {
         this.operationTimeout(false);

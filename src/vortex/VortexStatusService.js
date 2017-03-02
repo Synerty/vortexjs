@@ -16,7 +16,8 @@ var logDebug = console.debug ? UtilMisc_1.bind(console, console.debug) : UtilMis
 var logInfo = UtilMisc_1.bind(console, console.log);
 var logError = console.error ? UtilMisc_1.bind(console, console.error) : UtilMisc_1.bind(console, console.log);
 var VortexStatusService = (function () {
-    function VortexStatusService() {
+    function VortexStatusService(zone) {
+        this.zone = zone;
         this.isOnline = new Subject_1.Subject();
         this.info = new Subject_1.Subject();
         this.errors = new Subject_1.Subject();
@@ -35,11 +36,14 @@ var VortexStatusService = (function () {
         configurable: true
     });
     VortexStatusService.prototype.setOnline = function (online) {
+        var _this = this;
         if (online === this.wasOnline)
             return;
         logDebug(UtilMisc_1.dateStr() + "Vortex Status - online: " + online);
         this.wasOnline = online;
-        this.isOnline.next(online);
+        this.zone.run(function () {
+            _this.isOnline.next(online);
+        });
     };
     VortexStatusService.prototype.incrementQueuedActionCount = function () {
         this.setQueuedActionCount(this.lastQueuedTupleActions + 1);
@@ -48,24 +52,33 @@ var VortexStatusService = (function () {
         this.setQueuedActionCount(this.lastQueuedTupleActions - 1);
     };
     VortexStatusService.prototype.setQueuedActionCount = function (count) {
+        var _this = this;
         if (count === this.lastQueuedTupleActions)
             return;
         this.lastQueuedTupleActions = count;
-        this.queuedActionCount.next(count);
+        this.zone.run(function () {
+            _this.queuedActionCount.next(count);
+        });
     };
     VortexStatusService.prototype.logInfo = function (message) {
+        var _this = this;
         logInfo(UtilMisc_1.dateStr() + "Vortex Status - info: " + message);
-        this.info.next(message);
+        this.zone.run(function () {
+            _this.info.next(message);
+        });
     };
     VortexStatusService.prototype.logError = function (message) {
+        var _this = this;
         logError(UtilMisc_1.dateStr() + "Vortex Status - error: " + message);
-        this.errors.next(message);
+        this.zone.run(function () {
+            _this.errors.next(message);
+        });
     };
     return VortexStatusService;
 }());
 VortexStatusService = __decorate([
     core_1.Injectable(),
-    __metadata("design:paramtypes", [])
+    __metadata("design:paramtypes", [core_1.NgZone])
 ], VortexStatusService);
 exports.VortexStatusService = VortexStatusService;
 //# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/VortexStatusService.js.map

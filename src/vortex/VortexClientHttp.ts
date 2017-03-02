@@ -21,8 +21,9 @@ export class VortexClientHttp extends VortexClientABC {
      * the server.
      */
     constructor(vortexStatusService: VortexStatusService,
+                zone: NgZone,
                 url: string) {
-        super(vortexStatusService, url);
+        super(vortexStatusService, zone, url);
 
     }
 

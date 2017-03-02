@@ -13,8 +13,8 @@ var VortexClientHttp = (function (_super) {
      * RapUI VortexService, This class is responsible for sending and receiving payloads to/from
      * the server.
      */
-    function VortexClientHttp(vortexStatusService, url) {
-        return _super.call(this, vortexStatusService, url) || this;
+    function VortexClientHttp(vortexStatusService, zone, url) {
+        return _super.call(this, vortexStatusService, zone, url) || this;
     }
     VortexClientHttp.prototype.sendPayloads = function (payloads) {
         var _this = this;

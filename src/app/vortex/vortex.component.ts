@@ -14,13 +14,14 @@ export class VortexComponent implements OnInit {
     webSocketService: VortexService;
 
     constructor(private statusService: VortexStatusService,
+                private zone: NgZone,
                 private balloonMsg: Ng2BalloonMsgService) {
 
-        this.httpService = new VortexService(statusService, balloonMsg);
+        this.httpService = new VortexService(statusService, zone, balloonMsg);
 
         let host = location.host.split(':')[0];
         VortexService.setVortexUrl(`ws://${host}:8344`);
-        this.webSocketService = new VortexService(statusService, balloonMsg);
+        this.webSocketService = new VortexService(statusService, zone, balloonMsg);
     }
 
     ngOnInit() {

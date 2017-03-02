@@ -1,3 +1,4 @@
+import { NgZone } from "@angular/core";
 import { Subject } from "rxjs";
 import { VortexService } from "./VortexService";
 import { Tuple } from "./Tuple";
@@ -7,7 +8,7 @@ import { TupleOfflineStorageService } from "./TupleOfflineStorageService";
 import { TupleDataObservableNameService, TupleDataObserverService } from "./TupleDataObserverService";
 export declare class TupleDataOfflineObserverService extends TupleDataObserverService {
     private tupleOfflineStorageService;
-    constructor(vortexService: VortexService, vortexStatusService: VortexStatusService, tupleDataObservableName: TupleDataObservableNameService, tupleOfflineStorageService: TupleOfflineStorageService);
+    constructor(vortexService: VortexService, vortexStatusService: VortexStatusService, zone: NgZone, tupleDataObservableName: TupleDataObservableNameService, tupleOfflineStorageService: TupleOfflineStorageService);
     subscribeToTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]>;
     /** Update Offline State
      *

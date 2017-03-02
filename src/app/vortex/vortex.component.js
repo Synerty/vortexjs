@@ -13,13 +13,14 @@ var VortexService_1 = require("../../vortex/VortexService");
 var ng2_balloon_msg_1 = require("@synerty/ng2-balloon-msg");
 var VortexStatusService_1 = require("../../vortex/VortexStatusService");
 var VortexComponent = (function () {
-    function VortexComponent(statusService, balloonMsg) {
+    function VortexComponent(statusService, zone, balloonMsg) {
         this.statusService = statusService;
+        this.zone = zone;
         this.balloonMsg = balloonMsg;
-        this.httpService = new VortexService_1.VortexService(statusService, balloonMsg);
+        this.httpService = new VortexService_1.VortexService(statusService, zone, balloonMsg);
         var host = location.host.split(':')[0];
         VortexService_1.VortexService.setVortexUrl("ws://" + host + ":8344");
-        this.webSocketService = new VortexService_1.VortexService(statusService, balloonMsg);
+        this.webSocketService = new VortexService_1.VortexService(statusService, zone, balloonMsg);
     }
     VortexComponent.prototype.ngOnInit = function () {
     };
@@ -42,6 +43,7 @@ VortexComponent = __decorate([
         styleUrls: ['./vortex.component.css']
     }),
     __metadata("design:paramtypes", [VortexStatusService_1.VortexStatusService,
+        core_1.NgZone,
         ng2_balloon_msg_1.Ng2BalloonMsgService])
 ], VortexComponent);
 exports.VortexComponent = VortexComponent;
