@@ -1,5 +1,4 @@
 import { IPayloadFilt, Payload } from "./Payload";
-import { NgZone } from "@angular/core";
 import { Tuple } from "./Tuple";
 import { ComponentLifecycleEventEmitter } from "./ComponentLifecycleEventEmitter";
 import { Observable } from "rxjs";
@@ -9,11 +8,10 @@ import { Ng2BalloonMsgService } from "@synerty/ng2-balloon-msg";
 import { VortexStatusService } from "./VortexStatusService";
 export declare class VortexService {
     private vortexStatusService;
-    private zone;
     private balloonMsg;
     private vortex;
     private static vortexUrl;
-    constructor(vortexStatusService: VortexStatusService, zone: NgZone, balloonMsg: Ng2BalloonMsgService);
+    constructor(vortexStatusService: VortexStatusService, balloonMsg: Ng2BalloonMsgService);
     /**
      * Set Vortex URL
      *

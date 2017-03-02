@@ -38,11 +38,10 @@ TupleDataObservableNameService = __decorate([
 exports.TupleDataObservableNameService = TupleDataObservableNameService;
 var TupleDataObserverService = (function (_super) {
     __extends(TupleDataObserverService, _super);
-    function TupleDataObserverService(vortexService, statusService, zone, tupleDataObservableName) {
+    function TupleDataObserverService(vortexService, statusService, tupleDataObservableName) {
         var _this = _super.call(this) || this;
         _this.vortexService = vortexService;
         _this.statusService = statusService;
-        _this.zone = zone;
         _this.subjectsByTupleSelector = {};
         _this.filt = UtilMisc_1.extend({
             "name": tupleDataObservableName.name,
@@ -92,7 +91,7 @@ var TupleDataObserverService = (function (_super) {
         this.notifyObservers(subject, tupleSelector, payload.tuples);
     };
     TupleDataObserverService.prototype.notifyObservers = function (subject, tupleSelector, tuples) {
-        this.zone.run(function () { return subject.next(tuples); });
+        subject.next(tuples);
     };
     TupleDataObserverService.prototype.tellServerWeWantData = function (tupleSelectors) {
         var startFilt = UtilMisc_1.extend({ "subscribe": true }, this.filt);
@@ -112,7 +111,6 @@ TupleDataObserverService = __decorate([
     core_1.Injectable(),
     __metadata("design:paramtypes", [VortexService_1.VortexService,
         VortexStatusService_1.VortexStatusService,
-        core_1.NgZone,
         TupleDataObservableNameService])
 ], TupleDataObserverService);
 exports.TupleDataObserverService = TupleDataObserverService;

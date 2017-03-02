@@ -28,7 +28,6 @@ export abstract class VortexClientABC {
      * the server.
      */
     constructor(protected vortexStatusService: VortexStatusService,
-                private zone: NgZone,
                 url: string) {
         this._uuid = VortexClientABC.makeUuid();
         this._name = "browser";
@@ -143,9 +142,7 @@ export abstract class VortexClientABC {
         // console.log(dateStr() + "Received payload with filt : " + JSON.stringify(payload.filt));
 
         // TODO, Tell the payloadIO the vortexUuid
-        this.zone.run(() => {
-            payloadIO.process(payload);
-        });
+        payloadIO.process(payload);
     }
 
 

@@ -13,9 +13,8 @@ var VortexClientABC = (function () {
      * RapUI VortexService, This class is responsible for sending and receiving payloads to/from
      * the server.
      */
-    function VortexClientABC(vortexStatusService, zone, url) {
+    function VortexClientABC(vortexStatusService, url) {
         this.vortexStatusService = vortexStatusService;
-        this.zone = zone;
         this.beatTimer = null;
         this.serverVortexUuid = null;
         this.serverVortexName = null;
@@ -124,9 +123,7 @@ var VortexClientABC = (function () {
         }
         // console.log(dateStr() + "Received payload with filt : " + JSON.stringify(payload.filt));
         // TODO, Tell the payloadIO the vortexUuid
-        this.zone.run(function () {
-            PayloadIO_1.payloadIO.process(payload);
-        });
+        PayloadIO_1.payloadIO.process(payload);
     };
     return VortexClientABC;
 }());

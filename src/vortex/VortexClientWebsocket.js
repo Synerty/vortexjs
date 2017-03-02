@@ -9,8 +9,8 @@ var VortexClientABC_1 = require("./VortexClientABC");
 var UtilMisc_1 = require("./UtilMisc");
 var VortexClientWebsocket = (function (_super) {
     __extends(VortexClientWebsocket, _super);
-    function VortexClientWebsocket(vortexStatusService, zone, url) {
-        var _this = _super.call(this, vortexStatusService, zone, url) || this;
+    function VortexClientWebsocket(vortexStatusService, url) {
+        var _this = _super.call(this, vortexStatusService, url) || this;
         _this.Socket = WebSocket || MozWebSocket;
         _this.socket = null;
         _this.lastReconnectDate = Date.parse("01-Jan-2017");

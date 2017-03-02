@@ -1,4 +1,3 @@
-import { NgZone } from "@angular/core";
 import { Subject } from "rxjs";
 import { VortexService } from "./VortexService";
 import { Tuple } from "./Tuple";
@@ -15,13 +14,12 @@ export declare class TupleDataObservableNameService {
 export declare class TupleDataObserverService extends ComponentLifecycleEventEmitter {
     protected vortexService: VortexService;
     protected statusService: VortexStatusService;
-    protected zone: NgZone;
     protected endpoint: PayloadEndpoint;
     protected filt: IPayloadFilt;
     protected subjectsByTupleSelector: {
         [tupleSelector: string]: Subject<Tuple[]>;
     };
-    constructor(vortexService: VortexService, statusService: VortexStatusService, zone: NgZone, tupleDataObservableName: TupleDataObservableNameService);
+    constructor(vortexService: VortexService, statusService: VortexStatusService, tupleDataObservableName: TupleDataObservableNameService);
     pollForTuples(tupleSelector: TupleSelector): Promise<Tuple[]>;
     subscribeToTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]>;
     protected vortexOnlineChanged(): void;

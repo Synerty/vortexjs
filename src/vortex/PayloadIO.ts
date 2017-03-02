@@ -2,7 +2,7 @@ import {PayloadEndpoint} from "./PayloadEndpoint";
 
 export let STOP_PROCESSING = "STOP_PROCESSING";
 
-class PayloadIO {
+export class PayloadIO {
     private _endpoints: PayloadEndpoint[];
 
     constructor() {

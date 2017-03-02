@@ -16,10 +16,9 @@ export class TupleDataOfflineObserverService extends TupleDataObserverService {
 
     constructor(vortexService: VortexService,
                 vortexStatusService: VortexStatusService,
-                zone: NgZone,
                 tupleDataObservableName: TupleDataObservableNameService,
                 private tupleOfflineStorageService: TupleOfflineStorageService) {
-        super(vortexService, vortexStatusService, zone, tupleDataObservableName);
+        super(vortexService, vortexStatusService, tupleDataObservableName);
 
     }
 

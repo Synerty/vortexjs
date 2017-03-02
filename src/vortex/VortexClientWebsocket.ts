@@ -22,9 +22,8 @@ export class VortexClientWebsocket extends VortexClientABC {
     private sentBuffer: Payload[] = [];
 
     constructor(vortexStatusService: VortexStatusService,
-                zone: NgZone,
                 url: string) {
-        super(vortexStatusService, zone, url);
+        super(vortexStatusService, url);
 
     }
 

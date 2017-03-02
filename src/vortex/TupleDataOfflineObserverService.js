@@ -20,8 +20,8 @@ var TupleOfflineStorageService_1 = require("./TupleOfflineStorageService");
 var TupleDataObserverService_1 = require("./TupleDataObserverService");
 var TupleDataOfflineObserverService = (function (_super) {
     __extends(TupleDataOfflineObserverService, _super);
-    function TupleDataOfflineObserverService(vortexService, vortexStatusService, zone, tupleDataObservableName, tupleOfflineStorageService) {
-        var _this = _super.call(this, vortexService, vortexStatusService, zone, tupleDataObservableName) || this;
+    function TupleDataOfflineObserverService(vortexService, vortexStatusService, tupleDataObservableName, tupleOfflineStorageService) {
+        var _this = _super.call(this, vortexService, vortexStatusService, tupleDataObservableName) || this;
         _this.tupleOfflineStorageService = tupleOfflineStorageService;
         return _this;
     }
@@ -68,7 +68,6 @@ TupleDataOfflineObserverService = __decorate([
     core_1.Injectable(),
     __metadata("design:paramtypes", [VortexService_1.VortexService,
         VortexStatusService_1.VortexStatusService,
-        core_1.NgZone,
         TupleDataObserverService_1.TupleDataObservableNameService,
         TupleOfflineStorageService_1.TupleOfflineStorageService])
 ], TupleDataOfflineObserverService);

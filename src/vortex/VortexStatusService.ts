@@ -21,7 +21,7 @@ export class VortexStatusService {
 
     private wasOnline: boolean = false;
 
-    constructor(private zone: NgZone) {
+    constructor() {
 
     }
 
@@ -39,9 +39,7 @@ export class VortexStatusService {
         logDebug(dateStr() + "Vortex Status - online: " + online);
 
         this.wasOnline = online;
-        this.zone.run(() => {
-            this.isOnline.next(online);
-        });
+        this.isOnline.next(online);
     }
 
 
@@ -61,23 +59,17 @@ export class VortexStatusService {
             return;
 
         this.lastQueuedTupleActions = count;
-        this.zone.run(() => {
             this.queuedActionCount.next(count);
-        });
     }
 
     logInfo(message: string) {
         logInfo(dateStr() + "Vortex Status - info: " + message);
-        this.zone.run(() => {
-            this.info.next(message);
-        });
+        this.info.next(message);
     }
 
     logError(message: string) {
         logError(dateStr() + "Vortex Status - error: " + message);
-        this.zone.run(() => {
-            this.errors.next(message);
-        });
+        this.errors.next(message);
     }
 
 }

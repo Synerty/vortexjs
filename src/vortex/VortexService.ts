@@ -17,16 +17,15 @@ export class VortexService {
     private static vortexUrl: string = '/vortex';
 
     constructor(private vortexStatusService: VortexStatusService,
-                private zone: NgZone,
                 private balloonMsg: Ng2BalloonMsgService) {
         //
 
         if (VortexService.vortexUrl.toLowerCase().startsWith("ws")) {
             this.vortex = new VortexClientWebsocket(
-                vortexStatusService, zone, VortexService.vortexUrl);
+                vortexStatusService, VortexService.vortexUrl);
         } else {
             this.vortex = new VortexClientHttp(
-                vortexStatusService, zone, VortexService.vortexUrl);
+                vortexStatusService, VortexService.vortexUrl);
         }
     }
 
@@ -79,7 +78,6 @@ export class VortexService {
                       filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt) {
         return new TupleLoader(this.vortex,
             component,
-            this.zone,
             filterUpdateCallable,
             this.balloonMsg
         );

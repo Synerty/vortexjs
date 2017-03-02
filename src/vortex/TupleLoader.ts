@@ -13,7 +13,7 @@ import {bind, extend, deepEqual} from "./UtilMisc";
 // ------------------
 // Some private structures
 
-enum TupleLoaderEventEnum {
+export enum TupleLoaderEventEnum {
     Load,
     Save,
     Delete
@@ -77,7 +77,6 @@ export class TupleLoader {
 
     constructor(private vortex: VortexClientABC,
                 private component: ComponentLifecycleEventEmitter,
-                private zone: NgZone,
                 filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt,
                 private balloonMsg: Ng2BalloonMsgService | null = null) {
 
@@ -306,7 +305,7 @@ export class TupleLoader {
         }
 
         this.lastTuples = payload.tuples;
-        this.zone.run(() => this.observer.next(payload.tuples));
+        this.observer.next(payload.tuples);
     }
 
     private resetTimer(): void {

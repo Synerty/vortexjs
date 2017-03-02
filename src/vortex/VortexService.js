@@ -17,16 +17,15 @@ var VortexStatusService_1 = require("./VortexStatusService");
 var VortexClientHttp_1 = require("./VortexClientHttp");
 var VortexClientWebsocket_1 = require("./VortexClientWebsocket");
 var VortexService = VortexService_1 = (function () {
-    function VortexService(vortexStatusService, zone, balloonMsg) {
+    function VortexService(vortexStatusService, balloonMsg) {
         //
         this.vortexStatusService = vortexStatusService;
-        this.zone = zone;
         this.balloonMsg = balloonMsg;
         if (VortexService_1.vortexUrl.toLowerCase().startsWith("ws")) {
-            this.vortex = new VortexClientWebsocket_1.VortexClientWebsocket(vortexStatusService, zone, VortexService_1.vortexUrl);
+            this.vortex = new VortexClientWebsocket_1.VortexClientWebsocket(vortexStatusService, VortexService_1.vortexUrl);
         }
         else {
-            this.vortex = new VortexClientHttp_1.VortexClientHttp(vortexStatusService, zone, VortexService_1.vortexUrl);
+            this.vortex = new VortexClientHttp_1.VortexClientHttp(vortexStatusService, VortexService_1.vortexUrl);
         }
     }
     /**
@@ -64,7 +63,7 @@ var VortexService = VortexService_1 = (function () {
         return new PayloadEndpoint_1.PayloadEndpoint(component, filter, processLatestOnly);
     };
     VortexService.prototype.createTupleLoader = function (component, filterUpdateCallable) {
-        return new TupleLoader_1.TupleLoader(this.vortex, component, this.zone, filterUpdateCallable, this.balloonMsg);
+        return new TupleLoader_1.TupleLoader(this.vortex, component, filterUpdateCallable, this.balloonMsg);
     };
     return VortexService;
 }());
@@ -72,7 +71,6 @@ VortexService.vortexUrl = '/vortex';
 VortexService = VortexService_1 = __decorate([
     core_1.Injectable(),
     __metadata("design:paramtypes", [VortexStatusService_1.VortexStatusService,
-        core_1.NgZone,
         ng2_balloon_msg_1.Ng2BalloonMsgService])
 ], VortexService);
 exports.VortexService = VortexService;
