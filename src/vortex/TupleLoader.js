@@ -13,7 +13,7 @@ var TupleLoaderEventEnum;
     TupleLoaderEventEnum[TupleLoaderEventEnum["Load"] = 0] = "Load";
     TupleLoaderEventEnum[TupleLoaderEventEnum["Save"] = 1] = "Save";
     TupleLoaderEventEnum[TupleLoaderEventEnum["Delete"] = 2] = "Delete";
-})(TupleLoaderEventEnum || (TupleLoaderEventEnum = {}));
+})(TupleLoaderEventEnum = exports.TupleLoaderEventEnum || (exports.TupleLoaderEventEnum = {}));
 /**
  * TupleLoader for Angular2 + Synerty Vortex
  *

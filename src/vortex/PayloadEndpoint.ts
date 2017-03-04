@@ -1,14 +1,13 @@
 import {payloadIO} from "./PayloadIO";
-import {Payload, IPayloadFilt} from "./Payload";
+import {IPayloadFilt, Payload} from "./Payload";
 import {assert, dictKeysFromObject} from "./UtilMisc";
 import "./UtilArray";
 import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
-import {Observer, Observable, Subject} from "rxjs"; // Ensure it's included and defined
+import {Subject} from "rxjs"; // Ensure it's included and defined
 
 
 export class PayloadEndpoint {
-    private _observable: Observable<Payload>;
-    private _observer: Observer<Payload>;
+    private _observable: Subject<Payload>;
 
     private _filt: { key: string };
     private _lastPayloadDate: Date | null;
@@ -23,7 +22,7 @@ export class PayloadEndpoint {
         self._lastPayloadDate = null;
         self._processLatestOnly = processLatestOnly === true;
 
-        assert(self._filt != null, "Payload filter is null");
+        assert(self._filt != null, 'Payload filter is null');
 
         if (self._filt.key == null) {
             let e = new Error(`There is no 'key' in the payload filt \
@@ -62,7 +61,7 @@ export class PayloadEndpoint {
         if (!this.checkDate(payload))
             return null;
 
-        this._observer.next(payload);
+        this._observable.next(payload);
 
         return null;
     };
@@ -119,7 +118,7 @@ export class PayloadEndpoint {
         payloadIO.remove(self);
         if (this._observable['observers'] != null) {
             for (let observer of this._observable['observers']) {
-                observer.unsubscribe();
+                observer["unsubscribe"]();
             }
         }
     };

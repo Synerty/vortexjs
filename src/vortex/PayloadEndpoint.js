@@ -11,7 +11,7 @@ var PayloadEndpoint = (function () {
         self._filt = filter;
         self._lastPayloadDate = null;
         self._processLatestOnly = processLatestOnly === true;
-        UtilMisc_1.assert(self._filt != null, "Payload filter is null");
+        UtilMisc_1.assert(self._filt != null, 'Payload filter is null');
         if (self._filt.key == null) {
             var e = new Error("There is no 'key' in the payload filt                 , There must be one for routing - " + JSON.stringify(self._filt));
             console.log(e);
@@ -23,10 +23,7 @@ var PayloadEndpoint = (function () {
             _this.shutdown();
             subscription.unsubscribe();
         });
-        this._observable = rxjs_1.Observable.create(function (observer) { return _this._observer = observer; });
-        // Call subscribe, otherwise the observer is never created, and we can never call
-        // next() on it.
-        this._observable.subscribe().unsubscribe();
+        this._observable = new rxjs_1.Subject();
     }
     Object.defineProperty(PayloadEndpoint.prototype, "observable", {
         get: function () {
@@ -47,7 +44,7 @@ var PayloadEndpoint = (function () {
             return null;
         if (!this.checkDate(payload))
             return null;
-        this._observer.next(payload);
+        this._observable.next(payload);
         return null;
     };
     ;
@@ -96,7 +93,7 @@ var PayloadEndpoint = (function () {
         if (this._observable['observers'] != null) {
             for (var _i = 0, _a = this._observable['observers']; _i < _a.length; _i++) {
                 var observer = _a[_i];
-                observer.unsubscribe();
+                observer["unsubscribe"]();
             }
         }
     };

@@ -13,7 +13,7 @@ import {bind, extend, deepEqual} from "./UtilMisc";
 // ------------------
 // Some private structures
 
-enum TupleLoaderEventEnum {
+export enum TupleLoaderEventEnum {
     Load,
     Save,
     Delete

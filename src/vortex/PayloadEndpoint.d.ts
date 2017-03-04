@@ -1,15 +1,14 @@
-import { Payload, IPayloadFilt } from "./Payload";
+import { IPayloadFilt, Payload } from "./Payload";
 import "./UtilArray";
 import { ComponentLifecycleEventEmitter } from "./ComponentLifecycleEventEmitter";
-import { Observable } from "rxjs";
+import { Subject } from "rxjs";
 export declare class PayloadEndpoint {
     private _observable;
-    private _observer;
     private _filt;
     private _lastPayloadDate;
     private _processLatestOnly;
     constructor(component: ComponentLifecycleEventEmitter, filter: IPayloadFilt, processLatestOnly?: boolean);
-    readonly observable: Observable<Payload>;
+    readonly observable: Subject<Payload>;
     /**
      * Process Payload
      * Check if the payload is meant for us then process it.
