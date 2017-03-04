@@ -3,7 +3,7 @@ import {Payload, IPayloadFilt} from "./Payload";
 import {assert, dictKeysFromObject} from "./UtilMisc";
 import "./UtilArray";
 import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
-import {Observer, Observable} from "rxjs"; // Ensure it's included and defined
+import {Observer, Observable, Subject} from "rxjs"; // Ensure it's included and defined
 
 
 export class PayloadEndpoint {
@@ -41,11 +41,7 @@ export class PayloadEndpoint {
             }
         );
 
-        this._observable = Observable.create(observer => this._observer = observer);
-
-        // Call subscribe, otherwise the observer is never created, and we can never call
-        // next() on it.
-        this._observable.subscribe().unsubscribe();
+        this._observable = new Subject<Payload>();
     }
 
     get observable() {
