@@ -56,6 +56,7 @@ export class TupleDataOfflineObserverService extends TupleDataObserverService {
      */
     updateOfflineState(tupleSelector: TupleSelector, tuples: Tuple[]): void {
         this.tupleOfflineStorageService.saveTuples(tupleSelector, tuples);
+        this.subjectForTupleSelector(tupleSelector).next(tuples);
     }
 
     protected notifyObservers(subject: Subject < Tuple[] >,

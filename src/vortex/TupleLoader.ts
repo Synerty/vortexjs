@@ -20,9 +20,9 @@ export enum TupleLoaderEventEnum {
 }
 
 interface IPromiseCallbacks {
-    type: TupleLoaderEventEnum,
-    resolve: any,
-    reject: any
+    type: TupleLoaderEventEnum;
+    resolve: any;
+    reject: any;
 }
 
 /**

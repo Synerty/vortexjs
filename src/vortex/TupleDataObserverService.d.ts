@@ -23,6 +23,7 @@ export declare class TupleDataObserverService extends ComponentLifecycleEventEmi
     };
     constructor(vortexService: VortexService, statusService: VortexStatusService, zone: NgZone, tupleDataObservableName: TupleDataObservableNameService);
     pollForTuples(tupleSelector: TupleSelector): Promise<Tuple[]>;
+    protected subjectForTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]>;
     subscribeToTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]>;
     protected vortexOnlineChanged(): void;
     protected receivePayload(payload: any): void;

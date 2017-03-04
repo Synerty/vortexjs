@@ -57,7 +57,7 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
         return promise;
     }
 
-    subscribeToTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]> {
+    protected subjectForTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]> {
 
         let tsStr = tupleSelector.toOrderedJsonStr();
         if (this.subjectsByTupleSelector.hasOwnProperty(tsStr))
@@ -66,8 +66,12 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
         let newSubject = new Subject<Tuple[]>();
         this.subjectsByTupleSelector[tsStr] = newSubject;
 
-        this.tellServerWeWantData([tupleSelector]);
+        return newSubject;
+    }
 
+    subscribeToTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]> {
+        let newSubject = this.subjectForTupleSelector(tupleSelector);
+        this.tellServerWeWantData([tupleSelector]);
         return newSubject;
     }
 

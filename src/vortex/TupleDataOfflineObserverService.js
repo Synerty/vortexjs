@@ -50,6 +50,7 @@ var TupleDataOfflineObserverService = (function (_super) {
      */
     TupleDataOfflineObserverService.prototype.updateOfflineState = function (tupleSelector, tuples) {
         this.tupleOfflineStorageService.saveTuples(tupleSelector, tuples);
+        this.subjectForTupleSelector(tupleSelector).next(tuples);
     };
     TupleDataOfflineObserverService.prototype.notifyObservers = function (subject, tupleSelector, tuples) {
         var _this = this;

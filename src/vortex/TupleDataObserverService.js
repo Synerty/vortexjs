@@ -66,12 +66,16 @@ var TupleDataObserverService = (function (_super) {
             .then(function (payload) { return payload.tuples; });
         return promise;
     };
-    TupleDataObserverService.prototype.subscribeToTupleSelector = function (tupleSelector) {
+    TupleDataObserverService.prototype.subjectForTupleSelector = function (tupleSelector) {
         var tsStr = tupleSelector.toOrderedJsonStr();
         if (this.subjectsByTupleSelector.hasOwnProperty(tsStr))
             return this.subjectsByTupleSelector[tsStr];
         var newSubject = new rxjs_1.Subject();
         this.subjectsByTupleSelector[tsStr] = newSubject;
+        return newSubject;
+    };
+    TupleDataObserverService.prototype.subscribeToTupleSelector = function (tupleSelector) {
+        var newSubject = this.subjectForTupleSelector(tupleSelector);
         this.tellServerWeWantData([tupleSelector]);
         return newSubject;
     };
