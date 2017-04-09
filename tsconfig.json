@@ -3,7 +3,7 @@
   "allowUnreachableCode": true,
   "compilerOptions": {
     "baseUrl": "",
-    "declaration": true,
+    "declaration": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames":true,
