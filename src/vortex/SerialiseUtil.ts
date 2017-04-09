@@ -28,7 +28,8 @@ export default class SerialiseUtil {
     public static readonly ISO8601 = "%Y-%m-%d %H:%M:%S.%f";
 
 
-    protected __rapuiSerialiseType__: string;
+    // Rapui Serialised Type -  Shortened for memory constraints.
+    protected __rst: string;
 
     toStr(obj: any): string {
         let self = this;

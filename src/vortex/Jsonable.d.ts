@@ -6,7 +6,6 @@ import "./UtilString";
  * ###############################################################################
  */
 export default class Jsonable extends SerialiseUtil {
-    private __isJsonable;
     protected _tupleType: string;
     static readonly JSON_CLASS_TYPE: string;
     private static readonly JSON_TUPLE_TYPE;

@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 require("./polyfills.ts");
 require("zone.js/dist/long-stack-trace-zone");
 require("zone.js/dist/proxy.js");

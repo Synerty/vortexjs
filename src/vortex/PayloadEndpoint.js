@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var PayloadIO_1 = require("./PayloadIO");
 var UtilMisc_1 = require("./UtilMisc");
 require("./UtilArray");

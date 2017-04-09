@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var VortexClientABC_1 = require("./VortexClientABC");
 var UtilMisc_1 = require("./UtilMisc");
 var ComponentLifecycleEventEmitter_1 = require("./ComponentLifecycleEventEmitter");

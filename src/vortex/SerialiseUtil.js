@@ -4,6 +4,7 @@
  * ###############################################################################
  */
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var UtilMisc_1 = require("./UtilMisc");
 var SerialiseUtil = (function () {
     function SerialiseUtil() {
@@ -122,6 +123,5 @@ SerialiseUtil.V_NULL = "null";
 SerialiseUtil.V_TRUE = "1";
 SerialiseUtil.V_FALSE = "0";
 SerialiseUtil.ISO8601 = "%Y-%m-%d %H:%M:%S.%f";
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = SerialiseUtil;
 //# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/SerialiseUtil.js.map

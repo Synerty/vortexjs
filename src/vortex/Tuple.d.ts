@@ -16,8 +16,8 @@ export interface TupleChangeI {
  */
 export declare class Tuple extends Jsonable {
     _tupleType: string;
-    private _changeTracking;
-    private _changeTrackingReferenceState;
+    private _ct;
+    private _ctrs;
     constructor(tupleType?: string | null);
     _tupleName(): string;
     _setChangeTracking(on?: boolean): void;

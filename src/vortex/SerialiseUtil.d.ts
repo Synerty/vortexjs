@@ -14,7 +14,7 @@ export default class SerialiseUtil {
     static readonly V_TRUE: string;
     static readonly V_FALSE: string;
     static readonly ISO8601: string;
-    protected __rapuiSerialiseType__: string;
+    protected __rst: string;
     toStr(obj: any): string;
     fromStr(val: string, typeName: string): any;
     toRapuiType(value: any): string;

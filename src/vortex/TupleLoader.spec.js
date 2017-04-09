@@ -1,5 +1,6 @@
 /* tslint:disable:no-unused-variable */
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 //
 // describe('TupleLoader', () => {
 //   beforeEach(() => {

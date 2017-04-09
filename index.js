@@ -2,6 +2,7 @@
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
+Object.defineProperty(exports, "__esModule", { value: true });
 var VortexService_1 = require("./src/vortex/VortexService");
 exports.VortexService = VortexService_1.VortexService;
 var VortexStatusService_1 = require("./src/vortex/VortexStatusService");

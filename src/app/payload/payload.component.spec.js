@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /* tslint:disable:no-unused-variable */
 var testing_1 = require("@angular/core/testing");
 var VortexService_1 = require("../../vortex/VortexService");

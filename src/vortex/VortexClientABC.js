@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Payload_1 = require("./Payload");
 var UtilMisc_1 = require("./UtilMisc");
 var PayloadFilterKeys_1 = require("./PayloadFilterKeys");

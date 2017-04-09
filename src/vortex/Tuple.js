@@ -1,9 +1,15 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 var SerialiseUtil_1 = require("./SerialiseUtil");
 var Jsonable_1 = require("./Jsonable");
 var UtilMisc_1 = require("./UtilMisc");
@@ -22,10 +28,12 @@ var Tuple = (function (_super) {
     function Tuple(tupleType) {
         if (tupleType === void 0) { tupleType = null; }
         var _this = _super.call(this) || this;
-        _this._changeTracking = false;
-        _this._changeTrackingReferenceState = null;
+        // Change Tracking Enabled - Shortened for memory conservation
+        _this._ct = false;
+        // Change Tracking Reference State - Shortened for memory conservation
+        _this._ctrs = null;
         var self = _this;
-        self.__rapuiSerialiseType__ = SerialiseUtil_1.default.T_RAPUI_TUPLE;
+        self.__rst = SerialiseUtil_1.default.T_RAPUI_TUPLE;
         // Instantiate the correct class
         if (self._tupleType === undefined && exports.TUPLE_TYPES[tupleType] !== undefined) {
             self._tupleType = tupleType;
@@ -43,16 +51,16 @@ var Tuple = (function (_super) {
     // Start change detection code
     Tuple.prototype._setChangeTracking = function (on) {
         if (on === void 0) { on = true; }
-        this._changeTrackingReferenceState = new Tuple();
-        this._changeTrackingReferenceState.fromJsonDict(this.toJsonDict());
-        this._changeTracking = on;
+        this._ctrs = new Tuple();
+        this._ctrs.fromJsonDict(this.toJsonDict());
+        this._ct = on;
     };
     Tuple.prototype._detectedChanges = function (reset) {
         if (reset === void 0) { reset = true; }
         var changes = [];
         for (var _i = 0, _a = UtilMisc_1.dictKeysFromObject(this); _i < _a.length; _i++) {
             var key = _a[_i];
-            var old_ = this._changeTrackingReferenceState[key];
+            var old_ = this._ctrs[key];
             var new_ = this[key];
             if (UtilMisc_1.deepEqual(old_, new_))
                 continue;

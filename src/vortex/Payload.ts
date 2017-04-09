@@ -43,7 +43,7 @@ export class Payload extends Jsonable {
         super();
         let self = this;
 
-        self.__rapuiSerialiseType__ = SerialiseUtil.T_RAPUI_PAYLOAD;
+        self.__rst = SerialiseUtil.T_RAPUI_PAYLOAD;
 
         self.filt = filt;
         self.tuples = tuples;
@@ -72,7 +72,7 @@ export class Payload extends Jsonable {
         let self = this;
         let jsonDict = JSON.parse(jsonStr);
 
-        assert(jsonDict[Jsonable.JSON_CLASS_TYPE] === self.__rapuiSerialiseType__);
+        assert(jsonDict[Jsonable.JSON_CLASS_TYPE] === self.__rst);
         return self.fromJsonDict(jsonDict);
     }
 

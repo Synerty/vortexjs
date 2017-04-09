@@ -22,13 +22,17 @@ export interface TupleChangeI {
  */
 export class Tuple extends Jsonable {
     public _tupleType: string;
-    private _changeTracking: boolean = false;
-    private _changeTrackingReferenceState: Tuple | null = null;
+
+    // Change Tracking Enabled - Shortened for memory conservation
+    private _ct: boolean = false;
+
+    // Change Tracking Reference State - Shortened for memory conservation
+    private _ctrs: Tuple | null = null;
 
     constructor(tupleType: string | null = null) {
         super();
         let self = this;
-        self.__rapuiSerialiseType__ = SerialiseUtil.T_RAPUI_TUPLE;
+        self.__rst = SerialiseUtil.T_RAPUI_TUPLE;
 
         // Instantiate the correct class
         if (self._tupleType === undefined && TUPLE_TYPES[tupleType] !== undefined) {
@@ -47,15 +51,15 @@ export class Tuple extends Jsonable {
     // Start change detection code
 
     _setChangeTracking(on: boolean = true) {
-        this._changeTrackingReferenceState = new Tuple();
-        this._changeTrackingReferenceState.fromJsonDict(this.toJsonDict());
-        this._changeTracking = on;
+        this._ctrs = new Tuple();
+        this._ctrs.fromJsonDict(this.toJsonDict());
+        this._ct = on;
     }
 
     _detectedChanges(reset: boolean = true): TupleChangeI[] {
         let changes = [];
         for (let key of dictKeysFromObject(this)) {
-            let old_ = this._changeTrackingReferenceState[key];
+            let old_ = this._ctrs[key];
             let new_ = this[key];
             if (deepEqual(old_, new_))
                 continue;

@@ -1,9 +1,15 @@
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 var SerialiseUtil_1 = require("./SerialiseUtil");
 var UtilMisc_1 = require("./UtilMisc");
 require("./UtilString");
@@ -22,8 +28,7 @@ var Jsonable = (function (_super) {
          * structures (hence why Payloads have their own functions to do this)
          */
         var self = _this;
-        self.__isJsonable = true;
-        self.__rapuiSerialiseType__ = SerialiseUtil_1.default.T_GENERIC_CLASS;
+        self.__rst = SerialiseUtil_1.default.T_GENERIC_CLASS;
         return _this;
     }
     Jsonable.prototype._fieldNames = function () {
@@ -42,7 +47,7 @@ var Jsonable = (function (_super) {
     Jsonable.prototype.toJsonDict = function () {
         var self = this;
         var jsonDict = {};
-        jsonDict[Jsonable.JSON_CLASS_TYPE] = self.__rapuiSerialiseType__;
+        jsonDict[Jsonable.JSON_CLASS_TYPE] = self.__rst;
         if (self._tupleType != null)
             jsonDict[Jsonable.JSON_TUPLE_TYPE] = self._tupleType;
         /* This is in the PY version
@@ -122,7 +127,7 @@ var Jsonable = (function (_super) {
         var jsonStandardTypes = [SerialiseUtil_1.default.T_FLOAT, SerialiseUtil_1.default.T_STR,
             SerialiseUtil_1.default.T_INT, SerialiseUtil_1.default.V_NULL,
             SerialiseUtil_1.default.T_BOOL, SerialiseUtil_1.default.T_LIST, SerialiseUtil_1.default.T_DICT];
-        if (jsonStandardTypes.indexOf(valueType) === -1 && value.__isJsonable !== true) {
+        if (jsonStandardTypes.indexOf(valueType) === -1 && !(value instanceof Jsonable)) {
             var typedData = {};
             typedData[Jsonable.JSON_FIELD_TYPE] = valueType;
             typedData[Jsonable.JSON_FIELD_DATA] = convertedValue;
@@ -199,6 +204,5 @@ Jsonable.JSON_CLASS_TYPE = "_ct";
 Jsonable.JSON_TUPLE_TYPE = "_c";
 Jsonable.JSON_FIELD_TYPE = "_ft";
 Jsonable.JSON_FIELD_DATA = "_fd";
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Jsonable;
 //# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/Jsonable.js.map

@@ -11,8 +11,6 @@ declare let require:any;
  * ###############################################################################
  */
 export default class Jsonable extends SerialiseUtil {
-    private __isJsonable: boolean;
-
     protected _tupleType: string;
 
     public static readonly JSON_CLASS_TYPE = "_ct";
@@ -30,9 +28,7 @@ export default class Jsonable extends SerialiseUtil {
          */
         let self: Jsonable = this;
 
-
-        self.__isJsonable = true;
-        self.__rapuiSerialiseType__ = SerialiseUtil.T_GENERIC_CLASS;
+        self.__rst = SerialiseUtil.T_GENERIC_CLASS;
     }
 
 
@@ -60,7 +56,7 @@ export default class Jsonable extends SerialiseUtil {
         let self = this;
 
         let jsonDict = {};
-        jsonDict[Jsonable.JSON_CLASS_TYPE] = self.__rapuiSerialiseType__;
+        jsonDict[Jsonable.JSON_CLASS_TYPE] = self.__rst;
 
         if (self._tupleType != null)
             jsonDict[Jsonable.JSON_TUPLE_TYPE] = self._tupleType;
@@ -158,7 +154,7 @@ export default class Jsonable extends SerialiseUtil {
             SerialiseUtil.T_INT, SerialiseUtil.V_NULL,
             SerialiseUtil.T_BOOL, SerialiseUtil.T_LIST, SerialiseUtil.T_DICT];
 
-        if (jsonStandardTypes.indexOf(valueType) === -1 && value.__isJsonable !== true) {
+        if (jsonStandardTypes.indexOf(valueType) === -1 && !(value instanceof Jsonable)) {
             let typedData = {};
             typedData[Jsonable.JSON_FIELD_TYPE] = valueType;
             typedData[Jsonable.JSON_FIELD_DATA] = convertedValue;

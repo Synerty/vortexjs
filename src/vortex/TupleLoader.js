@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var rxjs_1 = require("rxjs");
 var Payload_1 = require("./Payload");
 var PayloadEndpoint_1 = require("./PayloadEndpoint");
@@ -216,6 +217,7 @@ var TupleLoader = (function () {
                 console.log("TupleLoader - Load event emit error");
                 console.error(e);
             }
+            // Result, means this was a save
         }
         else if (payload.result === true) {
             try {
@@ -230,6 +232,7 @@ var TupleLoader = (function () {
                 console.log("TupleLoader - Save/Delete event emit error");
                 console.error(e);
             }
+            // Else, treat this as a failure
         }
         else {
             if (this.lastPromise) {
