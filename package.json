@@ -33,7 +33,7 @@
   "dependencies": {
     "@angular/common": "^2.4.0",
     "@angular/core": "^2.4.0",
-    "@synerty/ng2-balloon-msg": "^0.1.1",
+    "@synerty/ng2-balloon-msg": "^0.2.0",
     "@types/deep-equal": "^0.0.30",
     "base-64": "^0.1.0",
     "core-js": "^2.4.1",
