@@ -79,7 +79,8 @@ var VortexStatusService = (function () {
 }());
 VortexStatusService = __decorate([
     core_1.Injectable(),
-    __metadata("design:paramtypes", [core_1.NgZone])
+    __metadata("design:paramtypes", [typeof (_a = typeof core_1.NgZone !== "undefined" && core_1.NgZone) === "function" && _a || Object])
 ], VortexStatusService);
 exports.VortexStatusService = VortexStatusService;
+var _a;
 //# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/VortexStatusService.js.map

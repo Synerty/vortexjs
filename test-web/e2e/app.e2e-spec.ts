@@ -1,10 +1,10 @@
-import { VortexjsPage } from './app.po';
+import { TestWebPage } from './app.po';
 
-describe('vortexjs App', function() {
-  let page: VortexjsPage;
+describe('test-web App', () => {
+  let page: TestWebPage;
 
   beforeEach(() => {
-    page = new VortexjsPage();
+    page = new TestWebPage();
   });
 
   it('should display message saying app works', () => {

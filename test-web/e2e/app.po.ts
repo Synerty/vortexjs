@@ -1,6 +1,6 @@
 import { browser, element, by } from 'protractor';
 
-export class VortexjsPage {
+export class TestWebPage {
   navigateTo() {
     return browser.get('/');
   }

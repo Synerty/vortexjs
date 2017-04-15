@@ -43,9 +43,8 @@ VortexComponent = __decorate([
         templateUrl: './vortex.component.html',
         styleUrls: ['./vortex.component.css']
     }),
-    __metadata("design:paramtypes", [VortexStatusService_1.VortexStatusService,
-        core_1.NgZone,
-        ng2_balloon_msg_1.Ng2BalloonMsgService])
+    __metadata("design:paramtypes", [VortexStatusService_1.VortexStatusService, typeof (_a = typeof core_1.NgZone !== "undefined" && core_1.NgZone) === "function" && _a || Object, typeof (_b = typeof ng2_balloon_msg_1.Ng2BalloonMsgService !== "undefined" && ng2_balloon_msg_1.Ng2BalloonMsgService) === "function" && _b || Object])
 ], VortexComponent);
 exports.VortexComponent = VortexComponent;
+var _a, _b;
 //# sourceMappingURL=/home/peek/project/vortexjs/src/app/vortex/vortex.component.js.map
