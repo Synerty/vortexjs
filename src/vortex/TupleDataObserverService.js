@@ -121,8 +121,9 @@ var TupleDataObserverService = (function (_super) {
 TupleDataObserverService = __decorate([
     core_1.Injectable(),
     __metadata("design:paramtypes", [VortexService_1.VortexService,
-        VortexStatusService_1.VortexStatusService, typeof (_a = typeof core_1.NgZone !== "undefined" && core_1.NgZone) === "function" && _a || Object, TupleDataObservableNameService])
+        VortexStatusService_1.VortexStatusService,
+        core_1.NgZone,
+        TupleDataObservableNameService])
 ], TupleDataObserverService);
 exports.TupleDataObserverService = TupleDataObserverService;
-var _a;
 //# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/TupleDataObserverService.js.map

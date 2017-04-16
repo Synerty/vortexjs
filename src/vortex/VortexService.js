@@ -72,8 +72,10 @@ var VortexService = VortexService_1 = (function () {
 VortexService.vortexUrl = '/vortex';
 VortexService = VortexService_1 = __decorate([
     core_1.Injectable(),
-    __metadata("design:paramtypes", [VortexStatusService_1.VortexStatusService, typeof (_a = typeof core_1.NgZone !== "undefined" && core_1.NgZone) === "function" && _a || Object, typeof (_b = typeof ng2_balloon_msg_1.Ng2BalloonMsgService !== "undefined" && ng2_balloon_msg_1.Ng2BalloonMsgService) === "function" && _b || Object])
+    __metadata("design:paramtypes", [VortexStatusService_1.VortexStatusService,
+        core_1.NgZone,
+        ng2_balloon_msg_1.Ng2BalloonMsgService])
 ], VortexService);
 exports.VortexService = VortexService;
-var VortexService_1, _a, _b;
+var VortexService_1;
 //# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/VortexService.js.map
