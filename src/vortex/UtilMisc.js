@@ -1,7 +1,7 @@
+"use strict";
 /**
  * Created by Jarrod Chesney / Synerty on 22/11/16.
  */
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // ----------------------------------------------------------------------------
 /**

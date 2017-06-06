@@ -1,5 +1,5 @@
-/* tslint:disable:no-unused-variable */
 "use strict";
+/* tslint:disable:no-unused-variable */
 Object.defineProperty(exports, "__esModule", { value: true });
 //
 // describe('TupleLoader', () => {

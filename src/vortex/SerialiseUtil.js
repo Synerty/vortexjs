@@ -1,11 +1,12 @@
+"use strict";
 /*
  * ###############################################################################
  * Common Serialisation functions
  * ###############################################################################
  */
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var UtilMisc_1 = require("./UtilMisc");
+var moment = require("moment");
 var SerialiseUtil = (function () {
     function SerialiseUtil() {
     }
@@ -28,7 +29,7 @@ var SerialiseUtil = (function () {
         if (typeName === SerialiseUtil.T_FLOAT || typeName === SerialiseUtil.T_INT)
             return parseFloat(val);
         if (typeName === SerialiseUtil.T_DATETIME)
-            return new Date(val.replace(" ", "T") + "Z");
+            return moment(val).toDate();
         alert("fromStr - UNKNOWN TYPE");
     };
     SerialiseUtil.prototype.toRapuiType = function (value) {
@@ -122,6 +123,6 @@ SerialiseUtil.T_LIST = "list";
 SerialiseUtil.V_NULL = "null";
 SerialiseUtil.V_TRUE = "1";
 SerialiseUtil.V_FALSE = "0";
-SerialiseUtil.ISO8601 = "%Y-%m-%d %H:%M:%S.%f";
+SerialiseUtil.ISO8601 = "%Y-%m-%d %H:%M:%S.%f%z";
 exports.default = SerialiseUtil;
 //# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/SerialiseUtil.js.map

@@ -1,7 +1,7 @@
+"use strict";
 /**
  * The file defines some commonly used filter keys
  */
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.rapuiServerEcho = "rapuiServerEcho";
 exports.rapuiClientEcho = "rapuiClientEcho";

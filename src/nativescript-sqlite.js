@@ -1,3 +1,4 @@
+"use strict";
 /**
  * This removes the nativescript-sqlite code from the WEB version of the project.
  *
@@ -5,7 +6,6 @@
  * symlinked to the src parent.
  *
  */
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = false;
 //# sourceMappingURL=/home/peek/project/vortexjs/src/nativescript-sqlite.js.map
