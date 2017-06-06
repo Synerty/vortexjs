@@ -7,6 +7,9 @@
 import {dictKeysFromObject} from "./UtilMisc";
 
 
+import * as moment from "moment";
+
+
 export default class SerialiseUtil {
 
     public static readonly T_RAPUI_TUPLE = "rt";
@@ -25,7 +28,7 @@ export default class SerialiseUtil {
     public static readonly V_TRUE = "1";
     public static readonly V_FALSE = "0";
 
-    public static readonly ISO8601 = "%Y-%m-%d %H:%M:%S.%f";
+    public static readonly ISO8601 = "%Y-%m-%d %H:%M:%S.%f%z";
 
 
     // Rapui Serialised Type -  Shortened for memory constraints.
@@ -59,7 +62,7 @@ export default class SerialiseUtil {
             return parseFloat(val);
 
         if (typeName === SerialiseUtil.T_DATETIME)
-            return new Date(val.replace(" ", "T") + "Z");
+            return moment(val).toDate();
 
         alert("fromStr - UNKNOWN TYPE");
     }
