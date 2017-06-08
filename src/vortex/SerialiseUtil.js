@@ -12,8 +12,8 @@ var SerialiseUtil = (function () {
     }
     SerialiseUtil.prototype.toStr = function (obj) {
         var self = this;
-        if (obj instanceof Date)
-            return obj.toISOString().replace("T", " ").replace("Z", "");
+        if (obj["toISOString"] != null)
+            return moment(obj).format(SerialiseUtil.ISO8601);
         if (obj.constructor === Boolean)
             return obj ? SerialiseUtil.V_TRUE : SerialiseUtil.V_FALSE;
         if (obj.constructor === String)
@@ -123,6 +123,7 @@ SerialiseUtil.T_LIST = "list";
 SerialiseUtil.V_NULL = "null";
 SerialiseUtil.V_TRUE = "1";
 SerialiseUtil.V_FALSE = "0";
-SerialiseUtil.ISO8601 = "%Y-%m-%d %H:%M:%S.%f%z";
+SerialiseUtil.ISO8601_PY = "%Y-%m-%d %H:%M:%S.%f%z";
+SerialiseUtil.ISO8601 = "YYYY-MM-DD HH:mm:ss.SSSSSSZZ";
 exports.default = SerialiseUtil;
 //# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/SerialiseUtil.js.map

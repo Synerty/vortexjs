@@ -28,7 +28,9 @@ export default class SerialiseUtil {
     public static readonly V_TRUE = "1";
     public static readonly V_FALSE = "0";
 
-    public static readonly ISO8601 = "%Y-%m-%d %H:%M:%S.%f%z";
+    public static readonly ISO8601_PY = "%Y-%m-%d %H:%M:%S.%f%z";
+
+    public static readonly ISO8601 = "YYYY-MM-DD HH:mm:ss.SSSSSSZZ";
 
 
     // Rapui Serialised Type -  Shortened for memory constraints.
@@ -37,8 +39,8 @@ export default class SerialiseUtil {
     toStr(obj: any): string {
         let self = this;
 
-        if (obj instanceof Date)
-            return obj.toISOString().replace("T", " ").replace("Z", "");
+        if (obj["toISOString"] != null) // instanceof Date or moment
+            return moment(obj).format(SerialiseUtil.ISO8601);
 
         if (obj.constructor === Boolean)
             return obj ? SerialiseUtil.V_TRUE : SerialiseUtil.V_FALSE;
