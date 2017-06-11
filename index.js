@@ -56,4 +56,6 @@ exports.WebSqlService = WebSqlService_1.WebSqlService;
 var UtilMisc_1 = require("./src/vortex/UtilMisc");
 exports.assert = UtilMisc_1.assert;
 exports.extend = UtilMisc_1.extend;
+var UtilArray_1 = require("./src/vortex/UtilArray");
+exports.Array = UtilArray_1.Array;
 //# sourceMappingURL=/home/peek/project/vortexjs/index.js.map

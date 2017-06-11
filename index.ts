@@ -44,3 +44,5 @@ export {WebSqlFactoryService, WebSqlService} from "./src/websql/WebSqlService";
 
 // Utility functions
 export {assert, extend} from "./src/vortex/UtilMisc";
+export {Array} from "./src/vortex/UtilArray";
+
