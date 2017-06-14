@@ -47,7 +47,7 @@ export class VortexClientWebsocket extends VortexClientABC {
                 return;
 
             let payload = this.unsentBuffer.shift();
-            this.socket.send(payload.toVortexMsg());
+            this.socket.send(payload.toVortexMsg() + '.');
         }
     }
 
