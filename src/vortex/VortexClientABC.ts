@@ -63,7 +63,7 @@ export abstract class VortexClientABC {
 
     set closed(value: boolean) {
         this._vortexClosed = value;
-        if (!value)
+        if (value)
             this.shutdown();
     }
 

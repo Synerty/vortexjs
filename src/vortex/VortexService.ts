@@ -21,7 +21,7 @@ export class VortexService {
                 private balloonMsg: Ng2BalloonMsgService) {
         //
 
-this.reconnect();
+        this.reconnect();
     }
 
     /**
@@ -39,7 +39,7 @@ this.reconnect();
         if (this.vortex != null)
             this.vortex.closed = true;
 
-                if (VortexService.vortexUrl.toLowerCase().startsWith("ws")) {
+        if (VortexService.vortexUrl.toLowerCase().startsWith("ws")) {
             this.vortex = new VortexClientWebsocket(
                 this.vortexStatusService, this.zone, VortexService.vortexUrl);
         } else {
@@ -68,7 +68,7 @@ this.reconnect();
 
     createEndpointObservable(component: ComponentLifecycleEventEmitter,
                              filter: IPayloadFilt,
-                             processLatestOnly: boolean = false): Observable < Payload > {
+                             processLatestOnly: boolean = false): Observable<Payload> {
         let endpoint = new PayloadEndpoint(component, filter, processLatestOnly);
 
         return this.createEndpoint(component, filter, processLatestOnly).observable;
