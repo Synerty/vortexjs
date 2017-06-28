@@ -51,6 +51,10 @@ export class VortexClientWebsocket extends VortexClientABC {
         }
     }
 
+    protected shutdown():void {
+        this.createSocket();
+    }
+
 
     private createSocket(): void {
         // If we're already connecting, then do nothing

@@ -21,13 +21,7 @@ export class VortexService {
                 private balloonMsg: Ng2BalloonMsgService) {
         //
 
-        if (VortexService.vortexUrl.toLowerCase().startsWith("ws")) {
-            this.vortex = new VortexClientWebsocket(
-                vortexStatusService, zone, VortexService.vortexUrl);
-        } else {
-            this.vortex = new VortexClientHttp(
-                vortexStatusService, zone, VortexService.vortexUrl);
-        }
+this.reconnect();
     }
 
     /**
@@ -42,6 +36,17 @@ export class VortexService {
     }
 
     reconnect() {
+        if (this.vortex != null)
+            this.vortex.closed = true;
+
+                if (VortexService.vortexUrl.toLowerCase().startsWith("ws")) {
+            this.vortex = new VortexClientWebsocket(
+                this.vortexStatusService, this.zone, VortexService.vortexUrl);
+        } else {
+            this.vortex = new VortexClientHttp(
+                this.vortexStatusService, this.zone, VortexService.vortexUrl);
+        }
+
         this.vortex.reconnect();
     }
 

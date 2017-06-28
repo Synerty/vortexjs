@@ -15,17 +15,25 @@ var UtilMisc_1 = require("./UtilMisc");
 var VortexClientABC_1 = require("./VortexClientABC");
 var VortexClientHttp = (function (_super) {
     __extends(VortexClientHttp, _super);
-    /**
-     * RapUI VortexService, This class is responsible for sending and receiving payloads to/from
-     * the server.
-     */
     function VortexClientHttp(vortexStatusService, zone, url) {
-        return _super.call(this, vortexStatusService, zone, url) || this;
+        var _this = _super.call(this, vortexStatusService, zone, url) || this;
+        /**
+         * RapUI VortexService, This class is responsible for sending and receiving payloads to/from
+         * the server.
+         */
+        _this.lastConn = null;
+        return _this;
     }
+    VortexClientHttp.prototype.shutdown = function () {
+        if (this.lastConn) {
+            this.lastConn.shutdown();
+            this.lastConn = null;
+        }
+    };
     VortexClientHttp.prototype.sendPayloads = function (payloads) {
         var _this = this;
-        var conn = new _VortexClientHttpConnection(this, this.vortexStatusService, function (payload) { return _this.receive(payload); }, function () { return _this.beat(); });
-        conn.send(payloads);
+        this.lastConn = new _VortexClientHttpConnection(this, this.vortexStatusService, function (payload) { return _this.receive(payload); }, function () { return _this.beat(); });
+        this.lastConn.send(payloads);
         // console.log(dateStr() + "Sent payload with filt : " + JSON.stringify(payload.filt));
     };
     return VortexClientHttp;
@@ -73,6 +81,10 @@ var _VortexClientHttpConnection = (function () {
         self._closing = false;
         self._aborting = false;
     }
+    _VortexClientHttpConnection.prototype.shutdown = function () {
+        if (this._http)
+            this._http.abort();
+    };
     _VortexClientHttpConnection.prototype.send = function (payloads) {
         var data = "";
         for (var _i = 0, payloads_1 = payloads; _i < payloads_1.length; _i++) {

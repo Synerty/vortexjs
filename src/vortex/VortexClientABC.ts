@@ -63,6 +63,8 @@ export abstract class VortexClientABC {
 
     set closed(value: boolean) {
         this._vortexClosed = value;
+        if (!value)
+            this.shutdown();
     }
 
     send(payload: Payload | Payload[]): void {
@@ -90,6 +92,8 @@ export abstract class VortexClientABC {
     }
 
     protected abstract  sendPayloads(payloads: Payload[]): void;
+
+    protected abstract shutdown(): void;
 
     reconnect(): void {
         this.restartTimer();

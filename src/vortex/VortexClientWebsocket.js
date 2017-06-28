@@ -42,8 +42,11 @@ var VortexClientWebsocket = (function (_super) {
             if (!this.isReady)
                 return;
             var payload = this.unsentBuffer.shift();
-            this.socket.send(payload.toVortexMsg());
+            this.socket.send(payload.toVortexMsg() + '.');
         }
+    };
+    VortexClientWebsocket.prototype.shutdown = function () {
+        this.createSocket();
     };
     VortexClientWebsocket.prototype.createSocket = function () {
         var _this = this;

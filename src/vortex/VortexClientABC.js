@@ -59,6 +59,8 @@ var VortexClientABC = (function () {
         },
         set: function (value) {
             this._vortexClosed = value;
+            if (!value)
+                this.shutdown();
         },
         enumerable: true,
         configurable: true

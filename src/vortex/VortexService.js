@@ -23,12 +23,7 @@ var VortexService = VortexService_1 = (function () {
         this.vortexStatusService = vortexStatusService;
         this.zone = zone;
         this.balloonMsg = balloonMsg;
-        if (VortexService_1.vortexUrl.toLowerCase().startsWith("ws")) {
-            this.vortex = new VortexClientWebsocket_1.VortexClientWebsocket(vortexStatusService, zone, VortexService_1.vortexUrl);
-        }
-        else {
-            this.vortex = new VortexClientHttp_1.VortexClientHttp(vortexStatusService, zone, VortexService_1.vortexUrl);
-        }
+        this.reconnect();
     }
     /**
      * Set Vortex URL
@@ -41,6 +36,14 @@ var VortexService = VortexService_1 = (function () {
         VortexService_1.vortexUrl = url;
     };
     VortexService.prototype.reconnect = function () {
+        if (this.vortex != null)
+            this.vortex.closed = true;
+        if (VortexService_1.vortexUrl.toLowerCase().startsWith("ws")) {
+            this.vortex = new VortexClientWebsocket_1.VortexClientWebsocket(this.vortexStatusService, this.zone, VortexService_1.vortexUrl);
+        }
+        else {
+            this.vortex = new VortexClientHttp_1.VortexClientHttp(this.vortexStatusService, this.zone, VortexService_1.vortexUrl);
+        }
         this.vortex.reconnect();
     };
     VortexService.prototype.sendTuple = function (filt, tuples) {

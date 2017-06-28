@@ -1,5 +1,5 @@
 import {Payload} from "./Payload";
-import {getFiltStr, bind} from "./UtilMisc";
+import {bind, getFiltStr} from "./UtilMisc";
 import {VortexClientABC} from "./VortexClientABC";
 import {NgZone} from "@angular/core";
 import {VortexStatusService} from "./VortexStatusService";
@@ -20,6 +20,8 @@ export class VortexClientHttp extends VortexClientABC {
      * RapUI VortexService, This class is responsible for sending and receiving payloads to/from
      * the server.
      */
+    private lastConn: _VortexClientHttpConnection | null = null;
+
     constructor(vortexStatusService: VortexStatusService,
                 zone: NgZone,
                 url: string) {
@@ -28,12 +30,20 @@ export class VortexClientHttp extends VortexClientABC {
     }
 
 
+    protected shutdown(): void {
+        if (this.lastConn) {
+            this.lastConn.shutdown();
+            this.lastConn = null;
+        }
+    }
+
+
     sendPayloads(payloads: Payload[]): void {
-        let conn = new _VortexClientHttpConnection(this, this.vortexStatusService,
+        this.lastConn = new _VortexClientHttpConnection(this, this.vortexStatusService,
             (payload) => this.receive(payload),
             () => this.beat()
         );
-        conn.send(payloads);
+        this.lastConn.send(payloads);
         // console.log(dateStr() + "Sent payload with filt : " + JSON.stringify(payload.filt));
     }
 
@@ -101,6 +111,11 @@ class _VortexClientHttpConnection {
         self._responseParseIndex = 0;
         self._closing = false;
         self._aborting = false;
+    }
+
+    shutdown(): void {
+        if (this._http)
+            this._http.abort();
     }
 
     send(payloads: Payload[]) {
