@@ -59,8 +59,12 @@ var VortexClientABC = (function () {
         },
         set: function (value) {
             this._vortexClosed = value;
-            if (value)
+            if (value) {
+                if (this.beatTimer != null) {
+                    clearInterval(this.beatTimer);
+                }
                 this.shutdown();
+            }
         },
         enumerable: true,
         configurable: true

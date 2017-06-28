@@ -63,8 +63,12 @@ export abstract class VortexClientABC {
 
     set closed(value: boolean) {
         this._vortexClosed = value;
-        if (value)
+        if (value) {
+            if (this.beatTimer != null) {
+                clearInterval(this.beatTimer);
+            }
             this.shutdown();
+        }
     }
 
     send(payload: Payload | Payload[]): void {
