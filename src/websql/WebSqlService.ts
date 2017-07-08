@@ -3,6 +3,19 @@ import {Injectable} from "@angular/core";
 
 @Injectable()
 export abstract class WebSqlFactoryService {
+
+    /** Has Storage Limitations
+     *
+     * Returns true if this SQL storage has a small limitation on storage.
+     *
+     * This was implemented to return true on iOS mobile devices, as they have a
+     * 50mb storage limit.
+     *
+     */
+    abstract hasStorageLimitations(): boolean;
+
+    abstract supportsWebSql():boolean;
+
     abstract createWebSql(dbName: string, dbSchema: string[]): WebSqlService;
 }
 
@@ -46,8 +59,7 @@ export abstract class WebSqlService {
         });
     }
 
-
-    abstract open(): Promise<true>;
+    abstract open(): Promise<void>;
 
     abstract isOpen(): boolean;
 
@@ -57,7 +69,7 @@ export abstract class WebSqlService {
 
     runSql(sql: string, bindParams: any[] = []): Promise<boolean> {
 
-        return new Promise<boolean | number>((resolve, reject) => {
+        return new Promise<boolean>((resolve, reject) => {
             this.openTransRunSql(sql, bindParams)
                 .catch((err) => {
                     reject(err);

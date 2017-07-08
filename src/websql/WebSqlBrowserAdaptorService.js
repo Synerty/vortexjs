@@ -24,6 +24,17 @@ var WebSqlService_1 = require("./WebSqlService");
 var WebSqlBrowserFactoryService = (function () {
     function WebSqlBrowserFactoryService() {
     }
+    WebSqlBrowserFactoryService.prototype.hasStorageLimitations = function () {
+        // iOS safari supports up to a 50mb limit, MAX.
+        // In this case, IndexedDB should be used.
+        // https://stackoverflow.com/questions/9038625/detect-if-device-is-ios
+        var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window["MSStream"];
+        // Other conditions
+        return iOS;
+    };
+    WebSqlBrowserFactoryService.prototype.supportsWebSql = function () {
+        return openDatabase != null;
+    };
     WebSqlBrowserFactoryService.prototype.createWebSql = function (dbName, dbSchema) {
         return new WebSqlBrowserAdaptorService(dbName, dbSchema);
     };
@@ -55,12 +66,12 @@ var WebSqlBrowserAdaptorService = (function (_super) {
         var _this = this;
         return new Promise(function (resolve, reject) {
             if (_this.isOpen()) {
-                resolve(true);
+                resolve();
                 return;
             }
             _this.db = openDatabase(_this.dbName, "1", _this.dbName, 4 * 1024 * 1024);
             if (_this.schemaInstalled) {
-                resolve(true);
+                resolve();
                 return;
             }
             _this.installSchema()
@@ -68,7 +79,7 @@ var WebSqlBrowserAdaptorService = (function (_super) {
                 reject(err);
                 throw new Error(err);
             })
-                .then(function () { return resolve(true); });
+                .then(function () { return resolve(); });
         });
     };
     WebSqlBrowserAdaptorService.prototype.isOpen = function () {

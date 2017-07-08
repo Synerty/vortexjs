@@ -4,6 +4,20 @@ declare let openDatabase: any;
 
 @Injectable()
 export class WebSqlBrowserFactoryService implements WebSqlFactoryService {
+
+    hasStorageLimitations(): boolean {
+        // iOS safari supports up to a 50mb limit, MAX.
+        // In this case, IndexedDB should be used.
+        // https://stackoverflow.com/questions/9038625/detect-if-device-is-ios
+        let iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window["MSStream"];
+        // Other conditions
+        return iOS;
+    }
+
+    supportsWebSql(): boolean {
+        return openDatabase != null;
+    }
+
     createWebSql(dbName: string, dbSchema: string[]): WebSqlService {
         return new WebSqlBrowserAdaptorService(dbName, dbSchema);
     }
@@ -25,16 +39,16 @@ class WebSqlBrowserAdaptorService extends WebSqlService {
         super(dbName, dbSchema);
     }
 
-    open(): Promise<boolean> {
-        return new Promise<boolean>((resolve, reject) => {
+    open(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
             if (this.isOpen()) {
-                resolve(true);
+                resolve();
                 return;
             }
 
             this.db = openDatabase(this.dbName, "1", this.dbName, 4 * 1024 * 1024);
             if (this.schemaInstalled) {
-                resolve(true);
+                resolve();
                 return;
             }
 
@@ -43,7 +57,7 @@ class WebSqlBrowserAdaptorService extends WebSqlService {
                     reject(err);
                     throw new Error(err);
                 })
-                .then(() => resolve(true));
+                .then(() => resolve());
         });
     }
 
@@ -71,14 +85,14 @@ class WebSqlBrowserTransactionAdaptor implements WebSqlTransaction {
 
     }
 
-    executeSql(sql: string, bindParams: any[]|null = []): Promise<null | any[]> {
+    executeSql(sql: string, bindParams: any[] | null = []): Promise<null | any[]> {
         return new Promise<null | any[]>((resolve, reject) => {
             this.retryExecuteSql(5, sql, bindParams, resolve, reject);
         });
     }
 
     private retryExecuteSql(retries: number, sql: string,
-                            bindParams: any[]|null, resolve: any, reject: any) {
+                            bindParams: any[] | null, resolve: any, reject: any) {
 
         this.websqlTransaction.executeSql(sql, bindParams,
             (transaction, results) => {

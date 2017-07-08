@@ -1,0 +1,6 @@
+references.d.ts
+test-web
+node_modules
+tslint.json
+.editorconfig
+.idea

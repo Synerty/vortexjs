@@ -25,6 +25,12 @@ var NsSqlite = require("nativescript-sqlite");
 var WebSqlNativeScriptFactoryService = (function () {
     function WebSqlNativeScriptFactoryService() {
     }
+    WebSqlNativeScriptFactoryService.prototype.hasStorageLimitations = function () {
+        return false; // NOPE :-)
+    };
+    WebSqlNativeScriptFactoryService.prototype.supportsWebSql = function () {
+        return true; // Yes :-)
+    };
     WebSqlNativeScriptFactoryService.prototype.createWebSql = function (dbName, dbSchema) {
         return new WebSqlNativeScriptAdaptorService(dbName, dbSchema);
     };
@@ -46,7 +52,7 @@ var WebSqlNativeScriptAdaptorService = (function (_super) {
         var _this = this;
         return new Promise(function (resolve, reject) {
             if (_this.isOpen()) {
-                resolve(_this.db);
+                resolve();
                 return;
             }
             var dbPromise = new NsSqlite(_this.dbName);
@@ -59,7 +65,7 @@ var WebSqlNativeScriptAdaptorService = (function (_super) {
                 _this.db.resultType(NsSqlite.RESULTSASOBJECT);
                 _this.db.version("1"); // MATCHES Browser Adaptor
                 if (_this.schemaInstalled) {
-                    resolve(true);
+                    resolve();
                     return;
                 }
                 _this.installSchema()
@@ -67,7 +73,7 @@ var WebSqlNativeScriptAdaptorService = (function (_super) {
                     reject(err);
                     throw new Error(err);
                 })
-                    .then(function () { return resolve(true); });
+                    .then(function () { return resolve(); });
             });
             dbPromise.catch(function (err) {
                 reject(err);

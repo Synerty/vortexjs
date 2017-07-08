@@ -5,6 +5,15 @@ let NsSqlite = require("nativescript-sqlite");
 
 @Injectable()
 export class WebSqlNativeScriptFactoryService implements WebSqlFactoryService {
+
+    hasStorageLimitations(): boolean {
+        return false; // NOPE :-)
+    }
+
+    supportsWebSql(): boolean {
+        return true; // Yes :-)
+    }
+
     createWebSql(dbName: string, dbSchema: string[]): WebSqlService {
         return new WebSqlNativeScriptAdaptorService(dbName, dbSchema);
     }
@@ -17,10 +26,10 @@ class WebSqlNativeScriptAdaptorService extends WebSqlService {
         super(dbName, dbSchema);
     }
 
-    open(): Promise<true> {
-        return new Promise<boolean>((resolve, reject) => {
+    open(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
             if (this.isOpen()) {
-                resolve(this.db);
+                resolve();
                 return;
             }
 
@@ -34,7 +43,7 @@ class WebSqlNativeScriptAdaptorService extends WebSqlService {
                 this.db.resultType(NsSqlite.RESULTSASOBJECT);
                 this.db.version("1"); // MATCHES Browser Adaptor
                 if (this.schemaInstalled) {
-                    resolve(true);
+                    resolve();
                     return;
                 }
 
@@ -43,7 +52,7 @@ class WebSqlNativeScriptAdaptorService extends WebSqlService {
                         reject(err);
                         throw new Error(err);
                     })
-                    .then(() => resolve(true));
+                    .then(() => resolve());
             });
             dbPromise.catch((err) => {
                 reject(err);
@@ -77,7 +86,7 @@ class WebSqlNativeScriptTransactionAdaptor implements WebSqlTransaction {
 
     }
 
-    executeSql(sql: string, bindParams: any[]|null = []): Promise<null | any[]> {
+    executeSql(sql: string, bindParams: any[] | null = []): Promise<null | any[]> {
         return this.db.all(sql, bindParams);
     }
 

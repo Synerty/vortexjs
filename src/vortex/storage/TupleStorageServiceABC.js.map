@@ -1,0 +1,1 @@
+{"version":3,"file":"TupleStorageServiceABC.js","sourceRoot":"","sources":["TupleStorageServiceABC.ts"],"names":[],"mappings":";;;;;;;;;;;AAAA,sCAAyC;AAGzC,oFAAiF;AAYjF,IAAsB,sBAAsB;IAIxC,gCAAY,IAAoC;QAC5C,IAAI,CAAC,MAAM,GAAG,IAAI,CAAC,IAAI,CAAC;IAE5B,CAAC;IAcL,6BAAC;AAAD,CAAC,AArBD,IAqBC;AArBqB,sBAAsB;IAD3C,iBAAU,EAAE;qCAKS,+DAA8B;GAJ9B,sBAAsB,CAqB3C;AArBqB,wDAAsB"}
