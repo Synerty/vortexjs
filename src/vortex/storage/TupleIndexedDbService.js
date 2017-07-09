@@ -172,6 +172,7 @@ var TupleIndexedDbTransaction = (function () {
     // ----------------------------------------------------------------------------
     // Add disply items to the cache
     TupleIndexedDbTransaction.prototype.saveTuples = function (tupleSelector, tuples) {
+        var _this = this;
         if (!this.txForWrite) {
             var msg = "IndexedDB: saveTuples attempted on read only TX";
             console.log(UtilMisc_1.dateStr() + " " + msg);
@@ -191,7 +192,7 @@ var TupleIndexedDbTransaction = (function () {
         startTime = now();
         return new Promise(function (resolve, reject) {
             // Run the inserts
-            var response = this.store.put(item);
+            var response = _this.store.put(item);
             addIndexedDbHandlers(response, function () {
                 reject(UtilMisc_1.dateStr() + " IndexedDB: saveTuples \"put\" error");
                 throw new IDBException("Put error");
@@ -206,6 +207,28 @@ var TupleIndexedDbTransaction = (function () {
         });
     };
     ;
+    TupleIndexedDbTransaction.prototype.close = function () {
+        return Promise.resolve();
+        /* Close transaction ???
+
+         addIndexedDbHandlers(this.tx, () => {
+         reject();
+         throw new IDBException("Transaction error");
+         });
+
+         // LOOK HERE, I'm looking at the WebSQL and IndexedDb implementation and both
+         // appear to only provide single use transactions like this.
+         // Considering that fact, The "TupleTransaction" api seems useless.
+         this.tx.oncomplete = () => {
+         let timeTaken = now() - startTime;
+         console.log(`${dateStr()} IndexedDB: saveTuples`
+         + ` took ${timeTaken}ms (in thread)`
+         + ` Inserted/updated ${tuples.length} tuples`);
+         resolve();
+         };
+
+         */
+    };
     return TupleIndexedDbTransaction;
 }());
 //# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/storage/TupleIndexedDbService.js.map

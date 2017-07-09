@@ -25,12 +25,24 @@ export class TupleOfflineStorageService {
 
     loadTuples(tupleSelector: TupleSelector): Promise<Tuple[]> {
         return this.storage.transaction(false)
-            .then(tx => tx.loadTuples(tupleSelector));
+            .then(tx => {
+                return tx.loadTuples(tupleSelector)
+                    .then((tuples: Tuple[]) => {
+                        // We have the tuples
+                        // close the transaction but disregard it's promise
+                        tx.close().catch(e => console.log(`ERROR loadTuples: ${e}`));
+                        return tuples;
+                    });
+            });
     }
 
-    saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<boolean> {
+    saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> {
         return this.storage.transaction(true)
-            .then(tx => tx.saveTuples(tupleSelector, tuples));
+            .then(tx => {
+                return tx.saveTuples(tupleSelector, tuples)
+                    // Call the TX Close when the save promise is resolved
+                    .then(() => tx.close());
+            });
     }
 
 

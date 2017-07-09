@@ -43,7 +43,7 @@ class TupleNullTransaction implements TupleStorageTransaction {
         return Promise.resolve([]);
     }
 
-    saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<boolean> {
+    saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> {
 
         if (!this.txForWrite) {
             let msg = "Null Storage: saveTuples attempted on read only TX";
@@ -52,7 +52,11 @@ class TupleNullTransaction implements TupleStorageTransaction {
         }
 
         console.log(`TupleStorageNullService.saveTuples ${tupleSelector.toOrderedJsonStr()}`);
-        return Promise.resolve(true);
+        return Promise.resolve();
 
+    }
+
+    close(): Promise<void> {
+        return Promise.resolve();
     }
 }

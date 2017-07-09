@@ -128,7 +128,7 @@ var TupleActionPushOfflineService = (function (_super) {
         return this.webSql.querySql(sql, bindParams)
             .then(function (rows) {
             if (rows.length === 0) {
-                return null;
+                return;
             }
             var row1 = rows[0];
             var payload = Payload_1.Payload.fromVortexMsg(row1.payload);

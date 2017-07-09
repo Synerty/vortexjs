@@ -149,7 +149,7 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
             .then(() => [tupleAction]); //
     }
 
-    private loadNextAction(): Promise<TupleActionABC> {
+    private loadNextAction(): Promise<TupleActionABC | null> {
         let sql = `SELECT payload
                     FROM ${tableName}
                     WHERE scope = ?
@@ -160,7 +160,7 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
         return this.webSql.querySql(sql, bindParams)
             .then((rows: any[]) => {
                 if (rows.length === 0) {
-                    return null;
+                    return;
                 }
 
                 let row1 = rows[0];

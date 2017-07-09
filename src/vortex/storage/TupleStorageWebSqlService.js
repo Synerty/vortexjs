@@ -87,7 +87,10 @@ var TupleWebSqlTransaction = (function () {
         var tupleSelectorStr = tupleSelector.toOrderedJsonStr();
         var bindParams = [tupleSelectorStr, Date.now(), payloadData];
         return this.tx.executeSql(insertSql, bindParams)
-            .then(function () { return true; }); // Convert the result
+            .then(function () { return null; }); // Convert the result
+    };
+    TupleWebSqlTransaction.prototype.close = function () {
+        return Promise.resolve();
     };
     return TupleWebSqlTransaction;
 }());

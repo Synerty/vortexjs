@@ -8,7 +8,13 @@ export interface TupleStorageTransaction {
 
     loadTuples(tupleSelector: TupleSelector): Promise<Tuple[]> ;
 
-    saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<boolean> ;
+    saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> ;
+
+    /** Close
+     *
+     * This will close the transaction, comitting if required.
+     */
+    close(): Promise<void> ;
 }
 
 

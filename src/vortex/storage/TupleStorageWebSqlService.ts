@@ -85,7 +85,7 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
             });
     }
 
-    saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<boolean> {
+    saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> {
 
         if (!this.txForWrite) {
             let msg = "WebSQL: saveTuples attempted on read only TX";
@@ -99,8 +99,12 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
         let bindParams = [tupleSelectorStr, Date.now(), payloadData];
 
         return this.tx.executeSql(insertSql, bindParams)
-            .then(() => true); // Convert the result
+            .then(() => null); // Convert the result
 
+    }
+
+    close(): Promise<void> {
+        return Promise.resolve();
     }
 
 

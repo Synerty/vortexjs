@@ -26,7 +26,7 @@ export function supportsIndexedDb(): boolean {
 
 // ----------------------------------------------------------------------------
 
-function now():any {
+function now(): any {
     return now();
 }
 
@@ -163,7 +163,7 @@ class TupleIndexedDbTransaction implements TupleStorageTransaction {
 // ----------------------------------------------------------------------------
 // Load the display items from the cache
     loadTuples(tupleSelector: TupleSelector): Promise<Tuple[]> {
-        let startTime :any= now();
+        let startTime: any = now();
 
         return new Promise<Tuple[]>((resolve, reject) => {
 
@@ -206,7 +206,7 @@ class TupleIndexedDbTransaction implements TupleStorageTransaction {
 // ----------------------------------------------------------------------------
 // Add disply items to the cache
 
-    saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<boolean> {
+    saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> {
 
         if (!this.txForWrite) {
             let msg = "IndexedDB: saveTuples attempted on read only TX";
@@ -232,7 +232,7 @@ class TupleIndexedDbTransaction implements TupleStorageTransaction {
 
         startTime = now();
 
-        return new Promise(function (resolve, reject) {
+        return new Promise<void>((resolve, reject) => {
 
             // Run the inserts
             let response = this.store.put(item);
@@ -253,24 +253,28 @@ class TupleIndexedDbTransaction implements TupleStorageTransaction {
 
     };
 
-    /* Close transaction ???
+    close(): Promise<void> {
+        return Promise.resolve();
 
-     addIndexedDbHandlers(this.tx, () => {
-     reject();
-     throw new IDBException("Transaction error");
-     });
+        /* Close transaction ???
 
-     // LOOK HERE, I'm looking at the WebSQL and IndexedDb implementation and both
-     // appear to only provide single use transactions like this.
-     // Considering that fact, The "TupleTransaction" api seems useless.
-     this.tx.oncomplete = () => {
-     let timeTaken = now() - startTime;
-     console.log(`${dateStr()} IndexedDB: saveTuples`
-     + ` took ${timeTaken}ms (in thread)`
-     + ` Inserted/updated ${tuples.length} tuples`);
-     resolve();
-     };
+         addIndexedDbHandlers(this.tx, () => {
+         reject();
+         throw new IDBException("Transaction error");
+         });
 
-     */
+         // LOOK HERE, I'm looking at the WebSQL and IndexedDb implementation and both
+         // appear to only provide single use transactions like this.
+         // Considering that fact, The "TupleTransaction" api seems useless.
+         this.tx.oncomplete = () => {
+         let timeTaken = now() - startTime;
+         console.log(`${dateStr()} IndexedDB: saveTuples`
+         + ` took ${timeTaken}ms (in thread)`
+         + ` Inserted/updated ${tuples.length} tuples`);
+         resolve();
+         };
 
+         */
+
+    }
 }

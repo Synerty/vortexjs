@@ -62,7 +62,10 @@ var TupleNullTransaction = (function () {
             return Promise.reject(msg);
         }
         console.log("TupleStorageNullService.saveTuples " + tupleSelector.toOrderedJsonStr());
-        return Promise.resolve(true);
+        return Promise.resolve();
+    };
+    TupleNullTransaction.prototype.close = function () {
+        return Promise.resolve();
     };
     return TupleNullTransaction;
 }());
