@@ -27,8 +27,11 @@ exports.WebSqlFactoryService = WebSqlService_1.WebSqlFactoryService;
 exports.WebSqlService = WebSqlService_1.WebSqlService;
 // Tuple Storage Factory
 // This should choose the best method of storage
+// This is plumbing, use TupleOfflineStorageService instead.
 var TupleStorageFactoryService_1 = require("./src/vortex/storage/TupleStorageFactoryService");
 exports.TupleStorageFactoryService = TupleStorageFactoryService_1.TupleStorageFactoryService;
+var TupleStorageServiceABC_1 = require("./src/vortex/storage/TupleStorageServiceABC");
+exports.TupleStorageServiceABC = TupleStorageServiceABC_1.TupleStorageServiceABC;
 // Offline Tuple
 var TupleOfflineStorageService_1 = require("./src/vortex/TupleOfflineStorageService");
 exports.TupleOfflineStorageService = TupleOfflineStorageService_1.TupleOfflineStorageService;
