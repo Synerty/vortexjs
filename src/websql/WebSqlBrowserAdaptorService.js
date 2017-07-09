@@ -90,6 +90,8 @@ var WebSqlBrowserAdaptorService = (function (_super) {
     };
     WebSqlBrowserAdaptorService.prototype.transaction = function () {
         var _this = this;
+        if (!this.isOpen())
+            throw new Error("SQLDatabase " + this.dbName + " is not open");
         return new Promise(function (resolve, reject) {
             _this.db.transaction(function (t) {
                 resolve(new WebSqlBrowserTransactionAdaptor(t));

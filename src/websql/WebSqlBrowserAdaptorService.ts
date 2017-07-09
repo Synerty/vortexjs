@@ -70,6 +70,9 @@ class WebSqlBrowserAdaptorService extends WebSqlService {
     }
 
     transaction(): Promise<WebSqlTransaction> {
+        if (!this.isOpen())
+            throw new Error(`SQLDatabase ${this.dbName} is not open`);
+
         return new Promise<WebSqlTransaction>((resolve, reject) => {
             this.db.transaction((t) => {
                 resolve(new WebSqlBrowserTransactionAdaptor(t));

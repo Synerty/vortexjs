@@ -5,6 +5,7 @@ import {TupleOfflineStorageNameService} from "../TupleOfflineStorageNameService"
 import {supportsIndexedDb, TupleIndexedDbService} from "./TupleIndexedDbService";
 import {TupleStorageWebSqlService} from "./TupleStorageWebSqlService";
 import {TupleStorageNullService} from "./TupleStorageNullService";
+
 @Injectable()
 export class TupleStorageFactoryService {
     constructor(private webSqlFactory: WebSqlFactoryService) {

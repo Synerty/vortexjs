@@ -72,8 +72,8 @@ class WebSqlNativeScriptAdaptorService extends WebSqlService {
 
     transaction(): Promise<WebSqlTransaction> {
         // NOT THE COMMERCIAL VERSION, NO TRANSACTION SUPPORT IS AVAILABLE
-        if (!this.db && this.db.isOpen())
-            throw new Error("The database is not open");
+        if (!this.isOpen())
+            throw new Error(`SQLDatabase ${this.dbName} is not open`);
 
         return new Promise<WebSqlTransaction>((resolve, reject) => {
             resolve(new WebSqlNativeScriptTransactionAdaptor(this.db));

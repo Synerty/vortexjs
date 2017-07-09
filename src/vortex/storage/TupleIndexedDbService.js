@@ -123,6 +123,8 @@ var TupleIndexedDbService = (function (_super) {
         this.db = null;
     };
     TupleIndexedDbService.prototype.transaction = function (forWrite) {
+        if (!this.isOpen())
+            throw new Error("IndexedDB " + this.dbName + " is not open");
         // Get the Read Only case out the way, it's easy
         var mode = forWrite ? "readwrite" : "readonly";
         return Promise.resolve(new TupleIndexedDbTransaction(this.db.transaction(TUPLE_STORE, mode), forWrite));

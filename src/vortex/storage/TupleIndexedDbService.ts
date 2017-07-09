@@ -141,6 +141,9 @@ export class TupleIndexedDbService extends TupleStorageServiceABC {
     }
 
     transaction(forWrite: boolean): Promise<TupleStorageTransaction> {
+        if (!this.isOpen())
+            throw new Error(`IndexedDB ${this.dbName} is not open`);
+
         // Get the Read Only case out the way, it's easy
         let mode = forWrite ? "readwrite" : "readonly";
         return Promise.resolve(

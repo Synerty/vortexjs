@@ -17,10 +17,14 @@ var TupleOfflineStorageService = (function () {
         this.storage = storageFactory.create(tupleOfflineStorageServiceName);
     }
     TupleOfflineStorageService.prototype.transaction = function (forWrite) {
+        var _this = this;
+        if (!this.storage.isOpen())
+            return this.storage.open()
+                .then(function () { return _this.storage.transaction(forWrite); });
         return this.storage.transaction(forWrite);
     };
     TupleOfflineStorageService.prototype.loadTuples = function (tupleSelector) {
-        return this.storage.transaction(false)
+        return this.transaction(false)
             .then(function (tx) {
             return tx.loadTuples(tupleSelector)
                 .then(function (tuples) {
@@ -32,7 +36,7 @@ var TupleOfflineStorageService = (function () {
         });
     };
     TupleOfflineStorageService.prototype.saveTuples = function (tupleSelector, tuples) {
-        return this.storage.transaction(true)
+        return this.transaction(true)
             .then(function (tx) {
             return tx.saveTuples(tupleSelector, tuples)
                 .then(function () { return tx.close(); });

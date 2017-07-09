@@ -20,11 +20,15 @@ export class TupleOfflineStorageService {
     }
 
     transaction(forWrite: boolean): Promise<TupleStorageTransaction> {
+        if (!this.storage.isOpen())
+            return this.storage.open()
+                .then(() => this.storage.transaction(forWrite));
+
         return this.storage.transaction(forWrite);
     }
 
     loadTuples(tupleSelector: TupleSelector): Promise<Tuple[]> {
-        return this.storage.transaction(false)
+        return this.transaction(false)
             .then(tx => {
                 return tx.loadTuples(tupleSelector)
                     .then((tuples: Tuple[]) => {
@@ -37,10 +41,10 @@ export class TupleOfflineStorageService {
     }
 
     saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> {
-        return this.storage.transaction(true)
+        return this.transaction(true)
             .then(tx => {
                 return tx.saveTuples(tupleSelector, tuples)
-                    // Call the TX Close when the save promise is resolved
+                // Call the TX Close when the save promise is resolved
                     .then(() => tx.close());
             });
     }
