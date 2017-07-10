@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
-PACKAGE="peek"
+PACKAGE="vortexjs"
 
 set -o nounset
 set -o errexit
-#set -x
+
+echo "Compiling TypeScript"
+tsc
 
 if [ -n "$(git status --porcelain)" ]; then
     echo "There are uncomitted changes, please make sure all changes are comitted" >&2
@@ -31,9 +33,6 @@ echo "Setting version to $VER"
 # Update the package version
 #sed -i "s;.*version.*=.*;__version__ = '${VER}';" ${PACKAGE}/__init__.py
 #sed -i "s;.*version.*=.*;__version__ = '${VER}';" docs/conf.py
-
-echo "Compiling TypeScript"
-tsc
 
 
 echo "Updating package version"
