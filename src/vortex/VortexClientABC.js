@@ -24,6 +24,7 @@ var VortexClientABC = (function () {
         this._name = "browser";
         this._url = url;
         this._vortexClosed = false;
+        console.log("Creating new vortex to " + this._url);
     }
     VortexClientABC.makeUuid = function () {
         function func(c) {
@@ -60,9 +61,7 @@ var VortexClientABC = (function () {
         set: function (value) {
             this._vortexClosed = value;
             if (value) {
-                if (this.beatTimer != null) {
-                    clearInterval(this.beatTimer);
-                }
+                this.clearBeatTimer();
                 this.shutdown();
             }
         },
@@ -91,21 +90,33 @@ var VortexClientABC = (function () {
         this.sendPayloads(payloads);
     };
     VortexClientABC.prototype.reconnect = function () {
+        if (this.closed)
+            throw new Error("An attempt was made to reconnect a closed vortex");
         this.restartTimer();
         this.send(new Payload_1.Payload());
     };
     VortexClientABC.prototype.beat = function () {
+        // We may still get a beat before the connection closes
+        if (this.closed)
+            return;
         this.vortexStatusService.setOnline(true);
         this.restartTimer();
     };
     VortexClientABC.prototype.restartTimer = function () {
         var _this = this;
-        if (this.beatTimer != null)
-            clearInterval(this.beatTimer);
+        this.clearBeatTimer();
         this.beatTimer = setInterval(function () {
+            if (_this.closed)
+                return;
             _this.dead();
             _this.reconnect();
         }, 15000);
+    };
+    VortexClientABC.prototype.clearBeatTimer = function () {
+        if (this.beatTimer != null) {
+            clearInterval(this.beatTimer);
+            this.beatTimer = null;
+        }
     };
     VortexClientABC.prototype.dead = function () {
         this.vortexStatusService.setOnline(false);

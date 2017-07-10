@@ -114,6 +114,7 @@ class _VortexClientHttpConnection {
     }
 
     shutdown(): void {
+        this._closing = true;
         if (this._http)
             this._http.abort();
     }
@@ -199,7 +200,7 @@ class _VortexClientHttpConnection {
         if (self._updateTimer)
             clearInterval(self._updateTimer);
 
-        if (self._aborting)
+        if (self._aborting || this._closing)
             return;
 
         let msg = "";

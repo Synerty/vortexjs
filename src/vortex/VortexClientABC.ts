@@ -34,6 +34,8 @@ export abstract class VortexClientABC {
         this._name = "browser";
         this._url = url;
         this._vortexClosed = false;
+
+        console.log(`Creating new vortex to ${this._url}`);
     }
 
     static makeUuid() {
@@ -64,9 +66,7 @@ export abstract class VortexClientABC {
     set closed(value: boolean) {
         this._vortexClosed = value;
         if (value) {
-            if (this.beatTimer != null) {
-                clearInterval(this.beatTimer);
-            }
+            this.clearBeatTimer();
             this.shutdown();
         }
     }
@@ -100,24 +100,40 @@ export abstract class VortexClientABC {
     protected abstract shutdown(): void;
 
     reconnect(): void {
+        if (this.closed)
+            throw new Error("An attempt was made to reconnect a closed vortex");
+
         this.restartTimer();
         this.send(new Payload());
     }
 
 
     protected beat(): void {
+        // We may still get a beat before the connection closes
+        if (this.closed)
+            return;
+
         this.vortexStatusService.setOnline(true);
         this.restartTimer();
     }
 
     private restartTimer() {
-        if (this.beatTimer != null)
-            clearInterval(this.beatTimer);
+        this.clearBeatTimer();
 
         this.beatTimer = setInterval(() => {
+            if (this.closed)
+                return;
+
             this.dead();
             this.reconnect();
         }, 15000);
+    }
+
+    private clearBeatTimer(){
+        if (this.beatTimer != null) {
+            clearInterval(this.beatTimer);
+            this.beatTimer = null;
+        }
     }
 
     private dead(): void {

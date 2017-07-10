@@ -82,6 +82,7 @@ var _VortexClientHttpConnection = (function () {
         self._aborting = false;
     }
     _VortexClientHttpConnection.prototype.shutdown = function () {
+        this._closing = true;
         if (this._http)
             this._http.abort();
     };
@@ -150,7 +151,7 @@ var _VortexClientHttpConnection = (function () {
         var self = this;
         if (self._updateTimer)
             clearInterval(self._updateTimer);
-        if (self._aborting)
+        if (self._aborting || this._closing)
             return;
         var msg = "";
         if (e.type === 'abort') {
