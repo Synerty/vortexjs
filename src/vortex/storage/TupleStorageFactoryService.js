@@ -22,13 +22,16 @@ var TupleStorageFactoryService = (function () {
         // Prefer Web SQL
         if (this.webSqlFactory.supportsWebSql()
             && !this.webSqlFactory.hasStorageLimitations()) {
+            console.log("TupleStorageFactoryService: Choosing WebSQL Storage");
             return new TupleStorageWebSqlService_1.TupleStorageWebSqlService(this.webSqlFactory, name);
         }
         // Fallback to Indexed DB, It gives mega space on mobile iOS
         if (TupleIndexedDbService_1.supportsIndexedDb()) {
+            console.log("TupleStorageFactoryService: Choosing IndexedDB Storage");
             return new TupleIndexedDbService_1.TupleIndexedDbService(name);
         }
         // Otheriwse, the null service just silently does nothing.
+        console.log("TupleStorageFactoryService: Choosing Null Storage");
         return new TupleStorageNullService_1.TupleStorageNullService(name);
     };
     return TupleStorageFactoryService;
