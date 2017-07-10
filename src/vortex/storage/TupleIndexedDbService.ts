@@ -27,7 +27,7 @@ export function supportsIndexedDb(): boolean {
 // ----------------------------------------------------------------------------
 
 function now(): any {
-    return now();
+    return new Date();
 }
 
 class IDBException {

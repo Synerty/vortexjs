@@ -36,7 +36,7 @@ function supportsIndexedDb() {
 exports.supportsIndexedDb = supportsIndexedDb;
 // ----------------------------------------------------------------------------
 function now() {
-    return now();
+    return new Date();
 }
 var IDBException = (function () {
     function IDBException(message) {
