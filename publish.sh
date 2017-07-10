@@ -13,8 +13,8 @@ if [ -n "$(git status --porcelain)" ]; then
     exit 1
 fi
 
-if ! [ -f "setup.py" ]; then
-    echo "setver.sh must be run in the directory where setup.py is" >&2
+if ! [ -f "package.json" ]; then
+    echo "publish.sh must be run in the directory where package.json is" >&2
     exit 1
 fi
 
