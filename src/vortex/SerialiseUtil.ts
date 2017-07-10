@@ -8,6 +8,7 @@ import {dictKeysFromObject} from "./UtilMisc";
 
 
 import * as moment from "moment";
+let base64 = require('base-64');
 
 
 export default class SerialiseUtil {
@@ -56,6 +57,9 @@ export default class SerialiseUtil {
 
         if (typeName === SerialiseUtil.T_STR)
             return val;
+
+        if (typeName === SerialiseUtil.T_BYTES)
+            return base64.decode(encodeURI(val));
 
         if (typeName === SerialiseUtil.T_BOOL)
             return val === SerialiseUtil.V_TRUE;

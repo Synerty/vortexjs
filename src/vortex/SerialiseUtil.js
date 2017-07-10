@@ -7,6 +7,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var UtilMisc_1 = require("./UtilMisc");
 var moment = require("moment");
+var base64 = require('base-64');
 var SerialiseUtil = (function () {
     function SerialiseUtil() {
     }
@@ -24,6 +25,8 @@ var SerialiseUtil = (function () {
         var self = this;
         if (typeName === SerialiseUtil.T_STR)
             return val;
+        if (typeName === SerialiseUtil.T_BYTES)
+            return base64.decode(encodeURI(val));
         if (typeName === SerialiseUtil.T_BOOL)
             return val === SerialiseUtil.V_TRUE;
         if (typeName === SerialiseUtil.T_FLOAT || typeName === SerialiseUtil.T_INT)

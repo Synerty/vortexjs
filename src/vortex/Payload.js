@@ -15,6 +15,7 @@ var Jsonable_1 = require("./Jsonable");
 var UtilMisc_1 = require("./UtilMisc");
 require("./UtilArray");
 var base64 = require('base-64');
+var pako = require("pako");
 /**
  *
  * This class is serialised and transferred over the vortex to the server.
@@ -69,7 +70,6 @@ var Payload = (function (_super) {
         // Convert the string to binary
         var compressedData = base64.decode(vortexStr);
         // Decompress the payload string
-        var pako = require("pako");
         var payloadStr = pako.inflate(compressedData, { to: "string" });
         /* Log compression sizes
          console.log(dateStr() + 'Payload: Payload Compression ' + compressedData.length
@@ -78,16 +78,13 @@ var Payload = (function (_super) {
          + (100 * compressedData.length / payloadStr.length).toFixed(1)
          + '%)');
          */
-        // return Payload()._fromXmlDocStr(payloadStr);
         return new Payload()._fromJson(payloadStr);
     };
     Payload.prototype.toVortexMsg = function () {
         var self = this;
         // Serialise it to string
-        // var payloadStr = self._toXmlDocStr();
         var payloadStr = self._toJson();
         // Compress it
-        var pako = require("pako");
         var compressedData = pako.deflate(payloadStr, { to: "string" });
         return base64.encode(compressedData);
     };

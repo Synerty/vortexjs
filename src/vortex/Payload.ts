@@ -4,7 +4,8 @@ import Jsonable from "./Jsonable";
 import {assert} from "./UtilMisc";
 import "./UtilArray";
 
-var base64 = require('base-64');
+let base64 = require('base-64');
+let pako = require("pako");
 
 // Typedef for require
 declare let require: any;
@@ -28,7 +29,7 @@ export class Payload extends Jsonable {
     static readonly vortexNameKey = "__vortexName__";
 
     filt: {};
-    tuples: Array<Tuple|any>;
+    tuples: Array<Tuple | any>;
     result: string | {} | null = null;
     date: Date | null = null;
 
@@ -39,7 +40,7 @@ export class Payload extends Jsonable {
      * @param tuples: The tuples to init the Payload with
      * different location @depreciated
      */
-    constructor(filt: {} = {}, tuples: Array<Tuple|any> = []) {
+    constructor(filt: {} = {}, tuples: Array<Tuple | any> = []) {
         super();
         let self = this;
 
@@ -88,7 +89,6 @@ export class Payload extends Jsonable {
         let compressedData = base64.decode(vortexStr);
 
         // Decompress the payload string
-        let pako = require("pako");
         let payloadStr = pako.inflate(compressedData, {to: "string"});
 
         /* Log compression sizes
@@ -98,8 +98,6 @@ export class Payload extends Jsonable {
          + (100 * compressedData.length / payloadStr.length).toFixed(1)
          + '%)');
          */
-
-        // return Payload()._fromXmlDocStr(payloadStr);
         return new Payload()._fromJson(payloadStr);
     }
 
@@ -107,11 +105,9 @@ export class Payload extends Jsonable {
         let self = this;
 
         // Serialise it to string
-        // var payloadStr = self._toXmlDocStr();
         let payloadStr = self._toJson();
 
         // Compress it
-        let pako = require("pako");
         let compressedData = pako.deflate(payloadStr, {to: "string"});
         return base64.encode(compressedData);
     }
