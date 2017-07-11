@@ -66,6 +66,7 @@ function addIndexedDbHandlers(request, stacktraceFunctor) {
     };
 }
 var TUPLE_STORE = "tuples";
+exports.counter = 0;
 /** Tuple Storage IndexedDB
  *
  * This class handles storing and retrieving tuples to/from indexed db.
@@ -74,18 +75,23 @@ var TUPLE_STORE = "tuples";
 var TupleIndexedDbService = (function (_super) {
     __extends(TupleIndexedDbService, _super);
     function TupleIndexedDbService(name) {
-        return _super.call(this, name) || this;
+        var _this = _super.call(this, name) || this;
+        _this.openInProgressPromise = null;
+        return _this;
     }
     // ----------------------------------------------------------------------------
     // Open the indexed db database
     TupleIndexedDbService.prototype.open = function () {
         var _this = this;
-        return new Promise(function (resolve, reject) {
+        if (this.openInProgressPromise != null)
+            return this.openInProgressPromise;
+        this.openInProgressPromise = new Promise(function (resolve, reject) {
             // DISP Store
             var request = indexedDB.open(_this.dbName, 1);
             addIndexedDbHandlers(request, function () {
                 var msg = UtilMisc_1.dateStr() + " IndexedDB : \"" + _this.dbName + "\" "
                     + "Failed to open IndexedDB database";
+                _this.openInProgressPromise = null;
                 reject(msg);
                 throw new IDBException(msg);
             });
@@ -93,6 +99,7 @@ var TupleIndexedDbService = (function (_super) {
                 console.log(UtilMisc_1.dateStr() + " IndexedDB : \"" + _this.dbName + "\" Success opening DB");
                 if (_this.db == null) {
                     _this.db = event.target.result;
+                    _this.openInProgressPromise = null;
                     resolve();
                 }
             };
@@ -100,14 +107,12 @@ var TupleIndexedDbService = (function (_super) {
                 console.log(UtilMisc_1.dateStr() + " IndexedDB : \"" + _this.dbName + "\" Upgrading");
                 var db = event.target.result;
                 // SCHEMA for database points
-                var gridStore = db.createObjectStore(TUPLE_STORE, { keyPath: "tupleSelector" });
+                // Schema Version 1
+                db.createObjectStore(TUPLE_STORE, { keyPath: "tupleSelector" });
                 console.log(UtilMisc_1.dateStr() + " IndexedDB : \"" + _this.dbName + "\" Upgrade Success");
-                if (_this.db == null) {
-                    _this.db = db;
-                    resolve();
-                }
             };
         });
+        return this.openInProgressPromise;
     };
     // ----------------------------------------------------------------------------
     // Check if the DB is open
@@ -123,8 +128,12 @@ var TupleIndexedDbService = (function (_super) {
         this.db = null;
     };
     TupleIndexedDbService.prototype.transaction = function (forWrite) {
-        if (!this.isOpen())
+        console.log("INDEXED DB: transaction");
+        if (!this.isOpen()) {
+            console.log("IndexedDB " + this.dbName + " is not open");
             throw new Error("IndexedDB " + this.dbName + " is not open");
+        }
+        ;
         // Get the Read Only case out the way, it's easy
         var mode = forWrite ? "readwrite" : "readonly";
         return Promise.resolve(new TupleIndexedDbTransaction(this.db.transaction(TUPLE_STORE, mode), forWrite));
@@ -141,31 +150,37 @@ var TupleIndexedDbTransaction = (function () {
         this.tx = tx;
         this.txForWrite = txForWrite;
         this.store = this.tx.objectStore(TUPLE_STORE);
+        this.count = exports.counter++;
+        console.log(this.count + " INDEXED DB: opened transaction");
     }
     // ----------------------------------------------------------------------------
     // Load the display items from the cache
     TupleIndexedDbTransaction.prototype.loadTuples = function (tupleSelector) {
         var _this = this;
         var startTime = now();
+        console.log(this.count + " INDEXED DB: resolve " + tupleSelector.toOrderedJsonStr());
         return new Promise(function (resolve, reject) {
             var request = _this.store.get(tupleSelector.toOrderedJsonStr());
+            console.log(_this.count + " INDEXED DB: loadTuples");
             addIndexedDbHandlers(request, function () {
-                var msg = UtilMisc_1.dateStr() + " IndexedDB: Index open cursor";
+                var msg = _this.count + "  IndexedDB: Index open cursor";
                 reject(msg);
                 throw new IDBException(msg);
             });
             request.onsuccess = function () {
+                console.log(_this.count + " INDEXED DB: onsuccess");
                 var tuples = [];
                 var timeTaken = now() - startTime;
-                console.log(UtilMisc_1.dateStr() + " IndexedDB: loadTuples took " + timeTaken + "ms (in thread)");
+                console.log(_this.count + "  IndexedDB: loadTuples took " + timeTaken + "ms (in thread)");
                 // Called for each matching record
                 var data = request.result;
                 if (data != null) {
                     var startTime_1 = now();
                     tuples = Payload_1.Payload.fromVortexMsg(data.payload).tuples;
                     var timeTaken_1 = now() - startTime_1;
-                    console.log(UtilMisc_1.dateStr() + " IndexedDB: fromVortexMsg took " + timeTaken_1 + "ms ");
+                    console.log(_this.count + "  IndexedDB: fromVortexMsg took " + timeTaken_1 + "ms ");
                 }
+                console.log(_this.count + " INDEXED DB: resolve " + JSON.stringify(tuples));
                 resolve(tuples);
             };
         });

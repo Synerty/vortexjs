@@ -24,7 +24,6 @@ var VortexClientABC = (function () {
         this._name = "browser";
         this._url = url;
         this._vortexClosed = false;
-        console.log("Creating new vortex to " + this._url);
     }
     VortexClientABC.makeUuid = function () {
         function func(c) {

@@ -25,7 +25,6 @@ export class TupleDataOfflineObserverService extends TupleDataObserverService {
 
     subscribeToTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]> {
 
-
         let subject = super.subscribeToTupleSelector(tupleSelector);
 
 

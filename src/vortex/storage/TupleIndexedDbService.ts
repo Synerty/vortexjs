@@ -76,6 +76,7 @@ interface DataStructI {
 @Injectable()
 export class TupleIndexedDbService extends TupleStorageServiceABC {
     db: any;
+    private openInProgressPromise: Promise<void> | null = null;
 
 
     constructor(name: TupleOfflineStorageNameService) {
@@ -87,7 +88,11 @@ export class TupleIndexedDbService extends TupleStorageServiceABC {
     // ----------------------------------------------------------------------------
     // Open the indexed db database
     open(): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+        if (this.openInProgressPromise != null)
+            return this.openInProgressPromise;
+
+
+        this.openInProgressPromise = new Promise<void>((resolve, reject) => {
 
             // DISP Store
 
@@ -95,6 +100,7 @@ export class TupleIndexedDbService extends TupleStorageServiceABC {
             addIndexedDbHandlers(request, () => {
                 let msg = `${dateStr()} IndexedDB : "${this.dbName}" `
                     + `Failed to open IndexedDB database`;
+                this.openInProgressPromise = null;
                 reject(msg);
                 throw new IDBException(msg);
             });
@@ -103,6 +109,7 @@ export class TupleIndexedDbService extends TupleStorageServiceABC {
                 console.log(`${dateStr()} IndexedDB : "${this.dbName}" Success opening DB`);
                 if (this.db == null) {
                     this.db = event.target.result;
+                    this.openInProgressPromise = null;
                     resolve();
                 }
             };
@@ -112,17 +119,13 @@ export class TupleIndexedDbService extends TupleStorageServiceABC {
                 let db = event.target.result;
 
                 // SCHEMA for database points
-                let gridStore = db.createObjectStore(TUPLE_STORE,
-                    {keyPath: "tupleSelector"});
+                // Schema Version 1
+                db.createObjectStore(TUPLE_STORE, {keyPath: "tupleSelector"});
 
                 console.log(`${dateStr()} IndexedDB : "${this.dbName}" Upgrade Success`);
-
-                if (this.db == null) {
-                    this.db = db;
-                    resolve();
-                }
             };
         });
+        return this.openInProgressPromise;
     }
 
     // ----------------------------------------------------------------------------
@@ -197,7 +200,6 @@ class TupleIndexedDbTransaction implements TupleStorageTransaction {
                         `${dateStr()} IndexedDB: fromVortexMsg took ${timeTaken}ms `
                     );
                 }
-
 
                 resolve(tuples);
             };

@@ -34,8 +34,6 @@ export abstract class VortexClientABC {
         this._name = "browser";
         this._url = url;
         this._vortexClosed = false;
-
-        console.log(`Creating new vortex to ${this._url}`);
     }
 
     static makeUuid() {

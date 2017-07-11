@@ -45,7 +45,10 @@ export class TupleOfflineStorageService {
             .then(tx => {
                 return tx.saveTuples(tupleSelector, tuples)
                 // Call the TX Close when the save promise is resolved
-                    .then(() => tx.close());
+                    .then(() => {
+                        // Don't add the close to the promise chain
+                        tx.close().catch(e => console.log(`ERROR loadTuples: ${e}`));
+                    });
             });
     }
 

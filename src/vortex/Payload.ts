@@ -18,7 +18,9 @@ export interface IPayloadFilt {
     key: string;
     [more: string]: any;
 }
-
+function now(): any {
+    return new Date();
+}
 /**
  *
  * This class is serialised and transferred over the vortex to the server.
@@ -85,11 +87,16 @@ export class Payload extends Jsonable {
 
     static fromVortexMsg(vortexStr: string): Payload {
 
+        let start = now();
         // Convert the string to binary
         let compressedData = base64.decode(vortexStr);
+        console.log(`Payload.fromVortexMsg decode took ${now() - start}`);
+        start = now();
 
         // Decompress the payload string
         let payloadStr = pako.inflate(compressedData, {to: "string"});
+        console.log(`Payload.fromVortexMsg inflate took ${now() - start}`);
+        start = now();
 
         /* Log compression sizes
          console.log(dateStr() + 'Payload: Payload Compression ' + compressedData.length
@@ -98,17 +105,28 @@ export class Payload extends Jsonable {
          + (100 * compressedData.length / payloadStr.length).toFixed(1)
          + '%)');
          */
-        return new Payload()._fromJson(payloadStr);
+        let j = new Payload()._fromJson(payloadStr);
+        console.log(`Payload.fromVortexMsg _fromJson took ${now() - start}`);
+        start = now();
+
+        return j;
     }
 
     toVortexMsg(): string {
         let self = this;
 
+        let start = now();
         // Serialise it to string
-        let payloadStr = self._toJson();
 
+        let payloadStr = self._toJson();
+        console.log(`Payload.toVortexMsg toJson took ${now() - start}`);
+        start = now();
         // Compress it
         let compressedData = pako.deflate(payloadStr, {to: "string"});
-        return base64.encode(compressedData);
+        console.log(`Payload.toVortexMsg deflate took ${now() - start}`);
+        start = now();
+        let enc = base64.encode(compressedData);
+        console.log(`Payload.toVortexMsg encode took ${now() - start}`);
+        return enc;
     }
 }

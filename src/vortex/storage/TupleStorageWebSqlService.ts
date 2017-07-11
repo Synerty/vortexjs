@@ -37,6 +37,7 @@ let selectSql = `SELECT tupleSelector, dateTime, payload
 @Injectable()
 export class TupleStorageWebSqlService extends TupleStorageServiceABC {
     private webSql: WebSqlService;
+    private openInProgressPromise: Promise<void> | null = null;
 
     constructor(webSqlFactory: WebSqlFactoryService,
                 name: TupleOfflineStorageNameService) {
@@ -45,7 +46,17 @@ export class TupleStorageWebSqlService extends TupleStorageServiceABC {
     }
 
     open(): Promise<void> {
-        return this.webSql.open();
+        if (this.openInProgressPromise != null)
+            return this.openInProgressPromise;
+
+        this.openInProgressPromise = this.webSql.open()
+            .then(() => this.openInProgressPromise = null)
+            .catch(e => {
+                this.openInProgressPromise = null;
+                throw (e);
+            });
+
+        return this.openInProgressPromise;
     }
 
     isOpen(): boolean {
