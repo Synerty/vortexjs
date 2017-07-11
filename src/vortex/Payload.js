@@ -14,8 +14,23 @@ var SerialiseUtil_1 = require("./SerialiseUtil");
 var Jsonable_1 = require("./Jsonable");
 var UtilMisc_1 = require("./UtilMisc");
 require("./UtilArray");
-var base64 = require('base-64');
 var pako = require("pako");
+var base64 = require("base-64");
+// ----------------------------------------------------------------------------
+// Deflate Worker
+var deflateWorkerBlob = new Blob(["\nimportScripts(\"pako\");\nimportScripts(\"base-64\");\n\n\nself.addEventListener('message', function (event) {\n    let compressedData = pako.deflate(event.data, {to: \"string\"});\n    let encodedData = base64.encode(compressedData);\n    self.postMessage(encodedData, null);\n}, false);\n"], { type: 'text/javascript' });
+var deflateWorkerBlobUrl = URL.createObjectURL(deflateWorkerBlob);
+// ----------------------------------------------------------------------------
+// Inflate Worker
+var inflateWorkerBlob = new Blob(["\nimportScripts(\"pako\");\nimportScripts(\"base-64\");\n\nself.addEventListener('message', function (event) {\n    let compressedData = base64.decode(event.data);\n    let jsonStr = pako.inflate(compressedData, {to: \"string\"});\n    self.postMessage(jsonStr, null);\n}, false);\n"], { type: 'text/javascript' });
+var inflateWorkerBlobUrl = URL.createObjectURL(inflateWorkerBlob);
+// ----------------------------------------------------------------------------
+// Typescript date - date fooler
+function now() {
+    return new Date();
+}
+// ----------------------------------------------------------------------------
+// Payload class
 /**
  *
  * This class is serialised and transferred over the vortex to the server.
@@ -67,26 +82,62 @@ var Payload = (function (_super) {
         return JSON.stringify(jsonDict);
     };
     Payload.fromVortexMsg = function (vortexStr) {
-        // Convert the string to binary
-        var compressedData = base64.decode(vortexStr);
-        // Decompress the payload string
-        var payloadStr = pako.inflate(compressedData, { to: "string" });
-        /* Log compression sizes
-         console.log(dateStr() + 'Payload: Payload Compression ' + compressedData.length
-         + ' -> ' + payloadStr.length
-         + ' ('
-         + (100 * compressedData.length / payloadStr.length).toFixed(1)
-         + '%)');
-         */
-        return new Payload()._fromJson(payloadStr);
+        var start = now();
+        return new Promise(function (resolve, reject) {
+            var complete = function (jsonStr) {
+                console.log("Payload.fromVortexMsg decode+inflate took " + (now() - start));
+                start = now();
+                var payload = new Payload()._fromJson(jsonStr);
+                console.log("Payload.fromVortexMsg _fromJson took " + (now() - start));
+                resolve(payload);
+            };
+            /*
+             let worker = new Worker(inflateWorkerBlobUrl);
+
+             worker.addEventListener('message', (event) => complete(event.data), false);
+
+             worker.addEventListener('error', (error) => {
+             let msg = `${dateStr()} ERROR: Payload fromVortexMsg failed : ${error}`;
+             console.log(msg);
+             reject(msg)
+             }, false);
+
+             // DISABLE WEB WORKER :-(
+             worker.postMessage(vortexStr); // Send data to our worker.
+             */
+            var compressedData = base64.decode(vortexStr);
+            var jsonStr = pako.inflate(compressedData, { to: "string" });
+            complete(jsonStr);
+        });
     };
     Payload.prototype.toVortexMsg = function () {
-        var self = this;
-        // Serialise it to string
-        var payloadStr = self._toJson();
-        // Compress it
-        var compressedData = pako.deflate(payloadStr, { to: "string" });
-        return base64.encode(compressedData);
+        var _this = this;
+        var start = now();
+        return new Promise(function (resolve, reject) {
+            var jsonStr = _this._toJson();
+            console.log("Payload.toVortexMsg _toJson took " + (now() - start));
+            start = now();
+            var complete = function (jsonStr) {
+                console.log("Payload.toVortexMsg deflate+encode took " + (now() - start));
+                resolve(jsonStr);
+            };
+            // DISABLE WEB WORKER :-(
+            /*
+             let worker = new Worker(deflateWorkerBlobUrl);
+             worker.addEventListener('message', (event) => complete(event.data), false);
+
+             worker.addEventListener('error', (error) => {
+             let msg = `${dateStr()} ERROR: Payload toVortexMsg failed : ${error.toString()}`;
+             console.log(msg);
+             reject(msg)
+             }, false);
+
+             worker.postMessage(payloadStr); // Send data to our worker.
+             */
+            var compressedData = pako.deflate(jsonStr, { to: "string" });
+            var encodedData = base64.encode(compressedData);
+            complete(encodedData);
+        });
     };
     return Payload;
 }(Jsonable_1.default));

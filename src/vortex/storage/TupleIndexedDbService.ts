@@ -183,8 +183,6 @@ class TupleIndexedDbTransaction implements TupleStorageTransaction {
 
             request.onsuccess = () => {
 
-                let tuples = [];
-
                 let timeTaken = now() - startTime;
                 console.log(
                     `${dateStr()} IndexedDB: loadTuples took ${timeTaken}ms (in thread)`
@@ -192,20 +190,19 @@ class TupleIndexedDbTransaction implements TupleStorageTransaction {
 
                 // Called for each matching record
                 let data: DataStructI | null = request.result;
-                if (data != null) {
-                    let startTime = now();
-                    tuples = Payload.fromVortexMsg(data.payload).tuples;
-                    let timeTaken = now() - startTime;
-                    console.log(
-                        `${dateStr()} IndexedDB: fromVortexMsg took ${timeTaken}ms `
-                    );
+                if (data == null) {
+                    resolve([]);
+                    return;
                 }
 
-                resolve(tuples);
+                Payload.fromVortexMsg(data.payload)
+                    .then((payload: Payload) => resolve(payload.tuples))
+                    .catch(e => reject(e));
+
             };
         });
 
-    };
+    }
 
 
 // ----------------------------------------------------------------------------
@@ -222,39 +219,41 @@ class TupleIndexedDbTransaction implements TupleStorageTransaction {
         let startTime = now();
 
         // The payload is a convenient way to serialise and compress the data
-        let payloadData = new Payload({}, tuples).toVortexMsg();
-        let tupleSelectorStr = tupleSelector.toOrderedJsonStr();
+        return new Payload({}, tuples).toVortexMsg()
+            .then((vortexMsg: string) => {
+                let tupleSelectorStr = tupleSelector.toOrderedJsonStr();
 
-        let item: DataStructI = {
-            tupleSelector: tupleSelectorStr,
-            dateTime: new Date(),
-            payload: payloadData
-        };
+                let item: DataStructI = {
+                    tupleSelector: tupleSelectorStr,
+                    dateTime: new Date(),
+                    payload: vortexMsg
+                };
 
 
-        let timeTaken = now() - startTime;
-        console.log(`${dateStr()} IndexedDB: toVortexMsg took ${timeTaken}ms `);
-
-        startTime = now();
-
-        return new Promise<void>((resolve, reject) => {
-
-            // Run the inserts
-            let response = this.store.put(item);
-
-            addIndexedDbHandlers(response, () => {
-                reject(`${dateStr()} IndexedDB: saveTuples "put" error`);
-                throw new IDBException("Put error");
-            });
-
-            response.oncomplete = () => {
                 let timeTaken = now() - startTime;
-                console.log(`${dateStr()} IndexedDB: saveTuples`
-                    + ` took ${timeTaken}ms (in thread)`
-                    + ` Inserted/updated ${tuples.length} tuples`);
-                resolve();
-            };
-        });
+                console.log(`${dateStr()} IndexedDB: toVortexMsg took ${timeTaken}ms `);
+
+                startTime = now();
+
+                return new Promise<void>((resolve, reject) => {
+
+                    // Run the inserts
+                    let response = this.store.put(item);
+
+                    addIndexedDbHandlers(response, () => {
+                        reject(`${dateStr()} IndexedDB: saveTuples "put" error`);
+                        throw new IDBException("Put error");
+                    });
+
+                    response.oncomplete = () => {
+                        let timeTaken = now() - startTime;
+                        console.log(`${dateStr()} IndexedDB: saveTuples`
+                            + ` took ${timeTaken}ms (in thread)`
+                            + ` Inserted/updated ${tuples.length} tuples`);
+                        resolve();
+                    };
+                });
+            });
 
     };
 

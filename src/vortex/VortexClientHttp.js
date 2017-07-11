@@ -30,10 +30,10 @@ var VortexClientHttp = (function (_super) {
             this.lastConn = null;
         }
     };
-    VortexClientHttp.prototype.sendPayloads = function (payloads) {
+    VortexClientHttp.prototype.sendVortexMsg = function (vortexMsgs) {
         var _this = this;
         this.lastConn = new _VortexClientHttpConnection(this, this.vortexStatusService, function (payload) { return _this.receive(payload); }, function () { return _this.beat(); });
-        this.lastConn.send(payloads);
+        this.lastConn.send(vortexMsgs);
         // console.log(dateStr() + "Sent payload with filt : " + JSON.stringify(payload.filt));
     };
     return VortexClientHttp;
@@ -86,12 +86,12 @@ var _VortexClientHttpConnection = (function () {
         if (this._http)
             this._http.abort();
     };
-    _VortexClientHttpConnection.prototype.send = function (payloads) {
+    _VortexClientHttpConnection.prototype.send = function (vortexMsgs) {
         var data = "";
-        for (var _i = 0, payloads_1 = payloads; _i < payloads_1.length; _i++) {
-            var payload = payloads_1[_i];
+        for (var _i = 0, vortexMsgs_1 = vortexMsgs; _i < vortexMsgs_1.length; _i++) {
+            var vortexMsg = vortexMsgs_1[_i];
             // Serialise the payload
-            data += payload.toVortexMsg() + ".";
+            data += vortexMsg + ".";
         }
         // console.log("sending payload");
         // console.log(xmlStr);
@@ -132,9 +132,10 @@ var _VortexClientHttpConnection = (function () {
             }
             else {
                 // Create payload object from it
-                var payload = Payload_1.Payload.fromVortexMsg(vortexStr);
                 // Send to vortex
-                self.receiveCallback(payload);
+                Payload_1.Payload.fromVortexMsg(vortexStr)
+                    .then(function (payload) { return self.receiveCallback(payload); })
+                    .catch(function (e) { return console.log("An error occured deserialising " + e); });
             }
             data = self._http.responseText.substr(self._responseParseIndex);
             payloadSeparatorIndex = data.indexOf(".");

@@ -66,7 +66,6 @@ function addIndexedDbHandlers(request, stacktraceFunctor) {
     };
 }
 var TUPLE_STORE = "tuples";
-exports.counter = 0;
 /** Tuple Storage IndexedDB
  *
  * This class handles storing and retrieving tuples to/from indexed db.
@@ -128,12 +127,8 @@ var TupleIndexedDbService = (function (_super) {
         this.db = null;
     };
     TupleIndexedDbService.prototype.transaction = function (forWrite) {
-        console.log("INDEXED DB: transaction");
-        if (!this.isOpen()) {
-            console.log("IndexedDB " + this.dbName + " is not open");
+        if (!this.isOpen())
             throw new Error("IndexedDB " + this.dbName + " is not open");
-        }
-        ;
         // Get the Read Only case out the way, it's easy
         var mode = forWrite ? "readwrite" : "readonly";
         return Promise.resolve(new TupleIndexedDbTransaction(this.db.transaction(TUPLE_STORE, mode), forWrite));
@@ -150,42 +145,34 @@ var TupleIndexedDbTransaction = (function () {
         this.tx = tx;
         this.txForWrite = txForWrite;
         this.store = this.tx.objectStore(TUPLE_STORE);
-        this.count = exports.counter++;
-        console.log(this.count + " INDEXED DB: opened transaction");
     }
     // ----------------------------------------------------------------------------
     // Load the display items from the cache
     TupleIndexedDbTransaction.prototype.loadTuples = function (tupleSelector) {
         var _this = this;
         var startTime = now();
-        console.log(this.count + " INDEXED DB: resolve " + tupleSelector.toOrderedJsonStr());
         return new Promise(function (resolve, reject) {
             var request = _this.store.get(tupleSelector.toOrderedJsonStr());
-            console.log(_this.count + " INDEXED DB: loadTuples");
             addIndexedDbHandlers(request, function () {
-                var msg = _this.count + "  IndexedDB: Index open cursor";
+                var msg = UtilMisc_1.dateStr() + " IndexedDB: Index open cursor";
                 reject(msg);
                 throw new IDBException(msg);
             });
             request.onsuccess = function () {
-                console.log(_this.count + " INDEXED DB: onsuccess");
-                var tuples = [];
                 var timeTaken = now() - startTime;
-                console.log(_this.count + "  IndexedDB: loadTuples took " + timeTaken + "ms (in thread)");
+                console.log(UtilMisc_1.dateStr() + " IndexedDB: loadTuples took " + timeTaken + "ms (in thread)");
                 // Called for each matching record
                 var data = request.result;
-                if (data != null) {
-                    var startTime_1 = now();
-                    tuples = Payload_1.Payload.fromVortexMsg(data.payload).tuples;
-                    var timeTaken_1 = now() - startTime_1;
-                    console.log(_this.count + "  IndexedDB: fromVortexMsg took " + timeTaken_1 + "ms ");
+                if (data == null) {
+                    resolve([]);
+                    return;
                 }
-                console.log(_this.count + " INDEXED DB: resolve " + JSON.stringify(tuples));
-                resolve(tuples);
+                Payload_1.Payload.fromVortexMsg(data.payload)
+                    .then(function (payload) { return resolve(payload.tuples); })
+                    .catch(function (e) { return reject(e); });
             };
         });
     };
-    ;
     // ----------------------------------------------------------------------------
     // Add disply items to the cache
     TupleIndexedDbTransaction.prototype.saveTuples = function (tupleSelector, tuples) {
@@ -197,30 +184,32 @@ var TupleIndexedDbTransaction = (function () {
         }
         var startTime = now();
         // The payload is a convenient way to serialise and compress the data
-        var payloadData = new Payload_1.Payload({}, tuples).toVortexMsg();
-        var tupleSelectorStr = tupleSelector.toOrderedJsonStr();
-        var item = {
-            tupleSelector: tupleSelectorStr,
-            dateTime: new Date(),
-            payload: payloadData
-        };
-        var timeTaken = now() - startTime;
-        console.log(UtilMisc_1.dateStr() + " IndexedDB: toVortexMsg took " + timeTaken + "ms ");
-        startTime = now();
-        return new Promise(function (resolve, reject) {
-            // Run the inserts
-            var response = _this.store.put(item);
-            addIndexedDbHandlers(response, function () {
-                reject(UtilMisc_1.dateStr() + " IndexedDB: saveTuples \"put\" error");
-                throw new IDBException("Put error");
-            });
-            response.oncomplete = function () {
-                var timeTaken = now() - startTime;
-                console.log(UtilMisc_1.dateStr() + " IndexedDB: saveTuples"
-                    + (" took " + timeTaken + "ms (in thread)")
-                    + (" Inserted/updated " + tuples.length + " tuples"));
-                resolve();
+        return new Payload_1.Payload({}, tuples).toVortexMsg()
+            .then(function (vortexMsg) {
+            var tupleSelectorStr = tupleSelector.toOrderedJsonStr();
+            var item = {
+                tupleSelector: tupleSelectorStr,
+                dateTime: new Date(),
+                payload: vortexMsg
             };
+            var timeTaken = now() - startTime;
+            console.log(UtilMisc_1.dateStr() + " IndexedDB: toVortexMsg took " + timeTaken + "ms ");
+            startTime = now();
+            return new Promise(function (resolve, reject) {
+                // Run the inserts
+                var response = _this.store.put(item);
+                addIndexedDbHandlers(response, function () {
+                    reject(UtilMisc_1.dateStr() + " IndexedDB: saveTuples \"put\" error");
+                    throw new IDBException("Put error");
+                });
+                response.oncomplete = function () {
+                    var timeTaken = now() - startTime;
+                    console.log(UtilMisc_1.dateStr() + " IndexedDB: saveTuples"
+                        + (" took " + timeTaken + "ms (in thread)")
+                        + (" Inserted/updated " + tuples.length + " tuples"));
+                    resolve();
+                };
+            });
         });
     };
     ;

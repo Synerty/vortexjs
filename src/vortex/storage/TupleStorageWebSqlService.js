@@ -35,11 +35,21 @@ var TupleStorageWebSqlService = (function (_super) {
     __extends(TupleStorageWebSqlService, _super);
     function TupleStorageWebSqlService(webSqlFactory, name) {
         var _this = _super.call(this, name) || this;
+        _this.openInProgressPromise = null;
         _this.webSql = webSqlFactory.createWebSql(_this.dbName, databaseSchema);
         return _this;
     }
     TupleStorageWebSqlService.prototype.open = function () {
-        return this.webSql.open();
+        var _this = this;
+        if (this.openInProgressPromise != null)
+            return this.openInProgressPromise;
+        this.openInProgressPromise = this.webSql.open()
+            .then(function () { return _this.openInProgressPromise = null; })
+            .catch(function (e) {
+            _this.openInProgressPromise = null;
+            throw (e);
+        });
+        return this.openInProgressPromise;
     };
     TupleStorageWebSqlService.prototype.isOpen = function () {
         return this.webSql.isOpen();
@@ -72,22 +82,25 @@ var TupleWebSqlTransaction = (function () {
                 return [];
             }
             var row1 = rows[0];
-            var payload = Payload_1.Payload.fromVortexMsg(row1.payload);
-            return payload.tuples;
+            return Payload_1.Payload.fromVortexMsg(row1.payload)
+                .then(function (payload) { return payload.tuples; });
         });
     };
     TupleWebSqlTransaction.prototype.saveTuples = function (tupleSelector, tuples) {
+        var _this = this;
         if (!this.txForWrite) {
             var msg = "WebSQL: saveTuples attempted on read only TX";
             console.log(UtilMisc_1.dateStr() + " " + msg);
             return Promise.reject(msg);
         }
         // The payload is a convenient way to serialise and compress the data
-        var payloadData = new Payload_1.Payload({}, tuples).toVortexMsg();
-        var tupleSelectorStr = tupleSelector.toOrderedJsonStr();
-        var bindParams = [tupleSelectorStr, Date.now(), payloadData];
-        return this.tx.executeSql(insertSql, bindParams)
-            .then(function () { return null; }); // Convert the result
+        return new Payload_1.Payload({}, tuples).toVortexMsg()
+            .then(function (vortexMsg) {
+            var tupleSelectorStr = tupleSelector.toOrderedJsonStr();
+            var bindParams = [tupleSelectorStr, Date.now(), vortexMsg];
+            return _this.tx.executeSql(insertSql, bindParams)
+                .then(function () { return null; }); // Convert the result
+        });
     };
     TupleWebSqlTransaction.prototype.close = function () {
         return Promise.resolve();

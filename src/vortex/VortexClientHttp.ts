@@ -38,12 +38,12 @@ export class VortexClientHttp extends VortexClientABC {
     }
 
 
-    sendPayloads(payloads: Payload[]): void {
+    protected sendVortexMsg(vortexMsgs: string[]): void {
         this.lastConn = new _VortexClientHttpConnection(this, this.vortexStatusService,
             (payload) => this.receive(payload),
             () => this.beat()
         );
-        this.lastConn.send(payloads);
+        this.lastConn.send(vortexMsgs);
         // console.log(dateStr() + "Sent payload with filt : " + JSON.stringify(payload.filt));
     }
 
@@ -119,12 +119,12 @@ class _VortexClientHttpConnection {
             this._http.abort();
     }
 
-    send(payloads: Payload[]) {
+    send(vortexMsgs: string[]) {
         let data = "";
 
-        for (let payload of payloads) {
+        for (let vortexMsg of vortexMsgs) {
             // Serialise the payload
-            data += payload.toVortexMsg() + ".";
+            data += vortexMsg + ".";
         }
 
         // console.log("sending payload");
@@ -175,10 +175,10 @@ class _VortexClientHttpConnection {
 
             } else {
                 // Create payload object from it
-                let payload = Payload.fromVortexMsg(vortexStr);
-
                 // Send to vortex
-                self.receiveCallback(payload);
+                Payload.fromVortexMsg(vortexStr)
+                    .then((payload: Payload) => self.receiveCallback(payload))
+                    .catch(e => console.log(`An error occured deserialising ${e}`));
             }
 
             data = self._http.responseText.substr(self._responseParseIndex);

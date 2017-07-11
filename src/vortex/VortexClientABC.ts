@@ -90,10 +90,22 @@ export abstract class VortexClientABC {
             }
         }
 
-        this.sendPayloads(payloads);
+        let vortexMsgs: string[] = [];
+        let promisies = [];
+
+        for (let payload of payloads) {
+            promisies.push(
+                payload.toVortexMsg()
+                    .then((vortexMsg) => vortexMsgs.push(vortexMsg))
+            );
+        }
+
+        Promise.all(promisies)
+            .then(() => this.sendVortexMsg(vortexMsgs))
+            .catch(e => console.log(`ERROR VortexClientABC: ${e.toString()}`));
     }
 
-    protected abstract  sendPayloads(payloads: Payload[]): void;
+    protected abstract sendVortexMsg(vortexMsgs: string[]): void;
 
     protected abstract shutdown(): void;
 
@@ -127,7 +139,7 @@ export abstract class VortexClientABC {
         }, 15000);
     }
 
-    private clearBeatTimer(){
+    private clearBeatTimer() {
         if (this.beatTimer != null) {
             clearInterval(this.beatTimer);
             this.beatTimer = null;

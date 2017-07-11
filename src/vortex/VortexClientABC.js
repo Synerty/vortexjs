@@ -68,6 +68,7 @@ var VortexClientABC = (function () {
         configurable: true
     });
     VortexClientABC.prototype.send = function (payload) {
+        var _this = this;
         var self = this;
         if (self.closed) {
             console.log(UtilMisc_1.dateStr() + "VortexService is closed, Probably due to a login page reload");
@@ -86,7 +87,16 @@ var VortexClientABC = (function () {
                     + ", There must be one for routing");
             }
         }
-        this.sendPayloads(payloads);
+        var vortexMsgs = [];
+        var promisies = [];
+        for (var _a = 0, payloads_2 = payloads; _a < payloads_2.length; _a++) {
+            var payload_1 = payloads_2[_a];
+            promisies.push(payload_1.toVortexMsg()
+                .then(function (vortexMsg) { return vortexMsgs.push(vortexMsg); }));
+        }
+        Promise.all(promisies)
+            .then(function () { return _this.sendVortexMsg(vortexMsgs); })
+            .catch(function (e) { return console.log("ERROR VortexClientABC: " + e.toString()); });
     };
     VortexClientABC.prototype.reconnect = function () {
         if (this.closed)

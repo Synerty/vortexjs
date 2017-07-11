@@ -39,7 +39,10 @@ var TupleOfflineStorageService = (function () {
         return this.transaction(true)
             .then(function (tx) {
             return tx.saveTuples(tupleSelector, tuples)
-                .then(function () { return tx.close(); });
+                .then(function () {
+                // Don't add the close to the promise chain
+                tx.close().catch(function (e) { return console.log("ERROR loadTuples: " + e); });
+            });
         });
     };
     return TupleOfflineStorageService;

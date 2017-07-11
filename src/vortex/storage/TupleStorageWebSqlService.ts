@@ -91,8 +91,8 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
                 }
 
                 let row1 = rows[0];
-                let payload = Payload.fromVortexMsg(row1.payload);
-                return payload.tuples;
+                return Payload.fromVortexMsg(row1.payload)
+                    .then((payload: Payload) => payload.tuples);
             });
     }
 
@@ -105,12 +105,14 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
         }
 
         // The payload is a convenient way to serialise and compress the data
-        let payloadData = new Payload({}, tuples).toVortexMsg();
-        let tupleSelectorStr = tupleSelector.toOrderedJsonStr();
-        let bindParams = [tupleSelectorStr, Date.now(), payloadData];
+        return new Payload({}, tuples).toVortexMsg()
+            .then((vortexMsg: string) => {
+                let tupleSelectorStr = tupleSelector.toOrderedJsonStr();
+                let bindParams = [tupleSelectorStr, Date.now(), vortexMsg];
 
-        return this.tx.executeSql(insertSql, bindParams)
-            .then(() => null); // Convert the result
+                return this.tx.executeSql(insertSql, bindParams)
+                    .then(() => null); // Convert the result
+            });
 
     }
 

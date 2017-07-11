@@ -3,7 +3,10 @@ import {VortexStatusService} from "./VortexStatusService";
 import {TupleActionABC} from "./TupleAction";
 import {Tuple} from "./Tuple";
 import {WebSqlFactoryService, WebSqlService} from "../websql/WebSqlService";
-import {TupleActionPushNameService, TupleActionPushService} from "./TupleActionPushService";
+import {
+    TupleActionPushNameService,
+    TupleActionPushService
+} from "./TupleActionPushService";
 import {Payload} from "./Payload";
 import {VortexService} from "./VortexService";
 import {assert} from "./UtilMisc";
@@ -29,7 +32,7 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
     private webSql: WebSqlService;
     private storageName: string;
     private sendingTuple = false;
-    private lastSendFailTime:null | number = null;
+    private lastSendFailTime: null | number = null;
 
     private SEND_FAIL_RETRY_TIMEOUT = 5000;// milliseconds
     private SERVER_PROCESSING_TIMEOUT = 5000;// milliseconds
@@ -68,8 +71,8 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
         if (!this.vortexStatus.snapshot.isOnline)
             return;
 
-            // Don't continually retry, if we have a last send fail, ensure we wait
-            // {SEND_FAIL_RETRY_BACKOFF} before sending again.
+        // Don't continually retry, if we have a last send fail, ensure we wait
+        // {SEND_FAIL_RETRY_BACKOFF} before sending again.
         if (this.lastSendFailTime != null) {
             let reconnectDiffMs = Date.now() - this.lastSendFailTime;
 
@@ -104,7 +107,7 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
                     this.makePayload(tupleAction),
                     PayloadResponse.RESPONSE_TIMEOUT_SECONDS, // Timeout
                     false // don't check result, only reject if it times out
-                ) .then(payload => {
+                ).then(payload => {
                     // If we received a payload, but it has an error message
                     // Log an error, it's out of our hands, move on.
                     let r = payload.result; // success is null or true
@@ -132,21 +135,23 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
             });
     }
 
-    private storeAction(tupleAction: TupleActionABC): Promise < Tuple[] > {
+    private storeAction(tupleAction: TupleActionABC): Promise<Tuple[]> {
         // The payload is a convenient way to serialise and compress the data
-        let payloadData = new Payload({}, [tupleAction]).toVortexMsg();
+        return new Payload({}, [tupleAction]).toVortexMsg()
+            .then((vortexMsg: string) => {
 
-        let sql = `INSERT INTO ${tableName}
+                let sql = `INSERT INTO ${tableName}
                     (scope, uuid, payload)
                     VALUES (?, ?, ?)`;
-        let bindParams = [this.storageName, tupleAction.uuid, payloadData];
+                let bindParams = [this.storageName, tupleAction.uuid, vortexMsg];
 
-        return this.webSql.runSql(sql, bindParams)
-            .then((val) => {
-                this.vortexStatus.incrementQueuedActionCount();
-                return val;
-            })
-            .then(() => [tupleAction]); //
+                return this.webSql.runSql(sql, bindParams)
+                    .then((val) => {
+                        this.vortexStatus.incrementQueuedActionCount();
+                        return val;
+                    })
+                    .then(() => [tupleAction]);
+            });
     }
 
     private loadNextAction(): Promise<TupleActionABC | null> {
@@ -164,12 +169,14 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
                 }
 
                 let row1 = rows[0];
-                let payload = Payload.fromVortexMsg(row1.payload);
+                return Payload.fromVortexMsg(row1.payload)
+                    .then((payload: Payload) => {
 
-                assert(payload.tuples.length === 1,
-                    `Expected 1 tuple, got ${payload.tuples.length}`);
+                        assert(payload.tuples.length === 1,
+                            `Expected 1 tuple, got ${payload.tuples.length}`);
 
-                return payload.tuples[0];
+                        return payload.tuples[0];
+                    });
             });
     }
 
@@ -190,7 +197,7 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
             });
     }
 
-    private deleteAction(actionUuid: number): Promise < void > {
+    private deleteAction(actionUuid: number): Promise<void> {
         let sql = `DELETE FROM ${tableName}
                     WHERE scope=? AND uuid=?`;
         let bindParams = [this.storageName, actionUuid];

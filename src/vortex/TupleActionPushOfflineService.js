@@ -112,15 +112,17 @@ var TupleActionPushOfflineService = (function (_super) {
     TupleActionPushOfflineService.prototype.storeAction = function (tupleAction) {
         var _this = this;
         // The payload is a convenient way to serialise and compress the data
-        var payloadData = new Payload_1.Payload({}, [tupleAction]).toVortexMsg();
-        var sql = "INSERT INTO " + tableName + "\n                    (scope, uuid, payload)\n                    VALUES (?, ?, ?)";
-        var bindParams = [this.storageName, tupleAction.uuid, payloadData];
-        return this.webSql.runSql(sql, bindParams)
-            .then(function (val) {
-            _this.vortexStatus.incrementQueuedActionCount();
-            return val;
-        })
-            .then(function () { return [tupleAction]; }); //
+        return new Payload_1.Payload({}, [tupleAction]).toVortexMsg()
+            .then(function (vortexMsg) {
+            var sql = "INSERT INTO " + tableName + "\n                    (scope, uuid, payload)\n                    VALUES (?, ?, ?)";
+            var bindParams = [_this.storageName, tupleAction.uuid, vortexMsg];
+            return _this.webSql.runSql(sql, bindParams)
+                .then(function (val) {
+                _this.vortexStatus.incrementQueuedActionCount();
+                return val;
+            })
+                .then(function () { return [tupleAction]; });
+        });
     };
     TupleActionPushOfflineService.prototype.loadNextAction = function () {
         var sql = "SELECT payload\n                    FROM " + tableName + "\n                    WHERE scope = ?\n                    ORDER BY id\n                    LIMIT 1";
@@ -131,9 +133,11 @@ var TupleActionPushOfflineService = (function (_super) {
                 return;
             }
             var row1 = rows[0];
-            var payload = Payload_1.Payload.fromVortexMsg(row1.payload);
-            UtilMisc_1.assert(payload.tuples.length === 1, "Expected 1 tuple, got " + payload.tuples.length);
-            return payload.tuples[0];
+            return Payload_1.Payload.fromVortexMsg(row1.payload)
+                .then(function (payload) {
+                UtilMisc_1.assert(payload.tuples.length === 1, "Expected 1 tuple, got " + payload.tuples.length);
+                return payload.tuples[0];
+            });
         });
     };
     TupleActionPushOfflineService.prototype.countActions = function () {

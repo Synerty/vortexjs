@@ -21,7 +21,6 @@ var VortexClientWebsocket = (function (_super) {
         _this.socket = null;
         _this.lastReconnectDate = Date.parse("01-Jan-2017");
         _this.unsentBuffer = [];
-        _this.sentBuffer = [];
         return _this;
     }
     Object.defineProperty(VortexClientWebsocket.prototype, "isReady", {
@@ -31,8 +30,8 @@ var VortexClientWebsocket = (function (_super) {
         enumerable: true,
         configurable: true
     });
-    VortexClientWebsocket.prototype.sendPayloads = function (payloads) {
-        this.unsentBuffer.add(payloads);
+    VortexClientWebsocket.prototype.sendVortexMsg = function (vortexMsgs) {
+        this.unsentBuffer.add(vortexMsgs);
         if (!this.isReady)
             this.createSocket();
         this.sendMessages();
@@ -41,8 +40,8 @@ var VortexClientWebsocket = (function (_super) {
         while (this.unsentBuffer.length !== 0) {
             if (!this.isReady)
                 return;
-            var payload = this.unsentBuffer.shift();
-            this.socket.send(payload.toVortexMsg() + '.');
+            var vortexMsg = this.unsentBuffer.shift();
+            this.socket.send(vortexMsg + '.');
         }
     };
     VortexClientWebsocket.prototype.shutdown = function () {
@@ -85,6 +84,7 @@ var VortexClientWebsocket = (function (_super) {
         this.socket.addEventListener('error', function (event) { return _this.onError(event); });
     };
     VortexClientWebsocket.prototype.onMessage = function (event) {
+        var _this = this;
         if (event.data.length == null) {
             this.vortexStatusService.logError("WebSocket, We've received a websocket binary message," +
                 " we expect a unicode");
@@ -96,8 +96,9 @@ var VortexClientWebsocket = (function (_super) {
             this.socket != null && this.socket.send('.');
             return;
         }
-        var payload = Payload_1.Payload.fromVortexMsg(event.data);
-        this.receive(payload);
+        Payload_1.Payload.fromVortexMsg(event.data)
+            .then(function (payload) { return _this.receive(payload); })
+            .catch(function (e) { return console.log("ERROR VortexClientWebsocket: " + e); });
     };
     VortexClientWebsocket.prototype.onOpen = function (event) {
         this.vortexStatusService.setOnline(true);

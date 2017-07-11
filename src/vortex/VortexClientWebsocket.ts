@@ -18,8 +18,7 @@ export class VortexClientWebsocket extends VortexClientABC {
 
     private lastReconnectDate: number = Date.parse("01-Jan-2017");
 
-    private unsentBuffer: Payload[] = [];
-    private sentBuffer: Payload[] = [];
+    private unsentBuffer: string[] = [];
 
     constructor(vortexStatusService: VortexStatusService,
                 zone: NgZone,
@@ -32,8 +31,8 @@ export class VortexClientWebsocket extends VortexClientABC {
         return this.socket != null && this.socket.readyState === this.Socket.OPEN;
     }
 
-    sendPayloads(payloads: Payload[]): void {
-        this.unsentBuffer.add(payloads);
+    protected sendVortexMsg(vortexMsgs: string[]): void {
+        this.unsentBuffer.add(vortexMsgs);
 
         if (!this.isReady)
             this.createSocket();
@@ -46,12 +45,12 @@ export class VortexClientWebsocket extends VortexClientABC {
             if (!this.isReady)
                 return;
 
-            let payload = this.unsentBuffer.shift();
-            this.socket.send(payload.toVortexMsg() + '.');
+            let vortexMsg = this.unsentBuffer.shift();
+            this.socket.send(vortexMsg + '.');
         }
     }
 
-    protected shutdown():void {
+    protected shutdown(): void {
         this.createSocket();
     }
 
@@ -115,9 +114,9 @@ export class VortexClientWebsocket extends VortexClientABC {
             return;
         }
 
-
-        let payload = Payload.fromVortexMsg(event.data);
-        this.receive(payload);
+        Payload.fromVortexMsg(event.data)
+            .then((payload: Payload) => this.receive(payload))
+            .catch(e => console.log(`ERROR VortexClientWebsocket: ${e}`));
     }
 
     private onOpen(event) {
