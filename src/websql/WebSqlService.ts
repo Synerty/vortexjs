@@ -34,9 +34,9 @@ export abstract class WebSqlService {
 
     }
 
-    protected installSchema(): Promise<true> {
+    protected installSchema(): Promise<void> {
         // Open Transaction promise
-        return new Promise<boolean>((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             this.transaction()
                 .catch((err) => {
                     reject(err);
@@ -53,7 +53,7 @@ export abstract class WebSqlService {
                         })
                         .then((data) => {
                             this.schemaInstalled = true;
-                            resolve(true)
+                            resolve()
                         });
                 });
         });

@@ -44,7 +44,7 @@ var WebSqlService = (function () {
                 })
                     .then(function (data) {
                     _this.schemaInstalled = true;
-                    resolve(true);
+                    resolve();
                 });
             });
         });
