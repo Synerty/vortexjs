@@ -17,14 +17,6 @@ require("./UtilArray");
 var pako = require("pako");
 var base64 = require("base-64");
 // ----------------------------------------------------------------------------
-// Deflate Worker
-var deflateWorkerBlob = new Blob(["\nimportScripts(\"pako\");\nimportScripts(\"base-64\");\n\n\nself.addEventListener('message', function (event) {\n    let compressedData = pako.deflate(event.data, {to: \"string\"});\n    let encodedData = base64.encode(compressedData);\n    self.postMessage(encodedData, null);\n}, false);\n"], { type: 'text/javascript' });
-var deflateWorkerBlobUrl = URL.createObjectURL(deflateWorkerBlob);
-// ----------------------------------------------------------------------------
-// Inflate Worker
-var inflateWorkerBlob = new Blob(["\nimportScripts(\"pako\");\nimportScripts(\"base-64\");\n\nself.addEventListener('message', function (event) {\n    let compressedData = base64.decode(event.data);\n    let jsonStr = pako.inflate(compressedData, {to: \"string\"});\n    self.postMessage(jsonStr, null);\n}, false);\n"], { type: 'text/javascript' });
-var inflateWorkerBlobUrl = URL.createObjectURL(inflateWorkerBlob);
-// ----------------------------------------------------------------------------
 // Typescript date - date fooler
 function now() {
     return new Date();

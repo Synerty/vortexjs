@@ -7,6 +7,8 @@ import "./UtilArray";
 import * as pako from "pako";
 import * as base64 from "base-64";
 
+/* Blob is undefined in NativeScript
+
 // ----------------------------------------------------------------------------
 // Deflate Worker
 let deflateWorkerBlob = new Blob([`
@@ -37,6 +39,9 @@ self.addEventListener('message', function (event) {
 `], {type: 'text/javascript'});
 
 let inflateWorkerBlobUrl = URL.createObjectURL(inflateWorkerBlob);
+
+*/
+
 
 // ----------------------------------------------------------------------------
 // Types
