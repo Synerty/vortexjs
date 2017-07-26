@@ -1,15 +1,16 @@
 import {Injectable} from "@angular/core";
 import {WebSqlFactoryService} from "../../websql/WebSqlService";
-import {TupleStorageServiceABC} from "./TupleStorageServiceABC";
+import {TupleStorageServiceABC} from "../storage/TupleStorageServiceABC";
 import {TupleOfflineStorageNameService} from "../TupleOfflineStorageNameService";
-import {supportsIndexedDb, TupleIndexedDbService} from "./TupleIndexedDbService";
-import {TupleStorageWebSqlService} from "./TupleStorageWebSqlService";
-import {TupleStorageNullService} from "./TupleStorageNullService";
+import {supportsIndexedDb, TupleIndexedDbService} from "../storage/TupleIndexedDbService";
+import {TupleStorageWebSqlService} from "../storage/TupleStorageWebSqlService";
+import {TupleStorageNullService} from "../storage/TupleStorageNullService";
+import {TupleStorageFactoryService} from "./TupleStorageFactoryService";
 
 @Injectable()
-export class TupleStorageFactoryService {
-    constructor(private webSqlFactory: WebSqlFactoryService) {
-
+export class TupleStorageFactoryServiceWeb extends TupleStorageFactoryService {
+    constructor(webSqlFactory: WebSqlFactoryService) {
+        super(webSqlFactory);
     }
 
     create(name: TupleOfflineStorageNameService): TupleStorageServiceABC {

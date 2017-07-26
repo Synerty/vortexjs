@@ -1,7 +1,7 @@
 import {TupleSelector} from "./TupleSelector";
 import {Tuple} from "./Tuple";
 import {Injectable} from "@angular/core";
-import {TupleStorageFactoryService} from "./storage/TupleStorageFactoryService";
+import {TupleStorageFactoryService} from "./storage-factory/TupleStorageFactoryService";
 import {
     TupleStorageServiceABC,
     TupleStorageTransaction

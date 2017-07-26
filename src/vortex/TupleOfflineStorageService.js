@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var TupleStorageFactoryService_1 = require("./storage/TupleStorageFactoryService");
+var TupleStorageFactoryService_1 = require("./storage-factory/TupleStorageFactoryService");
 var TupleOfflineStorageNameService_1 = require("./TupleOfflineStorageNameService");
 var TupleOfflineStorageService = (function () {
     function TupleOfflineStorageService(storageFactory, tupleOfflineStorageServiceName) {

@@ -14,7 +14,7 @@ export {WebSqlFactoryService, WebSqlService} from "./src/websql/WebSqlService";
 // Tuple Storage Factory
 // This should choose the best method of storage
 // This is plumbing, use TupleOfflineStorageService instead.
-export {TupleStorageFactoryService} from "./src/vortex/storage/TupleStorageFactoryService";
+export {TupleStorageFactoryService} from "./src/vortex/storage-factory/TupleStorageFactoryService";
 export {TupleStorageServiceABC} from "./src/vortex/storage/TupleStorageServiceABC";
 
 // Offline Tuple
