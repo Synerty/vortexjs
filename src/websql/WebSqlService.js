@@ -28,24 +28,13 @@ var WebSqlService = (function () {
     WebSqlService.prototype.installSchema = function () {
         var _this = this;
         // Open Transaction promise
-        return new Promise(function (resolve, reject) {
-            _this.transaction()
-                .catch(function (err) {
-                reject(err);
-                throw new Error(err);
-            })
-                .then(function (tx) {
-                // Run SQL Promise
-                // TODO, Handle more than one SQL statement
-                tx.executeSql(_this.dbSchema[0])
-                    .catch(function (err) {
-                    reject(err);
-                    throw new Error(err);
-                })
-                    .then(function (data) {
-                    _this.schemaInstalled = true;
-                    resolve();
-                });
+        return this.transaction()
+            .then(function (tx) {
+            // Run SQL Promise
+            // TODO, Handle more than one SQL statement
+            return tx.executeSql(_this.dbSchema[0])
+                .then(function (data) {
+                _this.schemaInstalled = true;
             });
         });
     };
@@ -80,29 +69,14 @@ var WebSqlService = (function () {
     };
     WebSqlService.prototype.openTransRunSql = function (sql, bindParams) {
         var _this = this;
-        return new Promise(function (resolve, reject) {
-            // Open DB Promise
-            _this.open()
-                .catch(function (err) {
-                reject(err);
-                throw new Error(err);
-            })
-                .then(function () {
-                // Open Transaction promise
-                _this.transaction()
-                    .catch(function (err) {
-                    reject(err);
-                    throw new Error(err);
-                })
-                    .then(function (tx) {
-                    // Run SQL Promise
-                    tx.executeSql(sql, bindParams)
-                        .catch(function (err) {
-                        reject(err);
-                        throw new Error(err);
-                    })
-                        .then(function (data) { return resolve(data); });
-                });
+        return this.open()
+            .then(function () {
+            // Open Transaction promise
+            return _this.transaction()
+                .then(function (tx) {
+                // Run SQL Promise
+                return tx.executeSql(sql, bindParams)
+                    .then(function (data) { return data; });
             });
         });
     };

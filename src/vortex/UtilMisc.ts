@@ -108,6 +108,30 @@ export function bind(obj: any, method: any): any {
 
 // ----------------------------------------------------------------------------
 
+/**
+ * Bind a function
+ * @param err : The err object to convert to a string.
+ *
+ * @return A callable function that will call the method correctly bound to "this"
+ */
+export function errToStr(err: any): string {
+
+    if (err.message != null)
+        return err.message;
+
+    try {
+        let jsonStr = JSON.stringify(err);
+        if (jsonStr != '{}')
+            return jsonStr;
+
+    } catch (ignore) {
+    }
+
+    return err.toString();
+}
+
+// ----------------------------------------------------------------------------
+
 /* Add a imports for these requires */
 
 export let extend = require('extend');
@@ -115,3 +139,5 @@ export let deepEqual = require('deep-equal');
 
 // https://www.npmjs.com/package/json-stable-stringify
 export let jsonOrderedStringify = require('json-stable-stringify');
+
+

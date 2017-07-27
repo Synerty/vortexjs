@@ -95,6 +95,26 @@ function bind(obj, method) {
 }
 exports.bind = bind;
 // ----------------------------------------------------------------------------
+/**
+ * Bind a function
+ * @param err : The err object to convert to a string.
+ *
+ * @return A callable function that will call the method correctly bound to "this"
+ */
+function errToStr(err) {
+    if (err.message != null)
+        return err.message;
+    try {
+        var jsonStr = JSON.stringify(err);
+        if (jsonStr != '{}')
+            return jsonStr;
+    }
+    catch (ignore) {
+    }
+    return err.toString();
+}
+exports.errToStr = errToStr;
+// ----------------------------------------------------------------------------
 /* Add a imports for these requires */
 exports.extend = require('extend');
 exports.deepEqual = require('deep-equal');

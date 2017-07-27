@@ -9,7 +9,7 @@ import {
 } from "./TupleActionPushService";
 import {Payload} from "./Payload";
 import {VortexService} from "./VortexService";
-import {assert} from "./UtilMisc";
+import {assert, errToStr} from "./UtilMisc";
 import {PayloadResponse} from "./PayloadResponse";
 
 let datbaseName = "tupleActions.sqlite";
@@ -54,14 +54,28 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
             .subscribe(online => this.sendNextAction());
 
         this.countActions()
-            .then(() => this.sendNextAction());
+            .then(() => this.sendNextAction())
+            .catch(err => {
+                let errStr = errToStr(err);
+                let msg = `Failed to count or sendNextAction action ${this.storageName} : ${errStr}`;
+                console.log(msg);
+                // Consume error
+            });
     }
 
 
     pushAction(tupleAction: TupleActionABC): Promise<Tuple[]> {
-        let p = this.storeAction(tupleAction);
-        this.sendNextAction();
-        return p;
+        return this.storeAction(tupleAction)
+            .then(() => {
+                this.sendNextAction();
+                return [];
+            })
+            .catch((err) => {
+                let errStr = errToStr(err);
+                let msg = `Failed to store action ${this.storageName} : ${errStr}`;
+                console.log(msg);
+                throw new Error(msg);
+            });
     }
 
     private sendNextAction() {
@@ -127,8 +141,10 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
             .catch(err => {
                 this.lastSendFailTime = Date.now();
 
-                let errStr = JSON.stringify(err);
-                this.vortexStatus.logError(`Failed to send TupleAction : ${errStr}`);
+                let errStr = errToStr(err);
+                this.vortexStatus.logError(
+                    `Failed to send TupleAction ${this.storageName} : ${errStr}`
+                );
                 this.sendingTuple = false;
                 setTimeout(() => this.sendNextAction(), this.SEND_FAIL_RETRY_TIMEOUT);
                 return null; // Handle the error
@@ -191,8 +207,10 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
                 this.vortexStatus.setQueuedActionCount(rows[0].count);
 
             }).catch(err => {
-                let errStr = JSON.stringify(err);
-                this.vortexStatus.logError(`Failed to count TupleActions : ${errStr}`);
+                let errStr = errToStr(err);
+                this.vortexStatus.logError(
+                    `Failed to count TupleActions ${this.storageName} : ${errStr}`
+                );
                 // Consume error
             });
     }
@@ -211,3 +229,4 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
     }
 
 }
+

@@ -49,13 +49,28 @@ var TupleActionPushOfflineService = (function (_super) {
             .filter(function (online) { return online === true; })
             .subscribe(function (online) { return _this.sendNextAction(); });
         _this.countActions()
-            .then(function () { return _this.sendNextAction(); });
+            .then(function () { return _this.sendNextAction(); })
+            .catch(function (err) {
+            var errStr = UtilMisc_1.errToStr(err);
+            var msg = "Failed to count or sendNextAction action " + _this.storageName + " : " + errStr;
+            console.log(msg);
+            // Consume error
+        });
         return _this;
     }
     TupleActionPushOfflineService.prototype.pushAction = function (tupleAction) {
-        var p = this.storeAction(tupleAction);
-        this.sendNextAction();
-        return p;
+        var _this = this;
+        return this.storeAction(tupleAction)
+            .then(function () {
+            _this.sendNextAction();
+            return [];
+        })
+            .catch(function (err) {
+            var errStr = UtilMisc_1.errToStr(err);
+            var msg = "Failed to store action " + _this.storageName + " : " + errStr;
+            console.log(msg);
+            throw new Error(msg);
+        });
     };
     TupleActionPushOfflineService.prototype.sendNextAction = function () {
         var _this = this;
@@ -102,8 +117,8 @@ var TupleActionPushOfflineService = (function (_super) {
         })
             .catch(function (err) {
             _this.lastSendFailTime = Date.now();
-            var errStr = JSON.stringify(err);
-            _this.vortexStatus.logError("Failed to send TupleAction : " + errStr);
+            var errStr = UtilMisc_1.errToStr(err);
+            _this.vortexStatus.logError("Failed to send TupleAction " + _this.storageName + " : " + errStr);
             _this.sendingTuple = false;
             setTimeout(function () { return _this.sendNextAction(); }, _this.SEND_FAIL_RETRY_TIMEOUT);
             return null; // Handle the error
@@ -148,8 +163,8 @@ var TupleActionPushOfflineService = (function (_super) {
             .then(function (rows) {
             _this.vortexStatus.setQueuedActionCount(rows[0].count);
         }).catch(function (err) {
-            var errStr = JSON.stringify(err);
-            _this.vortexStatus.logError("Failed to count TupleActions : " + errStr);
+            var errStr = UtilMisc_1.errToStr(err);
+            _this.vortexStatus.logError("Failed to count TupleActions " + _this.storageName + " : " + errStr);
             // Consume error
         });
     };
