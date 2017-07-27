@@ -1,29 +1,5 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var core_1 = require("@angular/core");
-var UtilMisc_1 = require("../UtilMisc");
-var Payload_1 = require("../Payload");
-var TupleActionStorageServiceABC_1 = require("./TupleActionStorageServiceABC");
-var IndexedDb_1 = require("../storage/IndexedDb");
 // ----------------------------------------------------------------------------
 function now() {
     return new Date();
@@ -35,159 +11,214 @@ var TUPLE_STORE = "tupleActions";
  * This class handles storing and retrieving tuples to/from indexed db.
  *
  */
-var TupleIndexedDbActionStorageService = (function (_super) {
-    __extends(TupleIndexedDbActionStorageService, _super);
-    function TupleIndexedDbActionStorageService() {
-        var _this = _super.call(this) || this;
-        _this.openInProgressPromise = null;
-        return _this;
+/*
+@Injectable()
+export class TupleIndexedDbActionStorageService extends TupleActionStorageServiceABC {
+    db: any;
+    private openInProgressPromise: Promise<void> | null = null;
+
+
+    constructor() {
+        super();
+
+
     }
-    TupleIndexedDbActionStorageService.prototype.storeAction = function (scope, tupleAction, payload) {
-    };
-    TupleIndexedDbActionStorageService.prototype.loadNextAction = function () {
-    };
-    TupleIndexedDbActionStorageService.prototype.countActions = function () {
-    };
-    TupleIndexedDbActionStorageService.prototype.deleteAction = function (scope, actionUuid) {
-    };
+
+
+     storeAction(scope: string, tupleAction: TupleActionABC, payload: Payload): Promise<void> {
+
+     }
+
+     loadNextAction(): Promise<Payload> {
+
+     }
+
+     countActions(): Promise<number> {
+
+     }
+
+     deleteAction(scope: string, actionUuid: number): Promise<void> {
+
+     }
+
     // ----------------------------------------------------------------------------
     // Open the indexed db database
-    TupleIndexedDbActionStorageService.prototype.open = function () {
-        var _this = this;
+    open(): Promise<void> {
         if (this.openInProgressPromise != null)
             return this.openInProgressPromise;
-        this.openInProgressPromise = new Promise(function (resolve, reject) {
+
+
+        this.openInProgressPromise = new Promise<void>((resolve, reject) => {
+
             // DISP Store
-            var request = indexedDB.open(DB_NAME, 1);
-            IndexedDb_1.addIndexedDbHandlers(request, function () {
-                var msg = UtilMisc_1.dateStr() + " IndexedDB : \"" + DB_NAME + "\" "
-                    + "Failed to open IndexedDB database";
-                _this.openInProgressPromise = null;
+
+            let request = indexedDB.open(DB_NAME, 1);
+            addIndexedDbHandlers(request, () => {
+                let msg = `${dateStr()} IndexedDB : "${DB_NAME}" `
+                    + `Failed to open IndexedDB database`;
+                this.openInProgressPromise = null;
                 reject(msg);
-                throw new IndexedDb_1.IDBException(msg);
+                throw new IDBException(msg);
             });
-            request.onsuccess = function (event) {
-                console.log(UtilMisc_1.dateStr() + " IndexedDB : \"" + DB_NAME + "\" Success opening DB");
-                if (_this.db == null) {
-                    _this.db = event.target.result;
-                    _this.openInProgressPromise = null;
+
+            request.onsuccess = (event) => {
+                console.log(`${dateStr()} IndexedDB : "${DB_NAME}" Success opening DB`);
+                if (this.db == null) {
+                    this.db = event.target.result;
+                    this.openInProgressPromise = null;
                     resolve();
                 }
             };
-            request.onupgradeneeded = function (event) {
-                console.log(UtilMisc_1.dateStr() + " IndexedDB : \"" + DB_NAME + "\" Upgrading");
-                var db = event.target.result;
+
+            request.onupgradeneeded = (event) => {
+                console.log(`${dateStr()} IndexedDB : "${DB_NAME}" Upgrading`);
+                let db = event.target.result;
+
                 // SCHEMA for database points
                 // Schema Version 1
-                db.createObjectStore(TUPLE_STORE, { keyPath: "tupleSelector" });
-                console.log(UtilMisc_1.dateStr() + " IndexedDB : \"" + DB_NAME + "\" Upgrade Success");
+                db.createObjectStore(TUPLE_STORE, {keyPath: "tupleSelector"});
+
+                console.log(`${dateStr()} IndexedDB : "${DB_NAME}" Upgrade Success`);
             };
         });
         return this.openInProgressPromise;
-    };
+    }
+
     // ----------------------------------------------------------------------------
     // Check if the DB is open
-    TupleIndexedDbActionStorageService.prototype.isOpen = function () {
+    isOpen(): boolean {
+
         return this.db != null;
     };
-    ;
-    TupleIndexedDbActionStorageService.prototype.close = function () {
+
+    close(): void {
         if (!this.isOpen()) {
-            throw new Error("IndexedDB \"" + DB_NAME + "\" is not open");
+            throw new Error(`IndexedDB "${DB_NAME}" is not open`)
         }
         this.db.close();
         this.db = null;
-    };
-    TupleIndexedDbActionStorageService.prototype.transaction = function (forWrite) {
+    }
+
+    transaction(forWrite: boolean): Promise<TupleStorageTransaction> {
         if (!this.isOpen())
-            throw new Error("IndexedDB " + DB_NAME + " is not open");
+            throw new Error(`IndexedDB ${DB_NAME} is not open`);
+
         // Get the Read Only case out the way, it's easy
-        var mode = forWrite ? "readwrite" : "readonly";
-        return Promise.resolve(new TupleIndexedDbTransaction(this.db.transaction(TUPLE_STORE, mode), forWrite));
-    };
-    return TupleIndexedDbActionStorageService;
-}(TupleActionStorageServiceABC_1.TupleActionStorageServiceABC));
-TupleIndexedDbActionStorageService = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [])
-], TupleIndexedDbActionStorageService);
-exports.TupleIndexedDbActionStorageService = TupleIndexedDbActionStorageService;
-var TupleIndexedDbTransaction = (function () {
-    function TupleIndexedDbTransaction(tx, txForWrite) {
-        this.tx = tx;
-        this.txForWrite = txForWrite;
+        let mode = forWrite ? "readwrite" : "readonly";
+        return Promise.resolve(
+            new TupleIndexedDbTransaction(
+                this.db.transaction(TUPLE_STORE, mode), forWrite
+            )
+        );
+
+    }
+}
+
+
+class TupleIndexedDbTransaction implements TupleStorageTransaction {
+    private store: any;
+
+    constructor(private tx: IDBTransaction, private txForWrite: boolean) {
         this.store = this.tx.objectStore(TUPLE_STORE);
     }
-    // ----------------------------------------------------------------------------
-    // Load the display items from the cache
-    TupleIndexedDbTransaction.prototype.loadTuples = function (tupleSelector) {
-        var _this = this;
-        var startTime = now();
-        return new Promise(function (resolve, reject) {
-            var request = _this.store.get(tupleSelector.toOrderedJsonStr());
-            IndexedDb_1.addIndexedDbHandlers(request, function () {
-                var msg = UtilMisc_1.dateStr() + " IndexedDB: Index open cursor";
+
+// ----------------------------------------------------------------------------
+// Load the display items from the cache
+    loadTuples(tupleSelector: TupleSelector): Promise<Tuple[]> {
+        let startTime: any = now();
+
+        return new Promise<Tuple[]>((resolve, reject) => {
+
+            let request = this.store.get(tupleSelector.toOrderedJsonStr());
+
+            addIndexedDbHandlers(request, () => {
+                let msg = `${dateStr()} IndexedDB: Index open cursor`;
                 reject(msg);
-                throw new IndexedDb_1.IDBException(msg);
+                throw new IDBException(msg);
             });
-            request.onsuccess = function () {
-                var timeTaken = now() - startTime;
-                console.log(UtilMisc_1.dateStr() + " IndexedDB: loadTuples took " + timeTaken + "ms (in thread)");
+
+            request.onsuccess = () => {
+
+                let timeTaken = now() - startTime;
+                console.log(
+                    `${dateStr()} IndexedDB: loadTuples took ${timeTaken}ms (in thread)`
+                );
+
                 // Called for each matching record
-                var data = request.result;
+                let data: DataStructI | null = request.result;
                 if (data == null) {
                     resolve([]);
                     return;
                 }
-                Payload_1.Payload.fromVortexMsg(data.payload)
-                    .then(function (payload) { return resolve(payload.tuples); })
-                    .catch(function (e) { return reject(e); });
+
+                Payload.fromVortexMsg(data.payload)
+                    .then((payload: Payload) => resolve(payload.tuples))
+                    .catch(e => reject(e));
+
             };
         });
-    };
-    // ----------------------------------------------------------------------------
-    // Add disply items to the cache
-    TupleIndexedDbTransaction.prototype.saveTuples = function (tupleSelector, tuples) {
-        var _this = this;
+
+    }
+
+
+// ----------------------------------------------------------------------------
+// Add disply items to the cache
+
+    saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> {
+
         if (!this.txForWrite) {
-            var msg = "IndexedDB: saveTuples attempted on read only TX";
-            console.log(UtilMisc_1.dateStr() + " " + msg);
-            return Promise.reject(msg);
+            let msg = "IndexedDB: saveTuples attempted on read only TX";
+            console.log(`${dateStr()} ${msg}`);
+            return Promise.reject(msg)
         }
-        var startTime = now();
+
+        let startTime = now();
+
         // The payload is a convenient way to serialise and compress the data
-        return new Payload_1.Payload({}, tuples).toVortexMsg()
-            .then(function (vortexMsg) {
-            var tupleSelectorStr = tupleSelector.toOrderedJsonStr();
-            var item = {
-                tupleSelector: tupleSelectorStr,
-                dateTime: new Date(),
-                payload: vortexMsg
-            };
-            var timeTaken = now() - startTime;
-            console.log(UtilMisc_1.dateStr() + " IndexedDB: toVortexMsg took " + timeTaken + "ms ");
-            startTime = now();
-            return new Promise(function (resolve, reject) {
-                // Run the inserts
-                var response = _this.store.put(item);
-                IndexedDb_1.addIndexedDbHandlers(response, function () {
-                    reject(UtilMisc_1.dateStr() + " IndexedDB: saveTuples \"put\" error");
-                    throw new IndexedDb_1.IDBException("Put error");
-                });
-                response.oncomplete = function () {
-                    var timeTaken = now() - startTime;
-                    console.log(UtilMisc_1.dateStr() + " IndexedDB: saveTuples"
-                        + (" took " + timeTaken + "ms (in thread)")
-                        + (" Inserted/updated " + tuples.length + " tuples"));
-                    resolve();
+        return new Payload({}, tuples).toVortexMsg()
+            .then((vortexMsg: string) => {
+                let tupleSelectorStr = tupleSelector.toOrderedJsonStr();
+
+                let item: DataStructI = {
+                    tupleSelector: tupleSelectorStr,
+                    dateTime: new Date(),
+                    payload: vortexMsg
                 };
+
+
+                let timeTaken = now() - startTime;
+                console.log(`${dateStr()} IndexedDB: toVortexMsg took ${timeTaken}ms `);
+
+                startTime = now();
+
+                return new Promise<void>((resolve, reject) => {
+
+                    // Run the inserts
+                    let response = this.store.put(item);
+
+                    addIndexedDbHandlers(response, () => {
+                        reject(`${dateStr()} IndexedDB: saveTuples "put" error`);
+                        throw new IDBException("Put error");
+                    });
+
+                    response.oncomplete = () => {
+                        let timeTaken = now() - startTime;
+                        console.log(`${dateStr()} IndexedDB: saveTuples`
+                            + ` took ${timeTaken}ms (in thread)`
+                            + ` Inserted/updated ${tuples.length} tuples`);
+                        resolve();
+                    };
+                });
             });
-        });
+
     };
-    ;
-    TupleIndexedDbTransaction.prototype.close = function () {
+
+    close(): Promise<void> {
         return Promise.resolve();
-    };
-    return TupleIndexedDbTransaction;
-}());
+
+
+
+    }
+}
+    */ 
 //# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/action-storage/TupleIndexedDbActionStorageService.js.map

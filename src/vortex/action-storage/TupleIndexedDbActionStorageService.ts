@@ -27,6 +27,7 @@ interface TupleActionStorageStructI {
  * This class handles storing and retrieving tuples to/from indexed db.
  *
  */
+/*
 @Injectable()
 export class TupleIndexedDbActionStorageService extends TupleActionStorageServiceABC {
     db: any;
@@ -235,3 +236,4 @@ class TupleIndexedDbTransaction implements TupleStorageTransaction {
 
     }
 }
+    */
