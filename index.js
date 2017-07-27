@@ -56,6 +56,8 @@ exports.TupleActionPushService = TupleActionPushService_1.TupleActionPushService
 exports.TupleActionPushNameService = TupleActionPushService_1.TupleActionPushNameService;
 var TupleActionPushOfflineService_1 = require("./src/vortex/TupleActionPushOfflineService");
 exports.TupleActionPushOfflineService = TupleActionPushOfflineService_1.TupleActionPushOfflineService;
+var TupleActionPushOfflineSingletonService_1 = require("./src/vortex/TupleActionPushOfflineSingletonService");
+exports.TupleActionPushOfflineSingletonService = TupleActionPushOfflineSingletonService_1.TupleActionPushOfflineSingletonService;
 // Tuple Actions Processors
 var TupleActionProcessorService_1 = require("./src/vortex/TupleActionProcessorService");
 exports.TupleActionProcessorNameService = TupleActionProcessorService_1.TupleActionProcessorNameService;

@@ -42,6 +42,9 @@ export {
     TupleActionPushNameService
 } from "./src/vortex/TupleActionPushService";
 export {TupleActionPushOfflineService} from "./src/vortex/TupleActionPushOfflineService";
+export {
+    TupleActionPushOfflineSingletonService
+} from "./src/vortex/TupleActionPushOfflineSingletonService";
 
 // Tuple Actions Processors
 export {

@@ -25,6 +25,8 @@ var TupleIndexedDbService_1 = require("../storage/TupleIndexedDbService");
 var TupleStorageWebSqlService_1 = require("../storage/TupleStorageWebSqlService");
 var TupleStorageNullService_1 = require("../storage/TupleStorageNullService");
 var TupleStorageFactoryService_1 = require("./TupleStorageFactoryService");
+var TupleWebSqlActionStorageService_1 = require("../action-storage/TupleWebSqlActionStorageService");
+var IndexedDb_1 = require("../storage/IndexedDb");
 var TupleStorageFactoryServiceWeb = (function (_super) {
     __extends(TupleStorageFactoryServiceWeb, _super);
     function TupleStorageFactoryServiceWeb(webSqlFactory) {
@@ -38,13 +40,17 @@ var TupleStorageFactoryServiceWeb = (function (_super) {
             return new TupleStorageWebSqlService_1.TupleStorageWebSqlService(this.webSqlFactory, name);
         }
         // Fallback to Indexed DB, It gives mega space on mobile iOS
-        if (TupleIndexedDbService_1.supportsIndexedDb()) {
+        if (IndexedDb_1.supportsIndexedDb()) {
             console.log("TupleStorageFactoryService: Choosing IndexedDB Storage");
             return new TupleIndexedDbService_1.TupleIndexedDbService(name);
         }
         // Otheriwse, the null service just silently does nothing.
         console.log("TupleStorageFactoryService: Choosing Null Storage");
         return new TupleStorageNullService_1.TupleStorageNullService(name);
+    };
+    TupleStorageFactoryServiceWeb.prototype.createActionStorage = function () {
+        // TODO, Implement IndexedDB storage for
+        return new TupleWebSqlActionStorageService_1.TueplWebSqlActionStorageService(this.webSqlFactory);
     };
     return TupleStorageFactoryServiceWeb;
 }(TupleStorageFactoryService_1.TupleStorageFactoryService));

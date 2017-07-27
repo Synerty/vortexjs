@@ -1,16 +1,11 @@
 import {Injectable} from "@angular/core";
 import {dateStr} from "../UtilMisc";
-import {TupleStorageServiceABC, TupleStorageTransaction} from "./TupleStorageServiceABC";
-import {TupleOfflineStorageNameService} from "../TupleOfflineStorageNameService";
 import {TupleSelector} from "../TupleSelector";
 import {Tuple} from "../Tuple";
 import {Payload} from "../Payload";
-import {indexedDB, addIndexedDbHandlers, IDBException} from "./IndexedDb";
-
-
-
-// ----------------------------------------------------------------------------
-
+import {TupleActionStorageServiceABC} from "./TupleActionStorageServiceABC";
+import {addIndexedDbHandlers, IDBException} from "../storage/IndexedDb";
+import {TupleActionABC} from "../TupleAction";
 
 // ----------------------------------------------------------------------------
 
@@ -18,12 +13,12 @@ function now(): any {
     return new Date();
 }
 
+const DB_NAME = "tupleActions";
+const TUPLE_STORE = "tupleActions";
 
-const TUPLE_STORE = "tuples";
-
-interface DataStructI {
-    tupleSelector: string;
-    dateTime: Date;
+interface TupleActionStorageStructI {
+    scope: string;
+    uuid: number;
     payload: string;
 }
 
@@ -33,16 +28,33 @@ interface DataStructI {
  *
  */
 @Injectable()
-export class TupleIndexedDbService extends TupleStorageServiceABC {
+export class TupleIndexedDbActionStorageService extends TupleActionStorageServiceABC {
     db: any;
     private openInProgressPromise: Promise<void> | null = null;
 
 
-    constructor(name: TupleOfflineStorageNameService) {
-        super(name);
+    constructor() {
+        super();
 
 
     }
+
+
+     storeAction(scope: string, tupleAction: TupleActionABC, payload: Payload): Promise<void> {
+
+     }
+
+     loadNextAction(): Promise<Payload> {
+
+     }
+
+     countActions(): Promise<number> {
+
+     }
+
+     deleteAction(scope: string, actionUuid: number): Promise<void> {
+
+     }
 
     // ----------------------------------------------------------------------------
     // Open the indexed db database
@@ -55,9 +67,9 @@ export class TupleIndexedDbService extends TupleStorageServiceABC {
 
             // DISP Store
 
-            let request = indexedDB.open(this.dbName, 1);
+            let request = indexedDB.open(DB_NAME, 1);
             addIndexedDbHandlers(request, () => {
-                let msg = `${dateStr()} IndexedDB : "${this.dbName}" `
+                let msg = `${dateStr()} IndexedDB : "${DB_NAME}" `
                     + `Failed to open IndexedDB database`;
                 this.openInProgressPromise = null;
                 reject(msg);
@@ -65,7 +77,7 @@ export class TupleIndexedDbService extends TupleStorageServiceABC {
             });
 
             request.onsuccess = (event) => {
-                console.log(`${dateStr()} IndexedDB : "${this.dbName}" Success opening DB`);
+                console.log(`${dateStr()} IndexedDB : "${DB_NAME}" Success opening DB`);
                 if (this.db == null) {
                     this.db = event.target.result;
                     this.openInProgressPromise = null;
@@ -74,14 +86,14 @@ export class TupleIndexedDbService extends TupleStorageServiceABC {
             };
 
             request.onupgradeneeded = (event) => {
-                console.log(`${dateStr()} IndexedDB : "${this.dbName}" Upgrading`);
+                console.log(`${dateStr()} IndexedDB : "${DB_NAME}" Upgrading`);
                 let db = event.target.result;
 
                 // SCHEMA for database points
                 // Schema Version 1
                 db.createObjectStore(TUPLE_STORE, {keyPath: "tupleSelector"});
 
-                console.log(`${dateStr()} IndexedDB : "${this.dbName}" Upgrade Success`);
+                console.log(`${dateStr()} IndexedDB : "${DB_NAME}" Upgrade Success`);
             };
         });
         return this.openInProgressPromise;
@@ -96,7 +108,7 @@ export class TupleIndexedDbService extends TupleStorageServiceABC {
 
     close(): void {
         if (!this.isOpen()) {
-            throw new Error(`IndexedDB "${this.dbName}" is not open`)
+            throw new Error(`IndexedDB "${DB_NAME}" is not open`)
         }
         this.db.close();
         this.db = null;
@@ -104,7 +116,7 @@ export class TupleIndexedDbService extends TupleStorageServiceABC {
 
     transaction(forWrite: boolean): Promise<TupleStorageTransaction> {
         if (!this.isOpen())
-            throw new Error(`IndexedDB ${this.dbName} is not open`);
+            throw new Error(`IndexedDB ${DB_NAME} is not open`);
 
         // Get the Read Only case out the way, it's easy
         let mode = forWrite ? "readwrite" : "readonly";
@@ -219,25 +231,7 @@ class TupleIndexedDbTransaction implements TupleStorageTransaction {
     close(): Promise<void> {
         return Promise.resolve();
 
-        /* Close transaction ???
 
-         addIndexedDbHandlers(this.tx, () => {
-         reject();
-         throw new IDBException("Transaction error");
-         });
-
-         // LOOK HERE, I'm looking at the WebSQL and IndexedDb implementation and both
-         // appear to only provide single use transactions like this.
-         // Considering that fact, The "TupleTransaction" api seems useless.
-         this.tx.oncomplete = () => {
-         let timeTaken = now() - startTime;
-         console.log(`${dateStr()} IndexedDB: saveTuples`
-         + ` took ${timeTaken}ms (in thread)`
-         + ` Inserted/updated ${tuples.length} tuples`);
-         resolve();
-         };
-
-         */
 
     }
 }
