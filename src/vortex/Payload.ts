@@ -160,7 +160,9 @@ export class Payload extends Jsonable {
              worker.postMessage(vortexStr); // Send data to our worker.
              */
 
-            let compressedData = base64.decode(vortexStr);
+            let compressedData = window["atob"] != null
+                ? atob(vortexStr)
+                : base64.decode(vortexStr);
             let jsonStr = pako.inflate(compressedData, {to: "string"});
             complete(jsonStr);
 
@@ -196,7 +198,9 @@ export class Payload extends Jsonable {
              */
 
             let compressedData = pako.deflate(jsonStr, {to: "string"});
-            let encodedData = base64.encode(compressedData);
+            let encodedData = window["btoa"] != null
+                ? btoa(compressedData)
+                : base64.encode(compressedData);
             complete(encodedData);
 
         });

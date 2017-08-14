@@ -97,7 +97,9 @@ var Payload = (function (_super) {
              // DISABLE WEB WORKER :-(
              worker.postMessage(vortexStr); // Send data to our worker.
              */
-            var compressedData = base64.decode(vortexStr);
+            var compressedData = window["atob"] != null
+                ? atob(vortexStr)
+                : base64.decode(vortexStr);
             var jsonStr = pako.inflate(compressedData, { to: "string" });
             complete(jsonStr);
         });
@@ -127,7 +129,9 @@ var Payload = (function (_super) {
              worker.postMessage(payloadStr); // Send data to our worker.
              */
             var compressedData = pako.deflate(jsonStr, { to: "string" });
-            var encodedData = base64.encode(compressedData);
+            var encodedData = window["btoa"] != null
+                ? btoa(compressedData)
+                : base64.encode(compressedData);
             complete(encodedData);
         });
     };
