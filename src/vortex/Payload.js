@@ -16,8 +16,22 @@ var UtilMisc_1 = require("./UtilMisc");
 require("./UtilArray");
 var pako = require("pako");
 var base64 = require("base-64");
-var btoa = window && window["btoa"] ? window["btoa"] : base64.encode;
-var atob = window && window["atob"] ? window["atob"] : base64.decode;
+function btoa(data) {
+    try {
+        return window["btoa"](data);
+    }
+    catch (e) {
+        return base64.encode(data);
+    }
+}
+function atob(data) {
+    try {
+        return window["atob"](data);
+    }
+    catch (e) {
+        return base64.decode(data);
+    }
+}
 // ----------------------------------------------------------------------------
 // Typescript date - date fooler
 function now() {

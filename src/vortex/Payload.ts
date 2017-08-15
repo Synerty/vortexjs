@@ -7,8 +7,24 @@ import "./UtilArray";
 import * as pako from "pako";
 import * as base64 from "base-64";
 
-let btoa = window && window["btoa"] ? window["btoa"] : base64.encode;
-let atob = window && window["atob"] ? window["atob"] : base64.decode;
+function btoa(data) {
+    try {
+        return window["btoa"](data);
+    }
+    catch (e) {
+        return base64.encode(data);
+    }
+}
+
+function atob(data) {
+    try {
+        return window["atob"](data);
+    }
+    catch (e) {
+        return base64.decode(data);
+    }
+}
+
 
 /* Blob is undefined in NativeScript
 
