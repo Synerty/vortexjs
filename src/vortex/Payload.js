@@ -16,6 +16,8 @@ var UtilMisc_1 = require("./UtilMisc");
 require("./UtilArray");
 var pako = require("pako");
 var base64 = require("base-64");
+var btoa = window && window["btoa"] ? window["btoa"] : base64.encode;
+var atob = window && window["atob"] ? window["atob"] : base64.decode;
 // ----------------------------------------------------------------------------
 // Typescript date - date fooler
 function now() {
@@ -97,9 +99,7 @@ var Payload = (function (_super) {
              // DISABLE WEB WORKER :-(
              worker.postMessage(vortexStr); // Send data to our worker.
              */
-            var compressedData = window["atob"] != null
-                ? atob(vortexStr)
-                : base64.decode(vortexStr);
+            var compressedData = atob(vortexStr);
             var jsonStr = pako.inflate(compressedData, { to: "string" });
             complete(jsonStr);
         });
@@ -129,9 +129,7 @@ var Payload = (function (_super) {
              worker.postMessage(payloadStr); // Send data to our worker.
              */
             var compressedData = pako.deflate(jsonStr, { to: "string" });
-            var encodedData = window["btoa"] != null
-                ? btoa(compressedData)
-                : base64.encode(compressedData);
+            var encodedData = btoa(compressedData);
             complete(encodedData);
         });
     };

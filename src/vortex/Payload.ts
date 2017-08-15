@@ -7,6 +7,9 @@ import "./UtilArray";
 import * as pako from "pako";
 import * as base64 from "base-64";
 
+let btoa = window && window["btoa"] ? window["btoa"] : base64.encode;
+let atob = window && window["atob"] ? window["atob"] : base64.decode;
+
 /* Blob is undefined in NativeScript
 
 // ----------------------------------------------------------------------------
@@ -52,6 +55,7 @@ let inflateWorkerBlobUrl = URL.createObjectURL(inflateWorkerBlob);
  */
 export interface IPayloadFilt {
     key: string;
+
     [more: string]: any;
 }
 
@@ -160,9 +164,7 @@ export class Payload extends Jsonable {
              worker.postMessage(vortexStr); // Send data to our worker.
              */
 
-            let compressedData = window["atob"] != null
-                ? atob(vortexStr)
-                : base64.decode(vortexStr);
+            let compressedData = atob(vortexStr);
             let jsonStr = pako.inflate(compressedData, {to: "string"});
             complete(jsonStr);
 
@@ -198,9 +200,7 @@ export class Payload extends Jsonable {
              */
 
             let compressedData = pako.deflate(jsonStr, {to: "string"});
-            let encodedData = window["btoa"] != null
-                ? btoa(compressedData)
-                : base64.encode(compressedData);
+            let encodedData = btoa(compressedData);
             complete(encodedData);
 
         });
