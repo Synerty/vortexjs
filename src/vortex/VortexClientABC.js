@@ -129,7 +129,7 @@ var VortexClientABC = (function () {
     };
     VortexClientABC.prototype.dead = function () {
         this.vortexStatusService.setOnline(false);
-        this.vortexStatusService.logInfo("VortexService server heartbeats have timed out");
+        this.vortexStatusService.logInfo("VortexService server heartbeats have timed out : " + this._url);
     };
     /**
      * Receive

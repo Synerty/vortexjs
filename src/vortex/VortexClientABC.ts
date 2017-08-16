@@ -149,7 +149,8 @@ export abstract class VortexClientABC {
     private dead(): void {
         this.vortexStatusService.setOnline(false);
         this.vortexStatusService.logInfo(
-            "VortexService server heartbeats have timed out");
+            `VortexService server heartbeats have timed out : ${this._url}`
+        );
     }
 
     /**
