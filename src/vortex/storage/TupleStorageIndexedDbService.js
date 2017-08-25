@@ -36,16 +36,16 @@ var TUPLE_STORE = "tuples";
  * This class handles storing and retrieving tuples to/from indexed db.
  *
  */
-var TupleIndexedDbService = (function (_super) {
-    __extends(TupleIndexedDbService, _super);
-    function TupleIndexedDbService(name) {
+var TupleStorageIndexedDbService = (function (_super) {
+    __extends(TupleStorageIndexedDbService, _super);
+    function TupleStorageIndexedDbService(name) {
         var _this = _super.call(this, name) || this;
         _this.openInProgressPromise = null;
         return _this;
     }
     // ----------------------------------------------------------------------------
     // Open the indexed db database
-    TupleIndexedDbService.prototype.open = function () {
+    TupleStorageIndexedDbService.prototype.open = function () {
         var _this = this;
         if (this.openInProgressPromise != null)
             return this.openInProgressPromise;
@@ -80,31 +80,31 @@ var TupleIndexedDbService = (function (_super) {
     };
     // ----------------------------------------------------------------------------
     // Check if the DB is open
-    TupleIndexedDbService.prototype.isOpen = function () {
+    TupleStorageIndexedDbService.prototype.isOpen = function () {
         return this.db != null;
     };
     ;
-    TupleIndexedDbService.prototype.close = function () {
+    TupleStorageIndexedDbService.prototype.close = function () {
         if (!this.isOpen()) {
             throw new Error("IndexedDB \"" + this.dbName + "\" is not open");
         }
         this.db.close();
         this.db = null;
     };
-    TupleIndexedDbService.prototype.transaction = function (forWrite) {
+    TupleStorageIndexedDbService.prototype.transaction = function (forWrite) {
         if (!this.isOpen())
             throw new Error("IndexedDB " + this.dbName + " is not open");
         // Get the Read Only case out the way, it's easy
         var mode = forWrite ? "readwrite" : "readonly";
         return Promise.resolve(new TupleIndexedDbTransaction(this.db.transaction(TUPLE_STORE, mode), forWrite));
     };
-    return TupleIndexedDbService;
+    return TupleStorageIndexedDbService;
 }(TupleStorageServiceABC_1.TupleStorageServiceABC));
-TupleIndexedDbService = __decorate([
+TupleStorageIndexedDbService = __decorate([
     core_1.Injectable(),
     __metadata("design:paramtypes", [TupleOfflineStorageNameService_1.TupleOfflineStorageNameService])
-], TupleIndexedDbService);
-exports.TupleIndexedDbService = TupleIndexedDbService;
+], TupleStorageIndexedDbService);
+exports.TupleStorageIndexedDbService = TupleStorageIndexedDbService;
 var TupleIndexedDbTransaction = (function () {
     function TupleIndexedDbTransaction(tx, txForWrite) {
         this.tx = tx;
@@ -202,4 +202,4 @@ var TupleIndexedDbTransaction = (function () {
     };
     return TupleIndexedDbTransaction;
 }());
-//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/storage/TupleIndexedDbService.js.map
+//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/storage/TupleStorageIndexedDbService.js.map

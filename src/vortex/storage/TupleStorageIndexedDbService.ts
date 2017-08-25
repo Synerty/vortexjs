@@ -33,7 +33,7 @@ interface DataStructI {
  *
  */
 @Injectable()
-export class TupleIndexedDbService extends TupleStorageServiceABC {
+export class TupleStorageIndexedDbService extends TupleStorageServiceABC {
     db: any;
     private openInProgressPromise: Promise<void> | null = null;
 

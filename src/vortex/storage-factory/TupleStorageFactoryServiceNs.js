@@ -23,7 +23,7 @@ var core_1 = require("@angular/core");
 var WebSqlService_1 = require("../../websql/WebSqlService");
 var TupleStorageWebSqlService_1 = require("../storage/TupleStorageWebSqlService");
 var TupleStorageFactoryService_1 = require("./TupleStorageFactoryService");
-var TupleWebSqlActionStorageService_1 = require("../action-storage/TupleWebSqlActionStorageService");
+var TueplActionStorageWebSqlService_1 = require("../action-storage/TueplActionStorageWebSqlService");
 var TupleStorageFactoryServiceNs = (function (_super) {
     __extends(TupleStorageFactoryServiceNs, _super);
     function TupleStorageFactoryServiceNs(webSqlFactory) {
@@ -33,7 +33,7 @@ var TupleStorageFactoryServiceNs = (function (_super) {
         return new TupleStorageWebSqlService_1.TupleStorageWebSqlService(this.webSqlFactory, name);
     };
     TupleStorageFactoryServiceNs.prototype.createActionStorage = function () {
-        return new TupleWebSqlActionStorageService_1.TueplWebSqlActionStorageService(this.webSqlFactory);
+        return new TueplActionStorageWebSqlService_1.TueplActionStorageWebSqlService(this.webSqlFactory);
     };
     return TupleStorageFactoryServiceNs;
 }(TupleStorageFactoryService_1.TupleStorageFactoryService));
