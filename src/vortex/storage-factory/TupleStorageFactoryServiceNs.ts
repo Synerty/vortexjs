@@ -5,7 +5,7 @@ import {TupleOfflineStorageNameService} from "../TupleOfflineStorageNameService"
 import {TupleStorageWebSqlService} from "../storage/TupleStorageWebSqlService";
 import {TupleStorageFactoryService} from "./TupleStorageFactoryService";
 import {TupleActionStorageServiceABC} from "../action-storage/TupleActionStorageServiceABC";
-import {TueplActionStorageWebSqlService} from "../action-storage/TueplActionStorageWebSqlService";
+import {TupleActionStorageWebSqlService} from "../action-storage/TupleActionStorageWebSqlService";
 
 @Injectable()
 export class TupleStorageFactoryServiceNs extends TupleStorageFactoryService {
@@ -19,7 +19,7 @@ export class TupleStorageFactoryServiceNs extends TupleStorageFactoryService {
     }
 
     createActionStorage(): TupleActionStorageServiceABC {
-        return new TueplActionStorageWebSqlService(this.webSqlFactory);
+        return new TupleActionStorageWebSqlService(this.webSqlFactory);
     }
 }
 

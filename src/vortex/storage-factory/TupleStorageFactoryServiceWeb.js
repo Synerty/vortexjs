@@ -25,9 +25,9 @@ var TupleStorageIndexedDbService_1 = require("../storage/TupleStorageIndexedDbSe
 var TupleStorageWebSqlService_1 = require("../storage/TupleStorageWebSqlService");
 var TupleStorageNullService_1 = require("../storage/TupleStorageNullService");
 var TupleStorageFactoryService_1 = require("./TupleStorageFactoryService");
-var TueplActionStorageWebSqlService_1 = require("../action-storage/TueplActionStorageWebSqlService");
 var IndexedDb_1 = require("../storage/IndexedDb");
-var TupleActionStorageIndexedDbService_1 = require("../action-storage/TupleActionStorageIndexedDbService");
+var TupleActionStorageWebSqlService_1 = require("../action-storage/TupleActionStorageWebSqlService");
+// import {TupleActionStorageIndexedDbService} from "../action-storage/TupleActionStorageIndexedDbService";
 var TupleStorageFactoryServiceWeb = (function (_super) {
     __extends(TupleStorageFactoryServiceWeb, _super);
     function TupleStorageFactoryServiceWeb(webSqlFactory) {
@@ -50,23 +50,30 @@ var TupleStorageFactoryServiceWeb = (function (_super) {
         return new TupleStorageNullService_1.TupleStorageNullService(name);
     };
     TupleStorageFactoryServiceWeb.prototype.createActionStorage = function () {
-        // Prefer Web SQL
-        if (this.webSqlFactory.supportsWebSql()
-            && !this.webSqlFactory.hasStorageLimitations()) {
-            console.log("TupleStorageFactoryService: Choosing WebSQL Storage");
-            return new TueplActionStorageWebSqlService_1.TueplActionStorageWebSqlService(this.webSqlFactory);
-        }
-        // Fallback to Indexed DB, It gives mega space on mobile iOS
-        if (IndexedDb_1.supportsIndexedDb()) {
-            console.log("TupleStorageFactoryService: Choosing IndexedDB Storage");
-            return new TupleActionStorageIndexedDbService_1.TupleActionStorageIndexedDbService();
-        }
-        // Otheriwse, raise an exception.
-        console.log("TupleStorageFactoryService: Choosing Null Storage");
-        throw new Error("Failed to choose a suitable storage backend for" +
-            " offline TupleActions");
-        // Maybe we could have an in memory tuple action cache, but it wouldn't be the
-        // same.
+        console.log("TupleStorageFactoryService: FORCING WebSQL Storage");
+        return new TupleActionStorageWebSqlService_1.TupleActionStorageWebSqlService(this.webSqlFactory);
+        /*
+            // Prefer Web SQL
+            if (this.webSqlFactory.supportsWebSql()
+                && !this.webSqlFactory.hasStorageLimitations()) {
+                console.log("TupleStorageFactoryService: Choosing WebSQL Storage");
+                return new TupleActionStorageWebSqlService(this.webSqlFactory);
+            }
+
+            // Fallback to Indexed DB, It gives mega space on mobile iOS
+            if (supportsIndexedDb()) {
+                console.log("TupleStorageFactoryService: Choosing IndexedDB Storage");
+                return new TupleActionStorageIndexedDbService();
+            }
+
+            // Otheriwse, raise an exception.
+            console.log("TupleStorageFactoryService: Choosing Null Storage");
+            throw new Error("Failed to choose a suitable storage backend for" +
+                " offline TupleActions");
+
+            // Maybe we could have an in memory tuple action cache, but it wouldn't be the
+            // same.
+            */
     };
     return TupleStorageFactoryServiceWeb;
 }(TupleStorageFactoryService_1.TupleStorageFactoryService));

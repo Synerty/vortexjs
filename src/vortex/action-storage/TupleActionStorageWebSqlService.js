@@ -28,15 +28,15 @@ var tableName = "tupleActions";
 var databaseSchema = [
     "CREATE TABLE IF NOT EXISTS " + tableName + "\n     (\n        id INTEGER PRIMARY KEY AUTOINCREMENT,\n        scope TEXT,\n        uuid REAL,\n        payload TEXT,\n        UNIQUE (scope, uuid)\n     )"
 ];
-var TueplActionStorageWebSqlService = (function (_super) {
-    __extends(TueplActionStorageWebSqlService, _super);
-    function TueplActionStorageWebSqlService(webSqlFactory) {
+var TupleActionStorageWebSqlService = (function (_super) {
+    __extends(TupleActionStorageWebSqlService, _super);
+    function TupleActionStorageWebSqlService(webSqlFactory) {
         var _this = _super.call(this) || this;
         _this.webSqlFactory = webSqlFactory;
         _this.webSql = webSqlFactory.createWebSql(datbaseName, databaseSchema);
         return _this;
     }
-    TueplActionStorageWebSqlService.prototype.storeAction = function (scope, tupleAction, payload) {
+    TupleActionStorageWebSqlService.prototype.storeAction = function (scope, tupleAction, payload) {
         var _this = this;
         return payload.toVortexMsg()
             .then(function (vortexMsg) {
@@ -46,7 +46,7 @@ var TueplActionStorageWebSqlService = (function (_super) {
                 .then(function () { return null; });
         });
     };
-    TueplActionStorageWebSqlService.prototype.loadNextAction = function () {
+    TupleActionStorageWebSqlService.prototype.loadNextAction = function () {
         var sql = "SELECT payload\n                    FROM " + tableName + "\n                    ORDER BY id\n                    LIMIT 1";
         var bindParams = [];
         return this.webSql.querySql(sql, bindParams)
@@ -58,23 +58,23 @@ var TueplActionStorageWebSqlService = (function (_super) {
             return Payload_1.Payload.fromVortexMsg(row1.payload);
         });
     };
-    TueplActionStorageWebSqlService.prototype.countActions = function () {
+    TupleActionStorageWebSqlService.prototype.countActions = function () {
         var sql = "SELECT count(payload) as count\n                    FROM " + tableName;
         var bindParams = [];
         return this.webSql.querySql(sql, bindParams)
             .then(function (rows) { return rows[0].count; });
     };
-    TueplActionStorageWebSqlService.prototype.deleteAction = function (scope, actionUuid) {
+    TupleActionStorageWebSqlService.prototype.deleteAction = function (scope, actionUuid) {
         var sql = "DELETE FROM " + tableName + "\n                    WHERE scope=? AND uuid=?";
         var bindParams = [scope, actionUuid];
         return this.webSql.runSql(sql, bindParams)
             .then(function () { return null; });
     };
-    return TueplActionStorageWebSqlService;
+    return TupleActionStorageWebSqlService;
 }(TupleActionStorageServiceABC_1.TupleActionStorageServiceABC));
-TueplActionStorageWebSqlService = __decorate([
+TupleActionStorageWebSqlService = __decorate([
     core_1.Injectable(),
     __metadata("design:paramtypes", [WebSqlService_1.WebSqlFactoryService])
-], TueplActionStorageWebSqlService);
-exports.TueplActionStorageWebSqlService = TueplActionStorageWebSqlService;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/action-storage/TueplActionStorageWebSqlService.js.map
+], TupleActionStorageWebSqlService);
+exports.TupleActionStorageWebSqlService = TupleActionStorageWebSqlService;
+//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/action-storage/TupleActionStorageWebSqlService.js.map

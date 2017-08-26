@@ -19,7 +19,7 @@ const databaseSchema = [
 
 
 @Injectable()
-export class TueplActionStorageWebSqlService extends TupleActionStorageServiceABC {
+export class TupleActionStorageWebSqlService extends TupleActionStorageServiceABC {
     private webSql: WebSqlService;
 
     constructor(private webSqlFactory: WebSqlFactoryService) {
