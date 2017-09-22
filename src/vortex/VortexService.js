@@ -38,8 +38,10 @@ var VortexService = VortexService_1 = (function () {
     VortexService.prototype.reconnect = function () {
         if (this.vortex != null)
             this.vortex.closed = true;
-        if (VortexService_1.vortexUrl == null)
+        if (VortexService_1.vortexUrl == null) {
+            this.vortexStatusService.setOnline(false);
             return;
+        }
         if (VortexService_1.vortexUrl.toLowerCase().startsWith("ws")) {
             this.vortex = new VortexClientWebsocket_1.VortexClientWebsocket(this.vortexStatusService, this.zone, VortexService_1.vortexUrl);
         }
@@ -58,6 +60,9 @@ var VortexService = VortexService_1 = (function () {
         this.sendPayload(new Payload_1.Payload(filt));
     };
     VortexService.prototype.sendPayload = function (payload) {
+        if (this.vortex == null) {
+            throw new Error("The vortex is not initialised yet.");
+        }
         this.vortex.send(payload);
     };
     VortexService.prototype.createEndpointObservable = function (component, filter, processLatestOnly) {

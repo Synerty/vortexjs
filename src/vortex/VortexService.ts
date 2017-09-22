@@ -39,8 +39,10 @@ export class VortexService {
         if (this.vortex != null)
             this.vortex.closed = true;
 
-        if (VortexService.vortexUrl == null)
+        if (VortexService.vortexUrl == null) {
+            this.vortexStatusService.setOnline(false);
             return;
+        }
 
         if (VortexService.vortexUrl.toLowerCase().startsWith("ws")) {
             this.vortex = new VortexClientWebsocket(
@@ -65,7 +67,10 @@ export class VortexService {
         this.sendPayload(new Payload(filt));
     }
 
-    sendPayload(payload): void {
+    sendPayload(payload:Payload[] | Payload): void {
+        if (this.vortex == null) {
+            throw new Error("The vortex is not initialised yet.");
+        }
         this.vortex.send(payload);
     }
 
