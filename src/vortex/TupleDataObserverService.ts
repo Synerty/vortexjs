@@ -101,6 +101,9 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
     }
 
     protected tellServerWeWantData(tupleSelectors: TupleSelector[]): void {
+        if (!this.statusService.snapshot.isOnline)
+            return;
+
         let startFilt = extend({"subscribe": true}, this.filt);
 
         let payloads: Payload[] = [];

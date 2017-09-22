@@ -105,6 +105,8 @@ var TupleDataObserverService = (function (_super) {
         this.zone.run(function () { return subject.next(tuples); });
     };
     TupleDataObserverService.prototype.tellServerWeWantData = function (tupleSelectors) {
+        if (!this.statusService.snapshot.isOnline)
+            return;
         var startFilt = UtilMisc_1.extend({ "subscribe": true }, this.filt);
         var payloads = [];
         for (var _i = 0, tupleSelectors_1 = tupleSelectors; _i < tupleSelectors_1.length; _i++) {
