@@ -38,6 +38,8 @@ var VortexService = VortexService_1 = (function () {
     VortexService.prototype.reconnect = function () {
         if (this.vortex != null)
             this.vortex.closed = true;
+        if (VortexService_1.vortexUrl == null)
+            return;
         if (VortexService_1.vortexUrl.toLowerCase().startsWith("ws")) {
             this.vortex = new VortexClientWebsocket_1.VortexClientWebsocket(this.vortexStatusService, this.zone, VortexService_1.vortexUrl);
         }

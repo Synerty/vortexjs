@@ -39,6 +39,9 @@ export class VortexService {
         if (this.vortex != null)
             this.vortex.closed = true;
 
+        if (VortexService.vortexUrl == null)
+            return;
+
         if (VortexService.vortexUrl.toLowerCase().startsWith("ws")) {
             this.vortex = new VortexClientWebsocket(
                 this.vortexStatusService, this.zone, VortexService.vortexUrl);
