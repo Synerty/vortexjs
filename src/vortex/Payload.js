@@ -37,6 +37,13 @@ function atob(data) {
 function now() {
     return new Date();
 }
+function logLong(message, start) {
+    var duration = now() - start;
+    // You get 5ms to do what you need before i call the performance cops.
+    if (duration < 5)
+        return;
+    console.log(message + ", took " + duration);
+}
 // ----------------------------------------------------------------------------
 // Payload class
 /**
@@ -93,10 +100,10 @@ var Payload = (function (_super) {
         var start = now();
         return new Promise(function (resolve, reject) {
             var complete = function (jsonStr) {
-                console.log("Payload.fromVortexMsg decode+inflate took " + (now() - start));
+                logLong('Payload.fromVortexMsg decode+inflate', start);
                 start = now();
                 var payload = new Payload()._fromJson(jsonStr);
-                console.log("Payload.fromVortexMsg _fromJson took " + (now() - start));
+                logLong('Payload.fromVortexMsg _fromJson', start);
                 resolve(payload);
             };
             /*
@@ -123,10 +130,10 @@ var Payload = (function (_super) {
         var start = now();
         return new Promise(function (resolve, reject) {
             var jsonStr = _this._toJson();
-            console.log("Payload.toVortexMsg _toJson took " + (now() - start));
+            logLong('Payload.toVortexMsg _toJson', start);
             start = now();
             var complete = function (jsonStr) {
-                console.log("Payload.toVortexMsg deflate+encode took " + (now() - start));
+                logLong('Payload.toVortexMsg deflate+encode', start);
                 resolve(jsonStr);
             };
             // DISABLE WEB WORKER :-(

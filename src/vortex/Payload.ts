@@ -82,6 +82,16 @@ function now(): any {
     return new Date();
 }
 
+function logLong(message: string, start: any) {
+    let duration = now() - start;
+
+    // You get 5ms to do what you need before i call the performance cops.
+    if (duration < 5)
+        return;
+
+    console.log(`${message}, took ${duration}`);
+}
+
 
 // ----------------------------------------------------------------------------
 // Payload class
@@ -156,11 +166,11 @@ export class Payload extends Jsonable {
         return new Promise<Payload>((resolve, reject) => {
 
             let complete = (jsonStr) => {
-                console.log(`Payload.fromVortexMsg decode+inflate took ${now() - start}`);
+                logLong('Payload.fromVortexMsg decode+inflate', start);
                 start = now();
 
                 let payload = new Payload()._fromJson(jsonStr);
-                console.log(`Payload.fromVortexMsg _fromJson took ${now() - start}`);
+                logLong('Payload.fromVortexMsg _fromJson', start);
 
                 resolve(payload);
             };
@@ -193,11 +203,11 @@ export class Payload extends Jsonable {
         return new Promise<string>((resolve, reject) => {
 
             let jsonStr = this._toJson();
-            console.log(`Payload.toVortexMsg _toJson took ${now() - start}`);
+            logLong('Payload.toVortexMsg _toJson', start);
             start = now();
 
             let complete = (jsonStr) => {
-                console.log(`Payload.toVortexMsg deflate+encode took ${now() - start}`);
+                logLong('Payload.toVortexMsg deflate+encode', start);
                 resolve(jsonStr);
             };
 
