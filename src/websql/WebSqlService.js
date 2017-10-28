@@ -87,4 +87,4 @@ WebSqlService = __decorate([
     __metadata("design:paramtypes", [String, Array])
 ], WebSqlService);
 exports.WebSqlService = WebSqlService;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/websql/WebSqlService.js.map
+//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/websql/WebSqlService.js.map

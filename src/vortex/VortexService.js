@@ -88,4 +88,4 @@ VortexService = VortexService_1 = __decorate([
 ], VortexService);
 exports.VortexService = VortexService;
 var VortexService_1;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/VortexService.js.map
+//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/VortexService.js.map

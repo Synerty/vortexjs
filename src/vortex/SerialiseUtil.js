@@ -129,4 +129,4 @@ SerialiseUtil.V_FALSE = "0";
 SerialiseUtil.ISO8601_PY = "%Y-%m-%d %H:%M:%S.%f%z";
 SerialiseUtil.ISO8601 = "YYYY-MM-DD HH:mm:ss.SSSSSSZZ";
 exports.default = SerialiseUtil;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/SerialiseUtil.js.map
+//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/SerialiseUtil.js.map

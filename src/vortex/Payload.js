@@ -37,12 +37,17 @@ function atob(data) {
 function now() {
     return new Date();
 }
-function logLong(message, start) {
+function logLong(message, start, payload) {
+    if (payload === void 0) { payload = null; }
     var duration = now() - start;
+    var desc = '';
     // You get 5ms to do what you need before i call the performance cops.
     if (duration < 5)
         return;
-    console.log(message + ", took " + duration);
+    if (payload != null) {
+        desc = ', ' + JSON.stringify(payload.filt);
+    }
+    console.log(message + ", took " + duration + desc);
 }
 // ----------------------------------------------------------------------------
 // Payload class
@@ -103,20 +108,20 @@ var Payload = (function (_super) {
                 logLong('Payload.fromVortexMsg decode+inflate', start);
                 start = now();
                 var payload = new Payload()._fromJson(jsonStr);
-                logLong('Payload.fromVortexMsg _fromJson', start);
+                logLong('Payload.fromVortexMsg _fromJson', start, payload);
                 resolve(payload);
             };
             /*
              let worker = new Worker(inflateWorkerBlobUrl);
-
+      
              worker.addEventListener('message', (event) => complete(event.data), false);
-
+      
              worker.addEventListener('error', (error) => {
              let msg = `${dateStr()} ERROR: Payload fromVortexMsg failed : ${error}`;
              console.log(msg);
              reject(msg)
              }, false);
-
+      
              // DISABLE WEB WORKER :-(
              worker.postMessage(vortexStr); // Send data to our worker.
              */
@@ -130,23 +135,23 @@ var Payload = (function (_super) {
         var start = now();
         return new Promise(function (resolve, reject) {
             var jsonStr = _this._toJson();
-            logLong('Payload.toVortexMsg _toJson', start);
+            logLong('Payload.toVortexMsg _toJson', start, _this);
             start = now();
             var complete = function (jsonStr) {
-                logLong('Payload.toVortexMsg deflate+encode', start);
+                logLong('Payload.toVortexMsg deflate+encode', start, _this);
                 resolve(jsonStr);
             };
             // DISABLE WEB WORKER :-(
             /*
              let worker = new Worker(deflateWorkerBlobUrl);
              worker.addEventListener('message', (event) => complete(event.data), false);
-
+      
              worker.addEventListener('error', (error) => {
              let msg = `${dateStr()} ERROR: Payload toVortexMsg failed : ${error.toString()}`;
              console.log(msg);
              reject(msg)
              }, false);
-
+      
              worker.postMessage(payloadStr); // Send data to our worker.
              */
             var compressedData = pako.deflate(jsonStr, { to: "string" });
@@ -159,4 +164,4 @@ var Payload = (function (_super) {
 Payload.vortexUuidKey = "__vortexUuid__";
 Payload.vortexNameKey = "__vortexName__";
 exports.Payload = Payload;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/Payload.js.map
+//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/Payload.js.map

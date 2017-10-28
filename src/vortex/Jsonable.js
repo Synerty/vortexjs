@@ -205,4 +205,4 @@ Jsonable.JSON_TUPLE_TYPE = "_c";
 Jsonable.JSON_FIELD_TYPE = "_ft";
 Jsonable.JSON_FIELD_DATA = "_fd";
 exports.default = Jsonable;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/Jsonable.js.map
+//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/Jsonable.js.map

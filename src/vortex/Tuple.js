@@ -84,4 +84,4 @@ function addTupleType(_Class) {
     exports.TUPLE_TYPES[inst._tupleType] = _Class;
 }
 exports.addTupleType = addTupleType;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/Tuple.js.map
+//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/Tuple.js.map

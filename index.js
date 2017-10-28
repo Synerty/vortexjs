@@ -69,4 +69,4 @@ var UtilMisc_1 = require("./src/vortex/UtilMisc");
 exports.assert = UtilMisc_1.assert;
 exports.extend = UtilMisc_1.extend;
 require("./src/vortex/UtilArray");
-//# sourceMappingURL=/home/peek/project/vortexjs/index.js.map
+//# sourceMappingURL=/Users/jchesney/project/vortexjs/index.js.map

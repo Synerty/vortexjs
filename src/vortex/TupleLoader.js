@@ -275,4 +275,4 @@ var TupleLoader = (function () {
     return TupleLoader;
 }());
 exports.TupleLoader = TupleLoader;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/TupleLoader.js.map
+//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/TupleLoader.js.map

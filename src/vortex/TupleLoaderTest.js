@@ -30,4 +30,4 @@ var Ang2TupleLoaderTest = (function (_super) {
     return Ang2TupleLoaderTest;
 }(ComponentLifecycleEventEmitter_1.ComponentLifecycleEventEmitter));
 exports.Ang2TupleLoaderTest = Ang2TupleLoaderTest;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/TupleLoaderTest.js.map
+//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/TupleLoaderTest.js.map

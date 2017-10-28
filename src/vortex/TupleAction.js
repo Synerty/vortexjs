@@ -91,4 +91,4 @@ TupleUpdateAction = __decorate([
     __metadata("design:paramtypes", [])
 ], TupleUpdateAction);
 exports.TupleUpdateAction = TupleUpdateAction;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/TupleAction.js.map
+//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/TupleAction.js.map

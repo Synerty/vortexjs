@@ -82,4 +82,4 @@ VortexStatusService = __decorate([
     __metadata("design:paramtypes", [core_1.NgZone])
 ], VortexStatusService);
 exports.VortexStatusService = VortexStatusService;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/VortexStatusService.js.map
+//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/VortexStatusService.js.map

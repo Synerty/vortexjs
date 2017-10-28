@@ -158,4 +158,4 @@ var VortexClientABC = (function () {
     return VortexClientABC;
 }());
 exports.VortexClientABC = VortexClientABC;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/VortexClientABC.js.map
+//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/VortexClientABC.js.map

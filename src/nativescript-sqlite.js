@@ -8,4 +8,4 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = false;
-//# sourceMappingURL=/home/peek/project/vortexjs/src/nativescript-sqlite.js.map
+//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/nativescript-sqlite.js.map

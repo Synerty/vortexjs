@@ -120,4 +120,4 @@ exports.extend = require('extend');
 exports.deepEqual = require('deep-equal');
 // https://www.npmjs.com/package/json-stable-stringify
 exports.jsonOrderedStringify = require('json-stable-stringify');
-//# sourceMappingURL=/home/peek/project/vortexjs/src/vortex/UtilMisc.js.map
+//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/UtilMisc.js.map
