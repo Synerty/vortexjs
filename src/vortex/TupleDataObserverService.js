@@ -102,7 +102,13 @@ var TupleDataObserverService = (function (_super) {
         this.notifyObservers(subject, tupleSelector, payload.tuples);
     };
     TupleDataObserverService.prototype.notifyObservers = function (subject, tupleSelector, tuples) {
-        this.zone.run(function () { return subject.next(tuples); });
+        try {
+            subject.next(tuples);
+        }
+        catch (e) {
+            // NOTE: Observables automatically remove observers when the raise exceptions.
+            console.log("ERROR: TupleDataObserverService.notifyObservers, observable has been removed\n            " + e.toString() + "\n            " + tupleSelector.toOrderedJsonStr());
+        }
     };
     TupleDataObserverService.prototype.tellServerWeWantData = function (tupleSelectors) {
         if (!this.statusService.snapshot.isOnline)
