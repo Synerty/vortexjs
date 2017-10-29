@@ -97,7 +97,16 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
     protected notifyObservers(subject: Subject<Tuple[]>,
                               tupleSelector: TupleSelector,
                               tuples: Tuple[]): void {
-        this.zone.run(() => subject.next(tuples));
+
+        try {
+            subject.next(tuples);
+        } catch (e) {
+            // NOTE: Observables automatically remove observers when the raise exceptions.
+            console.log(`ERROR: TupleDataObserverService.notifyObservers, observable has been removed
+            ${e.toString()}
+            ${tupleSelector.toOrderedJsonStr()}`);
+        }
+
     }
 
     protected tellServerWeWantData(tupleSelectors: TupleSelector[]): void {

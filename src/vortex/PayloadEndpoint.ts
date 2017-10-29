@@ -61,7 +61,14 @@ export class PayloadEndpoint {
         if (!this.checkDate(payload))
             return null;
 
-        this._observable.next(payload);
+        try {
+            this._observable.next(payload);
+        } catch (e) {
+            // NOTE: Observables automatically remove observers when the raise exceptions.
+            console.log(`ERROR: PayloadEndpoint.process, observable has been removed
+            ${e.toString()}
+            ${JSON.stringify(payload.filt)}`);
+        }
 
         return null;
     };
