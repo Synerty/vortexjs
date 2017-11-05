@@ -22,6 +22,10 @@ export class WebSqlNativeScriptFactoryService implements WebSqlFactoryService {
 @Injectable()
 class WebSqlNativeScriptAdaptorService extends WebSqlService {
 
+    private promiseMutexList = [];
+
+    private dbLocked = false;
+
     constructor(protected dbName: string, protected dbSchema: string[]) {
         super(dbName, dbSchema);
     }
@@ -75,9 +79,34 @@ class WebSqlNativeScriptAdaptorService extends WebSqlService {
         if (!this.isOpen())
             throw new Error(`SQLDatabase ${this.dbName} is not open`);
 
-        return new Promise<WebSqlTransaction>((resolve, reject) => {
-            resolve(new WebSqlNativeScriptTransactionAdaptor(this.db));
-        });
+        let prom =  new Promise<WebSqlTransaction>((resolve, reject) => {
+          this.promiseMutexList.push(resolve);
+        })
+          .then((val) => {
+          // console.log("==== Query complete =====");
+              this.dbLocked = false;
+              this.resolveNext();
+              return val;
+          })
+          .catch(e => {
+          // console.log("==== Query complete =====");
+              this.dbLocked = false;
+              this.resolveNext();
+              throw new Error(e);
+          });
+
+        this.resolveNext();
+        return prom;
+    }
+
+    private resolveNext() :void {
+      if (this.dbLocked || this.promiseMutexList.length == 0)
+        return;
+
+        // console.log(`==== Query started ${this.promiseMutexList.length} =====`);
+      this.dbLocked = true;
+      let resolve = this.promiseMutexList.shift();
+      resolve(new WebSqlNativeScriptTransactionAdaptor(this.db));
     }
 }
 

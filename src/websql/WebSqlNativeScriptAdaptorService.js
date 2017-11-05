@@ -46,6 +46,8 @@ var WebSqlNativeScriptAdaptorService = (function (_super) {
         var _this = _super.call(this, dbName, dbSchema) || this;
         _this.dbName = dbName;
         _this.dbSchema = dbSchema;
+        _this.promiseMutexList = [];
+        _this.dbLocked = false;
         return _this;
     }
     WebSqlNativeScriptAdaptorService.prototype.open = function () {
@@ -93,9 +95,31 @@ var WebSqlNativeScriptAdaptorService = (function (_super) {
         // NOT THE COMMERCIAL VERSION, NO TRANSACTION SUPPORT IS AVAILABLE
         if (!this.isOpen())
             throw new Error("SQLDatabase " + this.dbName + " is not open");
-        return new Promise(function (resolve, reject) {
-            resolve(new WebSqlNativeScriptTransactionAdaptor(_this.db));
+        var prom = new Promise(function (resolve, reject) {
+            _this.promiseMutexList.push(resolve);
+        })
+            .then(function (val) {
+            console.log("==== Query complete =====");
+            _this.dbLocked = false;
+            _this.resolveNext();
+            return val;
+        })
+            .catch(function (e) {
+            console.log("==== Query complete =====");
+            _this.dbLocked = false;
+            _this.resolveNext();
+            throw new Error(e);
         });
+        this.resolveNext();
+        return prom;
+    };
+    WebSqlNativeScriptAdaptorService.prototype.resolveNext = function () {
+        if (this.dbLocked || this.promiseMutexList.length == 0)
+            return;
+        console.log("==== Query started " + this.promiseMutexList.length + " =====");
+        this.dbLocked = true;
+        var resolve = this.promiseMutexList.shift();
+        resolve(new WebSqlNativeScriptTransactionAdaptor(this.db));
     };
     return WebSqlNativeScriptAdaptorService;
 }(WebSqlService_1.WebSqlService));
