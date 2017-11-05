@@ -17,11 +17,16 @@ export class TupleDataObservableNameService {
     }
 }
 
+export class CachedSubscribedData {
+  subject:Subject<Tuple[]> = new Subject<Tuple[]>();
+  tuples:Tuple[] = [];
+}
+
 @Injectable()
 export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
     protected endpoint: PayloadEndpoint;
     protected filt: IPayloadFilt;
-    protected subjectsByTupleSelector: { [tupleSelector: string]: Subject<Tuple[]> } = {};
+    protected cacheByTupleSelector: { [tupleSelector: string]: CachedSubscribedData} = {};
 
     constructor(protected vortexService: VortexService,
                 protected statusService: VortexStatusService,
@@ -37,11 +42,14 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
         this.endpoint = new PayloadEndpoint(this, this.filt);
         this.endpoint.observable.subscribe((payload) => this.receivePayload(payload));
 
-        let isOnlineSub = statusService.isOnline
+        statusService.isOnline
+            .takeUntil(this.onDestroyEvent)
             .filter(online => online === true)
             .subscribe(online => this.vortexOnlineChanged());
 
-        this.onDestroyEvent.subscribe(() => isOnlineSub.unsubscribe());
+        // Cleanup dead subscribers every 30 seconds.
+        let cleanupTimer = setInterval(() => this.cleanupDeadCaches(), 30);
+        this.onDestroyEvent.subscribe(() => clearInterval(cleanupTimer));
     }
 
     pollForTuples(tupleSelector: TupleSelector): Promise<Tuple[]> {
@@ -57,27 +65,38 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
         return promise;
     }
 
-    protected subjectForTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]> {
-
-        let tsStr = tupleSelector.toOrderedJsonStr();
-        if (this.subjectsByTupleSelector.hasOwnProperty(tsStr))
-            return this.subjectsByTupleSelector[tsStr];
-
-        let newSubject = new Subject<Tuple[]>();
-        this.subjectsByTupleSelector[tsStr] = newSubject;
-
-        return newSubject;
-    }
 
     subscribeToTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]> {
-        let newSubject = this.subjectForTupleSelector(tupleSelector);
+
+        let tsStr = tupleSelector.toOrderedJsonStr();
+        if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
+            let cachedData = this.cacheByTupleSelector[tsStr];
+            // Emit the data 5 seconds later.
+            setTimeout(() => cachedData.subject.next(cachedData.tuples), 5);
+            return cachedData.subject;
+        }
+
+        let newCahcedData = new CachedSubscribedData();
+        this.cacheByTupleSelector[tsStr] = newCahcedData;
+
         this.tellServerWeWantData([tupleSelector]);
-        return newSubject;
+
+        return newCahcedData.subject;
+
+    }
+
+    private cleanupDeadCaches() :void {
+        for (let key of dictKeysFromObject(this.cacheByTupleSelector)) {
+            let cachedData = this.cacheByTupleSelector[key];
+            if (cachedData.subject.observers.length == 0)
+                delete this.cacheByTupleSelector[key];
+        }
     }
 
     protected vortexOnlineChanged(): void {
+        this.cleanupDeadCaches();
         let tupleSelectors: TupleSelector[] = [];
-        for (let key of dictKeysFromObject(this.subjectsByTupleSelector)) {
+        for (let key of dictKeysFromObject(this.cacheByTupleSelector)) {
             tupleSelectors.push(TupleSelector.fromJsonStr(key));
         }
         this.tellServerWeWantData(tupleSelectors);
@@ -87,19 +106,21 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
         let tupleSelector = payload.filt.tupleSelector;
         let tsStr = tupleSelector.toOrderedJsonStr();
 
-        if (!this.subjectsByTupleSelector.hasOwnProperty(tsStr))
+        if (!this.cacheByTupleSelector.hasOwnProperty(tsStr))
             return;
 
-        let subject = this.subjectsByTupleSelector[tsStr];
-        this.notifyObservers(subject, tupleSelector, payload.tuples);
+        let cachedData = this.cacheByTupleSelector[tsStr];
+        this.notifyObservers(cachedData, tupleSelector, payload.tuples);
     }
 
-    protected notifyObservers(subject: Subject<Tuple[]>,
+    protected notifyObservers(cachedData: CachedSubscribedData,
                               tupleSelector: TupleSelector,
                               tuples: Tuple[]): void {
 
         try {
-            subject.next(tuples);
+            cachedData.tuples = tuples;
+            cachedData.subject.next(tuples);
+
         } catch (e) {
             // NOTE: Observables automatically remove observers when the raise exceptions.
             console.log(`ERROR: TupleDataObserverService.notifyObservers, observable has been removed

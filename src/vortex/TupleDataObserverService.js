@@ -42,6 +42,14 @@ TupleDataObservableNameService = __decorate([
     __metadata("design:paramtypes", [String, Object])
 ], TupleDataObservableNameService);
 exports.TupleDataObservableNameService = TupleDataObservableNameService;
+var CachedSubscribedData = (function () {
+    function CachedSubscribedData() {
+        this.subject = new rxjs_1.Subject();
+        this.tuples = [];
+    }
+    return CachedSubscribedData;
+}());
+exports.CachedSubscribedData = CachedSubscribedData;
 var TupleDataObserverService = (function (_super) {
     __extends(TupleDataObserverService, _super);
     function TupleDataObserverService(vortexService, statusService, zone, tupleDataObservableName) {
@@ -49,17 +57,20 @@ var TupleDataObserverService = (function (_super) {
         _this.vortexService = vortexService;
         _this.statusService = statusService;
         _this.zone = zone;
-        _this.subjectsByTupleSelector = {};
+        _this.cacheByTupleSelector = {};
         _this.filt = UtilMisc_1.extend({
             "name": tupleDataObservableName.name,
             "key": "tupleDataObservable"
         }, tupleDataObservableName.additionalFilt);
         _this.endpoint = new PayloadEndpoint_1.PayloadEndpoint(_this, _this.filt);
         _this.endpoint.observable.subscribe(function (payload) { return _this.receivePayload(payload); });
-        var isOnlineSub = statusService.isOnline
+        statusService.isOnline
+            .takeUntil(_this.onDestroyEvent)
             .filter(function (online) { return online === true; })
             .subscribe(function (online) { return _this.vortexOnlineChanged(); });
-        _this.onDestroyEvent.subscribe(function () { return isOnlineSub.unsubscribe(); });
+        // Cleanup dead subscribers every 30 seconds.
+        var cleanupTimer = setInterval(function () { return _this.cleanupDeadCaches(); }, 30);
+        _this.onDestroyEvent.subscribe(function () { return clearInterval(cleanupTimer); });
         return _this;
     }
     TupleDataObserverService.prototype.pollForTuples = function (tupleSelector) {
@@ -72,22 +83,31 @@ var TupleDataObserverService = (function (_super) {
             .then(function (payload) { return payload.tuples; });
         return promise;
     };
-    TupleDataObserverService.prototype.subjectForTupleSelector = function (tupleSelector) {
-        var tsStr = tupleSelector.toOrderedJsonStr();
-        if (this.subjectsByTupleSelector.hasOwnProperty(tsStr))
-            return this.subjectsByTupleSelector[tsStr];
-        var newSubject = new rxjs_1.Subject();
-        this.subjectsByTupleSelector[tsStr] = newSubject;
-        return newSubject;
-    };
     TupleDataObserverService.prototype.subscribeToTupleSelector = function (tupleSelector) {
-        var newSubject = this.subjectForTupleSelector(tupleSelector);
+        var tsStr = tupleSelector.toOrderedJsonStr();
+        if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
+            var cachedData_1 = this.cacheByTupleSelector[tsStr];
+            // Emit the data 5 seconds later.
+            setTimeout(function () { return cachedData_1.subject.next(cachedData_1.tuples); }, 5);
+            return cachedData_1.subject;
+        }
+        var newCahcedData = new CachedSubscribedData();
+        this.cacheByTupleSelector[tsStr] = newCahcedData;
         this.tellServerWeWantData([tupleSelector]);
-        return newSubject;
+        return newCahcedData.subject;
+    };
+    TupleDataObserverService.prototype.cleanupDeadCaches = function () {
+        for (var _i = 0, _a = UtilMisc_1.dictKeysFromObject(this.cacheByTupleSelector); _i < _a.length; _i++) {
+            var key = _a[_i];
+            var cachedData = this.cacheByTupleSelector[key];
+            if (cachedData.subject.observers.length == 0)
+                delete this.cacheByTupleSelector[key];
+        }
     };
     TupleDataObserverService.prototype.vortexOnlineChanged = function () {
+        this.cleanupDeadCaches();
         var tupleSelectors = [];
-        for (var _i = 0, _a = UtilMisc_1.dictKeysFromObject(this.subjectsByTupleSelector); _i < _a.length; _i++) {
+        for (var _i = 0, _a = UtilMisc_1.dictKeysFromObject(this.cacheByTupleSelector); _i < _a.length; _i++) {
             var key = _a[_i];
             tupleSelectors.push(TupleSelector_1.TupleSelector.fromJsonStr(key));
         }
@@ -96,14 +116,15 @@ var TupleDataObserverService = (function (_super) {
     TupleDataObserverService.prototype.receivePayload = function (payload) {
         var tupleSelector = payload.filt.tupleSelector;
         var tsStr = tupleSelector.toOrderedJsonStr();
-        if (!this.subjectsByTupleSelector.hasOwnProperty(tsStr))
+        if (!this.cacheByTupleSelector.hasOwnProperty(tsStr))
             return;
-        var subject = this.subjectsByTupleSelector[tsStr];
-        this.notifyObservers(subject, tupleSelector, payload.tuples);
+        var cachedData = this.cacheByTupleSelector[tsStr];
+        this.notifyObservers(cachedData, tupleSelector, payload.tuples);
     };
-    TupleDataObserverService.prototype.notifyObservers = function (subject, tupleSelector, tuples) {
+    TupleDataObserverService.prototype.notifyObservers = function (cachedData, tupleSelector, tuples) {
         try {
-            subject.next(tuples);
+            cachedData.tuples = tuples;
+            cachedData.subject.next(tuples);
         }
         catch (e) {
             // NOTE: Observables automatically remove observers when the raise exceptions.

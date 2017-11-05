@@ -7,7 +7,8 @@ import {VortexStatusService} from "./VortexStatusService";
 import {TupleOfflineStorageService} from "./TupleOfflineStorageService";
 import {
     TupleDataObservableNameService,
-    TupleDataObserverService
+    TupleDataObserverService,
+    CachedSubscribedData
 } from "./TupleDataObserverService";
 
 
@@ -54,15 +55,21 @@ export class TupleDataOfflineObserverService extends TupleDataObserverService {
      * @param tuples: The new data to store
      */
     updateOfflineState(tupleSelector: TupleSelector, tuples: Tuple[]): void {
-        this.tupleOfflineStorageService.saveTuples(tupleSelector, tuples);
-        this.subjectForTupleSelector(tupleSelector).next(tuples);
+        let tsStr = tupleSelector.toOrderedJsonStr();
+        if (!this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
+          console.log("ERROR: updateOfflineState called with no subscribers");
+          return;
+        }
+
+        let cachedData = this.cacheByTupleSelector[tsStr];
+        this.notifyObservers(cachedData, tupleSelector, tuples);
     }
 
-    protected notifyObservers(subject: Subject < Tuple[] >,
+    protected notifyObservers(cachedData: CachedSubscribedData,
                               tupleSelector: TupleSelector,
                               tuples: Tuple[]): void {
         // Pass the data on
-        super.notifyObservers(subject, tupleSelector, tuples);
+        super.notifyObservers(cachedData, tupleSelector, tuples);
 
         // AND store the data locally
         this.tupleOfflineStorageService.saveTuples(tupleSelector, tuples)
