@@ -99,13 +99,13 @@ var WebSqlNativeScriptAdaptorService = (function (_super) {
             _this.promiseMutexList.push(resolve);
         })
             .then(function (val) {
-            console.log("==== Query complete =====");
+            // console.log("==== Query complete =====");
             _this.dbLocked = false;
             _this.resolveNext();
             return val;
         })
             .catch(function (e) {
-            console.log("==== Query complete =====");
+            // console.log("==== Query complete =====");
             _this.dbLocked = false;
             _this.resolveNext();
             throw new Error(e);
@@ -116,7 +116,7 @@ var WebSqlNativeScriptAdaptorService = (function (_super) {
     WebSqlNativeScriptAdaptorService.prototype.resolveNext = function () {
         if (this.dbLocked || this.promiseMutexList.length == 0)
             return;
-        console.log("==== Query started " + this.promiseMutexList.length + " =====");
+        // console.log(`==== Query started ${this.promiseMutexList.length} =====`);
         this.dbLocked = true;
         var resolve = this.promiseMutexList.shift();
         resolve(new WebSqlNativeScriptTransactionAdaptor(this.db));
