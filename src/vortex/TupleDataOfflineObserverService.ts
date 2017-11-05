@@ -26,25 +26,42 @@ export class TupleDataOfflineObserverService extends TupleDataObserverService {
 
     subscribeToTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]> {
 
-        let subject = super.subscribeToTupleSelector(tupleSelector);
+        let tsStr = tupleSelector.toOrderedJsonStr();
 
+        if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
+            let cachedData = this.cacheByTupleSelector[tsStr];
 
-        // Make note of the first time the server receives data
-        let subscriptionActive = subject.subscribe(() => {
-            subscriptionActive.unsubscribe();
-            subscriptionActive = null;
-        });
+            // Emit the data 2 miliseconds later.
+            setTimeout(() => {
+                super.notifyObservers(cachedData, tupleSelector, cachedData.tuples);
+            }, 2);
 
-        this.tupleOfflineStorageService.loadTuples(tupleSelector)
-        // If the subscription is active, the server hasn't responded
-        // when we emit, it will unsubscribe.
-            .then((tuples: Tuple[]) => subscriptionActive != null && subject.next(tuples))
+            return cachedData.subject;
+        }
+
+        let newCahcedData = new CachedSubscribedData();
+        this.cacheByTupleSelector[tsStr] = newCahcedData;
+
+        this.tellServerWeWantData([tupleSelector]);
+
+        this.tupleOfflineStorageService
+          .loadTuples(tupleSelector)
+            .then((tuples: Tuple[]) => {
+               // If the server has responded before we loaded the data, then just
+               // ignore the cached data.
+               if (newCahcedData.serverResponded)
+                 return;
+
+               // Update the tuples, and notify if them
+               newCahcedData.tuples = tuples;
+               super.notifyObservers(newCahcedData, tupleSelector, tuples);
+            })
             .catch(err => {
                 this.statusService.logError(`loadTuples failed : ${err}`);
                 throw new Error(err);
             });
 
-        return subject;
+        return newCahcedData.subject;
     }
 
     /** Update Offline State

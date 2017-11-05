@@ -20,6 +20,7 @@ export class TupleDataObservableNameService {
 export class CachedSubscribedData {
   subject:Subject<Tuple[]> = new Subject<Tuple[]>();
   tuples:Tuple[] = [];
+  serverResponded = false;
 }
 
 @Injectable()
@@ -65,14 +66,17 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
         return promise;
     }
 
-
     subscribeToTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]> {
 
         let tsStr = tupleSelector.toOrderedJsonStr();
         if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
             let cachedData = this.cacheByTupleSelector[tsStr];
-            // Emit the data 5 seconds later.
-            setTimeout(() => cachedData.subject.next(cachedData.tuples), 5);
+
+            // Emit the data 2 miliseconds later.
+            setTimeout(() => {
+                this.notifyObservers(cachedData, tupleSelector, cachedData.tuples);
+            }, 2);
+
             return cachedData.subject;
         }
 
@@ -110,6 +114,8 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
             return;
 
         let cachedData = this.cacheByTupleSelector[tsStr];
+        cachedData.tuples = payload.tuples;
+        cachedData.serverResponded = true;
         this.notifyObservers(cachedData, tupleSelector, payload.tuples);
     }
 
@@ -118,7 +124,6 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
                               tuples: Tuple[]): void {
 
         try {
-            cachedData.tuples = tuples;
             cachedData.subject.next(tuples);
 
         } catch (e) {

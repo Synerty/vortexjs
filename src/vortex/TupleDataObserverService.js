@@ -46,6 +46,7 @@ var CachedSubscribedData = (function () {
     function CachedSubscribedData() {
         this.subject = new rxjs_1.Subject();
         this.tuples = [];
+        this.serverResponded = false;
     }
     return CachedSubscribedData;
 }());
@@ -84,11 +85,14 @@ var TupleDataObserverService = (function (_super) {
         return promise;
     };
     TupleDataObserverService.prototype.subscribeToTupleSelector = function (tupleSelector) {
+        var _this = this;
         var tsStr = tupleSelector.toOrderedJsonStr();
         if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
             var cachedData_1 = this.cacheByTupleSelector[tsStr];
-            // Emit the data 5 seconds later.
-            setTimeout(function () { return cachedData_1.subject.next(cachedData_1.tuples); }, 5);
+            // Emit the data 2 miliseconds later.
+            setTimeout(function () {
+                _this.notifyObservers(cachedData_1, tupleSelector, cachedData_1.tuples);
+            }, 2);
             return cachedData_1.subject;
         }
         var newCahcedData = new CachedSubscribedData();
@@ -119,11 +123,12 @@ var TupleDataObserverService = (function (_super) {
         if (!this.cacheByTupleSelector.hasOwnProperty(tsStr))
             return;
         var cachedData = this.cacheByTupleSelector[tsStr];
+        cachedData.tuples = payload.tuples;
+        cachedData.serverResponded = true;
         this.notifyObservers(cachedData, tupleSelector, payload.tuples);
     };
     TupleDataObserverService.prototype.notifyObservers = function (cachedData, tupleSelector, tuples) {
         try {
-            cachedData.tuples = tuples;
             cachedData.subject.next(tuples);
         }
         catch (e) {
