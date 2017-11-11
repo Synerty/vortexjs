@@ -169,50 +169,57 @@ class TupleIndexedDbTransaction implements TupleStorageTransaction {
 
     saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> {
 
+        let startTime = now();
+
+        // The payload is a convenient way to serialise and compress the data
+        return new Payload({}, tuples).toVortexMsg()
+            .then((vortexMsg: string) => {
+                let timeTaken = now() - startTime;
+                console.log(`${dateStr()} IndexedDB: toVortexMsg took ${timeTaken}ms `);
+
+                return this.saveTuplesEncoded(tupleSelector, vortexMsg);
+            });
+
+    };
+
+
+    saveTuplesEncoded(tupleSelector: TupleSelector, vortexMsg: string): Promise<void> {
+
         if (!this.txForWrite) {
             let msg = "IndexedDB: saveTuples attempted on read only TX";
             console.log(`${dateStr()} ${msg}`);
             return Promise.reject(msg)
         }
 
+        // The payload is a convenient way to serialise and compress the data
+        let tupleSelectorStr = tupleSelector.toOrderedJsonStr();
+
+        let item: DataStructI = {
+            tupleSelector: tupleSelectorStr,
+            dateTime: new Date(),
+            payload: vortexMsg
+        };
+
         let startTime = now();
 
-        // The payload is a convenient way to serialise and compress the data
-        return new Payload({}, tuples).toVortexMsg()
-            .then((vortexMsg: string) => {
-                let tupleSelectorStr = tupleSelector.toOrderedJsonStr();
+        return new Promise<void>((resolve, reject) => {
 
-                let item: DataStructI = {
-                    tupleSelector: tupleSelectorStr,
-                    dateTime: new Date(),
-                    payload: vortexMsg
-                };
+            // Run the inserts
+            let response = this.store.put(item);
 
-
-                let timeTaken = now() - startTime;
-                console.log(`${dateStr()} IndexedDB: toVortexMsg took ${timeTaken}ms `);
-
-                startTime = now();
-
-                return new Promise<void>((resolve, reject) => {
-
-                    // Run the inserts
-                    let response = this.store.put(item);
-
-                    addIndexedDbHandlers(response, () => {
-                        reject(`${dateStr()} IndexedDB: saveTuples "put" error`);
-                        throw new IDBException("Put error");
-                    });
-
-                    response.oncomplete = () => {
-                        let timeTaken = now() - startTime;
-                        console.log(`${dateStr()} IndexedDB: saveTuples`
-                            + ` took ${timeTaken}ms (in thread)`
-                            + ` Inserted/updated ${tuples.length} tuples`);
-                        resolve();
-                    };
-                });
+            addIndexedDbHandlers(response, () => {
+                reject(`${dateStr()} IndexedDB: saveTuples "put" error`);
+                throw new IDBException("Put error");
             });
+
+            response.oncomplete = () => {
+                let timeTaken = now() - startTime;
+                console.log(`${dateStr()} IndexedDB: saveTuples`
+                    + ` took ${timeTaken}ms (in thread)`
+                    + ` Inserted/updated ${vortexMsg.length} of encoding`);
+                resolve();
+            };
+        });
 
     };
 

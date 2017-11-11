@@ -41,7 +41,17 @@ var TupleOfflineStorageService = (function () {
             return tx.saveTuples(tupleSelector, tuples)
                 .then(function () {
                 // Don't add the close to the promise chain
-                tx.close().catch(function (e) { return console.log("ERROR loadTuples: " + e); });
+                tx.close().catch(function (e) { return console.log("ERROR saveTuples: " + e); });
+            });
+        });
+    };
+    TupleOfflineStorageService.prototype.saveTuplesEncoded = function (tupleSelector, vortexMsg) {
+        return this.transaction(true)
+            .then(function (tx) {
+            return tx.saveTuplesEncoded(tupleSelector, vortexMsg)
+                .then(function () {
+                // Don't add the close to the promise chain
+                tx.close().catch(function (e) { return console.log("ERROR saveTuplesEncoded: " + e); });
             });
         });
     };

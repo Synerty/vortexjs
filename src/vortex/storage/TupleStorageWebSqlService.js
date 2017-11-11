@@ -88,19 +88,23 @@ var TupleWebSqlTransaction = (function () {
     };
     TupleWebSqlTransaction.prototype.saveTuples = function (tupleSelector, tuples) {
         var _this = this;
+        // The payload is a convenient way to serialise and compress the data
+        return new Payload_1.Payload({}, tuples).toVortexMsg()
+            .then(function (vortexMsg) {
+            return _this.saveTuplesEncoded(tupleSelector, vortexMsg);
+        });
+    };
+    TupleWebSqlTransaction.prototype.saveTuplesEncoded = function (tupleSelector, vortexMsg) {
         if (!this.txForWrite) {
             var msg = "WebSQL: saveTuples attempted on read only TX";
             console.log(UtilMisc_1.dateStr() + " " + msg);
             return Promise.reject(msg);
         }
         // The payload is a convenient way to serialise and compress the data
-        return new Payload_1.Payload({}, tuples).toVortexMsg()
-            .then(function (vortexMsg) {
-            var tupleSelectorStr = tupleSelector.toOrderedJsonStr();
-            var bindParams = [tupleSelectorStr, Date.now(), vortexMsg];
-            return _this.tx.executeSql(insertSql, bindParams)
-                .then(function () { return null; }); // Convert the result
-        });
+        var tupleSelectorStr = tupleSelector.toOrderedJsonStr();
+        var bindParams = [tupleSelectorStr, Date.now(), vortexMsg];
+        return this.tx.executeSql(insertSql, bindParams)
+            .then(function () { return null; }); // Convert the result
     };
     TupleWebSqlTransaction.prototype.close = function () {
         return Promise.resolve();

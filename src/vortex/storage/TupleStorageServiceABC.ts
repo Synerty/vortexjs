@@ -10,6 +10,8 @@ export interface TupleStorageTransaction {
 
     saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> ;
 
+    saveTuplesEncoded(tupleSelector: TupleSelector, vortexMsg: string): Promise<void> ;
+
     /** Close
      *
      * This will close the transaction, comitting if required.

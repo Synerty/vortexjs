@@ -47,10 +47,21 @@ export class TupleOfflineStorageService {
                 // Call the TX Close when the save promise is resolved
                     .then(() => {
                         // Don't add the close to the promise chain
-                        tx.close().catch(e => console.log(`ERROR loadTuples: ${e}`));
+                        tx.close().catch(e => console.log(`ERROR saveTuples: ${e}`));
                     });
             });
     }
 
+    saveTuplesEncoded(tupleSelector: TupleSelector, vortexMsg: string): Promise<void>  {
+        return this.transaction(true)
+            .then(tx => {
+                return tx.saveTuplesEncoded(tupleSelector, vortexMsg)
+                // Call the TX Close when the save promise is resolved
+                    .then(() => {
+                        // Don't add the close to the promise chain
+                        tx.close().catch(e => console.log(`ERROR saveTuplesEncoded: ${e}`));
+                    });
+            });
+    }
 
 }

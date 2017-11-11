@@ -142,39 +142,45 @@ var TupleIndexedDbTransaction = (function () {
     // Add disply items to the cache
     TupleIndexedDbTransaction.prototype.saveTuples = function (tupleSelector, tuples) {
         var _this = this;
+        var startTime = now();
+        // The payload is a convenient way to serialise and compress the data
+        return new Payload_1.Payload({}, tuples).toVortexMsg()
+            .then(function (vortexMsg) {
+            var timeTaken = now() - startTime;
+            console.log(UtilMisc_1.dateStr() + " IndexedDB: toVortexMsg took " + timeTaken + "ms ");
+            return _this.saveTuplesEncoded(tupleSelector, vortexMsg);
+        });
+    };
+    ;
+    TupleIndexedDbTransaction.prototype.saveTuplesEncoded = function (tupleSelector, vortexMsg) {
+        var _this = this;
         if (!this.txForWrite) {
             var msg = "IndexedDB: saveTuples attempted on read only TX";
             console.log(UtilMisc_1.dateStr() + " " + msg);
             return Promise.reject(msg);
         }
-        var startTime = now();
         // The payload is a convenient way to serialise and compress the data
-        return new Payload_1.Payload({}, tuples).toVortexMsg()
-            .then(function (vortexMsg) {
-            var tupleSelectorStr = tupleSelector.toOrderedJsonStr();
-            var item = {
-                tupleSelector: tupleSelectorStr,
-                dateTime: new Date(),
-                payload: vortexMsg
-            };
-            var timeTaken = now() - startTime;
-            console.log(UtilMisc_1.dateStr() + " IndexedDB: toVortexMsg took " + timeTaken + "ms ");
-            startTime = now();
-            return new Promise(function (resolve, reject) {
-                // Run the inserts
-                var response = _this.store.put(item);
-                IndexedDb_1.addIndexedDbHandlers(response, function () {
-                    reject(UtilMisc_1.dateStr() + " IndexedDB: saveTuples \"put\" error");
-                    throw new IndexedDb_1.IDBException("Put error");
-                });
-                response.oncomplete = function () {
-                    var timeTaken = now() - startTime;
-                    console.log(UtilMisc_1.dateStr() + " IndexedDB: saveTuples"
-                        + (" took " + timeTaken + "ms (in thread)")
-                        + (" Inserted/updated " + tuples.length + " tuples"));
-                    resolve();
-                };
+        var tupleSelectorStr = tupleSelector.toOrderedJsonStr();
+        var item = {
+            tupleSelector: tupleSelectorStr,
+            dateTime: new Date(),
+            payload: vortexMsg
+        };
+        var startTime = now();
+        return new Promise(function (resolve, reject) {
+            // Run the inserts
+            var response = _this.store.put(item);
+            IndexedDb_1.addIndexedDbHandlers(response, function () {
+                reject(UtilMisc_1.dateStr() + " IndexedDB: saveTuples \"put\" error");
+                throw new IndexedDb_1.IDBException("Put error");
             });
+            response.oncomplete = function () {
+                var timeTaken = now() - startTime;
+                console.log(UtilMisc_1.dateStr() + " IndexedDB: saveTuples"
+                    + (" took " + timeTaken + "ms (in thread)")
+                    + (" Inserted/updated " + vortexMsg.length + " of encoding"));
+                resolve();
+            };
         });
     };
     ;

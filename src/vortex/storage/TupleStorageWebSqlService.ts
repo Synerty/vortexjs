@@ -98,6 +98,17 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
 
     saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> {
 
+        // The payload is a convenient way to serialise and compress the data
+        return new Payload({}, tuples).toVortexMsg()
+            .then((vortexMsg: string) => {
+                return this.saveTuplesEncoded(tupleSelector, vortexMsg);
+            });
+
+    }
+
+
+    saveTuplesEncoded(tupleSelector: TupleSelector, vortexMsg: string): Promise<void> {
+
         if (!this.txForWrite) {
             let msg = "WebSQL: saveTuples attempted on read only TX";
             console.log(`${dateStr()} ${msg}`);
@@ -105,14 +116,11 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
         }
 
         // The payload is a convenient way to serialise and compress the data
-        return new Payload({}, tuples).toVortexMsg()
-            .then((vortexMsg: string) => {
-                let tupleSelectorStr = tupleSelector.toOrderedJsonStr();
-                let bindParams = [tupleSelectorStr, Date.now(), vortexMsg];
+        let tupleSelectorStr = tupleSelector.toOrderedJsonStr();
+        let bindParams = [tupleSelectorStr, Date.now(), vortexMsg];
 
-                return this.tx.executeSql(insertSql, bindParams)
-                    .then(() => null); // Convert the result
-            });
+        return this.tx.executeSql(insertSql, bindParams)
+            .then(() => null); // Convert the result
 
     }
 

@@ -44,6 +44,10 @@ class TupleNullTransaction implements TupleStorageTransaction {
     }
 
     saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> {
+      return this.saveTuplesEncoded(tupleSelector, 'TupleStorageNullService');
+    }
+
+    saveTuplesEncoded(tupleSelector: TupleSelector, vortexMsg: string): Promise<void> {
 
         if (!this.txForWrite) {
             let msg = "Null Storage: saveTuples attempted on read only TX";

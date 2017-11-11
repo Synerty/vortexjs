@@ -56,6 +56,9 @@ var TupleNullTransaction = (function () {
         return Promise.resolve([]);
     };
     TupleNullTransaction.prototype.saveTuples = function (tupleSelector, tuples) {
+        return this.saveTuplesEncoded(tupleSelector, 'TupleStorageNullService');
+    };
+    TupleNullTransaction.prototype.saveTuplesEncoded = function (tupleSelector, vortexMsg) {
         if (!this.txForWrite) {
             var msg = "Null Storage: saveTuples attempted on read only TX";
             console.log(UtilMisc_1.dateStr() + " " + msg);
