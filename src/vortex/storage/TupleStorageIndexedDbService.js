@@ -114,6 +114,18 @@ var TupleIndexedDbTransaction = (function () {
     // ----------------------------------------------------------------------------
     // Load the display items from the cache
     TupleIndexedDbTransaction.prototype.loadTuples = function (tupleSelector) {
+        return this.loadTuplesEncoded(tupleSelector)
+            .then(function (vortexMsg) {
+            if (vortexMsg == null) {
+                return [];
+            }
+            return Payload_1.Payload.fromVortexMsg(vortexMsg)
+                .then(function (payload) { return payload.tuples; });
+        });
+    };
+    // ----------------------------------------------------------------------------
+    // Load the display items from the cache
+    TupleIndexedDbTransaction.prototype.loadTuplesEncoded = function (tupleSelector) {
         var _this = this;
         var startTime = now();
         return new Promise(function (resolve, reject) {
@@ -129,12 +141,10 @@ var TupleIndexedDbTransaction = (function () {
                 // Called for each matching record
                 var data = request.result;
                 if (data == null) {
-                    resolve([]);
+                    resolve(null);
                     return;
                 }
-                Payload_1.Payload.fromVortexMsg(data.payload)
-                    .then(function (payload) { return resolve(payload.tuples); })
-                    .catch(function (e) { return reject(e); });
+                return data.payload;
             };
         });
     };

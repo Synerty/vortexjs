@@ -75,15 +75,24 @@ var TupleWebSqlTransaction = (function () {
         this.txForWrite = txForWrite;
     }
     TupleWebSqlTransaction.prototype.loadTuples = function (tupleSelector) {
+        return this.loadTuplesEncoded(tupleSelector)
+            .then(function (vortexMsg) {
+            if (vortexMsg == null) {
+                return [];
+            }
+            return Payload_1.Payload.fromVortexMsg(vortexMsg)
+                .then(function (payload) { return payload.tuples; });
+        });
+    };
+    TupleWebSqlTransaction.prototype.loadTuplesEncoded = function (tupleSelector) {
         var bindParams = [tupleSelector.toOrderedJsonStr()];
         return this.tx.executeSql(selectSql, bindParams)
             .then(function (rows) {
             if (rows.length === 0) {
-                return [];
+                return null;
             }
             var row1 = rows[0];
-            return Payload_1.Payload.fromVortexMsg(row1.payload)
-                .then(function (payload) { return payload.tuples; });
+            return row1.payload;
         });
     };
     TupleWebSqlTransaction.prototype.saveTuples = function (tupleSelector, tuples) {

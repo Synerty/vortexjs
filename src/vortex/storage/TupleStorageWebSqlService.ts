@@ -82,17 +82,29 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
 
     loadTuples(tupleSelector: TupleSelector): Promise<Tuple[]> {
 
+        return this.loadTuplesEncoded(tupleSelector)
+            .then((vortexMsg: string) => {
+                if (vortexMsg == null) {
+                    return [];
+                }
+
+                return Payload.fromVortexMsg(vortexMsg)
+                    .then((payload: Payload) => payload.tuples);
+            });
+    }
+
+    loadTuplesEncoded(tupleSelector: TupleSelector): Promise<string | null> {
+
         let bindParams = [tupleSelector.toOrderedJsonStr()];
 
         return this.tx.executeSql(selectSql, bindParams)
             .then((rows: any[]) => {
                 if (rows.length === 0) {
-                    return [];
+                    return null;
                 }
 
                 let row1 = rows[0];
-                return Payload.fromVortexMsg(row1.payload)
-                    .then((payload: Payload) => payload.tuples);
+                return row1.payload;
             });
     }
 

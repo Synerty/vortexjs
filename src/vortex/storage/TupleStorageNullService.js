@@ -55,6 +55,10 @@ var TupleNullTransaction = (function () {
         console.log("TupleStorageNullService.tupleSelector " + tupleSelector.toOrderedJsonStr());
         return Promise.resolve([]);
     };
+    TupleNullTransaction.prototype.loadTuplesEncoded = function (tupleSelector) {
+        console.log("TupleStorageNullService.tupleSelector " + tupleSelector.toOrderedJsonStr());
+        return Promise.resolve(null);
+    };
     TupleNullTransaction.prototype.saveTuples = function (tupleSelector, tuples) {
         return this.saveTuplesEncoded(tupleSelector, 'TupleStorageNullService');
     };

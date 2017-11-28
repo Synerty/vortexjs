@@ -43,6 +43,11 @@ class TupleNullTransaction implements TupleStorageTransaction {
         return Promise.resolve([]);
     }
 
+    loadTuplesEncoded(tupleSelector: TupleSelector): Promise<string | null> {
+        console.log(`TupleStorageNullService.tupleSelector ${tupleSelector.toOrderedJsonStr()}`);
+        return Promise.resolve(null);
+    }
+
     saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> {
       return this.saveTuplesEncoded(tupleSelector, 'TupleStorageNullService');
     }

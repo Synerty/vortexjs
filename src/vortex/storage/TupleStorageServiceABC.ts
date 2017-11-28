@@ -8,6 +8,8 @@ export interface TupleStorageTransaction {
 
     loadTuples(tupleSelector: TupleSelector): Promise<Tuple[]> ;
 
+    loadTuplesEncoded(tupleSelector: TupleSelector): Promise<string | null> ;
+
     saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> ;
 
     saveTuplesEncoded(tupleSelector: TupleSelector, vortexMsg: string): Promise<void> ;

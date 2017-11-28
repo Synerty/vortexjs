@@ -127,10 +127,26 @@ class TupleIndexedDbTransaction implements TupleStorageTransaction {
 
 // ----------------------------------------------------------------------------
 // Load the display items from the cache
+
     loadTuples(tupleSelector: TupleSelector): Promise<Tuple[]> {
+
+        return this.loadTuplesEncoded(tupleSelector)
+            .then((vortexMsg: string) => {
+                if (vortexMsg == null) {
+                    return [];
+                }
+
+                return Payload.fromVortexMsg(vortexMsg)
+                    .then((payload: Payload) => payload.tuples);
+            });
+    }
+
+// ----------------------------------------------------------------------------
+// Load the display items from the cache
+    loadTuplesEncoded(tupleSelector: TupleSelector): Promise<string | null> {
         let startTime: any = now();
 
-        return new Promise<Tuple[]>((resolve, reject) => {
+        return new Promise<string | null>((resolve, reject) => {
 
             let request = this.store.get(tupleSelector.toOrderedJsonStr());
 
@@ -150,13 +166,11 @@ class TupleIndexedDbTransaction implements TupleStorageTransaction {
                 // Called for each matching record
                 let data: DataStructI | null = request.result;
                 if (data == null) {
-                    resolve([]);
+                    resolve(null);
                     return;
                 }
 
-                Payload.fromVortexMsg(data.payload)
-                    .then((payload: Payload) => resolve(payload.tuples))
-                    .catch(e => reject(e));
+                return data.payload;
 
             };
         });
