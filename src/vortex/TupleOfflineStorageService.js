@@ -35,6 +35,19 @@ var TupleOfflineStorageService = (function () {
             });
         });
     };
+    TupleOfflineStorageService.prototype.loadTuplesEncoded = function (tupleSelector) {
+        return this.transaction(false)
+            .then(function (tx) {
+            return tx.loadTuplesEncoded(tupleSelector)
+                .then(function (vortexMsg) {
+                // We have the tuples
+                // close the transaction but disregard it's promise
+                tx.close()
+                    .catch(function (e) { return console.log("ERROR loadTuplesEncoded: " + e); });
+                return vortexMsg;
+            });
+        });
+    };
     TupleOfflineStorageService.prototype.saveTuples = function (tupleSelector, tuples) {
         return this.transaction(true)
             .then(function (tx) {

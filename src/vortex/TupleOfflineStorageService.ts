@@ -40,6 +40,20 @@ export class TupleOfflineStorageService {
             });
     }
 
+    loadTuplesEncoded(tupleSelector: TupleSelector): Promise<string | null> {
+        return this.transaction(false)
+            .then(tx => {
+                return tx.loadTuplesEncoded(tupleSelector)
+                    .then((vortexMsg: string | null) => {
+                        // We have the tuples
+                        // close the transaction but disregard it's promise
+                        tx.close()
+                          .catch(e => console.log(`ERROR loadTuplesEncoded: ${e}`));
+                        return vortexMsg;
+                    });
+            });
+    }
+
     saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> {
         return this.transaction(true)
             .then(tx => {
