@@ -170,8 +170,7 @@ class TupleIndexedDbTransaction implements TupleStorageTransaction {
                     return;
                 }
 
-                return data.payload;
-
+                resolve(data.payload);
             };
         });
 

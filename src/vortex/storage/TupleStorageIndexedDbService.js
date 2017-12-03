@@ -144,7 +144,7 @@ var TupleIndexedDbTransaction = (function () {
                     resolve(null);
                     return;
                 }
-                return data.payload;
+                resolve(data.payload);
             };
         });
     };
