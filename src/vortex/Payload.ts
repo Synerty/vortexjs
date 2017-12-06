@@ -3,63 +3,8 @@ import SerialiseUtil from "./SerialiseUtil";
 import Jsonable from "./Jsonable";
 import {assert} from "./UtilMisc";
 import "./UtilArray";
-
-import * as pako from "pako";
-import * as base64 from "base-64";
-
-function btoa(data) {
-  try {
-    return window["btoa"](data);
-  }
-  catch (e) {
-    return base64.encode(data);
-  }
-}
-
-function atob(data) {
-  try {
-    return window["atob"](data);
-  }
-  catch (e) {
-    return base64.decode(data);
-  }
-}
-
-
-/* Blob is undefined in NativeScript
-
-// ----------------------------------------------------------------------------
-// Deflate Worker
-let deflateWorkerBlob = new Blob([`
-importScripts("pako");
-importScripts("base-64");
-
-
-self.addEventListener('message', function (event) {
-    let compressedData = pako.deflate(event.data, {to: "string"});
-    let encodedData = base64.encode(compressedData);
-    self.postMessage(encodedData, null);
-}, false);
-`], {type: 'text/javascript'});
-
-let deflateWorkerBlobUrl = URL.createObjectURL(deflateWorkerBlob);
-
-// ----------------------------------------------------------------------------
-// Inflate Worker
-let inflateWorkerBlob = new Blob([`
-importScripts("pako");
-importScripts("base-64");
-
-self.addEventListener('message', function (event) {
-    let compressedData = base64.decode(event.data);
-    let jsonStr = pako.inflate(compressedData, {to: "string"});
-    self.postMessage(jsonStr, null);
-}, false);
-`], {type: 'text/javascript'});
-
-let inflateWorkerBlobUrl = URL.createObjectURL(inflateWorkerBlob);
-
-*/
+import {PayloadDelegateInMain} from "./payload/PayloadDelegateInMain";
+import {logLong, now, PayloadDelegateABC} from "./payload/PayloadDelegateABC";
 
 
 // ----------------------------------------------------------------------------
@@ -75,29 +20,6 @@ export interface IPayloadFilt {
   [more: string]: any;
 }
 
-
-// ----------------------------------------------------------------------------
-// Typescript date - date fooler
-function now(): any {
-  return new Date();
-}
-
-function logLong(message: string, start: any, payload: any | null = null) {
-  let duration = now() - start;
-  let desc = '';
-
-  // You get 5ms to do what you need before i call the performance cops.
-  if (duration < 5)
-    return;
-
-  if (payload != null) {
-    desc = ', ' + JSON.stringify(payload.filt);
-  }
-
-  console.log(`${message}, took ${duration}${desc}`);
-}
-
-
 // ----------------------------------------------------------------------------
 // Payload class
 
@@ -106,6 +28,8 @@ function logLong(message: string, start: any, payload: any | null = null) {
  * This class is serialised and transferred over the vortex to the server.
  */
 export class Payload extends Jsonable {
+
+  private static workerDelegate = new PayloadDelegateInMain();
 
   static readonly vortexUuidKey = "__vortexUuid__";
   static readonly vortexNameKey = "__vortexName__";
@@ -131,6 +55,10 @@ export class Payload extends Jsonable {
     self.filt = filt;
     self.tuples = tuples;
 
+  }
+
+  static setWorkerDelegate(delegate: PayloadDelegateABC) {
+    Payload.workerDelegate = delegate;
   }
 
   isEmpty() {
@@ -170,34 +98,19 @@ export class Payload extends Jsonable {
 
     return new Promise<Payload>((resolve, reject) => {
 
-      let complete = (jsonStr) => {
-        logLong('Payload.fromVortexMsg decode+inflate', start);
-        start = now();
+      Payload.workerDelegate.decodeAndInflate(vortexStr)
+        .then((jsonStr) => {
+          logLong('Payload.fromVortexMsg decode+inflate', start);
+          return jsonStr;
+        })
+        .then((jsonStr) => {
+          start = now();
+          let payload = new Payload()._fromJson(jsonStr);
+          logLong('Payload.fromVortexMsg _fromJson', start, payload);
 
-        let payload = new Payload()._fromJson(jsonStr);
-        logLong('Payload.fromVortexMsg _fromJson', start, payload);
-
-        resolve(payload);
-      };
-
-      /*
-       let worker = new Worker(inflateWorkerBlobUrl);
-
-       worker.addEventListener('message', (event) => complete(event.data), false);
-
-       worker.addEventListener('error', (error) => {
-       let msg = `${dateStr()} ERROR: Payload fromVortexMsg failed : ${error}`;
-       console.log(msg);
-       reject(msg)
-       }, false);
-
-       // DISABLE WEB WORKER :-(
-       worker.postMessage(vortexStr); // Send data to our worker.
-       */
-
-      let compressedData = atob(vortexStr);
-      let jsonStr = pako.inflate(compressedData, {to: "string"});
-      complete(jsonStr);
+          resolve(payload);
+        })
+        .catch(e => console.log(`ERROR: toVortexMsg ${e}`));
 
     });
   }
@@ -211,29 +124,14 @@ export class Payload extends Jsonable {
       logLong('Payload.toVortexMsg _toJson', start, this);
       start = now();
 
-      let complete = (jsonStr) => {
-        logLong('Payload.toVortexMsg deflate+encode', start, this);
-        resolve(jsonStr);
-      };
-
-      // DISABLE WEB WORKER :-(
-      /*
-       let worker = new Worker(deflateWorkerBlobUrl);
-       worker.addEventListener('message', (event) => complete(event.data), false);
-
-       worker.addEventListener('error', (error) => {
-       let msg = `${dateStr()} ERROR: Payload toVortexMsg failed : ${error.toString()}`;
-       console.log(msg);
-       reject(msg)
-       }, false);
-
-       worker.postMessage(payloadStr); // Send data to our worker.
-       */
-
-      let compressedData = pako.deflate(jsonStr, {to: "string"});
-      let encodedData = btoa(compressedData);
-      complete(encodedData);
+      Payload.workerDelegate.deflateAndEncode(jsonStr)
+        .then((jsonStr) => {
+          logLong('Payload.toVortexMsg deflate+encode', start, this);
+          resolve(jsonStr);
+        })
+        .catch(e => console.log(`ERROR: toVortexMsg ${e}`));
 
     });
   }
+
 }

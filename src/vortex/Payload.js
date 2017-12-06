@@ -14,41 +14,8 @@ var SerialiseUtil_1 = require("./SerialiseUtil");
 var Jsonable_1 = require("./Jsonable");
 var UtilMisc_1 = require("./UtilMisc");
 require("./UtilArray");
-var pako = require("pako");
-var base64 = require("base-64");
-function btoa(data) {
-    try {
-        return window["btoa"](data);
-    }
-    catch (e) {
-        return base64.encode(data);
-    }
-}
-function atob(data) {
-    try {
-        return window["atob"](data);
-    }
-    catch (e) {
-        return base64.decode(data);
-    }
-}
-// ----------------------------------------------------------------------------
-// Typescript date - date fooler
-function now() {
-    return new Date();
-}
-function logLong(message, start, payload) {
-    if (payload === void 0) { payload = null; }
-    var duration = now() - start;
-    var desc = '';
-    // You get 5ms to do what you need before i call the performance cops.
-    if (duration < 5)
-        return;
-    if (payload != null) {
-        desc = ', ' + JSON.stringify(payload.filt);
-    }
-    console.log(message + ", took " + duration + desc);
-}
+var PayloadDelegateInMain_1 = require("./payload/PayloadDelegateInMain");
+var PayloadDelegateABC_1 = require("./payload/PayloadDelegateABC");
 // ----------------------------------------------------------------------------
 // Payload class
 /**
@@ -76,6 +43,9 @@ var Payload = (function (_super) {
         self.tuples = tuples;
         return _this;
     }
+    Payload.setWorkerDelegate = function (delegate) {
+        Payload.workerDelegate = delegate;
+    };
     Payload.prototype.isEmpty = function () {
         var self = this;
         // Ignore the connection start vortexUuid value
@@ -102,65 +72,40 @@ var Payload = (function (_super) {
         return JSON.stringify(jsonDict);
     };
     Payload.fromVortexMsg = function (vortexStr) {
-        var start = now();
+        var start = PayloadDelegateABC_1.now();
         return new Promise(function (resolve, reject) {
-            var complete = function (jsonStr) {
-                logLong('Payload.fromVortexMsg decode+inflate', start);
-                start = now();
+            Payload.workerDelegate.decodeAndInflate(vortexStr)
+                .then(function (jsonStr) {
+                PayloadDelegateABC_1.logLong('Payload.fromVortexMsg decode+inflate', start);
+                return jsonStr;
+            })
+                .then(function (jsonStr) {
+                start = PayloadDelegateABC_1.now();
                 var payload = new Payload()._fromJson(jsonStr);
-                logLong('Payload.fromVortexMsg _fromJson', start, payload);
+                PayloadDelegateABC_1.logLong('Payload.fromVortexMsg _fromJson', start, payload);
                 resolve(payload);
-            };
-            /*
-             let worker = new Worker(inflateWorkerBlobUrl);
-      
-             worker.addEventListener('message', (event) => complete(event.data), false);
-      
-             worker.addEventListener('error', (error) => {
-             let msg = `${dateStr()} ERROR: Payload fromVortexMsg failed : ${error}`;
-             console.log(msg);
-             reject(msg)
-             }, false);
-      
-             // DISABLE WEB WORKER :-(
-             worker.postMessage(vortexStr); // Send data to our worker.
-             */
-            var compressedData = atob(vortexStr);
-            var jsonStr = pako.inflate(compressedData, { to: "string" });
-            complete(jsonStr);
+            })
+                .catch(function (e) { return console.log("ERROR: toVortexMsg " + e); });
         });
     };
     Payload.prototype.toVortexMsg = function () {
         var _this = this;
-        var start = now();
+        var start = PayloadDelegateABC_1.now();
         return new Promise(function (resolve, reject) {
             var jsonStr = _this._toJson();
-            logLong('Payload.toVortexMsg _toJson', start, _this);
-            start = now();
-            var complete = function (jsonStr) {
-                logLong('Payload.toVortexMsg deflate+encode', start, _this);
+            PayloadDelegateABC_1.logLong('Payload.toVortexMsg _toJson', start, _this);
+            start = PayloadDelegateABC_1.now();
+            Payload.workerDelegate.deflateAndEncode(jsonStr)
+                .then(function (jsonStr) {
+                PayloadDelegateABC_1.logLong('Payload.toVortexMsg deflate+encode', start, _this);
                 resolve(jsonStr);
-            };
-            // DISABLE WEB WORKER :-(
-            /*
-             let worker = new Worker(deflateWorkerBlobUrl);
-             worker.addEventListener('message', (event) => complete(event.data), false);
-      
-             worker.addEventListener('error', (error) => {
-             let msg = `${dateStr()} ERROR: Payload toVortexMsg failed : ${error.toString()}`;
-             console.log(msg);
-             reject(msg)
-             }, false);
-      
-             worker.postMessage(payloadStr); // Send data to our worker.
-             */
-            var compressedData = pako.deflate(jsonStr, { to: "string" });
-            var encodedData = btoa(compressedData);
-            complete(encodedData);
+            })
+                .catch(function (e) { return console.log("ERROR: toVortexMsg " + e); });
         });
     };
     return Payload;
 }(Jsonable_1.default));
+Payload.workerDelegate = new PayloadDelegateInMain_1.PayloadDelegateInMain();
 Payload.vortexUuidKey = "__vortexUuid__";
 Payload.vortexNameKey = "__vortexName__";
 exports.Payload = Payload;
