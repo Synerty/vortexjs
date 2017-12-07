@@ -15,18 +15,33 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
 
     return new Promise<string>((resolve, reject) => {
 
+      function callError(error) {
+          reject(error);
+          console.log(
+            `ERROR: PayloadDelegateNs.deflateAndEncode ${error}`
+          );
+      }
+
       worker.onmessage = (result) => {
-        let resultAny:any = result;
-        resolve(resultAny["payloadJson"]);
+        let resultAny: any = result;
+        let error = resultAny["error"];
+
+        if (error == null) {
+          resolve(resultAny["payloadJson"]);
+
+        } else {
+          callError(error);
+        }
+
         worker.terminate();
       };
 
       worker.onerror = (error) => {
-        reject(error);
+          callError(error);
         worker.terminate();
       };
 
-      worker.postMessage({payloadJson:payloadJson});
+      worker.postMessage({payloadJson: payloadJson});
 
     });
 
@@ -45,18 +60,33 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
 
     return new Promise<string>((resolve, reject) => {
 
+      function callError(error) {
+          reject(error);
+          console.log(
+            `ERROR: PayloadDelegateNs.decodeAndInflate ${error}`
+          );
+      }
+
       worker.onmessage = (result) => {
-        let resultAny:any = result;
-        resolve(resultAny["encodedData"]);
+        let resultAny: any = result;
+        let error = resultAny["error"];
+
+        if (error == null) {
+          resolve(resultAny["encodedData"]);
+
+        } else {
+          callError(error);
+        }
+
         worker.terminate();
       };
 
       worker.onerror = (error) => {
-        reject(error);
+        callError(error);
         worker.terminate();
       };
 
-      worker.postMessage({vortexStr:vortexStr});
+      worker.postMessage({vortexStr: vortexStr});
 
     });
 

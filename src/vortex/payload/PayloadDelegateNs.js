@@ -26,13 +26,23 @@ var PayloadDelegateNs = (function (_super) {
         //     w = new Worker("./workers/grayscaler.js");
         // }
         return new Promise(function (resolve, reject) {
+            function callError(error) {
+                reject(error);
+                console.log("ERROR: PayloadDelegateNs.deflateAndEncode " + error);
+            }
             worker.onmessage = function (result) {
                 var resultAny = result;
-                resolve(resultAny["payloadJson"]);
+                var error = resultAny["error"];
+                if (error == null) {
+                    resolve(resultAny["payloadJson"]);
+                }
+                else {
+                    callError(error);
+                }
                 worker.terminate();
             };
             worker.onerror = function (error) {
-                reject(error);
+                callError(error);
                 worker.terminate();
             };
             worker.postMessage({ payloadJson: payloadJson });
@@ -48,13 +58,23 @@ var PayloadDelegateNs = (function (_super) {
         //     w = new Worker("./workers/grayscaler.js");
         // }
         return new Promise(function (resolve, reject) {
+            function callError(error) {
+                reject(error);
+                console.log("ERROR: PayloadDelegateNs.decodeAndInflate " + error);
+            }
             worker.onmessage = function (result) {
                 var resultAny = result;
-                resolve(resultAny["encodedData"]);
+                var error = resultAny["error"];
+                if (error == null) {
+                    resolve(resultAny["encodedData"]);
+                }
+                else {
+                    callError(error);
+                }
                 worker.terminate();
             };
             worker.onerror = function (error) {
-                reject(error);
+                callError(error);
                 worker.terminate();
             };
             worker.postMessage({ vortexStr: vortexStr });
