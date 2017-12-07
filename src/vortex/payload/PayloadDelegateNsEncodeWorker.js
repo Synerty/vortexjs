@@ -2,10 +2,10 @@
 var pako = require("pako");
 var base64 = require("base-64");
 
-onmessage = function (payloadJson) {
-    var compressedData = pako.deflate(payloadJson, { to: "string" });
+onmessage = function (data) {
+    var compressedData = pako.deflate(data.payloadJson, { to: "string" });
     var encodedData = base64.encode(compressedData);
-    postMessage(encodedData);
+    postMessage({encodedData:encodedData});
 };
 
 

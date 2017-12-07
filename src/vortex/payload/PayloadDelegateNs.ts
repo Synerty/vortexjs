@@ -17,7 +17,7 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
 
       worker.onmessage = (result) => {
         let resultAny:any = result;
-        resolve(resultAny);
+        resolve(resultAny["payloadJson"]);
         worker.terminate();
       };
 
@@ -26,7 +26,7 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
         worker.terminate();
       };
 
-      worker.postMessage(payloadJson);
+      worker.postMessage({payloadJson:payloadJson});
 
     });
 
@@ -47,7 +47,7 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
 
       worker.onmessage = (result) => {
         let resultAny:any = result;
-        resolve(resultAny);
+        resolve(resultAny["encodedData"]);
         worker.terminate();
       };
 
@@ -56,7 +56,7 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
         worker.terminate();
       };
 
-      worker.postMessage(vortexStr);
+      worker.postMessage({vortexStr:vortexStr});
 
     });
 

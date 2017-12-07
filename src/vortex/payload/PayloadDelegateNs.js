@@ -28,14 +28,14 @@ var PayloadDelegateNs = (function (_super) {
         return new Promise(function (resolve, reject) {
             worker.onmessage = function (result) {
                 var resultAny = result;
-                resolve(resultAny);
+                resolve(resultAny["payloadJson"]);
                 worker.terminate();
             };
             worker.onerror = function (error) {
                 reject(error);
                 worker.terminate();
             };
-            worker.postMessage(payloadJson);
+            worker.postMessage({ payloadJson: payloadJson });
         });
     };
     PayloadDelegateNs.prototype.decodeAndInflate = function (vortexStr) {
@@ -50,14 +50,14 @@ var PayloadDelegateNs = (function (_super) {
         return new Promise(function (resolve, reject) {
             worker.onmessage = function (result) {
                 var resultAny = result;
-                resolve(resultAny);
+                resolve(resultAny["encodedData"]);
                 worker.terminate();
             };
             worker.onerror = function (error) {
                 reject(error);
                 worker.terminate();
             };
-            worker.postMessage(vortexStr);
+            worker.postMessage({ vortexStr: vortexStr });
         });
     };
     return PayloadDelegateNs;
