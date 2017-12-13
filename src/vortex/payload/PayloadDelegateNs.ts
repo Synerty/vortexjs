@@ -1,17 +1,18 @@
-import {PayloadDelegateABC} from "./PayloadDelegateABC";
+import { PayloadDelegateABC } from "./PayloadDelegateABC";
+
+declare let global: any;
 
 export class PayloadDelegateNs extends PayloadDelegateABC {
 
   deflateAndEncode(payloadJson: string): Promise<string> {
-    let worker = new Worker('./PayloadDelegateNsEncodeWorker.js');
 
-    // var w;
-    // if (global.TNS_WEBPACK) {
-    //     var GrayscaleWorker = require("nativescript-worker-loader!./workers/grayscaler.js");
-    //     w = new GrayscaleWorker();
-    // } else {
-    //     w = new Worker("./workers/grayscaler.js");
-    // }
+    let worker;
+    if (global.TNS_WEBPACK) {
+      let Worker = require("nativescript-worker-loader!../PayloadDelegateNsEncodeWorker.js");
+      worker = new Worker();
+    } else {
+      worker = new Worker("./PayloadDelegateNsEncodeWorker.js");
+    }
 
     return new Promise<string>((resolve, reject) => {
 
@@ -41,22 +42,21 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
         worker.terminate();
       };
 
-      worker.postMessage({payloadJson: payloadJson});
+      worker.postMessage({ payloadJson: payloadJson });
 
     });
 
   }
 
   decodeAndInflate(vortexStr: string): Promise<string> {
-    let worker = new Worker('./PayloadDelegateNsDecodeWorker.js');
 
-    // var w;
-    // if (global.TNS_WEBPACK) {
-    //     var GrayscaleWorker = require("nativescript-worker-loader!./workers/grayscaler.js");
-    //     w = new GrayscaleWorker();
-    // } else {
-    //     w = new Worker("./workers/grayscaler.js");
-    // }
+    let worker;
+    if (global.TNS_WEBPACK) {
+      let Worker = require("nativescript-worker-loader!./PayloadDelegateNsDecodeWorker.js");
+      worker = new Worker();
+    } else {
+      worker = new Worker('./PayloadDelegateNsDecodeWorker.js');
+    }
 
     return new Promise<string>((resolve, reject) => {
 
@@ -86,7 +86,7 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
         worker.terminate();
       };
 
-      worker.postMessage({vortexStr: vortexStr});
+      worker.postMessage({ vortexStr: vortexStr });
 
     });
 

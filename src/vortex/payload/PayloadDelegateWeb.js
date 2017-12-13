@@ -11,28 +11,21 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var PayloadDelegateABC_1 = require("./PayloadDelegateABC");
-var PayloadDelegateNs = (function (_super) {
-    __extends(PayloadDelegateNs, _super);
-    function PayloadDelegateNs() {
+var PayloadDelegateWeb = (function (_super) {
+    __extends(PayloadDelegateWeb, _super);
+    function PayloadDelegateWeb() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    PayloadDelegateNs.prototype.deflateAndEncode = function (payloadJson) {
-        var worker;
-        if (global.TNS_WEBPACK) {
-            var Worker_1 = require("nativescript-worker-loader!../PayloadDelegateNsEncodeWorker.js");
-            worker = new Worker_1();
-        }
-        else {
-            worker = new Worker("./PayloadDelegateNsEncodeWorker.js");
-        }
+    PayloadDelegateWeb.prototype.deflateAndEncode = function (payloadJson) {
+        var worker = new Worker('./PayloadDelegateWebEncodeWorker.js');
         return new Promise(function (resolve, reject) {
             function callError(error) {
                 reject(error);
-                console.log("ERROR: PayloadDelegateNs.deflateAndEncode " + error);
+                console.log("ERROR: PayloadDelegateWeb.deflateAndEncode " + error);
             }
-            worker.onmessage = function (result) {
-                var resultAny = result.data;
-                var error = resultAny["error"];
+            worker.addEventListener('message', function (result) {
+                var resultAny = result["data"];
+                var error = resultAny.error;
                 if (error == null) {
                     resolve(resultAny["encodedData"]);
                 }
@@ -40,31 +33,24 @@ var PayloadDelegateNs = (function (_super) {
                     callError(error);
                 }
                 worker.terminate();
-            };
-            worker.onerror = function (error) {
+            }, false);
+            worker.addEventListener('error', function (error) {
                 callError(error);
                 worker.terminate();
-            };
+            }, false);
             worker.postMessage({ payloadJson: payloadJson });
         });
     };
-    PayloadDelegateNs.prototype.decodeAndInflate = function (vortexStr) {
-        var worker;
-        if (global.TNS_WEBPACK) {
-            var Worker_2 = require("nativescript-worker-loader!./PayloadDelegateNsDecodeWorker.js");
-            worker = new Worker_2();
-        }
-        else {
-            worker = new Worker('./PayloadDelegateNsDecodeWorker.js');
-        }
+    PayloadDelegateWeb.prototype.decodeAndInflate = function (vortexStr) {
+        var worker = new Worker('./PayloadDelegateWebDecodeWorker.js');
         return new Promise(function (resolve, reject) {
             function callError(error) {
                 reject(error);
-                console.log("ERROR: PayloadDelegateNs.decodeAndInflate " + error);
+                console.log("ERROR: PayloadDelegateWeb.decodeAndInflate " + error);
             }
-            worker.onmessage = function (result) {
-                var resultAny = result.data;
-                var error = resultAny["error"];
+            worker.addEventListener('message', function (result) {
+                var resultAny = result["data"];
+                var error = resultAny.error;
                 if (error == null) {
                     resolve(resultAny["payloadJson"]);
                 }
@@ -72,15 +58,15 @@ var PayloadDelegateNs = (function (_super) {
                     callError(error);
                 }
                 worker.terminate();
-            };
-            worker.onerror = function (error) {
+            }, false);
+            worker.addEventListener('error', function (error) {
                 callError(error);
                 worker.terminate();
-            };
+            }, false);
             worker.postMessage({ vortexStr: vortexStr });
         });
     };
-    return PayloadDelegateNs;
+    return PayloadDelegateWeb;
 }(PayloadDelegateABC_1.PayloadDelegateABC));
-exports.PayloadDelegateNs = PayloadDelegateNs;
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/payload/PayloadDelegateNs.js.map
+exports.PayloadDelegateWeb = PayloadDelegateWeb;
+//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/payload/PayloadDelegateWeb.js.map
