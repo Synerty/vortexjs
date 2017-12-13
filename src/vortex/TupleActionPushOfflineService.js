@@ -1,4 +1,23 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var VortexStatusService_1 = require("./VortexStatusService");
@@ -18,14 +37,14 @@ var TupleActionPushOfflineService = (function (_super) {
             .queueAction(this.tupleActionProcessorName.name, tupleAction, payload)
             .then(function () { return []; });
     };
-    TupleActionPushOfflineService = __decorate([
-        core_1.Injectable(),
-        __metadata("design:paramtypes", [TupleActionPushService_1.TupleActionPushNameService,
-            VortexService_1.VortexService,
-            VortexStatusService_1.VortexStatusService,
-            TupleActionPushOfflineSingletonService_1.TupleActionPushOfflineSingletonService])
-    ], TupleActionPushOfflineService);
     return TupleActionPushOfflineService;
 }(TupleActionPushService_1.TupleActionPushService));
+TupleActionPushOfflineService = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [TupleActionPushService_1.TupleActionPushNameService,
+        VortexService_1.VortexService,
+        VortexStatusService_1.VortexStatusService,
+        TupleActionPushOfflineSingletonService_1.TupleActionPushOfflineSingletonService])
+], TupleActionPushOfflineService);
 exports.TupleActionPushOfflineService = TupleActionPushOfflineService;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiVHVwbGVBY3Rpb25QdXNoT2ZmbGluZVNlcnZpY2UuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJUdXBsZUFjdGlvblB1c2hPZmZsaW5lU2VydmljZS50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztBQUFBLHNDQUF5QztBQUN6Qyw2REFBMEQ7QUFHMUQsbUVBR2tDO0FBQ2xDLGlEQUE4QztBQUM5QyxtR0FBZ0c7QUFHaEc7SUFBbUQsaURBQXNCO0lBRXJFLHVDQUFZLGVBQTJDLEVBQzNDLGFBQTRCLEVBQzVCLFlBQWlDLEVBQ3pCLFNBQWlEO1FBSHJFLFlBSUksa0JBQU0sZUFBZSxFQUFFLGFBQWEsRUFBRSxZQUFZLENBQUMsU0FFdEQ7UUFIbUIsZUFBUyxHQUFULFNBQVMsQ0FBd0M7O0lBR3JFLENBQUM7SUFHRCxrREFBVSxHQUFWLFVBQVcsV0FBMkI7UUFDbEMsSUFBSSxPQUFPLEdBQUcsSUFBSSxDQUFDLFdBQVcsQ0FBQyxXQUFXLENBQUMsQ0FBQztRQUM1QyxNQUFNLENBQUMsSUFBSSxDQUFDLFNBQVM7YUFDaEIsV0FBVyxDQUFDLElBQUksQ0FBQyx3QkFBd0IsQ0FBQyxJQUFJLEVBQUUsV0FBVyxFQUFFLE9BQU8sQ0FBQzthQUNyRSxJQUFJLENBQUMsY0FBTSxPQUFBLEVBQUUsRUFBRixDQUFFLENBQUMsQ0FBQztJQUN4QixDQUFDO0lBaEJRLDZCQUE2QjtRQUR6QyxpQkFBVSxFQUFFO3lDQUdvQixtREFBMEI7WUFDNUIsNkJBQWE7WUFDZCx5Q0FBbUI7WUFDZCwrRUFBc0M7T0FMNUQsNkJBQTZCLENBa0J6QztJQUFELG9DQUFDO0NBQUEsQUFsQkQsQ0FBbUQsK0NBQXNCLEdBa0J4RTtBQWxCWSxzRUFBNkIiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQge0luamVjdGFibGV9IGZyb20gXCJAYW5ndWxhci9jb3JlXCI7XG5pbXBvcnQge1ZvcnRleFN0YXR1c1NlcnZpY2V9IGZyb20gXCIuL1ZvcnRleFN0YXR1c1NlcnZpY2VcIjtcbmltcG9ydCB7VHVwbGVBY3Rpb25BQkN9IGZyb20gXCIuL1R1cGxlQWN0aW9uXCI7XG5pbXBvcnQge1R1cGxlfSBmcm9tIFwiLi9UdXBsZVwiO1xuaW1wb3J0IHtcbiAgICBUdXBsZUFjdGlvblB1c2hOYW1lU2VydmljZSxcbiAgICBUdXBsZUFjdGlvblB1c2hTZXJ2aWNlXG59IGZyb20gXCIuL1R1cGxlQWN0aW9uUHVzaFNlcnZpY2VcIjtcbmltcG9ydCB7Vm9ydGV4U2VydmljZX0gZnJvbSBcIi4vVm9ydGV4U2VydmljZVwiO1xuaW1wb3J0IHtUdXBsZUFjdGlvblB1c2hPZmZsaW5lU2luZ2xldG9uU2VydmljZX0gZnJvbSBcIi4vVHVwbGVBY3Rpb25QdXNoT2ZmbGluZVNpbmdsZXRvblNlcnZpY2VcIjtcblxuQEluamVjdGFibGUoKVxuZXhwb3J0IGNsYXNzIFR1cGxlQWN0aW9uUHVzaE9mZmxpbmVTZXJ2aWNlIGV4dGVuZHMgVHVwbGVBY3Rpb25QdXNoU2VydmljZSB7XG5cbiAgICBjb25zdHJ1Y3Rvcih0dXBsZUFjdGlvbk5hbWU6IFR1cGxlQWN0aW9uUHVzaE5hbWVTZXJ2aWNlLFxuICAgICAgICAgICAgICAgIHZvcnRleFNlcnZpY2U6IFZvcnRleFNlcnZpY2UsXG4gICAgICAgICAgICAgICAgdm9ydGV4U3RhdHVzOiBWb3J0ZXhTdGF0dXNTZXJ2aWNlLFxuICAgICAgICAgICAgICAgIHByaXZhdGUgc2luZ2xldG9uOiBUdXBsZUFjdGlvblB1c2hPZmZsaW5lU2luZ2xldG9uU2VydmljZSkge1xuICAgICAgICBzdXBlcih0dXBsZUFjdGlvbk5hbWUsIHZvcnRleFNlcnZpY2UsIHZvcnRleFN0YXR1cyk7XG5cbiAgICB9XG5cblxuICAgIHB1c2hBY3Rpb24odHVwbGVBY3Rpb246IFR1cGxlQWN0aW9uQUJDKTogUHJvbWlzZTxUdXBsZVtdPiB7XG4gICAgICAgIGxldCBwYXlsb2FkID0gdGhpcy5tYWtlUGF5bG9hZCh0dXBsZUFjdGlvbik7XG4gICAgICAgIHJldHVybiB0aGlzLnNpbmdsZXRvblxuICAgICAgICAgICAgLnF1ZXVlQWN0aW9uKHRoaXMudHVwbGVBY3Rpb25Qcm9jZXNzb3JOYW1lLm5hbWUsIHR1cGxlQWN0aW9uLCBwYXlsb2FkKVxuICAgICAgICAgICAgLnRoZW4oKCkgPT4gW10pO1xuICAgIH1cblxufVxuXG4iXX0=
+//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/TupleActionPushOfflineService.js.map

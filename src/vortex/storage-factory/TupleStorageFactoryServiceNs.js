@@ -1,4 +1,23 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var WebSqlService_1 = require("../../websql/WebSqlService");
@@ -16,11 +35,11 @@ var TupleStorageFactoryServiceNs = (function (_super) {
     TupleStorageFactoryServiceNs.prototype.createActionStorage = function () {
         return new TupleActionStorageWebSqlService_1.TupleActionStorageWebSqlService(this.webSqlFactory);
     };
-    TupleStorageFactoryServiceNs = __decorate([
-        core_1.Injectable(),
-        __metadata("design:paramtypes", [WebSqlService_1.WebSqlFactoryService])
-    ], TupleStorageFactoryServiceNs);
     return TupleStorageFactoryServiceNs;
 }(TupleStorageFactoryService_1.TupleStorageFactoryService));
+TupleStorageFactoryServiceNs = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [WebSqlService_1.WebSqlFactoryService])
+], TupleStorageFactoryServiceNs);
 exports.TupleStorageFactoryServiceNs = TupleStorageFactoryServiceNs;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiVHVwbGVTdG9yYWdlRmFjdG9yeVNlcnZpY2VOcy5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIlR1cGxlU3RvcmFnZUZhY3RvcnlTZXJ2aWNlTnMudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFBQSxzQ0FBeUM7QUFDekMsNERBQWdFO0FBR2hFLGtGQUErRTtBQUMvRSwyRUFBd0U7QUFFeEUscUdBQWtHO0FBR2xHO0lBQWtELGdEQUEwQjtJQUN4RSxzQ0FBWSxhQUFtQztlQUMzQyxrQkFBTSxhQUFhLENBQUM7SUFFeEIsQ0FBQztJQUVELDZDQUFNLEdBQU4sVUFBTyxJQUFvQztRQUN2QyxNQUFNLENBQUMsSUFBSSxxREFBeUIsQ0FBQyxJQUFJLENBQUMsYUFBYSxFQUFFLElBQUksQ0FBQyxDQUFDO0lBQ25FLENBQUM7SUFFRCwwREFBbUIsR0FBbkI7UUFDSSxNQUFNLENBQUMsSUFBSSxpRUFBK0IsQ0FBQyxJQUFJLENBQUMsYUFBYSxDQUFDLENBQUM7SUFDbkUsQ0FBQztJQVpRLDRCQUE0QjtRQUR4QyxpQkFBVSxFQUFFO3lDQUVrQixvQ0FBb0I7T0FEdEMsNEJBQTRCLENBYXhDO0lBQUQsbUNBQUM7Q0FBQSxBQWJELENBQWtELHVEQUEwQixHQWEzRTtBQWJZLG9FQUE0QiIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7SW5qZWN0YWJsZX0gZnJvbSBcIkBhbmd1bGFyL2NvcmVcIjtcbmltcG9ydCB7V2ViU3FsRmFjdG9yeVNlcnZpY2V9IGZyb20gXCIuLi8uLi93ZWJzcWwvV2ViU3FsU2VydmljZVwiO1xuaW1wb3J0IHtUdXBsZVN0b3JhZ2VTZXJ2aWNlQUJDfSBmcm9tIFwiLi4vc3RvcmFnZS9UdXBsZVN0b3JhZ2VTZXJ2aWNlQUJDXCI7XG5pbXBvcnQge1R1cGxlT2ZmbGluZVN0b3JhZ2VOYW1lU2VydmljZX0gZnJvbSBcIi4uL1R1cGxlT2ZmbGluZVN0b3JhZ2VOYW1lU2VydmljZVwiO1xuaW1wb3J0IHtUdXBsZVN0b3JhZ2VXZWJTcWxTZXJ2aWNlfSBmcm9tIFwiLi4vc3RvcmFnZS9UdXBsZVN0b3JhZ2VXZWJTcWxTZXJ2aWNlXCI7XG5pbXBvcnQge1R1cGxlU3RvcmFnZUZhY3RvcnlTZXJ2aWNlfSBmcm9tIFwiLi9UdXBsZVN0b3JhZ2VGYWN0b3J5U2VydmljZVwiO1xuaW1wb3J0IHtUdXBsZUFjdGlvblN0b3JhZ2VTZXJ2aWNlQUJDfSBmcm9tIFwiLi4vYWN0aW9uLXN0b3JhZ2UvVHVwbGVBY3Rpb25TdG9yYWdlU2VydmljZUFCQ1wiO1xuaW1wb3J0IHtUdXBsZUFjdGlvblN0b3JhZ2VXZWJTcWxTZXJ2aWNlfSBmcm9tIFwiLi4vYWN0aW9uLXN0b3JhZ2UvVHVwbGVBY3Rpb25TdG9yYWdlV2ViU3FsU2VydmljZVwiO1xuXG5ASW5qZWN0YWJsZSgpXG5leHBvcnQgY2xhc3MgVHVwbGVTdG9yYWdlRmFjdG9yeVNlcnZpY2VOcyBleHRlbmRzIFR1cGxlU3RvcmFnZUZhY3RvcnlTZXJ2aWNlIHtcbiAgICBjb25zdHJ1Y3Rvcih3ZWJTcWxGYWN0b3J5OiBXZWJTcWxGYWN0b3J5U2VydmljZSkge1xuICAgICAgICBzdXBlcih3ZWJTcWxGYWN0b3J5KTtcblxuICAgIH1cblxuICAgIGNyZWF0ZShuYW1lOiBUdXBsZU9mZmxpbmVTdG9yYWdlTmFtZVNlcnZpY2UpOiBUdXBsZVN0b3JhZ2VTZXJ2aWNlQUJDIHtcbiAgICAgICAgcmV0dXJuIG5ldyBUdXBsZVN0b3JhZ2VXZWJTcWxTZXJ2aWNlKHRoaXMud2ViU3FsRmFjdG9yeSwgbmFtZSk7XG4gICAgfVxuXG4gICAgY3JlYXRlQWN0aW9uU3RvcmFnZSgpOiBUdXBsZUFjdGlvblN0b3JhZ2VTZXJ2aWNlQUJDIHtcbiAgICAgICAgcmV0dXJuIG5ldyBUdXBsZUFjdGlvblN0b3JhZ2VXZWJTcWxTZXJ2aWNlKHRoaXMud2ViU3FsRmFjdG9yeSk7XG4gICAgfVxufVxuXG4iXX0=
+//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/storage-factory/TupleStorageFactoryServiceNs.js.map
