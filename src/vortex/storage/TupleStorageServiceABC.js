@@ -1,13 +1,4 @@
 "use strict";
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var TupleOfflineStorageNameService_1 = require("../TupleOfflineStorageNameService");
@@ -15,11 +6,11 @@ var TupleStorageServiceABC = (function () {
     function TupleStorageServiceABC(name) {
         this.dbName = name.name;
     }
+    TupleStorageServiceABC = __decorate([
+        core_1.Injectable(),
+        __metadata("design:paramtypes", [TupleOfflineStorageNameService_1.TupleOfflineStorageNameService])
+    ], TupleStorageServiceABC);
     return TupleStorageServiceABC;
 }());
-TupleStorageServiceABC = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [TupleOfflineStorageNameService_1.TupleOfflineStorageNameService])
-], TupleStorageServiceABC);
 exports.TupleStorageServiceABC = TupleStorageServiceABC;
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/storage/TupleStorageServiceABC.js.map
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiVHVwbGVTdG9yYWdlU2VydmljZUFCQy5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIlR1cGxlU3RvcmFnZVNlcnZpY2VBQkMudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFBQSxzQ0FBeUM7QUFHekMsb0ZBQWlGO0FBc0JqRjtJQUlJLGdDQUFZLElBQW9DO1FBQzVDLElBQUksQ0FBQyxNQUFNLEdBQUcsSUFBSSxDQUFDLElBQUksQ0FBQztJQUU1QixDQUFDO0lBUGlCLHNCQUFzQjtRQUQzQyxpQkFBVSxFQUFFO3lDQUtTLCtEQUE4QjtPQUo5QixzQkFBc0IsQ0FxQjNDO0lBQUQsNkJBQUM7Q0FBQSxBQXJCRCxJQXFCQztBQXJCcUIsd0RBQXNCIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHtJbmplY3RhYmxlfSBmcm9tIFwiQGFuZ3VsYXIvY29yZVwiO1xuaW1wb3J0IHtUdXBsZX0gZnJvbSBcIi4uL1R1cGxlXCI7XG5pbXBvcnQge1R1cGxlU2VsZWN0b3J9IGZyb20gXCIuLi9UdXBsZVNlbGVjdG9yXCI7XG5pbXBvcnQge1R1cGxlT2ZmbGluZVN0b3JhZ2VOYW1lU2VydmljZX0gZnJvbSBcIi4uL1R1cGxlT2ZmbGluZVN0b3JhZ2VOYW1lU2VydmljZVwiO1xuXG5cbmV4cG9ydCBpbnRlcmZhY2UgVHVwbGVTdG9yYWdlVHJhbnNhY3Rpb24ge1xuXG4gICAgbG9hZFR1cGxlcyh0dXBsZVNlbGVjdG9yOiBUdXBsZVNlbGVjdG9yKTogUHJvbWlzZTxUdXBsZVtdPiA7XG5cbiAgICBsb2FkVHVwbGVzRW5jb2RlZCh0dXBsZVNlbGVjdG9yOiBUdXBsZVNlbGVjdG9yKTogUHJvbWlzZTxzdHJpbmcgfCBudWxsPiA7XG5cbiAgICBzYXZlVHVwbGVzKHR1cGxlU2VsZWN0b3I6IFR1cGxlU2VsZWN0b3IsIHR1cGxlczogVHVwbGVbXSk6IFByb21pc2U8dm9pZD4gO1xuXG4gICAgc2F2ZVR1cGxlc0VuY29kZWQodHVwbGVTZWxlY3RvcjogVHVwbGVTZWxlY3Rvciwgdm9ydGV4TXNnOiBzdHJpbmcpOiBQcm9taXNlPHZvaWQ+IDtcblxuICAgIC8qKiBDbG9zZVxuICAgICAqXG4gICAgICogVGhpcyB3aWxsIGNsb3NlIHRoZSB0cmFuc2FjdGlvbiwgY29taXR0aW5nIGlmIHJlcXVpcmVkLlxuICAgICAqL1xuICAgIGNsb3NlKCk6IFByb21pc2U8dm9pZD4gO1xufVxuXG5cbkBJbmplY3RhYmxlKClcbmV4cG9ydCBhYnN0cmFjdCBjbGFzcyBUdXBsZVN0b3JhZ2VTZXJ2aWNlQUJDIHtcblxuICAgIHByb3RlY3RlZCBkYk5hbWU6IHN0cmluZztcblxuICAgIGNvbnN0cnVjdG9yKG5hbWU6IFR1cGxlT2ZmbGluZVN0b3JhZ2VOYW1lU2VydmljZSkge1xuICAgICAgICB0aGlzLmRiTmFtZSA9IG5hbWUubmFtZTtcblxuICAgIH1cblxuICAgIGFic3RyYWN0IG9wZW4oKTogUHJvbWlzZTx2b2lkPjtcblxuICAgIGFic3RyYWN0IGlzT3BlbigpOiBib29sZWFuO1xuXG4gICAgYWJzdHJhY3QgY2xvc2UoKTogdm9pZDtcblxuICAgIC8vIE5PVEU6IEknbSBsb29raW5nIGF0IHRoZSBXZWJTUUwgYW5kIEluZGV4ZWREYiBpbXBsZW1lbnRhdGlvbiBhbmQgYm90aFxuICAgIC8vIGFwcGVhciB0byBvbmx5IHByb3ZpZGUgc2luZ2xlIHVzZSB0cmFuc2FjdGlvbnMgbGlrZSB0aGlzLlxuICAgIC8vIENvbnNpZGVyaW5nIHRoYXQgZmFjdCwgVGhlIFwiVHVwbGVUcmFuc2FjdGlvblwiIGFwaSBzZWVtcyB1c2VsZXNzLlxuICAgIC8vIFNlZSBUdXBsZUluZGV4ZWREYlRyYW5zYWN0aW9uLnNhdmVUdXBsZXNcbiAgICBhYnN0cmFjdCB0cmFuc2FjdGlvbihmb3JXcml0ZTogYm9vbGVhbik6IFByb21pc2U8VHVwbGVTdG9yYWdlVHJhbnNhY3Rpb24+O1xuXG59XG4iXX0=

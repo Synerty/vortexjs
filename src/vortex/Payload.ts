@@ -1,10 +1,10 @@
-import {Tuple} from "./Tuple";
+import { Tuple } from "./Tuple";
 import SerialiseUtil from "./SerialiseUtil";
 import Jsonable from "./Jsonable";
-import {assert} from "./UtilMisc";
+import { assert } from "./UtilMisc";
 import "./UtilArray";
-import {PayloadDelegateInMain} from "./payload/PayloadDelegateInMain";
-import {logLong, now, PayloadDelegateABC} from "./payload/PayloadDelegateABC";
+import { PayloadDelegateInMain } from "./payload/PayloadDelegateInMain";
+import { logLong, now, PayloadDelegateABC } from "./payload/PayloadDelegateABC";
 
 
 // ----------------------------------------------------------------------------
@@ -76,8 +76,8 @@ export class Payload extends Jsonable {
     return (self.tuples.length === 0 && self.result == null);
   }
 
-// -------------------------------------------
-// JSON Related method
+  // -------------------------------------------
+  // JSON Related method
 
   private _fromJson(jsonStr: string): Payload {
     let self = this;
@@ -101,16 +101,17 @@ export class Payload extends Jsonable {
       Payload.workerDelegate.decodeAndInflate(vortexStr)
         .then((jsonStr) => {
           logLong('Payload.fromVortexMsg decode+inflate', start);
-          return jsonStr;
-        })
-        .then((jsonStr) => {
           start = now();
+          
           let payload = new Payload()._fromJson(jsonStr);
           logLong('Payload.fromVortexMsg _fromJson', start, payload);
 
           resolve(payload);
         })
-        .catch(e => console.log(`ERROR: toVortexMsg ${e}`));
+        .catch((err) => {
+          console.log(`ERROR: toVortexMsg ${err}`);
+          reject(err);
+        });
 
     });
   }
@@ -129,7 +130,10 @@ export class Payload extends Jsonable {
           logLong('Payload.toVortexMsg deflate+encode', start, this);
           resolve(jsonStr);
         })
-        .catch(e => console.log(`ERROR: toVortexMsg ${e}`));
+        .catch((err) => {
+          console.log(`ERROR: toVortexMsg ${err}`);
+          reject(err);
+        });
 
     });
   }

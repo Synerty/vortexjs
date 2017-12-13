@@ -1,5 +1,6 @@
 references.d.ts
 test-web
+test-ns
 node_modules
 tslint.json
 .editorconfig
