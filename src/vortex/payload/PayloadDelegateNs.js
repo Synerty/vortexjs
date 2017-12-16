@@ -11,76 +11,93 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var PayloadDelegateABC_1 = require("./PayloadDelegateABC");
+var PayloadDelegateInMain_1 = require("./PayloadDelegateInMain");
 var PayloadDelegateNs = (function (_super) {
     __extends(PayloadDelegateNs, _super);
     function PayloadDelegateNs() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    PayloadDelegateNs.prototype.deflateAndEncode = function (payloadJson) {
-        var worker;
+        var _this = _super.call(this) || this;
+        _this.inMainDelegate = new PayloadDelegateInMain_1.PayloadDelegateInMain();
         if (global.TNS_WEBPACK) {
             var Worker_1 = require("nativescript-worker-loader!../PayloadDelegateNsEncodeWorker.js");
-            worker = new Worker_1();
+            _this.encodeWorker = new Worker_1();
         }
         else {
-            worker = new Worker("./PayloadDelegateNsEncodeWorker.js");
+            _this.encodeWorker = new Worker("./PayloadDelegateNsEncodeWorker.js");
         }
+        _this.encodeWorker.onmessage = PayloadDelegateNs.onMessage;
+        _this.encodeWorker.onerror = PayloadDelegateNs.onError;
+        if (global.TNS_WEBPACK) {
+            var Worker_2 = require("nativescript-worker-loader!../PayloadDelegateNsDecodeWorker.js");
+            _this.decodeWorker = new Worker_2();
+        }
+        else {
+            _this.decodeWorker = new Worker("./PayloadDelegateNsDecodeWorker.js");
+        }
+        _this.decodeWorker.onmessage = PayloadDelegateNs.onMessage;
+        _this.decodeWorker.onerror = PayloadDelegateNs.onError;
+        return _this;
+    }
+    PayloadDelegateNs.prototype.deflateAndEncode = function (payloadJson) {
+        var _this = this;
+        // Don't send small messages to the worker
+        if (payloadJson.length < (10 * 1024))
+            return this.inMainDelegate.deflateAndEncode(payloadJson);
         return new Promise(function (resolve, reject) {
-            function callError(error) {
-                reject(error);
-                console.log("ERROR: PayloadDelegateNs.deflateAndEncode " + error);
-            }
-            worker.onmessage = function (result) {
-                var resultAny = result.data;
-                var error = resultAny["error"];
-                if (error == null) {
-                    resolve(resultAny["encodedData"]);
-                }
-                else {
-                    callError(error);
-                }
-                worker.terminate();
-            };
-            worker.onerror = function (error) {
-                callError(error);
-                worker.terminate();
-            };
-            worker.postMessage({ payloadJson: payloadJson });
+            var callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
+            _this.encodeWorker.postMessage({
+                callNumber: callNumber,
+                payloadJson: payloadJson
+            });
         });
     };
     PayloadDelegateNs.prototype.decodeAndInflate = function (vortexStr) {
-        var worker;
-        if (global.TNS_WEBPACK) {
-            var Worker_2 = require("nativescript-worker-loader!./PayloadDelegateNsDecodeWorker.js");
-            worker = new Worker_2();
+        var _this = this;
+        // Don't send small messages to the worker
+        if (vortexStr.length < (5 * 1024))
+            return this.inMainDelegate.decodeAndInflate(vortexStr);
+        return new Promise(function (resolve, reject) {
+            var callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
+            _this.decodeWorker.postMessage({
+                callNumber: callNumber,
+                vortexStr: vortexStr
+            });
+        });
+    }; // ------------------------------------------------------------------------
+    PayloadDelegateNs.popPromise = function (callNumber) {
+        var promise = PayloadDelegateNs._promises[callNumber];
+        delete PayloadDelegateNs._promises[callNumber];
+        return promise;
+    };
+    PayloadDelegateNs.pushPromise = function (resolve, reject) {
+        var callNumber = PayloadDelegateNs._promisesNum++;
+        PayloadDelegateNs._promises[callNumber] = {
+            resolve: resolve,
+            reject: reject
+        };
+        return callNumber;
+    };
+    PayloadDelegateNs.onMessage = function (postResult) {
+        var resultAny = postResult.data;
+        // console.log(`WebSQL Service, Tx Receiving : ${JSON.stringify(resultAny)}`);
+        var error = resultAny["error"];
+        var callNumber = resultAny["callNumber"];
+        var result = resultAny["result"];
+        var promise = PayloadDelegateNs.popPromise(callNumber);
+        var resolve = promise["resolve"];
+        var reject = promise["reject"];
+        if (error == null) {
+            resolve(result);
         }
         else {
-            worker = new Worker('./PayloadDelegateNsDecodeWorker.js');
+            reject(error);
         }
-        return new Promise(function (resolve, reject) {
-            function callError(error) {
-                reject(error);
-                console.log("ERROR: PayloadDelegateNs.decodeAndInflate " + error);
-            }
-            worker.onmessage = function (result) {
-                var resultAny = result.data;
-                var error = resultAny["error"];
-                if (error == null) {
-                    resolve(resultAny["payloadJson"]);
-                }
-                else {
-                    callError(error);
-                }
-                worker.terminate();
-            };
-            worker.onerror = function (error) {
-                callError(error);
-                worker.terminate();
-            };
-            worker.postMessage({ vortexStr: vortexStr });
-        });
+    };
+    PayloadDelegateNs.onError = function (error) {
+        console.log("PayloadDelegateNs.onerror " + error);
     };
     return PayloadDelegateNs;
 }(PayloadDelegateABC_1.PayloadDelegateABC));
+PayloadDelegateNs._promises = {};
+PayloadDelegateNs._promisesNum = 1;
 exports.PayloadDelegateNs = PayloadDelegateNs;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/payload/PayloadDelegateNs.js.map
