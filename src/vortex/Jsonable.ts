@@ -1,9 +1,9 @@
 import SerialiseUtil from "./SerialiseUtil";
-import {dictKeysFromObject} from "./UtilMisc";
+import { dictKeysFromObject } from "./UtilMisc";
 import "./UtilString";
 
 // Typedef for require
-declare let require:any;
+declare let require: any;
 
 /**
  * ############################################################################### #
@@ -12,6 +12,7 @@ declare let require:any;
  */
 export default class Jsonable extends SerialiseUtil {
     protected _tupleType: string;
+    protected _rawJonableFields = null;
 
     public static readonly JSON_CLASS_TYPE = "_ct";
     // private static readonly JSON_CLASS = "_c";
@@ -29,6 +30,14 @@ export default class Jsonable extends SerialiseUtil {
         let self: Jsonable = this;
 
         self.__rst = SerialiseUtil.T_GENERIC_CLASS;
+    }
+
+    private _isRawJsonableField(name: string): boolean {
+        if (name == null || name.length == 0)
+            return false;
+        if (this._rawJonableFields == null)
+            return false;
+        return this._rawJonableFields.indexOf(name) != -1;
     }
 
 
@@ -91,7 +100,11 @@ export default class Jsonable extends SerialiseUtil {
             let name = fieldNames[i];
             if (name.startsWith("_"))
                 continue;
-            this[name] = this.fromJsonField(jsonDict[name]);
+
+            if (this._isRawJsonableField(name))
+                this[name] = JSON.parse(jsonDict[name]);
+            else
+                this[name] = this.fromJsonField(jsonDict[name]);
         }
 
         // This is only required for unit tests new Tuple().fromJsonDict(..)
@@ -104,8 +117,9 @@ export default class Jsonable extends SerialiseUtil {
 
 
     toJsonField(value: any,
-                jsonDict: {} | null = null,
-                name: string | null = null): any {
+        jsonDict: {} | null = null,
+        name: string | null = null): any {
+
         let self = this;
 
         let convertedValue = null;
@@ -114,7 +128,10 @@ export default class Jsonable extends SerialiseUtil {
             : self.toRapuiType(value);
 
 
-        if (valueType === SerialiseUtil.T_RAPUI_TUPLE
+        if (this._isRawJsonableField(name)) {
+            convertedValue = JSON.stringify(value);
+
+        } else if (valueType === SerialiseUtil.T_RAPUI_TUPLE
             || valueType === SerialiseUtil.T_RAPUI_PAYLOAD) {
             convertedValue = value.toJsonDict();
 
@@ -151,8 +168,8 @@ export default class Jsonable extends SerialiseUtil {
         // Non standard values need a dict to store their value type attributes
         // Create a sub dict that contains the value and type
         let jsonStandardTypes = [SerialiseUtil.T_FLOAT, SerialiseUtil.T_STR,
-            SerialiseUtil.T_INT, SerialiseUtil.V_NULL,
-            SerialiseUtil.T_BOOL, SerialiseUtil.T_LIST, SerialiseUtil.T_DICT];
+        SerialiseUtil.T_INT, SerialiseUtil.V_NULL,
+        SerialiseUtil.T_BOOL, SerialiseUtil.T_LIST, SerialiseUtil.T_DICT];
 
         if (jsonStandardTypes.indexOf(valueType) === -1 && !(value instanceof Jsonable)) {
             let typedData = {};
@@ -170,7 +187,7 @@ export default class Jsonable extends SerialiseUtil {
         return convertedValue;
     }
 
-// ----------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------
     fromJsonField(value: any, valueType: string = null) {
         let self = this;
         if (valueType === SerialiseUtil.V_NULL || value == null)
@@ -187,7 +204,7 @@ export default class Jsonable extends SerialiseUtil {
         if (valueType == null) {
             valueType = self.toRapuiType(value);
             if ([SerialiseUtil.T_BOOL, SerialiseUtil.T_FLOAT,
-                    SerialiseUtil.T_INT, SerialiseUtil.T_STR].indexOf(valueType) !== -1)
+            SerialiseUtil.T_INT, SerialiseUtil.T_STR].indexOf(valueType) !== -1)
                 return value;
         }
 

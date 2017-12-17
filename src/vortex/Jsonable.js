@@ -22,6 +22,7 @@ var Jsonable = (function (_super) {
     __extends(Jsonable, _super);
     function Jsonable() {
         var _this = _super.call(this) || this;
+        _this._rawJonableFields = null;
         /*
          * Jsonable This class gives simple objects suport for serialising to/from json.
          * It handles Number, String, Array and Date. It doesn't handle more complex
@@ -31,6 +32,13 @@ var Jsonable = (function (_super) {
         self.__rst = SerialiseUtil_1.default.T_GENERIC_CLASS;
         return _this;
     }
+    Jsonable.prototype._isRawJsonableField = function (name) {
+        if (name == null || name.length == 0)
+            return false;
+        if (this._rawJonableFields == null)
+            return false;
+        return this._rawJonableFields.indexOf(name) != -1;
+    };
     Jsonable.prototype._fieldNames = function () {
         var self = this;
         var keys = [];
@@ -74,7 +82,10 @@ var Jsonable = (function (_super) {
             var name_2 = fieldNames[i];
             if (name_2.startsWith("_"))
                 continue;
-            this[name_2] = this.fromJsonField(jsonDict[name_2]);
+            if (this._isRawJsonableField(name_2))
+                this[name_2] = JSON.parse(jsonDict[name_2]);
+            else
+                this[name_2] = this.fromJsonField(jsonDict[name_2]);
         }
         // This is only required for unit tests new Tuple().fromJsonDict(..)
         if (jsonDict[Jsonable.JSON_CLASS_TYPE] == SerialiseUtil_1.default.T_RAPUI_TUPLE) {
@@ -90,7 +101,10 @@ var Jsonable = (function (_super) {
         var valueType = value == null
             ? SerialiseUtil_1.default.V_NULL
             : self.toRapuiType(value);
-        if (valueType === SerialiseUtil_1.default.T_RAPUI_TUPLE
+        if (this._isRawJsonableField(name)) {
+            convertedValue = JSON.stringify(value);
+        }
+        else if (valueType === SerialiseUtil_1.default.T_RAPUI_TUPLE
             || valueType === SerialiseUtil_1.default.T_RAPUI_PAYLOAD) {
             convertedValue = value.toJsonDict();
         }
