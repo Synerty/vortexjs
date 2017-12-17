@@ -76,10 +76,10 @@ var Payload = (function (_super) {
         return new Promise(function (resolve, reject) {
             Payload.workerDelegate.decodeAndInflate(vortexStr)
                 .then(function (jsonStr) {
-                PayloadDelegateABC_1.logLong('Payload.fromVortexMsg decode+inflate', start);
+                PayloadDelegateABC_1.logLong("Payload.fromVortexMsg decode+inflate len=" + vortexStr.length, start);
                 start = PayloadDelegateABC_1.now();
                 var payload = new Payload()._fromJson(jsonStr);
-                PayloadDelegateABC_1.logLong('Payload.fromVortexMsg _fromJson', start, payload);
+                PayloadDelegateABC_1.logLong("Payload.fromVortexMsg _fromJson len=" + vortexStr.length, start, payload);
                 resolve(payload);
             })
                 .catch(function (err) {
@@ -93,11 +93,11 @@ var Payload = (function (_super) {
         var start = PayloadDelegateABC_1.now();
         return new Promise(function (resolve, reject) {
             var jsonStr = _this._toJson();
-            PayloadDelegateABC_1.logLong('Payload.toVortexMsg _toJson', start, _this);
+            PayloadDelegateABC_1.logLong("Payload.toVortexMsg _toJson len=" + jsonStr.length, start, _this);
             start = PayloadDelegateABC_1.now();
             Payload.workerDelegate.deflateAndEncode(jsonStr)
                 .then(function (jsonStr) {
-                PayloadDelegateABC_1.logLong('Payload.toVortexMsg deflate+encode', start, _this);
+                PayloadDelegateABC_1.logLong("Payload.toVortexMsg deflate+encode len=" + jsonStr.length, start, _this);
                 resolve(jsonStr);
             })
                 .catch(function (err) {

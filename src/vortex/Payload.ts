@@ -100,11 +100,11 @@ export class Payload extends Jsonable {
 
       Payload.workerDelegate.decodeAndInflate(vortexStr)
         .then((jsonStr) => {
-          logLong('Payload.fromVortexMsg decode+inflate', start);
+          logLong(`Payload.fromVortexMsg decode+inflate len=${vortexStr.length}`, start);
           start = now();
           
           let payload = new Payload()._fromJson(jsonStr);
-          logLong('Payload.fromVortexMsg _fromJson', start, payload);
+          logLong(`Payload.fromVortexMsg _fromJson len=${vortexStr.length}`, start, payload);
 
           resolve(payload);
         })
@@ -122,12 +122,12 @@ export class Payload extends Jsonable {
     return new Promise<string>((resolve, reject) => {
 
       let jsonStr = this._toJson();
-      logLong('Payload.toVortexMsg _toJson', start, this);
+      logLong(`Payload.toVortexMsg _toJson len=${jsonStr.length}`, start, this);
       start = now();
 
       Payload.workerDelegate.deflateAndEncode(jsonStr)
         .then((jsonStr) => {
-          logLong('Payload.toVortexMsg deflate+encode', start, this);
+          logLong(`Payload.toVortexMsg deflate+encode len=${jsonStr.length}`, start, this);
           resolve(jsonStr);
         })
         .catch((err) => {
