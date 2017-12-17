@@ -83,7 +83,7 @@ var Jsonable = (function (_super) {
             if (name_2.startsWith("_"))
                 continue;
             if (this._isRawJsonableField(name_2))
-                this[name_2] = JSON.parse(jsonDict[name_2]);
+                this[name_2] = jsonDict[name_2];
             else
                 this[name_2] = this.fromJsonField(jsonDict[name_2]);
         }
@@ -102,7 +102,7 @@ var Jsonable = (function (_super) {
             ? SerialiseUtil_1.default.V_NULL
             : self.toRapuiType(value);
         if (this._isRawJsonableField(name)) {
-            convertedValue = JSON.stringify(value);
+            convertedValue = UtilMisc_1.deepCopy(value);
         }
         else if (valueType === SerialiseUtil_1.default.T_RAPUI_TUPLE
             || valueType === SerialiseUtil_1.default.T_RAPUI_PAYLOAD) {

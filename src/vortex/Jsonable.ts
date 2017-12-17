@@ -1,5 +1,5 @@
 import SerialiseUtil from "./SerialiseUtil";
-import { dictKeysFromObject } from "./UtilMisc";
+import { dictKeysFromObject, deepCopy } from "./UtilMisc";
 import "./UtilString";
 
 // Typedef for require
@@ -102,7 +102,7 @@ export default class Jsonable extends SerialiseUtil {
                 continue;
 
             if (this._isRawJsonableField(name))
-                this[name] = JSON.parse(jsonDict[name]);
+                this[name] = jsonDict[name];
             else
                 this[name] = this.fromJsonField(jsonDict[name]);
         }
@@ -129,7 +129,7 @@ export default class Jsonable extends SerialiseUtil {
 
 
         if (this._isRawJsonableField(name)) {
-            convertedValue = JSON.stringify(value);
+            convertedValue = deepCopy(value);
 
         } else if (valueType === SerialiseUtil.T_RAPUI_TUPLE
             || valueType === SerialiseUtil.T_RAPUI_PAYLOAD) {

@@ -136,6 +136,7 @@ export function errToStr(err: any): string {
 
 export let extend = require('extend');
 export let deepEqual = require('deep-equal');
+export let deepCopy = require('deep-copy');
 
 // https://www.npmjs.com/package/json-stable-stringify
 export let jsonOrderedStringify = require('json-stable-stringify');
