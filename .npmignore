@@ -5,6 +5,8 @@ references.d.ts
 test-web
 test-ns
 node_modules
+package-lock.json
 tslint.json
 .editorconfig
 .idea
+.vscode
