@@ -76,6 +76,9 @@ export abstract class VortexClientABC {
             return;
         }
 
+        if (this.closed)
+            throw new Error("An attempt was made to reconnect a closed vortex");
+
         let payloads: Payload[] = [];
         if (payload instanceof Array)
             payloads = payload;

@@ -10,16 +10,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var WebSqlFactoryService = (function () {
+var WebSqlFactoryService = /** @class */ (function () {
     function WebSqlFactoryService() {
     }
+    WebSqlFactoryService = __decorate([
+        core_1.Injectable()
+    ], WebSqlFactoryService);
     return WebSqlFactoryService;
 }());
-WebSqlFactoryService = __decorate([
-    core_1.Injectable()
-], WebSqlFactoryService);
 exports.WebSqlFactoryService = WebSqlFactoryService;
-var WebSqlService = (function () {
+var WebSqlService = /** @class */ (function () {
     function WebSqlService(dbName, dbSchema) {
         this.dbName = dbName;
         this.dbSchema = dbSchema;
@@ -80,11 +80,11 @@ var WebSqlService = (function () {
             });
         });
     };
+    WebSqlService = __decorate([
+        core_1.Injectable(),
+        __metadata("design:paramtypes", [String, Array])
+    ], WebSqlService);
     return WebSqlService;
 }());
-WebSqlService = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [String, Array])
-], WebSqlService);
 exports.WebSqlService = WebSqlService;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/websql/WebSqlService.js.map

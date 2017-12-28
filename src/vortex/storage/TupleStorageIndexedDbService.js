@@ -36,7 +36,7 @@ var TUPLE_STORE = "tuples";
  * This class handles storing and retrieving tuples to/from indexed db.
  *
  */
-var TupleStorageIndexedDbService = (function (_super) {
+var TupleStorageIndexedDbService = /** @class */ (function (_super) {
     __extends(TupleStorageIndexedDbService, _super);
     function TupleStorageIndexedDbService(name) {
         var _this = _super.call(this, name) || this;
@@ -98,14 +98,14 @@ var TupleStorageIndexedDbService = (function (_super) {
         var mode = forWrite ? "readwrite" : "readonly";
         return Promise.resolve(new TupleIndexedDbTransaction(this.db.transaction(TUPLE_STORE, mode), forWrite));
     };
+    TupleStorageIndexedDbService = __decorate([
+        core_1.Injectable(),
+        __metadata("design:paramtypes", [TupleOfflineStorageNameService_1.TupleOfflineStorageNameService])
+    ], TupleStorageIndexedDbService);
     return TupleStorageIndexedDbService;
 }(TupleStorageServiceABC_1.TupleStorageServiceABC));
-TupleStorageIndexedDbService = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [TupleOfflineStorageNameService_1.TupleOfflineStorageNameService])
-], TupleStorageIndexedDbService);
 exports.TupleStorageIndexedDbService = TupleStorageIndexedDbService;
-var TupleIndexedDbTransaction = (function () {
+var TupleIndexedDbTransaction = /** @class */ (function () {
     function TupleIndexedDbTransaction(tx, txForWrite) {
         this.tx = tx;
         this.txForWrite = txForWrite;

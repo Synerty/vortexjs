@@ -28,7 +28,7 @@ var tableName = "tupleActions";
 var databaseSchema = [
     "CREATE TABLE IF NOT EXISTS " + tableName + "\n     (\n        id INTEGER PRIMARY KEY AUTOINCREMENT,\n        scope TEXT,\n        uuid REAL,\n        payload TEXT,\n        UNIQUE (scope, uuid)\n     )"
 ];
-var TupleActionStorageWebSqlService = (function (_super) {
+var TupleActionStorageWebSqlService = /** @class */ (function (_super) {
     __extends(TupleActionStorageWebSqlService, _super);
     function TupleActionStorageWebSqlService(webSqlFactory) {
         var _this = _super.call(this) || this;
@@ -70,11 +70,11 @@ var TupleActionStorageWebSqlService = (function (_super) {
         return this.webSql.runSql(sql, bindParams)
             .then(function () { return null; });
     };
+    TupleActionStorageWebSqlService = __decorate([
+        core_1.Injectable(),
+        __metadata("design:paramtypes", [WebSqlService_1.WebSqlFactoryService])
+    ], TupleActionStorageWebSqlService);
     return TupleActionStorageWebSqlService;
 }(TupleActionStorageServiceABC_1.TupleActionStorageServiceABC));
-TupleActionStorageWebSqlService = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [WebSqlService_1.WebSqlFactoryService])
-], TupleActionStorageWebSqlService);
 exports.TupleActionStorageWebSqlService = TupleActionStorageWebSqlService;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/action-storage/TupleActionStorageWebSqlService.js.map

@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var PayloadDelegateABC_1 = require("./PayloadDelegateABC");
-var PayloadDelegateWeb = (function (_super) {
+var PayloadDelegateWeb = /** @class */ (function (_super) {
     __extends(PayloadDelegateWeb, _super);
     function PayloadDelegateWeb() {
         return _super !== null && _super.apply(this, arguments) || this;

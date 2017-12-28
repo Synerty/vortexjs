@@ -31,11 +31,17 @@ export class VortexClientWebsocket extends VortexClientABC {
         return this.socket != null && this.socket.readyState === this.Socket.OPEN;
     }
 
-    protected sendVortexMsg(vortexMsgs: string[]): void {
-        this.unsentBuffer.add(vortexMsgs);
+    send(payload: Payload | Payload[]): void {
+        if (!this.isReady) {
+          throw new Error("Websocked vortex is not online.");
+        }
 
-        if (!this.isReady)
-            this.createSocket();
+        super.send(payload);
+    }
+
+    protected sendVortexMsg(vortexMsgs: string[]): void {
+
+        this.unsentBuffer.add(vortexMsgs);
 
         this.sendMessages();
     }

@@ -30,7 +30,7 @@ var TupleSelector_1 = require("./TupleSelector");
  *  @property data Some optional data for this action
  *
  * */
-var TupleActionABC = (function (_super) {
+var TupleActionABC = /** @class */ (function (_super) {
     __extends(TupleActionABC, _super);
     function TupleActionABC(tupleName) {
         var _this = _super.call(this, tupleName) || this;
@@ -50,7 +50,7 @@ exports.TupleActionABC = TupleActionABC;
  *  @property data Some optional data for this action
  *
  * */
-var TupleGenericAction = (function (_super) {
+var TupleGenericAction = /** @class */ (function (_super) {
     __extends(TupleGenericAction, _super);
     function TupleGenericAction() {
         var _this = _super.call(this, "vortex.TupleGenericAction") || this;
@@ -58,12 +58,12 @@ var TupleGenericAction = (function (_super) {
         _this.data = null;
         return _this;
     }
+    TupleGenericAction = __decorate([
+        Tuple_1.addTupleType,
+        __metadata("design:paramtypes", [])
+    ], TupleGenericAction);
     return TupleGenericAction;
 }(TupleActionABC));
-TupleGenericAction = __decorate([
-    Tuple_1.addTupleType,
-    __metadata("design:paramtypes", [])
-], TupleGenericAction);
 exports.TupleGenericAction = TupleGenericAction;
 /** Tuple Update Action
  *
@@ -75,7 +75,7 @@ exports.TupleGenericAction = TupleGenericAction;
  *  @property data Some optional data for this action
  *
  * */
-var TupleUpdateAction = (function (_super) {
+var TupleUpdateAction = /** @class */ (function (_super) {
     __extends(TupleUpdateAction, _super);
     function TupleUpdateAction() {
         var _this = _super.call(this, "vortex.TupleUpdateAction") || this;
@@ -84,11 +84,11 @@ var TupleUpdateAction = (function (_super) {
         _this.data = null;
         return _this;
     }
+    TupleUpdateAction = __decorate([
+        Tuple_1.addTupleType,
+        __metadata("design:paramtypes", [])
+    ], TupleUpdateAction);
     return TupleUpdateAction;
 }(TupleActionABC));
-TupleUpdateAction = __decorate([
-    Tuple_1.addTupleType,
-    __metadata("design:paramtypes", [])
-], TupleUpdateAction);
 exports.TupleUpdateAction = TupleUpdateAction;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/TupleAction.js.map

@@ -9,7 +9,7 @@ var PayloadIO_1 = require("./PayloadIO");
  * @type {number}
  */
 exports.SERVER_RESPONSE_TIMEOUT = 20000;
-var VortexClientABC = (function () {
+var VortexClientABC = /** @class */ (function () {
     /**
      * RapUI VortexService, This class is responsible for sending and receiving payloads to/from
      * the server.
@@ -74,6 +74,8 @@ var VortexClientABC = (function () {
             console.log(UtilMisc_1.dateStr() + "VortexService is closed, Probably due to a login page reload");
             return;
         }
+        if (this.closed)
+            throw new Error("An attempt was made to reconnect a closed vortex");
         var payloads = [];
         if (payload instanceof Array)
             payloads = payload;

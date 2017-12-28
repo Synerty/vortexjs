@@ -23,7 +23,7 @@ var ComponentLifecycleEventEmitter_1 = require("./ComponentLifecycleEventEmitter
  *          .catch((err) => console.log(err));
  *
  */
-var PayloadResponse = (function () {
+var PayloadResponse = /** @class */ (function () {
     /** Constructor
      * @param vortexService:
      * @param payload: The payload to mark and send.
@@ -110,9 +110,9 @@ var PayloadResponse = (function () {
         enumerable: true,
         configurable: true
     });
+    PayloadResponse.RESPONSE_TIMEOUT_SECONDS = 10000; // milliseconds
+    PayloadResponse.messageIdKey = "PayloadResponse.messageId";
     return PayloadResponse;
 }());
-PayloadResponse.RESPONSE_TIMEOUT_SECONDS = 10000; // milliseconds
-PayloadResponse.messageIdKey = "PayloadResponse.messageId";
 exports.PayloadResponse = PayloadResponse;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/PayloadResponse.js.map

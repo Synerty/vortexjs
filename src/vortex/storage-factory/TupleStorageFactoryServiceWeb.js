@@ -28,7 +28,7 @@ var TupleStorageFactoryService_1 = require("./TupleStorageFactoryService");
 var IndexedDb_1 = require("../storage/IndexedDb");
 var TupleActionStorageWebSqlService_1 = require("../action-storage/TupleActionStorageWebSqlService");
 // import {TupleActionStorageIndexedDbService} from "../action-storage/TupleActionStorageIndexedDbService";
-var TupleStorageFactoryServiceWeb = (function (_super) {
+var TupleStorageFactoryServiceWeb = /** @class */ (function (_super) {
     __extends(TupleStorageFactoryServiceWeb, _super);
     function TupleStorageFactoryServiceWeb(webSqlFactory) {
         return _super.call(this, webSqlFactory) || this;
@@ -75,11 +75,11 @@ var TupleStorageFactoryServiceWeb = (function (_super) {
             // same.
             */
     };
+    TupleStorageFactoryServiceWeb = __decorate([
+        core_1.Injectable(),
+        __metadata("design:paramtypes", [WebSqlService_1.WebSqlFactoryService])
+    ], TupleStorageFactoryServiceWeb);
     return TupleStorageFactoryServiceWeb;
 }(TupleStorageFactoryService_1.TupleStorageFactoryService));
-TupleStorageFactoryServiceWeb = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [WebSqlService_1.WebSqlFactoryService])
-], TupleStorageFactoryServiceWeb);
 exports.TupleStorageFactoryServiceWeb = TupleStorageFactoryServiceWeb;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/storage-factory/TupleStorageFactoryServiceWeb.js.map

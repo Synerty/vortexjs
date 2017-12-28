@@ -1,3 +1,6 @@
+*.ts
+!*.d.ts
+
 references.d.ts
 test-web
 test-ns

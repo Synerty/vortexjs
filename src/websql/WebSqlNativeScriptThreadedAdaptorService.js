@@ -21,7 +21,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var WebSqlService_1 = require("./WebSqlService");
-var WebSqlNativeScriptThreadedFactoryService = (function () {
+var WebSqlNativeScriptThreadedFactoryService = /** @class */ (function () {
     function WebSqlNativeScriptThreadedFactoryService() {
     }
     WebSqlNativeScriptThreadedFactoryService.prototype.hasStorageLimitations = function () {
@@ -33,13 +33,13 @@ var WebSqlNativeScriptThreadedFactoryService = (function () {
     WebSqlNativeScriptThreadedFactoryService.prototype.createWebSql = function (dbName, dbSchema) {
         return new WebSqlNativeScriptThreadedAdaptorService(dbName, dbSchema);
     };
+    WebSqlNativeScriptThreadedFactoryService = __decorate([
+        core_1.Injectable()
+    ], WebSqlNativeScriptThreadedFactoryService);
     return WebSqlNativeScriptThreadedFactoryService;
 }());
-WebSqlNativeScriptThreadedFactoryService = __decorate([
-    core_1.Injectable()
-], WebSqlNativeScriptThreadedFactoryService);
 exports.WebSqlNativeScriptThreadedFactoryService = WebSqlNativeScriptThreadedFactoryService;
-var WebSqlNativeScriptThreadedAdaptorService = WebSqlNativeScriptThreadedAdaptorService_1 = (function (_super) {
+var WebSqlNativeScriptThreadedAdaptorService = /** @class */ (function (_super) {
     __extends(WebSqlNativeScriptThreadedAdaptorService, _super);
     function WebSqlNativeScriptThreadedAdaptorService(dbName, dbSchema) {
         var _this = _super.call(this, dbName, dbSchema) || this;
@@ -55,6 +55,7 @@ var WebSqlNativeScriptThreadedAdaptorService = WebSqlNativeScriptThreadedAdaptor
         }
         return _this;
     }
+    WebSqlNativeScriptThreadedAdaptorService_1 = WebSqlNativeScriptThreadedAdaptorService;
     WebSqlNativeScriptThreadedAdaptorService.prototype.open = function () {
         var _this = this;
         return new Promise(function (resolve, reject) {
@@ -141,16 +142,17 @@ var WebSqlNativeScriptThreadedAdaptorService = WebSqlNativeScriptThreadedAdaptor
     WebSqlNativeScriptThreadedAdaptorService.onError = function (error) {
         console.log("WebSqlNativeScriptThreadedAdaptorService.onerror " + error);
     };
+    // ------------------------------------------------------------------------
+    WebSqlNativeScriptThreadedAdaptorService._promises = {};
+    WebSqlNativeScriptThreadedAdaptorService._promisesNum = 1;
+    WebSqlNativeScriptThreadedAdaptorService = WebSqlNativeScriptThreadedAdaptorService_1 = __decorate([
+        core_1.Injectable(),
+        __metadata("design:paramtypes", [String, Array])
+    ], WebSqlNativeScriptThreadedAdaptorService);
     return WebSqlNativeScriptThreadedAdaptorService;
+    var WebSqlNativeScriptThreadedAdaptorService_1;
 }(WebSqlService_1.WebSqlService));
-// ------------------------------------------------------------------------
-WebSqlNativeScriptThreadedAdaptorService._promises = {};
-WebSqlNativeScriptThreadedAdaptorService._promisesNum = 1;
-WebSqlNativeScriptThreadedAdaptorService = WebSqlNativeScriptThreadedAdaptorService_1 = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [String, Array])
-], WebSqlNativeScriptThreadedAdaptorService);
-var WebSqlNativeScriptThreadedTransactionAdaptor = (function () {
+var WebSqlNativeScriptThreadedTransactionAdaptor = /** @class */ (function () {
     function WebSqlNativeScriptThreadedTransactionAdaptor(worker) {
         this.worker = worker;
     }
@@ -172,5 +174,4 @@ var WebSqlNativeScriptThreadedTransactionAdaptor = (function () {
     };
     return WebSqlNativeScriptThreadedTransactionAdaptor;
 }());
-var WebSqlNativeScriptThreadedAdaptorService_1;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/websql/WebSqlNativeScriptThreadedAdaptorService.js.map

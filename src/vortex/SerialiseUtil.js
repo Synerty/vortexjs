@@ -8,7 +8,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var UtilMisc_1 = require("./UtilMisc");
 var moment = require("moment");
 var base64 = require('base-64');
-var SerialiseUtil = (function () {
+var SerialiseUtil = /** @class */ (function () {
     function SerialiseUtil() {
     }
     SerialiseUtil.prototype.toStr = function (obj) {
@@ -110,23 +110,23 @@ var SerialiseUtil = (function () {
         }
         return true;
     };
+    SerialiseUtil.T_RAPUI_TUPLE = "rt";
+    SerialiseUtil.T_RAPUI_PAYLOAD = "rp";
+    SerialiseUtil.T_GENERIC_CLASS = "gen"; // NOT SUPPORTED
+    SerialiseUtil.T_FLOAT = "float";
+    SerialiseUtil.T_INT = "int";
+    SerialiseUtil.T_STR = "str";
+    SerialiseUtil.T_BYTES = "bytes";
+    SerialiseUtil.T_BOOL = "bool";
+    SerialiseUtil.T_DATETIME = "datetime";
+    SerialiseUtil.T_DICT = "dict";
+    SerialiseUtil.T_LIST = "list";
+    SerialiseUtil.V_NULL = "null";
+    SerialiseUtil.V_TRUE = "1";
+    SerialiseUtil.V_FALSE = "0";
+    SerialiseUtil.ISO8601_PY = "%Y-%m-%d %H:%M:%S.%f%z";
+    SerialiseUtil.ISO8601 = "YYYY-MM-DD HH:mm:ss.SSSSSSZZ";
     return SerialiseUtil;
 }());
-SerialiseUtil.T_RAPUI_TUPLE = "rt";
-SerialiseUtil.T_RAPUI_PAYLOAD = "rp";
-SerialiseUtil.T_GENERIC_CLASS = "gen"; // NOT SUPPORTED
-SerialiseUtil.T_FLOAT = "float";
-SerialiseUtil.T_INT = "int";
-SerialiseUtil.T_STR = "str";
-SerialiseUtil.T_BYTES = "bytes";
-SerialiseUtil.T_BOOL = "bool";
-SerialiseUtil.T_DATETIME = "datetime";
-SerialiseUtil.T_DICT = "dict";
-SerialiseUtil.T_LIST = "list";
-SerialiseUtil.V_NULL = "null";
-SerialiseUtil.V_TRUE = "1";
-SerialiseUtil.V_FALSE = "0";
-SerialiseUtil.ISO8601_PY = "%Y-%m-%d %H:%M:%S.%f%z";
-SerialiseUtil.ISO8601 = "YYYY-MM-DD HH:mm:ss.SSSSSSZZ";
 exports.default = SerialiseUtil;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/SerialiseUtil.js.map

@@ -15,20 +15,20 @@ var VortexService_1 = require("./VortexService");
 var PayloadResponse_1 = require("./PayloadResponse");
 var Payload_1 = require("./Payload");
 var UtilMisc_1 = require("./UtilMisc");
-var TupleActionPushNameService = (function () {
+var TupleActionPushNameService = /** @class */ (function () {
     function TupleActionPushNameService(name, additionalFilt) {
         if (additionalFilt === void 0) { additionalFilt = {}; }
         this.name = name;
         this.additionalFilt = additionalFilt;
     }
+    TupleActionPushNameService = __decorate([
+        core_1.Injectable(),
+        __metadata("design:paramtypes", [String, Object])
+    ], TupleActionPushNameService);
     return TupleActionPushNameService;
 }());
-TupleActionPushNameService = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [String, Object])
-], TupleActionPushNameService);
 exports.TupleActionPushNameService = TupleActionPushNameService;
-var TupleActionPushService = (function () {
+var TupleActionPushService = /** @class */ (function () {
     function TupleActionPushService(tupleActionProcessorName, vortexService, vortexStatus) {
         this.tupleActionProcessorName = tupleActionProcessorName;
         this.vortexService = vortexService;
@@ -67,13 +67,13 @@ var TupleActionPushService = (function () {
         payload.tuples = [tupleAction];
         return payload;
     };
+    TupleActionPushService = __decorate([
+        core_1.Injectable(),
+        __metadata("design:paramtypes", [TupleActionPushNameService,
+            VortexService_1.VortexService,
+            VortexStatusService_1.VortexStatusService])
+    ], TupleActionPushService);
     return TupleActionPushService;
 }());
-TupleActionPushService = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [TupleActionPushNameService,
-        VortexService_1.VortexService,
-        VortexStatusService_1.VortexStatusService])
-], TupleActionPushService);
 exports.TupleActionPushService = TupleActionPushService;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/TupleActionPushService.js.map

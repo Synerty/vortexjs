@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var TupleActionProcessorDelegateABC = (function () {
+var TupleActionProcessorDelegateABC = /** @class */ (function () {
     function TupleActionProcessorDelegateABC() {
     }
     return TupleActionProcessorDelegateABC;

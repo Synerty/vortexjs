@@ -10,15 +10,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var TupleOfflineStorageNameService = (function () {
+var TupleOfflineStorageNameService = /** @class */ (function () {
     function TupleOfflineStorageNameService(name) {
         this.name = name;
     }
+    TupleOfflineStorageNameService = __decorate([
+        core_1.Injectable(),
+        __metadata("design:paramtypes", [String])
+    ], TupleOfflineStorageNameService);
     return TupleOfflineStorageNameService;
 }());
-TupleOfflineStorageNameService = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [String])
-], TupleOfflineStorageNameService);
 exports.TupleOfflineStorageNameService = TupleOfflineStorageNameService;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/TupleOfflineStorageNameService.js.map

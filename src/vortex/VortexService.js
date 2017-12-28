@@ -17,7 +17,7 @@ var ng2_balloon_msg_1 = require("@synerty/ng2-balloon-msg");
 var VortexStatusService_1 = require("./VortexStatusService");
 var VortexClientHttp_1 = require("./VortexClientHttp");
 var VortexClientWebsocket_1 = require("./VortexClientWebsocket");
-var VortexService = VortexService_1 = (function () {
+var VortexService = /** @class */ (function () {
     function VortexService(vortexStatusService, zone, balloonMsg) {
         //
         this.vortexStatusService = vortexStatusService;
@@ -25,6 +25,7 @@ var VortexService = VortexService_1 = (function () {
         this.balloonMsg = balloonMsg;
         this.reconnect();
     }
+    VortexService_1 = VortexService;
     /**
      * Set Vortex URL
      *
@@ -77,15 +78,15 @@ var VortexService = VortexService_1 = (function () {
     VortexService.prototype.createTupleLoader = function (component, filterUpdateCallable) {
         return new TupleLoader_1.TupleLoader(this.vortex, component, this.zone, filterUpdateCallable, this.balloonMsg);
     };
+    VortexService.vortexUrl = '/vortex';
+    VortexService = VortexService_1 = __decorate([
+        core_1.Injectable(),
+        __metadata("design:paramtypes", [VortexStatusService_1.VortexStatusService,
+            core_1.NgZone,
+            ng2_balloon_msg_1.Ng2BalloonMsgService])
+    ], VortexService);
     return VortexService;
+    var VortexService_1;
 }());
-VortexService.vortexUrl = '/vortex';
-VortexService = VortexService_1 = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [VortexStatusService_1.VortexStatusService,
-        core_1.NgZone,
-        ng2_balloon_msg_1.Ng2BalloonMsgService])
-], VortexService);
 exports.VortexService = VortexService;
-var VortexService_1;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/VortexService.js.map

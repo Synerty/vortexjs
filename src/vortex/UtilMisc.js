@@ -27,7 +27,7 @@ function dictKeysFromObject(obj, includeUnderscore) {
 }
 exports.dictKeysFromObject = dictKeysFromObject;
 // ----------------------------------------------------------------------------
-var AssertException = (function () {
+var AssertException = /** @class */ (function () {
     function AssertException(message) {
         var self = this;
         self.message = message;

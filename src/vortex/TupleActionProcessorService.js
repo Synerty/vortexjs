@@ -25,20 +25,20 @@ var VortexService_1 = require("./VortexService");
 var ComponentLifecycleEventEmitter_1 = require("./ComponentLifecycleEventEmitter");
 var VortexStatusService_1 = require("./VortexStatusService");
 var core_1 = require("@angular/core");
-var TupleActionProcessorNameService = (function () {
+var TupleActionProcessorNameService = /** @class */ (function () {
     function TupleActionProcessorNameService(name, additionalFilt) {
         if (additionalFilt === void 0) { additionalFilt = {}; }
         this.name = name;
         this.additionalFilt = additionalFilt;
     }
+    TupleActionProcessorNameService = __decorate([
+        core_1.Injectable(),
+        __metadata("design:paramtypes", [String, Object])
+    ], TupleActionProcessorNameService);
     return TupleActionProcessorNameService;
 }());
-TupleActionProcessorNameService = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [String, Object])
-], TupleActionProcessorNameService);
 exports.TupleActionProcessorNameService = TupleActionProcessorNameService;
-var TupleActionProcessorService = (function (_super) {
+var TupleActionProcessorService = /** @class */ (function (_super) {
     __extends(TupleActionProcessorService, _super);
     function TupleActionProcessorService(tupleActionProcessorName, vortexService, vortexStatusService) {
         var _this = _super.call(this) || this;
@@ -111,13 +111,13 @@ var TupleActionProcessorService = (function (_super) {
         payload.result = err;
         this.vortexService.sendPayload(payload);
     };
+    TupleActionProcessorService = __decorate([
+        core_1.Injectable(),
+        __metadata("design:paramtypes", [TupleActionProcessorNameService,
+            VortexService_1.VortexService,
+            VortexStatusService_1.VortexStatusService])
+    ], TupleActionProcessorService);
     return TupleActionProcessorService;
 }(ComponentLifecycleEventEmitter_1.ComponentLifecycleEventEmitter));
-TupleActionProcessorService = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [TupleActionProcessorNameService,
-        VortexService_1.VortexService,
-        VortexStatusService_1.VortexStatusService])
-], TupleActionProcessorService);
 exports.TupleActionProcessorService = TupleActionProcessorService;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/TupleActionProcessorService.js.map

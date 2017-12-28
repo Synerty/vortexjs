@@ -18,7 +18,7 @@ require("./UtilString");
  * JSON Serialisation functions
  * ###############################################################################
  */
-var Jsonable = (function (_super) {
+var Jsonable = /** @class */ (function (_super) {
     __extends(Jsonable, _super);
     function Jsonable() {
         var _this = _super.call(this) || this;
@@ -211,12 +211,12 @@ var Jsonable = (function (_super) {
         // Handle single value
         return self.fromStr(value, valueType);
     };
+    Jsonable.JSON_CLASS_TYPE = "_ct";
+    // private static readonly JSON_CLASS = "_c";
+    Jsonable.JSON_TUPLE_TYPE = "_c";
+    Jsonable.JSON_FIELD_TYPE = "_ft";
+    Jsonable.JSON_FIELD_DATA = "_fd";
     return Jsonable;
 }(SerialiseUtil_1.default));
-Jsonable.JSON_CLASS_TYPE = "_ct";
-// private static readonly JSON_CLASS = "_c";
-Jsonable.JSON_TUPLE_TYPE = "_c";
-Jsonable.JSON_FIELD_TYPE = "_ft";
-Jsonable.JSON_FIELD_DATA = "_fd";
 exports.default = Jsonable;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/Jsonable.js.map
