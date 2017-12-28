@@ -130,7 +130,7 @@ export abstract class VortexClientABC {
         this.restartTimer();
     }
 
-    private restartTimer() {
+    protected restartTimer() {
         this.clearBeatTimer();
 
         this.beatTimer = setInterval(() => {

@@ -11,6 +11,7 @@ export declare class VortexClientWebsocket extends VortexClientABC {
     constructor(vortexStatusService: VortexStatusService, zone: NgZone, url: string);
     readonly isReady: boolean;
     send(payload: Payload | Payload[]): void;
+    reconnect(): void;
     protected sendVortexMsg(vortexMsgs: string[]): void;
     private sendMessages();
     protected shutdown(): void;

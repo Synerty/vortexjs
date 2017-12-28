@@ -30,11 +30,19 @@ var VortexClientWebsocket = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    // OVERRIDE Send
     VortexClientWebsocket.prototype.send = function (payload) {
         if (!this.isReady) {
             throw new Error("Websocked vortex is not online.");
         }
         _super.prototype.send.call(this, payload);
+    };
+    // OVERRIDE reconnect
+    VortexClientWebsocket.prototype.reconnect = function () {
+        if (this.closed)
+            throw new Error("An attempt was made to reconnect a closed vortex");
+        this.restartTimer();
+        this.createSocket();
     };
     VortexClientWebsocket.prototype.sendVortexMsg = function (vortexMsgs) {
         this.unsentBuffer.add(vortexMsgs);

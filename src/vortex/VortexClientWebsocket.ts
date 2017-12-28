@@ -31,12 +31,22 @@ export class VortexClientWebsocket extends VortexClientABC {
         return this.socket != null && this.socket.readyState === this.Socket.OPEN;
     }
 
-    send(payload: Payload | Payload[]): void {
+  // OVERRIDE Send
+  send(payload: Payload | Payload[]): void {
         if (!this.isReady) {
           throw new Error("Websocked vortex is not online.");
         }
 
         super.send(payload);
+    }
+
+    // OVERRIDE reconnect
+    reconnect() :void {
+        if (this.closed)
+            throw new Error("An attempt was made to reconnect a closed vortex");
+
+        this.restartTimer();
+        this.createSocket();
     }
 
     protected sendVortexMsg(vortexMsgs: string[]): void {

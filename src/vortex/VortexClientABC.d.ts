@@ -31,7 +31,7 @@ export declare abstract class VortexClientABC {
     protected abstract shutdown(): void;
     reconnect(): void;
     protected beat(): void;
-    private restartTimer();
+    protected restartTimer(): void;
     private clearBeatTimer();
     private dead();
     /**
