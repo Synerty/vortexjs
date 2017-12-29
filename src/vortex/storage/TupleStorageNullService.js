@@ -24,7 +24,7 @@ var TupleStorageServiceABC_1 = require("./TupleStorageServiceABC");
 var TupleOfflineStorageNameService_1 = require("../TupleOfflineStorageNameService");
 var UtilMisc_1 = require("../UtilMisc");
 // ----------------------------------------------------------------------------
-var TupleStorageNullService = /** @class */ (function (_super) {
+var TupleStorageNullService = (function (_super) {
     __extends(TupleStorageNullService, _super);
     function TupleStorageNullService(name) {
         return _super.call(this, name) || this;
@@ -40,14 +40,14 @@ var TupleStorageNullService = /** @class */ (function (_super) {
     TupleStorageNullService.prototype.transaction = function (forWrite) {
         return Promise.resolve(new TupleNullTransaction(forWrite));
     };
-    TupleStorageNullService = __decorate([
-        core_1.Injectable(),
-        __metadata("design:paramtypes", [TupleOfflineStorageNameService_1.TupleOfflineStorageNameService])
-    ], TupleStorageNullService);
     return TupleStorageNullService;
 }(TupleStorageServiceABC_1.TupleStorageServiceABC));
+TupleStorageNullService = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [TupleOfflineStorageNameService_1.TupleOfflineStorageNameService])
+], TupleStorageNullService);
 exports.TupleStorageNullService = TupleStorageNullService;
-var TupleNullTransaction = /** @class */ (function () {
+var TupleNullTransaction = (function () {
     function TupleNullTransaction(txForWrite) {
         this.txForWrite = txForWrite;
     }

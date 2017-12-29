@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var TupleStorageFactoryService = /** @class */ (function () {
+var TupleStorageFactoryService = (function () {
     function TupleStorageFactoryService(webSqlFactory) {
         this.webSqlFactory = webSqlFactory;
     }

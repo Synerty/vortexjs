@@ -15,7 +15,7 @@ var VortexService_1 = require("./VortexService");
 var UtilMisc_1 = require("./UtilMisc");
 var PayloadResponse_1 = require("./PayloadResponse");
 var TupleStorageFactoryService_1 = require("./storage-factory/TupleStorageFactoryService");
-var TupleActionPushOfflineSingletonService = /** @class */ (function () {
+var TupleActionPushOfflineSingletonService = (function () {
     function TupleActionPushOfflineSingletonService(vortexService, vortexStatus, factoryService) {
         var _this = this;
         this.vortexService = vortexService;
@@ -110,13 +110,13 @@ var TupleActionPushOfflineSingletonService = /** @class */ (function () {
             return null; // Handle the error
         });
     };
-    TupleActionPushOfflineSingletonService = __decorate([
-        core_1.Injectable(),
-        __metadata("design:paramtypes", [VortexService_1.VortexService,
-            VortexStatusService_1.VortexStatusService,
-            TupleStorageFactoryService_1.TupleStorageFactoryService])
-    ], TupleActionPushOfflineSingletonService);
     return TupleActionPushOfflineSingletonService;
 }());
+TupleActionPushOfflineSingletonService = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [VortexService_1.VortexService,
+        VortexStatusService_1.VortexStatusService,
+        TupleStorageFactoryService_1.TupleStorageFactoryService])
+], TupleActionPushOfflineSingletonService);
 exports.TupleActionPushOfflineSingletonService = TupleActionPushOfflineSingletonService;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/TupleActionPushOfflineSingletonService.js.map

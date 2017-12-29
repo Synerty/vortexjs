@@ -23,7 +23,7 @@ var UtilMisc_1 = require("./UtilMisc");
  * populated fields exist in the tuples when it deserialises it.
  *
  */
-var Tuple = /** @class */ (function (_super) {
+var Tuple = (function (_super) {
     __extends(Tuple, _super);
     function Tuple(tupleType) {
         if (tupleType === void 0) { tupleType = null; }

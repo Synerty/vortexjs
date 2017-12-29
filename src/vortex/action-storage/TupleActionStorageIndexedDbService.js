@@ -36,7 +36,7 @@ var ACTION_KEY_PATH = "scopeUuid";
  * This class handles storing and retrieving tuples to/from indexed db.
  *
  */
-var TupleActionStorageIndexedDbService = /** @class */ (function (_super) {
+var TupleActionStorageIndexedDbService = (function (_super) {
     __extends(TupleActionStorageIndexedDbService, _super);
     function TupleActionStorageIndexedDbService() {
         var _this = _super.call(this) || this;
@@ -200,11 +200,11 @@ var TupleActionStorageIndexedDbService = /** @class */ (function (_super) {
             return _this.db.transaction(ACTION_STORE, forWrite ? "readwrite" : "readonly");
         });
     };
-    TupleActionStorageIndexedDbService = __decorate([
-        core_1.Injectable(),
-        __metadata("design:paramtypes", [])
-    ], TupleActionStorageIndexedDbService);
     return TupleActionStorageIndexedDbService;
 }(TupleActionStorageServiceABC_1.TupleActionStorageServiceABC));
+TupleActionStorageIndexedDbService = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [])
+], TupleActionStorageIndexedDbService);
 exports.TupleActionStorageIndexedDbService = TupleActionStorageIndexedDbService;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/action-storage/TupleActionStorageIndexedDbService.js.map

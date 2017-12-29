@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var TupleStorageFactoryService_1 = require("./storage-factory/TupleStorageFactoryService");
 var TupleOfflineStorageNameService_1 = require("./TupleOfflineStorageNameService");
-var TupleOfflineStorageService = /** @class */ (function () {
+var TupleOfflineStorageService = (function () {
     function TupleOfflineStorageService(storageFactory, tupleOfflineStorageServiceName) {
         this.storage = storageFactory.create(tupleOfflineStorageServiceName);
     }
@@ -68,12 +68,12 @@ var TupleOfflineStorageService = /** @class */ (function () {
             });
         });
     };
-    TupleOfflineStorageService = __decorate([
-        core_1.Injectable(),
-        __metadata("design:paramtypes", [TupleStorageFactoryService_1.TupleStorageFactoryService,
-            TupleOfflineStorageNameService_1.TupleOfflineStorageNameService])
-    ], TupleOfflineStorageService);
     return TupleOfflineStorageService;
 }());
+TupleOfflineStorageService = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [TupleStorageFactoryService_1.TupleStorageFactoryService,
+        TupleOfflineStorageNameService_1.TupleOfflineStorageNameService])
+], TupleOfflineStorageService);
 exports.TupleOfflineStorageService = TupleOfflineStorageService;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/TupleOfflineStorageService.js.map

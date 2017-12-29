@@ -12,7 +12,7 @@ function supportsIndexedDb() {
 }
 exports.supportsIndexedDb = supportsIndexedDb;
 // ----------------------------------------------------------------------------
-var IDBException = /** @class */ (function () {
+var IDBException = (function () {
     function IDBException(message) {
         this.message = message;
     }

@@ -11,7 +11,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var ComponentLifecycleEventEmitter_1 = require("./ComponentLifecycleEventEmitter");
-var Ang2TupleLoaderTest = /** @class */ (function (_super) {
+var Ang2TupleLoaderTest = (function (_super) {
     __extends(Ang2TupleLoaderTest, _super);
     function Ang2TupleLoaderTest(vortexService) {
         var _this = _super.call(this) || this;

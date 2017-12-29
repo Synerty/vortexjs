@@ -29,20 +29,20 @@ var ComponentLifecycleEventEmitter_1 = require("./ComponentLifecycleEventEmitter
 var UtilMisc_1 = require("./UtilMisc");
 var VortexStatusService_1 = require("./VortexStatusService");
 var PayloadResponse_1 = require("./PayloadResponse");
-var TupleDataObservableNameService = /** @class */ (function () {
+var TupleDataObservableNameService = (function () {
     function TupleDataObservableNameService(name, additionalFilt) {
         if (additionalFilt === void 0) { additionalFilt = {}; }
         this.name = name;
         this.additionalFilt = additionalFilt;
     }
-    TupleDataObservableNameService = __decorate([
-        core_1.Injectable(),
-        __metadata("design:paramtypes", [String, Object])
-    ], TupleDataObservableNameService);
     return TupleDataObservableNameService;
 }());
+TupleDataObservableNameService = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [String, Object])
+], TupleDataObservableNameService);
 exports.TupleDataObservableNameService = TupleDataObservableNameService;
-var CachedSubscribedData = /** @class */ (function () {
+var CachedSubscribedData = (function () {
     function CachedSubscribedData() {
         this.subject = new rxjs_1.Subject();
         this.tuples = [];
@@ -51,7 +51,7 @@ var CachedSubscribedData = /** @class */ (function () {
     return CachedSubscribedData;
 }());
 exports.CachedSubscribedData = CachedSubscribedData;
-var TupleDataObserverService = /** @class */ (function (_super) {
+var TupleDataObserverService = (function (_super) {
     __extends(TupleDataObserverService, _super);
     function TupleDataObserverService(vortexService, statusService, zone, tupleDataObservableName) {
         var _this = _super.call(this) || this;
@@ -150,14 +150,14 @@ var TupleDataObserverService = /** @class */ (function (_super) {
         }
         this.vortexService.sendPayload(payloads);
     };
-    TupleDataObserverService = __decorate([
-        core_1.Injectable(),
-        __metadata("design:paramtypes", [VortexService_1.VortexService,
-            VortexStatusService_1.VortexStatusService,
-            core_1.NgZone,
-            TupleDataObservableNameService])
-    ], TupleDataObserverService);
     return TupleDataObserverService;
 }(ComponentLifecycleEventEmitter_1.ComponentLifecycleEventEmitter));
+TupleDataObserverService = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [VortexService_1.VortexService,
+        VortexStatusService_1.VortexStatusService,
+        core_1.NgZone,
+        TupleDataObservableNameService])
+], TupleDataObserverService);
 exports.TupleDataObserverService = TupleDataObserverService;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/TupleDataObserverService.js.map

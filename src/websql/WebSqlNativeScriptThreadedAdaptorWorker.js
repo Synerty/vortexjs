@@ -31,10 +31,10 @@ global.onmessage = function (postedArg) {
     var callNumber = params["callNumber"];
     try {
         switch (call) {
-            case CALL_DB_OPEN:// Open DB
+            case CALL_DB_OPEN:
                 openDb(params["dbName"], params["dbSchema"], params["dbVersion"]);
                 break;
-            case CALL_DB_EXECUTE:// Open DB
+            case CALL_DB_EXECUTE:
                 executeSql(callNumber, params["sql"], params["bindParams"]);
                 break;
         }

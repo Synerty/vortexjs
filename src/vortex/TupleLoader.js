@@ -32,7 +32,7 @@ var TupleLoaderEventEnum;
  * * "save()"
  * * "del()"
  */
-var TupleLoader = /** @class */ (function () {
+var TupleLoader = (function () {
     function TupleLoader(vortex, component, zone, filterUpdateCallable, balloonMsg) {
         if (balloonMsg === void 0) { balloonMsg = null; }
         var _this = this;

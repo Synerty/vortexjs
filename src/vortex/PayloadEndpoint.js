@@ -4,7 +4,7 @@ var PayloadIO_1 = require("./PayloadIO");
 var UtilMisc_1 = require("./UtilMisc");
 require("./UtilArray");
 var rxjs_1 = require("rxjs"); // Ensure it's included and defined
-var PayloadEndpoint = /** @class */ (function () {
+var PayloadEndpoint = (function () {
     function PayloadEndpoint(component, filter, processLatestOnly) {
         if (processLatestOnly === void 0) { processLatestOnly = false; }
         var _this = this;

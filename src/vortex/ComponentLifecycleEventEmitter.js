@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 // Post to here if it works
 // http://stackoverflow.com/questions/34743069/angular2-ngondestroy-emit-event
-var ComponentLifecycleEventEmitter = /** @class */ (function () {
+var ComponentLifecycleEventEmitter = (function () {
     function ComponentLifecycleEventEmitter() {
         this.onDestroyEvent = new core_1.EventEmitter();
         this.doCheckEvent = new core_1.EventEmitter();
@@ -59,7 +59,7 @@ exports.ComponentLifecycleEventEmitter = ComponentLifecycleEventEmitter;
 /**
  * Example component implementing the lifecycle observer
  */
-var MyComponent = /** @class */ (function (_super) {
+var MyComponent = (function (_super) {
     __extends(MyComponent, _super);
     function MyComponent() {
         return _super.call(this) || this;
@@ -72,7 +72,7 @@ exports.MyComponent = MyComponent;
 /**
  * Example class using a lifecycle observer
  */
-var CompLcObserver = /** @class */ (function () {
+var CompLcObserver = (function () {
     function CompLcObserver(myComp) {
         var _this = this;
         this.myComp = myComp;

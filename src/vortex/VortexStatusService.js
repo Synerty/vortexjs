@@ -16,7 +16,7 @@ var UtilMisc_1 = require("./UtilMisc");
 var logDebug = console.debug ? UtilMisc_1.bind(console, console.debug) : UtilMisc_1.bind(console, console.log);
 var logInfo = UtilMisc_1.bind(console, console.log);
 var logError = console.error ? UtilMisc_1.bind(console, console.error) : UtilMisc_1.bind(console, console.log);
-var VortexStatusService = /** @class */ (function () {
+var VortexStatusService = (function () {
     function VortexStatusService(zone) {
         this.zone = zone;
         this.isOnline = new Subject_1.Subject();
@@ -75,11 +75,11 @@ var VortexStatusService = /** @class */ (function () {
             _this.errors.next(message);
         });
     };
-    VortexStatusService = __decorate([
-        core_1.Injectable(),
-        __metadata("design:paramtypes", [core_1.NgZone])
-    ], VortexStatusService);
     return VortexStatusService;
 }());
+VortexStatusService = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [core_1.NgZone])
+], VortexStatusService);
 exports.VortexStatusService = VortexStatusService;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/VortexStatusService.js.map

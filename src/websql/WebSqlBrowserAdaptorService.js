@@ -21,7 +21,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var WebSqlService_1 = require("./WebSqlService");
-var WebSqlBrowserFactoryService = /** @class */ (function () {
+var WebSqlBrowserFactoryService = (function () {
     function WebSqlBrowserFactoryService() {
     }
     WebSqlBrowserFactoryService.prototype.hasStorageLimitations = function () {
@@ -38,13 +38,13 @@ var WebSqlBrowserFactoryService = /** @class */ (function () {
     WebSqlBrowserFactoryService.prototype.createWebSql = function (dbName, dbSchema) {
         return new WebSqlBrowserAdaptorService(dbName, dbSchema);
     };
-    WebSqlBrowserFactoryService = __decorate([
-        core_1.Injectable()
-    ], WebSqlBrowserFactoryService);
     return WebSqlBrowserFactoryService;
 }());
+WebSqlBrowserFactoryService = __decorate([
+    core_1.Injectable()
+], WebSqlBrowserFactoryService);
 exports.WebSqlBrowserFactoryService = WebSqlBrowserFactoryService;
-var WDBException = /** @class */ (function () {
+var WDBException = (function () {
     function WDBException(message) {
         this.message = message;
     }
@@ -54,7 +54,7 @@ var WDBException = /** @class */ (function () {
     return WDBException;
 }());
 exports.WDBException = WDBException;
-var WebSqlBrowserAdaptorService = /** @class */ (function (_super) {
+var WebSqlBrowserAdaptorService = (function (_super) {
     __extends(WebSqlBrowserAdaptorService, _super);
     function WebSqlBrowserAdaptorService(dbName, dbSchema) {
         var _this = _super.call(this, dbName, dbSchema) || this;
@@ -100,13 +100,13 @@ var WebSqlBrowserAdaptorService = /** @class */ (function (_super) {
             });
         });
     };
-    WebSqlBrowserAdaptorService = __decorate([
-        core_1.Injectable(),
-        __metadata("design:paramtypes", [String, Array])
-    ], WebSqlBrowserAdaptorService);
     return WebSqlBrowserAdaptorService;
 }(WebSqlService_1.WebSqlService));
-var WebSqlBrowserTransactionAdaptor = /** @class */ (function () {
+WebSqlBrowserAdaptorService = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [String, Array])
+], WebSqlBrowserAdaptorService);
+var WebSqlBrowserTransactionAdaptor = (function () {
     function WebSqlBrowserTransactionAdaptor(websqlTransaction) {
         this.websqlTransaction = websqlTransaction;
     }

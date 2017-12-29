@@ -24,7 +24,7 @@ var VortexService_1 = require("./VortexService");
 var VortexStatusService_1 = require("./VortexStatusService");
 var TupleOfflineStorageService_1 = require("./TupleOfflineStorageService");
 var TupleDataObserverService_1 = require("./TupleDataObserverService");
-var TupleDataOfflineObserverService = /** @class */ (function (_super) {
+var TupleDataOfflineObserverService = (function (_super) {
     __extends(TupleDataOfflineObserverService, _super);
     function TupleDataOfflineObserverService(vortexService, vortexStatusService, zone, tupleDataObservableName, tupleOfflineStorageService) {
         var _this = _super.call(this, vortexService, vortexStatusService, zone, tupleDataObservableName) || this;
@@ -89,15 +89,15 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
             throw new Error(err);
         });
     };
-    TupleDataOfflineObserverService = __decorate([
-        core_1.Injectable(),
-        __metadata("design:paramtypes", [VortexService_1.VortexService,
-            VortexStatusService_1.VortexStatusService,
-            core_1.NgZone,
-            TupleDataObserverService_1.TupleDataObservableNameService,
-            TupleOfflineStorageService_1.TupleOfflineStorageService])
-    ], TupleDataOfflineObserverService);
     return TupleDataOfflineObserverService;
 }(TupleDataObserverService_1.TupleDataObserverService));
+TupleDataOfflineObserverService = __decorate([
+    core_1.Injectable(),
+    __metadata("design:paramtypes", [VortexService_1.VortexService,
+        VortexStatusService_1.VortexStatusService,
+        core_1.NgZone,
+        TupleDataObserverService_1.TupleDataObservableNameService,
+        TupleOfflineStorageService_1.TupleOfflineStorageService])
+], TupleDataOfflineObserverService);
 exports.TupleDataOfflineObserverService = TupleDataOfflineObserverService;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/TupleDataOfflineObserverService.js.map
