@@ -102,14 +102,14 @@ export class Payload extends Jsonable {
         .then((jsonStr) => {
           logLong(`Payload.fromVortexMsg decode+inflate len=${vortexStr.length}`, start);
           start = now();
-          
+
           let payload = new Payload()._fromJson(jsonStr);
           logLong(`Payload.fromVortexMsg _fromJson len=${vortexStr.length}`, start, payload);
 
           resolve(payload);
         })
         .catch((err) => {
-          console.log(`ERROR: toVortexMsg ${err}`);
+          console.log(`ERROR: fromVortexMsg ${err}`);
           reject(err);
         });
 
