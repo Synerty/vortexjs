@@ -62,10 +62,10 @@ export class PayloadResponse {
 
       // Create the endpoint
       this.payload.filt[PayloadResponse.messageIdKey] = this._messageId;
-      let endpoint = vortexService.createEndpoint(
-        this._lcEmitter, (<IPayloadFilt>this.payload.filt));
+      let endpoint = vortexService
+        .createEndpoint(this._lcEmitter, (<IPayloadFilt>this.payload.filt));
 
-      let callFail = (status: string, msgArg='') => {
+      let callFail = (status: string, msgArg = '') => {
         let filtStr = JSON.stringify(this.payload.filt);
         let msg = `${dateStr()} PayloadEndpoing ${status} Failed : ${msgArg}\n${filtStr}`;
         console.log(msg);
@@ -74,28 +74,29 @@ export class PayloadResponse {
         reject(msg);
         this._lcEmitter.onDestroyEvent.emit("OnDestroy");
 
-        if (endpoint != null)
-          endpoint.shutdown();
-
-        if (timer != null)
+        if (timer != null) {
           clearTimeout(timer);
+          timer = null;
+        }
       };
 
       // Subscribe
-      endpoint.observable.subscribe((payload) => {
+      endpoint.observable
+        .takeUntil(this._lcEmitter.onDestroyEvent)
+        .subscribe((payload) => {
 
-        let r = payload.result; // success is null or true
-        if (this.resultCheck && !(r == null || r === true)) {
-          callFail(this.FAILED, r.toString());
-        } else {
-          callFail(this.SUCCESS, r.toString());
-        }
+          let r = payload.result; // success is null or true
+          if (this.resultCheck && !(r == null || r === true)) {
+            callFail(this.FAILED, r.toString());
+          } else {
+            callFail(this.SUCCESS, r.toString());
+          }
 
-      });
+        });
 
       vortexService.sendPayload(this.payload)
         .then(() => {
-          timer = setTimeout(() => callFail(this.TIMED_OUT), timeout );
+          timer = setTimeout(() => callFail(this.TIMED_OUT), timeout);
         })
         .catch((err) => {
           callFail(this.SEND_FAILED, err);
