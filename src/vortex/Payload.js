@@ -83,7 +83,7 @@ var Payload = (function (_super) {
                 resolve(payload);
             })
                 .catch(function (err) {
-                console.log("ERROR: toVortexMsg " + err);
+                console.log("ERROR: fromVortexMsg " + err);
                 reject(err);
             });
         });

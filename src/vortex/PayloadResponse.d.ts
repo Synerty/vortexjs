@@ -28,6 +28,7 @@ export declare class PayloadResponse {
     private static messageIdKey;
     readonly PROCESSING: string;
     readonly FAILED: string;
+    readonly SEND_FAILED: string;
     readonly SUCCESS: string;
     readonly TIMED_OUT: string;
     private _messageId;

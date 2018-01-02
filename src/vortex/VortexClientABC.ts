@@ -69,15 +69,12 @@ export abstract class VortexClientABC {
         }
     }
 
-    send(payload: Payload | Payload[]): void {
-        let self = this;
-        if (self.closed) {
-            console.log(dateStr() + "VortexService is closed, Probably due to a login page reload");
-            return;
-        }
-
-        if (this.closed)
+    send(payload: Payload | Payload[]): Promise<void> {
+        if (this.closed) {
+            let msg = dateStr() + "VortexService is closed, Probably due to a login page reload";
+            console.log(msg);
             throw new Error("An attempt was made to reconnect a closed vortex");
+        }
 
         let payloads: Payload[] = [];
         if (payload instanceof Array)
@@ -103,9 +100,13 @@ export abstract class VortexClientABC {
             );
         }
 
-        Promise.all(promisies)
+        return Promise.all(promisies)
             .then(() => this.sendVortexMsg(vortexMsgs))
-            .catch(e => console.log(`ERROR VortexClientABC: ${e.toString()}`));
+            .catch(e => {
+              let msg = `ERROR VortexClientABC: ${e.toString()}`;
+              console.log(msg);
+              throw new Error(msg);
+            });
     }
 
     protected abstract sendVortexMsg(vortexMsgs: string[]): void;

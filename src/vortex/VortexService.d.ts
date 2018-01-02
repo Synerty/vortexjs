@@ -25,7 +25,12 @@ export declare class VortexService {
     reconnect(): void;
     sendTuple(filt: IPayloadFilt | string, tuples: any[] | Tuple[]): void;
     sendFilt(filt: any): void;
-    sendPayload(payload: Payload[] | Payload): void;
+    /** Send Payload
+     *
+     * @param {Payload[] | Payload} payload
+     * @returns {Promise<void>}
+     */
+    sendPayload(payload: Payload[] | Payload): Promise<void>;
     createEndpointObservable(component: ComponentLifecycleEventEmitter, filter: IPayloadFilt, processLatestOnly?: boolean): Observable<Payload>;
     createEndpoint(component: ComponentLifecycleEventEmitter, filter: IPayloadFilt, processLatestOnly?: boolean): PayloadEndpoint;
     createTupleLoader(component: ComponentLifecycleEventEmitter, filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt): TupleLoader;

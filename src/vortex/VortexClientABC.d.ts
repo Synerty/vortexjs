@@ -26,7 +26,7 @@ export declare abstract class VortexClientABC {
     readonly uuid: string;
     readonly name: string;
     closed: boolean;
-    send(payload: Payload | Payload[]): void;
+    send(payload: Payload | Payload[]): Promise<void>;
     protected abstract sendVortexMsg(vortexMsgs: string[]): void;
     protected abstract shutdown(): void;
     reconnect(): void;

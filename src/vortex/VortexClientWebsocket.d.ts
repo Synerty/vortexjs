@@ -10,7 +10,7 @@ export declare class VortexClientWebsocket extends VortexClientABC {
     private unsentBuffer;
     constructor(vortexStatusService: VortexStatusService, zone: NgZone, url: string);
     readonly isReady: boolean;
-    send(payload: Payload | Payload[]): void;
+    send(payload: Payload | Payload[]): Promise<void>;
     reconnect(): void;
     protected sendVortexMsg(vortexMsgs: string[]): void;
     private sendMessages();

@@ -35,7 +35,7 @@ var VortexClientWebsocket = (function (_super) {
         if (!this.isReady) {
             throw new Error("Websocked vortex is not online.");
         }
-        _super.prototype.send.call(this, payload);
+        return _super.prototype.send.call(this, payload);
     };
     // OVERRIDE reconnect
     VortexClientWebsocket.prototype.reconnect = function () {

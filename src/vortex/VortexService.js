@@ -59,11 +59,16 @@ var VortexService = VortexService_1 = (function () {
     VortexService.prototype.sendFilt = function (filt) {
         this.sendPayload(new Payload_1.Payload(filt));
     };
+    /** Send Payload
+     *
+     * @param {Payload[] | Payload} payload
+     * @returns {Promise<void>}
+     */
     VortexService.prototype.sendPayload = function (payload) {
         if (this.vortex == null) {
             throw new Error("The vortex is not initialised yet.");
         }
-        this.vortex.send(payload);
+        return this.vortex.send(payload);
     };
     VortexService.prototype.createEndpointObservable = function (component, filter, processLatestOnly) {
         if (processLatestOnly === void 0) { processLatestOnly = false; }

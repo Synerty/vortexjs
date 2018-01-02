@@ -67,11 +67,16 @@ export class VortexService {
         this.sendPayload(new Payload(filt));
     }
 
-    sendPayload(payload:Payload[] | Payload): void {
+    /** Send Payload
+     *
+     * @param {Payload[] | Payload} payload
+     * @returns {Promise<void>}
+     */
+    sendPayload(payload:Payload[] | Payload): Promise<void> {
         if (this.vortex == null) {
             throw new Error("The vortex is not initialised yet.");
         }
-        this.vortex.send(payload);
+        return this.vortex.send(payload);
     }
 
     createEndpointObservable(component: ComponentLifecycleEventEmitter,

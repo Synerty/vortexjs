@@ -40,6 +40,7 @@ var PayloadResponse = (function () {
         this.PROCESSING = "Processing";
         // NO_ENDPOINT = "No Endpoint"
         this.FAILED = "Failed";
+        this.SEND_FAILED = "Send Failed";
         this.SUCCESS = "Success";
         this.TIMED_OUT = "Timed Out";
         this._messageId = VortexClientABC_1.VortexClientABC.makeUuid();
@@ -47,33 +48,40 @@ var PayloadResponse = (function () {
         this._lcEmitter = new ComponentLifecycleEventEmitter_1.ComponentLifecycleEventEmitter();
         this.promise = new Promise(function (resolve, reject) {
             // Start the timer
-            var timer = setTimeout(function () {
-                var filtStr = JSON.stringify(_this.payload.filt);
-                var msg = "Timed out for payload " + filtStr;
-                console.log(UtilMisc_1.dateStr() + " ERR: " + msg);
-                _this._status = _this.TIMED_OUT;
-                reject(msg);
-                _this._lcEmitter.onDestroyEvent.emit("OnDestroy");
-            }, timeout);
+            var timer = null;
             // Create the endpoint
             _this.payload.filt[PayloadResponse.messageIdKey] = _this._messageId;
             var endpoint = vortexService.createEndpoint(_this._lcEmitter, _this.payload.filt);
+            var callFail = function (status, msgArg) {
+                if (msgArg === void 0) { msgArg = ''; }
+                var filtStr = JSON.stringify(_this.payload.filt);
+                var msg = UtilMisc_1.dateStr() + " PayloadEndpoing " + status + " Failed : " + msgArg + "\n" + filtStr;
+                console.log(msg);
+                _this._status = status;
+                reject(msg);
+                _this._lcEmitter.onDestroyEvent.emit("OnDestroy");
+                if (endpoint != null)
+                    endpoint.shutdown();
+                if (timer != null)
+                    clearTimeout(timer);
+            };
             // Subscribe
             endpoint.observable.subscribe(function (payload) {
-                clearTimeout(timer);
-                endpoint.shutdown();
                 var r = payload.result; // success is null or true
                 if (_this.resultCheck && !(r == null || r === true)) {
-                    _this._status = _this.FAILED;
-                    reject(payload.result.toString());
+                    callFail(_this.FAILED, r.toString());
                 }
                 else {
-                    _this._status = _this.SUCCESS;
-                    resolve(payload);
+                    callFail(_this.SUCCESS, r.toString());
                 }
-                _this._lcEmitter.onDestroyEvent.emit("OnDestroy");
             });
-            vortexService.sendPayload(_this.payload);
+            vortexService.sendPayload(_this.payload)
+                .then(function () {
+                timer = setTimeout(function () { return callFail(_this.TIMED_OUT); });
+            })
+                .catch(function (err) {
+                callFail(_this.SEND_FAILED, err);
+            });
         });
     }
     /**
@@ -112,7 +120,7 @@ var PayloadResponse = (function () {
     });
     return PayloadResponse;
 }());
-PayloadResponse.RESPONSE_TIMEOUT_SECONDS = 10000; // milliseconds
+PayloadResponse.RESPONSE_TIMEOUT_SECONDS = 30000; // milliseconds
 PayloadResponse.messageIdKey = "PayloadResponse.messageId";
 exports.PayloadResponse = PayloadResponse;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/PayloadResponse.js.map

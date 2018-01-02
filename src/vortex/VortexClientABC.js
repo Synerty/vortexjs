@@ -69,13 +69,11 @@ var VortexClientABC = (function () {
     });
     VortexClientABC.prototype.send = function (payload) {
         var _this = this;
-        var self = this;
-        if (self.closed) {
-            console.log(UtilMisc_1.dateStr() + "VortexService is closed, Probably due to a login page reload");
-            return;
-        }
-        if (this.closed)
+        if (this.closed) {
+            var msg = UtilMisc_1.dateStr() + "VortexService is closed, Probably due to a login page reload";
+            console.log(msg);
             throw new Error("An attempt was made to reconnect a closed vortex");
+        }
         var payloads = [];
         if (payload instanceof Array)
             payloads = payload;
@@ -96,9 +94,13 @@ var VortexClientABC = (function () {
             promisies.push(payload_1.toVortexMsg()
                 .then(function (vortexMsg) { return vortexMsgs.push(vortexMsg); }));
         }
-        Promise.all(promisies)
+        return Promise.all(promisies)
             .then(function () { return _this.sendVortexMsg(vortexMsgs); })
-            .catch(function (e) { return console.log("ERROR VortexClientABC: " + e.toString()); });
+            .catch(function (e) {
+            var msg = "ERROR VortexClientABC: " + e.toString();
+            console.log(msg);
+            throw new Error(msg);
+        });
     };
     VortexClientABC.prototype.reconnect = function () {
         if (this.closed)

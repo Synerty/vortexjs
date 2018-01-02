@@ -32,12 +32,12 @@ export class VortexClientWebsocket extends VortexClientABC {
     }
 
   // OVERRIDE Send
-  send(payload: Payload | Payload[]): void {
+  send(payload: Payload | Payload[]): Promise<void> {
         if (!this.isReady) {
           throw new Error("Websocked vortex is not online.");
         }
 
-        super.send(payload);
+        return super.send(payload);
     }
 
     // OVERRIDE reconnect
