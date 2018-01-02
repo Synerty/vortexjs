@@ -95,7 +95,7 @@ export class PayloadResponse {
 
       vortexService.sendPayload(this.payload)
         .then(() => {
-          timer = setTimeout(() => callFail(this.TIMED_OUT));
+          timer = setTimeout(() => callFail(this.TIMED_OUT), timeout );
         })
         .catch((err) => {
           callFail(this.SEND_FAILED, err);

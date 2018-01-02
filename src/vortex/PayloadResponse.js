@@ -77,7 +77,7 @@ var PayloadResponse = (function () {
             });
             vortexService.sendPayload(_this.payload)
                 .then(function () {
-                timer = setTimeout(function () { return callFail(_this.TIMED_OUT); });
+                timer = setTimeout(function () { return callFail(_this.TIMED_OUT); }, timeout);
             })
                 .catch(function (err) {
                 callFail(_this.SEND_FAILED, err);
