@@ -65,19 +65,23 @@ export class PayloadResponse {
       let endpoint = vortexService
         .createEndpoint(this._lcEmitter, (<IPayloadFilt>this.payload.filt));
 
-      let callFail = (status: string, msgArg = '') => {
-        let filtStr = JSON.stringify(this.payload.filt);
-        let msg = `${dateStr()} PayloadEndpoing ${status} Failed : ${msgArg}\n${filtStr}`;
-        console.log(msg);
-
+      let finish = (status) => {
         this._status = status;
-        reject(msg);
         this._lcEmitter.onDestroyEvent.emit("OnDestroy");
 
         if (timer != null) {
           clearTimeout(timer);
           timer = null;
         }
+      }
+
+      let callFail = (status: string, msgArg = '') => {
+        let filtStr = JSON.stringify(this.payload.filt);
+        let msg = `${dateStr()} PayloadEndpoing ${status} Failed : ${msgArg}\n${filtStr}`;
+        console.log(msg);
+
+        finish(status);
+        reject(msgArg);
       };
 
       // Subscribe
@@ -89,7 +93,8 @@ export class PayloadResponse {
           if (this.resultCheck && !(r == null || r === true)) {
             callFail(this.FAILED, r.toString());
           } else {
-            callFail(this.SUCCESS, r.toString());
+            finish(this.SUCCESS);
+            resolve(payload);
           }
 
         });

@@ -53,18 +53,21 @@ var PayloadResponse = (function () {
             _this.payload.filt[PayloadResponse.messageIdKey] = _this._messageId;
             var endpoint = vortexService
                 .createEndpoint(_this._lcEmitter, _this.payload.filt);
-            var callFail = function (status, msgArg) {
-                if (msgArg === void 0) { msgArg = ''; }
-                var filtStr = JSON.stringify(_this.payload.filt);
-                var msg = UtilMisc_1.dateStr() + " PayloadEndpoing " + status + " Failed : " + msgArg + "\n" + filtStr;
-                console.log(msg);
+            var finish = function (status) {
                 _this._status = status;
-                reject(msg);
                 _this._lcEmitter.onDestroyEvent.emit("OnDestroy");
                 if (timer != null) {
                     clearTimeout(timer);
                     timer = null;
                 }
+            };
+            var callFail = function (status, msgArg) {
+                if (msgArg === void 0) { msgArg = ''; }
+                var filtStr = JSON.stringify(_this.payload.filt);
+                var msg = UtilMisc_1.dateStr() + " PayloadEndpoing " + status + " Failed : " + msgArg + "\n" + filtStr;
+                console.log(msg);
+                finish(status);
+                reject(msgArg);
             };
             // Subscribe
             endpoint.observable
@@ -75,7 +78,8 @@ var PayloadResponse = (function () {
                     callFail(_this.FAILED, r.toString());
                 }
                 else {
-                    callFail(_this.SUCCESS, r.toString());
+                    finish(_this.SUCCESS);
+                    resolve(payload);
                 }
             });
             vortexService.sendPayload(_this.payload)
