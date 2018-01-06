@@ -170,7 +170,6 @@ class WebSqlNativeScriptThreadedAdaptorService extends WebSqlService {
         let error = resultAny["error"];
         let callNumber = resultAny["callNumber"];
         let result = resultAny["result"];
-        let service = resultAny["service"];
 
         let promise = this.popPromise(callNumber);
         let resolve = promise["resolve"];
@@ -182,7 +181,7 @@ class WebSqlNativeScriptThreadedAdaptorService extends WebSqlService {
             reject(error);
         }
 
-        service.callNext();
+        this.callNext();
     }
 
     private onError(error) {

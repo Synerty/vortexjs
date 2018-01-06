@@ -159,7 +159,6 @@ var WebSqlNativeScriptThreadedAdaptorService = WebSqlNativeScriptThreadedAdaptor
         var error = resultAny["error"];
         var callNumber = resultAny["callNumber"];
         var result = resultAny["result"];
-        var service = resultAny["service"];
         var promise = this.popPromise(callNumber);
         var resolve = promise["resolve"];
         var reject = promise["reject"];
@@ -169,7 +168,7 @@ var WebSqlNativeScriptThreadedAdaptorService = WebSqlNativeScriptThreadedAdaptor
         else {
             reject(error);
         }
-        service.callNext();
+        this.callNext();
     };
     WebSqlNativeScriptThreadedAdaptorService.prototype.onError = function (error) {
         console.log("ERROR : this.onerror " + error);
