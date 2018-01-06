@@ -57,6 +57,8 @@ var WebSqlNativeScriptThreadedAdaptorService = WebSqlNativeScriptThreadedAdaptor
         else {
             _this.worker = new Worker("./WebSqlNativeScriptThreadedAdaptorWorker.js");
         }
+        _this.worker.onerror = function (data) { return _this.onError(data); };
+        _this.worker.onmessage = function (err) { return _this.onMessage(err); };
         if (WebSqlNativeScriptThreadedAdaptorService_1.openDatabaseNames.indexOf(dbName) != -1) {
             var msg = "A database with name " + dbName + " exists";
             console.log("ERROR: " + msg);
@@ -77,7 +79,7 @@ var WebSqlNativeScriptThreadedAdaptorService = WebSqlNativeScriptThreadedAdaptor
             }
             function callError(error) {
                 reject(error);
-                console.log("ERROR: this.open " + error);
+                console.log("ERROR: WebSqlNativeScriptThreadedAdaptorService.open " + error);
             }
             _this.worker.onmessage = function (postResult) {
                 var resultAny = postResult.data;
@@ -195,8 +197,8 @@ var WebSqlNativeScriptThreadedTransactionAdaptor = (function () {
                 sql: sql,
                 bindParams: bindParams
             };
-            _this.service.queueCall(postArg);
             _this.service.pushPromise(callNumber, resolve, reject);
+            _this.service.queueCall(postArg);
         });
     };
     return WebSqlNativeScriptThreadedTransactionAdaptor;

@@ -25,10 +25,10 @@ class WebSqlNativeScriptThreadedAdaptorService extends WebSqlService {
     private worker: Worker;
     private _isOpen: boolean = false;
 
-    private _callQueue:any[] = [];
-    private _callInProgress:boolean = false;
+    private _callQueue: any[] = [];
+    private _callInProgress: boolean = false;
 
-    static openDatabaseNames:string[] = [];
+    static openDatabaseNames: string[] = [];
 
     public _promises = {};
     public _promisesNum = 1;
@@ -42,6 +42,9 @@ class WebSqlNativeScriptThreadedAdaptorService extends WebSqlService {
         } else {
             this.worker = new Worker("./WebSqlNativeScriptThreadedAdaptorWorker.js");
         }
+
+        this.worker.onerror = data => this.onError(data);
+        this.worker.onmessage = err => this.onMessage(err);
 
         if (WebSqlNativeScriptThreadedAdaptorService.openDatabaseNames.indexOf(dbName) != -1) {
           let msg = `A database with name ${dbName} exists`;
@@ -66,7 +69,7 @@ class WebSqlNativeScriptThreadedAdaptorService extends WebSqlService {
             function callError(error) {
                 reject(error);
                 console.log(
-                    `ERROR: this.open ${error}`
+                    `ERROR: WebSqlNativeScriptThreadedAdaptorService.open ${error}`
                 );
             }
 
@@ -153,7 +156,7 @@ class WebSqlNativeScriptThreadedAdaptorService extends WebSqlService {
         return promise;
     }
 
-     pushPromise(callNumber: number, resolve, reject): void {
+    pushPromise(callNumber: number, resolve, reject): void {
         this._promises[callNumber] = {
             resolve: resolve,
             reject: reject
@@ -204,8 +207,8 @@ class WebSqlNativeScriptThreadedTransactionAdaptor implements WebSqlTransaction 
                 bindParams: bindParams
             };
 
-            this.service.queueCall(postArg);
             this.service.pushPromise(callNumber, resolve, reject);
+            this.service.queueCall(postArg);
         })
     }
 
