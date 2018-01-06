@@ -46,10 +46,6 @@ var WebSqlNativeScriptThreadedAdaptorService = WebSqlNativeScriptThreadedAdaptor
         _this.dbName = dbName;
         _this.dbSchema = dbSchema;
         _this._isOpen = false;
-        _this._callQueue = [];
-        _this._callInProgress = false;
-        _this._promises = {};
-        _this._promisesNum = 1;
         if (global.TNS_WEBPACK) {
             var Worker_1 = require("nativescript-worker-loader!./WebSqlNativeScriptThreadedAdaptorWorker.js");
             _this.worker = new Worker_1();
@@ -57,21 +53,10 @@ var WebSqlNativeScriptThreadedAdaptorService = WebSqlNativeScriptThreadedAdaptor
         else {
             _this.worker = new Worker("./WebSqlNativeScriptThreadedAdaptorWorker.js");
         }
-        _this.worker.onerror = function (data) { return _this.onError(data); };
-        _this.worker.onmessage = function (err) { return _this.onMessage(err); };
-        if (WebSqlNativeScriptThreadedAdaptorService_1.openDatabaseNames.indexOf(dbName) != -1) {
-            var msg = "A database with name " + dbName + " exists";
-            console.log("ERROR: " + msg);
-            throw new Error(msg);
-        }
-        WebSqlNativeScriptThreadedAdaptorService_1.openDatabaseNames.push(dbName);
         return _this;
     }
     WebSqlNativeScriptThreadedAdaptorService.prototype.open = function () {
         var _this = this;
-        if (this.worker == null) {
-            throw new Error("A database service can not be opened twice");
-        }
         return new Promise(function (resolve, reject) {
             if (_this.isOpen()) {
                 resolve();
@@ -87,8 +72,8 @@ var WebSqlNativeScriptThreadedAdaptorService = WebSqlNativeScriptThreadedAdaptor
                 var error = resultAny["error"];
                 if (error == null) {
                     _this._isOpen = true;
-                    _this.worker.onerror = function (data) { return _this.onError(data); };
-                    _this.worker.onmessage = function (err) { return _this.onMessage(err); };
+                    _this.worker.onerror = WebSqlNativeScriptThreadedAdaptorService_1.onError;
+                    _this.worker.onmessage = WebSqlNativeScriptThreadedAdaptorService_1.onMessage;
                     resolve();
                 }
                 else {
@@ -111,9 +96,9 @@ var WebSqlNativeScriptThreadedAdaptorService = WebSqlNativeScriptThreadedAdaptor
     };
     WebSqlNativeScriptThreadedAdaptorService.prototype.isOpen = function () {
         return this.worker != null && this._isOpen;
+        ;
     };
     WebSqlNativeScriptThreadedAdaptorService.prototype.close = function () {
-        WebSqlNativeScriptThreadedAdaptorService_1.openDatabaseNames.remove(this.dbName);
         this.worker.terminate();
         this.worker = null;
     };
@@ -123,43 +108,27 @@ var WebSqlNativeScriptThreadedAdaptorService = WebSqlNativeScriptThreadedAdaptor
         if (!this.isOpen())
             throw new Error("SQLDatabase " + this.dbName + " is not open");
         return new Promise(function (resolve, reject) {
-            resolve(new WebSqlNativeScriptThreadedTransactionAdaptor(_this));
+            resolve(new WebSqlNativeScriptThreadedTransactionAdaptor(_this.worker));
         });
     };
-    // ------------------------------------------------------------------------
-    WebSqlNativeScriptThreadedAdaptorService.prototype.queueCall = function (call) {
-        //console.log(`WebSQL Transaction, Sending : ${JSON.stringify(postArg)}`);
-        this._callQueue.push(call);
-        this.callNext();
-    };
-    WebSqlNativeScriptThreadedAdaptorService.prototype.callNext = function () {
-        if (this._callInProgress)
-            return;
-        if (this._callQueue.length == 0)
-            return;
-        var nextCall = this._callQueue.unshift();
-        this.worker.postMessage(nextCall);
-        this._callInProgress = true;
-    };
-    // ------------------------------------------------------------------------
-    WebSqlNativeScriptThreadedAdaptorService.prototype.popPromise = function (callNumber) {
-        var promise = this._promises[callNumber];
-        delete this._promises[callNumber];
+    WebSqlNativeScriptThreadedAdaptorService.popPromise = function (callNumber) {
+        var promise = WebSqlNativeScriptThreadedAdaptorService_1._promises[callNumber];
+        delete WebSqlNativeScriptThreadedAdaptorService_1._promises[callNumber];
         return promise;
     };
-    WebSqlNativeScriptThreadedAdaptorService.prototype.pushPromise = function (callNumber, resolve, reject) {
-        this._promises[callNumber] = {
+    WebSqlNativeScriptThreadedAdaptorService.pushPromise = function (callNumber, resolve, reject) {
+        WebSqlNativeScriptThreadedAdaptorService_1._promises[callNumber] = {
             resolve: resolve,
             reject: reject
         };
     };
-    WebSqlNativeScriptThreadedAdaptorService.prototype.onMessage = function (postResult) {
+    WebSqlNativeScriptThreadedAdaptorService.onMessage = function (postResult) {
         var resultAny = postResult.data;
         // console.log(`WebSQL Service, Tx Receiving : ${JSON.stringify(resultAny)}`);
         var error = resultAny["error"];
         var callNumber = resultAny["callNumber"];
         var result = resultAny["result"];
-        var promise = this.popPromise(callNumber);
+        var promise = WebSqlNativeScriptThreadedAdaptorService_1.popPromise(callNumber);
         var resolve = promise["resolve"];
         var reject = promise["reject"];
         if (error == null) {
@@ -168,27 +137,27 @@ var WebSqlNativeScriptThreadedAdaptorService = WebSqlNativeScriptThreadedAdaptor
         else {
             reject(error);
         }
-        this.callNext();
     };
-    WebSqlNativeScriptThreadedAdaptorService.prototype.onError = function (error) {
-        console.log("ERROR : this.onerror " + error);
-        this.callNext();
+    WebSqlNativeScriptThreadedAdaptorService.onError = function (error) {
+        console.log("WebSqlNativeScriptThreadedAdaptorService.onerror " + error);
     };
     return WebSqlNativeScriptThreadedAdaptorService;
 }(WebSqlService_1.WebSqlService));
-WebSqlNativeScriptThreadedAdaptorService.openDatabaseNames = [];
+// ------------------------------------------------------------------------
+WebSqlNativeScriptThreadedAdaptorService._promises = {};
+WebSqlNativeScriptThreadedAdaptorService._promisesNum = 1;
 WebSqlNativeScriptThreadedAdaptorService = WebSqlNativeScriptThreadedAdaptorService_1 = __decorate([
     core_1.Injectable(),
     __metadata("design:paramtypes", [String, Array])
 ], WebSqlNativeScriptThreadedAdaptorService);
 var WebSqlNativeScriptThreadedTransactionAdaptor = (function () {
-    function WebSqlNativeScriptThreadedTransactionAdaptor(service) {
-        this.service = service;
+    function WebSqlNativeScriptThreadedTransactionAdaptor(worker) {
+        this.worker = worker;
     }
     WebSqlNativeScriptThreadedTransactionAdaptor.prototype.executeSql = function (sql, bindParams) {
         var _this = this;
         if (bindParams === void 0) { bindParams = []; }
-        var callNumber = this.service._promisesNum++;
+        var callNumber = WebSqlNativeScriptThreadedAdaptorService._promisesNum++;
         return new Promise(function (resolve, reject) {
             var postArg = {
                 call: 3,
@@ -196,8 +165,9 @@ var WebSqlNativeScriptThreadedTransactionAdaptor = (function () {
                 sql: sql,
                 bindParams: bindParams
             };
-            _this.service.pushPromise(callNumber, resolve, reject);
-            _this.service.queueCall(postArg);
+            //console.log(`WebSQL Transaction, Sending : ${JSON.stringify(postArg)}`);
+            _this.worker.postMessage(postArg);
+            WebSqlNativeScriptThreadedAdaptorService.pushPromise(callNumber, resolve, reject);
         });
     };
     return WebSqlNativeScriptThreadedTransactionAdaptor;

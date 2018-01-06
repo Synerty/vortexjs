@@ -103,7 +103,9 @@ var TupleWebSqlTransaction = (function () {
             return _this.saveTuplesEncoded(tupleSelector, vortexMsg);
         });
     };
-    TupleWebSqlTransaction.prototype.saveTuplesEncoded = function (tupleSelector, vortexMsg) {
+    TupleWebSqlTransaction.prototype.saveTuplesEncoded = function (tupleSelector, vortexMsg, retries) {
+        var _this = this;
+        if (retries === void 0) { retries = 0; }
         if (!this.txForWrite) {
             var msg = "WebSQL: saveTuples attempted on read only TX";
             console.log(UtilMisc_1.dateStr() + " " + msg);
@@ -113,6 +115,15 @@ var TupleWebSqlTransaction = (function () {
         var tupleSelectorStr = tupleSelector.toOrderedJsonStr();
         var bindParams = [tupleSelectorStr, Date.now(), vortexMsg];
         return this.tx.executeSql(insertSql, bindParams)
+            .catch(function (err) {
+            if (err.indexOf('SQLITE.ALL - Database Error5') !== -1) {
+                if (retries == 5) {
+                    throw new Error(err + "\nRetried " + retries + " times");
+                }
+                return _this.saveTuplesEncoded(tupleSelector, vortexMsg, retries + 1);
+            }
+            throw new Error(err);
+        })
             .then(function () { return null; }); // Convert the result
     };
     TupleWebSqlTransaction.prototype.close = function () {

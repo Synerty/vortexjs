@@ -35,8 +35,8 @@ const CALL_DB_EXECUTE = 3;
 global.onmessage = function (postedArg) {
   let params: any = postedArg["data"];
   //console.log(`WebSQL Worker, Received : ${JSON.stringify(params)}`);
-  let call: number = params["call"]
-  let callNumber: number = params["callNumber"]
+  let call: number = params["call"];
+  let callNumber: number = params["callNumber"];
 
   try {
     switch (call) {
@@ -91,4 +91,4 @@ function executeSql(callNumber: number, sql: string, bindParams: any): void {
   db.all(sql, bindParams)
     .then(result => postResult(CALL_DB_EXECUTE, callNumber, result))
     .catch(err => postError(CALL_DB_EXECUTE, callNumber, err));
-}  
+}

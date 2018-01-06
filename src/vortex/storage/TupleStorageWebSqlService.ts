@@ -119,7 +119,9 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
     }
 
 
-    saveTuplesEncoded(tupleSelector: TupleSelector, vortexMsg: string): Promise<void> {
+    saveTuplesEncoded(tupleSelector: TupleSelector,
+                      vortexMsg: string,
+                      retries=0): Promise<void> {
 
         if (!this.txForWrite) {
             let msg = "WebSQL: saveTuples attempted on read only TX";
@@ -132,6 +134,15 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
         let bindParams = [tupleSelectorStr, Date.now(), vortexMsg];
 
         return this.tx.executeSql(insertSql, bindParams)
+          .catch(err => {
+            if (err.indexOf('SQLITE.ALL - Database Error5') !== -1) {
+              if (retries == 5) {
+                throw new Error(`${err}\nRetried ${retries} times`);
+              }
+              return this.saveTuplesEncoded(tupleSelector, vortexMsg, retries+1);
+            }
+            throw new Error(err);
+          })
             .then(() => null); // Convert the result
 
     }
