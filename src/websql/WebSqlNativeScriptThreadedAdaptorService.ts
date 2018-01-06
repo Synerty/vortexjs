@@ -25,6 +25,14 @@ class WebSqlNativeScriptThreadedAdaptorService extends WebSqlService {
     private worker: Worker;
     private _isOpen: boolean = false;
 
+    private _callQueue:any[] = [];
+    private _callInProgress:boolean = false;
+
+    static openDatabaseNames:string[] = [];
+
+    public _promises = {};
+    public _promisesNum = 1;
+
     constructor(protected dbName: string, protected dbSchema: string[]) {
         super(dbName, dbSchema);
 
@@ -35,9 +43,20 @@ class WebSqlNativeScriptThreadedAdaptorService extends WebSqlService {
             this.worker = new Worker("./WebSqlNativeScriptThreadedAdaptorWorker.js");
         }
 
+        if (WebSqlNativeScriptThreadedAdaptorService.openDatabaseNames.indexOf(dbName) != -1) {
+          let msg = `A database with name ${dbName} exists`;
+          console.log(`ERROR: ${msg}`);
+          throw new Error(msg);
+        }
+
+        WebSqlNativeScriptThreadedAdaptorService.openDatabaseNames.push(dbName);
     }
 
     open(): Promise<void> {
+        if (this.worker == null) {
+            throw new Error("A database service can not be opened twice");
+        }
+
         return new Promise<void>((resolve, reject) => {
             if (this.isOpen()) {
                 resolve();
@@ -47,7 +66,7 @@ class WebSqlNativeScriptThreadedAdaptorService extends WebSqlService {
             function callError(error) {
                 reject(error);
                 console.log(
-                    `ERROR: WebSqlNativeScriptThreadedAdaptorService.open ${error}`
+                    `ERROR: this.open ${error}`
                 );
             }
 
@@ -58,8 +77,8 @@ class WebSqlNativeScriptThreadedAdaptorService extends WebSqlService {
 
                 if (error == null) {
                     this._isOpen = true;
-                    this.worker.onerror = WebSqlNativeScriptThreadedAdaptorService.onError;
-                    this.worker.onmessage = WebSqlNativeScriptThreadedAdaptorService.onMessage;
+                    this.worker.onerror = data => this.onError(data);
+                    this.worker.onmessage = err => this.onMessage(err);
                     resolve();
 
                 } else {
@@ -85,10 +104,12 @@ class WebSqlNativeScriptThreadedAdaptorService extends WebSqlService {
     }
 
     isOpen(): boolean {
-        return this.worker != null && this._isOpen;;
+        return this.worker != null && this._isOpen;
     }
 
     close(): void {
+        WebSqlNativeScriptThreadedAdaptorService.openDatabaseNames.remove(this.dbName);
+
         this.worker.terminate();
         this.worker = null;
     }
@@ -99,60 +120,81 @@ class WebSqlNativeScriptThreadedAdaptorService extends WebSqlService {
             throw new Error(`SQLDatabase ${this.dbName} is not open`);
 
         return new Promise<WebSqlTransaction>((resolve, reject) => {
-            resolve(new WebSqlNativeScriptThreadedTransactionAdaptor(this.worker));
+            resolve(new WebSqlNativeScriptThreadedTransactionAdaptor(this));
         });
     }
 
     // ------------------------------------------------------------------------
 
-    static _promises = {};
-    static _promisesNum = 1;
+    queueCall(call:any):void {
+        //console.log(`WebSQL Transaction, Sending : ${JSON.stringify(postArg)}`);
+        this._callQueue.push(call);
+        this.callNext();
+    }
 
-    static popPromise(callNumber: number): {} {
-        let promise = WebSqlNativeScriptThreadedAdaptorService._promises[callNumber];
-        delete WebSqlNativeScriptThreadedAdaptorService._promises[callNumber];
+    callNext():void {
+        if (this._callInProgress)
+          return;
+
+        if (this._callQueue.length == 0)
+          return;
+
+        let nextCall = this._callQueue.unshift();
+        this.worker.postMessage(nextCall);
+        this._callInProgress = true;
+    }
+
+    // ------------------------------------------------------------------------
+
+
+    private popPromise(callNumber: number): {} {
+        let promise = this._promises[callNumber];
+        delete this._promises[callNumber];
         return promise;
     }
 
-    static pushPromise(callNumber: number, resolve, reject): void {
-        WebSqlNativeScriptThreadedAdaptorService._promises[callNumber] = {
+     pushPromise(callNumber: number, resolve, reject): void {
+        this._promises[callNumber] = {
             resolve: resolve,
             reject: reject
         };
     }
 
-    static onMessage(postResult) {
+    private onMessage(postResult) {
         let resultAny: any = postResult.data;
         // console.log(`WebSQL Service, Tx Receiving : ${JSON.stringify(resultAny)}`);
 
         let error = resultAny["error"];
         let callNumber = resultAny["callNumber"];
         let result = resultAny["result"];
+        let service = resultAny["service"];
 
-        let promise = WebSqlNativeScriptThreadedAdaptorService.popPromise(callNumber);
+        let promise = this.popPromise(callNumber);
         let resolve = promise["resolve"];
         let reject = promise["reject"];
 
         if (error == null) {
             resolve(result);
-
         } else {
             reject(error);
         }
+
+        service.callNext();
     }
 
-    static onError(error) {
-        console.log(`WebSqlNativeScriptThreadedAdaptorService.onerror ${error}`);
+    private onError(error) {
+        console.log(`ERROR : this.onerror ${error}`);
+        this.callNext();
     }
 }
 
 class WebSqlNativeScriptThreadedTransactionAdaptor implements WebSqlTransaction {
-    constructor(private worker: any) {
+    constructor(private service: WebSqlNativeScriptThreadedAdaptorService) {
 
     }
 
     executeSql(sql: string, bindParams: any[] | null = []): Promise<null | any[]> {
-        let callNumber = WebSqlNativeScriptThreadedAdaptorService._promisesNum++;
+        let callNumber = this.service._promisesNum++;
 
         return new Promise((resolve, reject) => {
             let postArg = {
@@ -161,10 +203,9 @@ class WebSqlNativeScriptThreadedTransactionAdaptor implements WebSqlTransaction 
                 sql: sql,
                 bindParams: bindParams
             };
-            //console.log(`WebSQL Transaction, Sending : ${JSON.stringify(postArg)}`);
-            this.worker.postMessage(postArg);
 
-            WebSqlNativeScriptThreadedAdaptorService.pushPromise(callNumber, resolve, reject);
+            this.service.queueCall(postArg);
+            this.service.pushPromise(callNumber, resolve, reject);
         })
     }
 
