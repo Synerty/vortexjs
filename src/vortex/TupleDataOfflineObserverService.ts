@@ -72,14 +72,17 @@ export class TupleDataOfflineObserverService extends TupleDataObserverService {
      * @param tuples: The new data to store
      */
     updateOfflineState(tupleSelector: TupleSelector, tuples: Tuple[]): void {
+        // AND store the data locally
+        this.storeDataLocally(tupleSelector, tuples);
+
         let tsStr = tupleSelector.toOrderedJsonStr();
-        if (!this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
-          console.log("ERROR: updateOfflineState called with no subscribers");
-          return;
+
+        if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
+            let cachedData = this.cacheByTupleSelector[tsStr];
+            cachedData.tuples = tuples;
+            super.notifyObservers(cachedData, tupleSelector, tuples);
         }
 
-        let cachedData = this.cacheByTupleSelector[tsStr];
-        this.notifyObservers(cachedData, tupleSelector, tuples);
     }
 
     protected notifyObservers(cachedData: CachedSubscribedData,
@@ -87,9 +90,12 @@ export class TupleDataOfflineObserverService extends TupleDataObserverService {
                               tuples: Tuple[]): void {
         // Pass the data on
         super.notifyObservers(cachedData, tupleSelector, tuples);
-
         // AND store the data locally
-        this.tupleOfflineStorageService.saveTuples(tupleSelector, tuples)
+        this.storeDataLocally(tupleSelector, tuples);
+    }
+
+    private storeDataLocally(tupleSelector: TupleSelector, tuples: Tuple[]):Promise<void> {
+        return this.tupleOfflineStorageService.saveTuples(tupleSelector, tuples)
             .catch(err => {
                 this.statusService.logError(`saveTuples failed : ${err}`);
                 throw new Error(err);

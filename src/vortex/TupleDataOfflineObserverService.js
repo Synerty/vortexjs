@@ -70,20 +70,24 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
      * @param tuples: The new data to store
      */
     TupleDataOfflineObserverService.prototype.updateOfflineState = function (tupleSelector, tuples) {
+        // AND store the data locally
+        this.storeDataLocally(tupleSelector, tuples);
         var tsStr = tupleSelector.toOrderedJsonStr();
-        if (!this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
-            console.log("ERROR: updateOfflineState called with no subscribers");
-            return;
+        if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
+            var cachedData = this.cacheByTupleSelector[tsStr];
+            cachedData.tuples = tuples;
+            _super.prototype.notifyObservers.call(this, cachedData, tupleSelector, tuples);
         }
-        var cachedData = this.cacheByTupleSelector[tsStr];
-        this.notifyObservers(cachedData, tupleSelector, tuples);
     };
     TupleDataOfflineObserverService.prototype.notifyObservers = function (cachedData, tupleSelector, tuples) {
-        var _this = this;
         // Pass the data on
         _super.prototype.notifyObservers.call(this, cachedData, tupleSelector, tuples);
         // AND store the data locally
-        this.tupleOfflineStorageService.saveTuples(tupleSelector, tuples)
+        this.storeDataLocally(tupleSelector, tuples);
+    };
+    TupleDataOfflineObserverService.prototype.storeDataLocally = function (tupleSelector, tuples) {
+        var _this = this;
+        return this.tupleOfflineStorageService.saveTuples(tupleSelector, tuples)
             .catch(function (err) {
             _this.statusService.logError("saveTuples failed : " + err);
             throw new Error(err);

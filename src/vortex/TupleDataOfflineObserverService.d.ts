@@ -19,4 +19,5 @@ export declare class TupleDataOfflineObserverService extends TupleDataObserverSe
      */
     updateOfflineState(tupleSelector: TupleSelector, tuples: Tuple[]): void;
     protected notifyObservers(cachedData: CachedSubscribedData, tupleSelector: TupleSelector, tuples: Tuple[]): void;
+    private storeDataLocally(tupleSelector, tuples);
 }
