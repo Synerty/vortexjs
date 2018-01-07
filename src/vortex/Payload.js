@@ -22,7 +22,7 @@ var PayloadDelegateABC_1 = require("./payload/PayloadDelegateABC");
  *
  * This class is serialised and transferred over the vortex to the server.
  */
-var Payload = (function (_super) {
+var Payload = /** @class */ (function (_super) {
     __extends(Payload, _super);
     /**
      * Payload
@@ -106,10 +106,10 @@ var Payload = (function (_super) {
             });
         });
     };
+    Payload.workerDelegate = new PayloadDelegateInMain_1.PayloadDelegateInMain();
+    Payload.vortexUuidKey = "__vortexUuid__";
+    Payload.vortexNameKey = "__vortexName__";
     return Payload;
 }(Jsonable_1.default));
-Payload.workerDelegate = new PayloadDelegateInMain_1.PayloadDelegateInMain();
-Payload.vortexUuidKey = "__vortexUuid__";
-Payload.vortexNameKey = "__vortexName__";
 exports.Payload = Payload;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/Payload.js.map

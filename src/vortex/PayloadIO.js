@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.STOP_PROCESSING = "STOP_PROCESSING";
-var PayloadIO = (function () {
+var PayloadIO = /** @class */ (function () {
     function PayloadIO() {
         var self = this;
         self._endpoints = [];

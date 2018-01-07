@@ -29,7 +29,7 @@ function atob(data) {
     }
 }
 var PayloadDelegateABC_1 = require("./PayloadDelegateABC");
-var PayloadDelegateInMain = (function (_super) {
+var PayloadDelegateInMain = /** @class */ (function (_super) {
     __extends(PayloadDelegateInMain, _super);
     function PayloadDelegateInMain() {
         return _super !== null && _super.apply(this, arguments) || this;

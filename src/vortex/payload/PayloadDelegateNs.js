@@ -12,7 +12,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var PayloadDelegateABC_1 = require("./PayloadDelegateABC");
 var PayloadDelegateInMain_1 = require("./PayloadDelegateInMain");
-var PayloadDelegateNs = (function (_super) {
+var PayloadDelegateNs = /** @class */ (function (_super) {
     __extends(PayloadDelegateNs, _super);
     function PayloadDelegateNs() {
         var _this = _super.call(this) || this;
@@ -95,9 +95,9 @@ var PayloadDelegateNs = (function (_super) {
     PayloadDelegateNs.onError = function (error) {
         console.log("PayloadDelegateNs.onerror " + error);
     };
+    PayloadDelegateNs._promises = {};
+    PayloadDelegateNs._promisesNum = 1;
     return PayloadDelegateNs;
 }(PayloadDelegateABC_1.PayloadDelegateABC));
-PayloadDelegateNs._promises = {};
-PayloadDelegateNs._promisesNum = 1;
 exports.PayloadDelegateNs = PayloadDelegateNs;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/payload/PayloadDelegateNs.js.map

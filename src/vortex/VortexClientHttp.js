@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Payload_1 = require("./Payload");
 var UtilMisc_1 = require("./UtilMisc");
 var VortexClientABC_1 = require("./VortexClientABC");
-var VortexClientHttp = (function (_super) {
+var VortexClientHttp = /** @class */ (function (_super) {
     __extends(VortexClientHttp, _super);
     function VortexClientHttp(vortexStatusService, zone, url) {
         var _this = _super.call(this, vortexStatusService, zone, url) || this;
@@ -40,7 +40,7 @@ var VortexClientHttp = (function (_super) {
 }(VortexClientABC_1.VortexClientABC));
 exports.VortexClientHttp = VortexClientHttp;
 // ############################################################################
-var _VortexClientHttpConnection = (function () {
+var _VortexClientHttpConnection = /** @class */ (function () {
     function _VortexClientHttpConnection(vortex, vortexStatusService, receiveCallback, vortexBeatCallback) {
         this.vortex = vortex;
         this.vortexStatusService = vortexStatusService;
@@ -169,7 +169,7 @@ var _VortexClientHttpConnection = (function () {
         this.vortexStatusService.logError(msg);
         // console.log("VortexConnection, connection errored out: " + msg);
     };
+    _VortexClientHttpConnection.RECONNECT_SIZE_LIMIT = 20 * 1024 * 1024; // 20 megabytes
     return _VortexClientHttpConnection;
 }());
-_VortexClientHttpConnection.RECONNECT_SIZE_LIMIT = 20 * 1024 * 1024; // 20 megabytes
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/VortexClientHttp.js.map

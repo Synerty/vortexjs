@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var TupleActionStorageServiceABC = (function () {
+var TupleActionStorageServiceABC = /** @class */ (function () {
     function TupleActionStorageServiceABC() {
     }
     return TupleActionStorageServiceABC;

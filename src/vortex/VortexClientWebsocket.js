@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Payload_1 = require("./Payload");
 var VortexClientABC_1 = require("./VortexClientABC");
 var UtilMisc_1 = require("./UtilMisc");
-var VortexClientWebsocket = (function (_super) {
+var VortexClientWebsocket = /** @class */ (function (_super) {
     __extends(VortexClientWebsocket, _super);
     function VortexClientWebsocket(vortexStatusService, zone, url) {
         var _this = _super.call(this, vortexStatusService, zone, url) || this;
@@ -126,8 +126,8 @@ var VortexClientWebsocket = (function (_super) {
         this.vortexStatusService.logError(event.error ? event.error : "WebSocket, No error message");
         // onClose will get called as well
     };
+    VortexClientWebsocket.RECONNECT_BACKOFF = 5000; // milliseconds
     return VortexClientWebsocket;
 }(VortexClientABC_1.VortexClientABC));
-VortexClientWebsocket.RECONNECT_BACKOFF = 5000; // milliseconds
 exports.VortexClientWebsocket = VortexClientWebsocket;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/VortexClientWebsocket.js.map

@@ -20,7 +20,7 @@ function logLong(message, start, payload) {
 }
 exports.logLong = logLong;
 // ----------------------------------------------------------------------------
-var PayloadDelegateABC = (function () {
+var PayloadDelegateABC = /** @class */ (function () {
     function PayloadDelegateABC() {
     }
     return PayloadDelegateABC;

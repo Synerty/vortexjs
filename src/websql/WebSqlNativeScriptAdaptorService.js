@@ -22,7 +22,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var WebSqlService_1 = require("./WebSqlService");
 var NsSqlite = require("nativescript-sqlite");
-var WebSqlNativeScriptFactoryService = (function () {
+var WebSqlNativeScriptFactoryService = /** @class */ (function () {
     function WebSqlNativeScriptFactoryService() {
     }
     WebSqlNativeScriptFactoryService.prototype.hasStorageLimitations = function () {
@@ -34,13 +34,13 @@ var WebSqlNativeScriptFactoryService = (function () {
     WebSqlNativeScriptFactoryService.prototype.createWebSql = function (dbName, dbSchema) {
         return new WebSqlNativeScriptAdaptorService(dbName, dbSchema);
     };
+    WebSqlNativeScriptFactoryService = __decorate([
+        core_1.Injectable()
+    ], WebSqlNativeScriptFactoryService);
     return WebSqlNativeScriptFactoryService;
 }());
-WebSqlNativeScriptFactoryService = __decorate([
-    core_1.Injectable()
-], WebSqlNativeScriptFactoryService);
 exports.WebSqlNativeScriptFactoryService = WebSqlNativeScriptFactoryService;
-var WebSqlNativeScriptAdaptorService = (function (_super) {
+var WebSqlNativeScriptAdaptorService = /** @class */ (function (_super) {
     __extends(WebSqlNativeScriptAdaptorService, _super);
     function WebSqlNativeScriptAdaptorService(dbName, dbSchema) {
         var _this = _super.call(this, dbName, dbSchema) || this;
@@ -97,13 +97,13 @@ var WebSqlNativeScriptAdaptorService = (function (_super) {
             resolve(new WebSqlNativeScriptTransactionAdaptor(_this.db));
         });
     };
+    WebSqlNativeScriptAdaptorService = __decorate([
+        core_1.Injectable(),
+        __metadata("design:paramtypes", [String, Array])
+    ], WebSqlNativeScriptAdaptorService);
     return WebSqlNativeScriptAdaptorService;
 }(WebSqlService_1.WebSqlService));
-WebSqlNativeScriptAdaptorService = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [String, Array])
-], WebSqlNativeScriptAdaptorService);
-var WebSqlNativeScriptTransactionAdaptor = (function () {
+var WebSqlNativeScriptTransactionAdaptor = /** @class */ (function () {
     function WebSqlNativeScriptTransactionAdaptor(db) {
         this.db = db;
     }

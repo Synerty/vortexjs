@@ -31,7 +31,7 @@ var databaseSchema = [
 ];
 var insertSql = "INSERT OR REPLACE INTO tuples\n                 (tupleSelector, dateTime, payload)\n                 VALUES (?, ?, ?)";
 var selectSql = "SELECT tupleSelector, dateTime, payload\n                 FROM tuples\n                 WHERE tupleSelector = ?";
-var TupleStorageWebSqlService = (function (_super) {
+var TupleStorageWebSqlService = /** @class */ (function (_super) {
     __extends(TupleStorageWebSqlService, _super);
     function TupleStorageWebSqlService(webSqlFactory, name) {
         var _this = _super.call(this, name) || this;
@@ -61,15 +61,15 @@ var TupleStorageWebSqlService = (function (_super) {
         return this.webSql.transaction()
             .then(function (t) { return new TupleWebSqlTransaction(t, forWrite); });
     };
+    TupleStorageWebSqlService = __decorate([
+        core_1.Injectable(),
+        __metadata("design:paramtypes", [WebSqlService_1.WebSqlFactoryService,
+            TupleOfflineStorageNameService_1.TupleOfflineStorageNameService])
+    ], TupleStorageWebSqlService);
     return TupleStorageWebSqlService;
 }(TupleStorageServiceABC_1.TupleStorageServiceABC));
-TupleStorageWebSqlService = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [WebSqlService_1.WebSqlFactoryService,
-        TupleOfflineStorageNameService_1.TupleOfflineStorageNameService])
-], TupleStorageWebSqlService);
 exports.TupleStorageWebSqlService = TupleStorageWebSqlService;
-var TupleWebSqlTransaction = (function () {
+var TupleWebSqlTransaction = /** @class */ (function () {
     function TupleWebSqlTransaction(tx, txForWrite) {
         this.tx = tx;
         this.txForWrite = txForWrite;

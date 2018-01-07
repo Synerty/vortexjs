@@ -24,7 +24,7 @@ var VortexStatusService_1 = require("./VortexStatusService");
 var TupleActionPushService_1 = require("./TupleActionPushService");
 var VortexService_1 = require("./VortexService");
 var TupleActionPushOfflineSingletonService_1 = require("./TupleActionPushOfflineSingletonService");
-var TupleActionPushOfflineService = (function (_super) {
+var TupleActionPushOfflineService = /** @class */ (function (_super) {
     __extends(TupleActionPushOfflineService, _super);
     function TupleActionPushOfflineService(tupleActionName, vortexService, vortexStatus, singleton) {
         var _this = _super.call(this, tupleActionName, vortexService, vortexStatus) || this;
@@ -37,14 +37,14 @@ var TupleActionPushOfflineService = (function (_super) {
             .queueAction(this.tupleActionProcessorName.name, tupleAction, payload)
             .then(function () { return []; });
     };
+    TupleActionPushOfflineService = __decorate([
+        core_1.Injectable(),
+        __metadata("design:paramtypes", [TupleActionPushService_1.TupleActionPushNameService,
+            VortexService_1.VortexService,
+            VortexStatusService_1.VortexStatusService,
+            TupleActionPushOfflineSingletonService_1.TupleActionPushOfflineSingletonService])
+    ], TupleActionPushOfflineService);
     return TupleActionPushOfflineService;
 }(TupleActionPushService_1.TupleActionPushService));
-TupleActionPushOfflineService = __decorate([
-    core_1.Injectable(),
-    __metadata("design:paramtypes", [TupleActionPushService_1.TupleActionPushNameService,
-        VortexService_1.VortexService,
-        VortexStatusService_1.VortexStatusService,
-        TupleActionPushOfflineSingletonService_1.TupleActionPushOfflineSingletonService])
-], TupleActionPushOfflineService);
 exports.TupleActionPushOfflineService = TupleActionPushOfflineService;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/TupleActionPushOfflineService.js.map

@@ -9,7 +9,7 @@ var PayloadIO_1 = require("./PayloadIO");
  * @type {number}
  */
 exports.SERVER_RESPONSE_TIMEOUT = 20000;
-var VortexClientABC = (function () {
+var VortexClientABC = /** @class */ (function () {
     /**
      * RapUI VortexService, This class is responsible for sending and receiving payloads to/from
      * the server.

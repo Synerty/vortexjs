@@ -25,7 +25,7 @@ var Tuple_1 = require("./Tuple");
 //     name: string;
 //     selector: { [name: string]: any };
 // }
-var TupleSelector = TupleSelector_1 = (function (_super) {
+var TupleSelector = /** @class */ (function (_super) {
     __extends(TupleSelector, _super);
     function TupleSelector(name, selector) {
         var _this = _super.call(this, "vortex.TupleSelector") || this;
@@ -33,6 +33,7 @@ var TupleSelector = TupleSelector_1 = (function (_super) {
         _this.selector = selector;
         return _this;
     }
+    TupleSelector_1 = TupleSelector;
     TupleSelector.prototype.toOrderedJsonStr = function () {
         return UtilMisc_1.jsonOrderedStringify({
             'name': this.name,
@@ -43,12 +44,12 @@ var TupleSelector = TupleSelector_1 = (function (_super) {
         var args = JSON.parse(jsonStr);
         return new TupleSelector_1(args.name, args.selector);
     };
+    TupleSelector = TupleSelector_1 = __decorate([
+        Tuple_1.addTupleType,
+        __metadata("design:paramtypes", [String, Object])
+    ], TupleSelector);
     return TupleSelector;
+    var TupleSelector_1;
 }(Tuple_1.Tuple));
-TupleSelector = TupleSelector_1 = __decorate([
-    Tuple_1.addTupleType,
-    __metadata("design:paramtypes", [String, Object])
-], TupleSelector);
 exports.TupleSelector = TupleSelector;
-var TupleSelector_1;
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/TupleSelector.js.map
