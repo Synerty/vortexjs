@@ -10,3 +10,5 @@ tslint.json
 .editorconfig
 .idea
 .vscode
+
+publish.sh
