@@ -84,7 +84,7 @@ var TupleDataObserverService = /** @class */ (function (_super) {
             .filter(function (online) { return online === true; })
             .subscribe(function (online) { return _this.vortexOnlineChanged(); });
         // Cleanup dead subscribers every 30 seconds.
-        var cleanupTimer = setInterval(function () { return _this.cleanupDeadCaches(); }, 30);
+        var cleanupTimer = setInterval(function () { return _this.cleanupDeadCaches(); }, 30000);
         _this.onDestroyEvent.subscribe(function () { return clearInterval(cleanupTimer); });
         return _this;
     }

@@ -68,7 +68,7 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
             .subscribe(online => this.vortexOnlineChanged());
 
         // Cleanup dead subscribers every 30 seconds.
-        let cleanupTimer = setInterval(() => this.cleanupDeadCaches(), 30);
+        let cleanupTimer = setInterval(() => this.cleanupDeadCaches(), 30000);
         this.onDestroyEvent.subscribe(() => clearInterval(cleanupTimer));
     }
 
