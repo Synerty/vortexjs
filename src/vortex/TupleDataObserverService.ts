@@ -18,16 +18,35 @@ export class TupleDataObservableNameService {
 }
 
 export class CachedSubscribedData {
-  subject:Subject<Tuple[]> = new Subject<Tuple[]>();
-  tuples:Tuple[] = [];
-  serverResponded = false;
+    subject: Subject<Tuple[]> = new Subject<Tuple[]>();
+
+    // The date the cache is scheduled to be torn down.
+    // This will be X time after we notice that it has no subscribers
+    private tearDownDate: number | null = null;
+    private TEARDOWN_WAIT = 120 * 1000; // 2 minutes, in milliseconds
+
+    tuples: Tuple[] = [];
+    serverResponded = false;
+
+    markForTearDown(): void {
+        if (this.tearDownDate == null)
+            this.tearDownDate = Date.now() + this.TEARDOWN_WAIT;
+    }
+
+    resetTearDown(): void {
+        this.tearDownDate = null;
+    }
+
+    isReadyForTearDown(): boolean {
+        return this.tearDownDate != null && this.tearDownDate >= Date.now();
+    }
 }
 
 @Injectable()
 export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
     protected endpoint: PayloadEndpoint;
     protected filt: IPayloadFilt;
-    protected cacheByTupleSelector: { [tupleSelector: string]: CachedSubscribedData} = {};
+    protected cacheByTupleSelector: { [tupleSelector: string]: CachedSubscribedData } = {};
 
     constructor(protected vortexService: VortexService,
                 protected statusService: VortexStatusService,
@@ -71,6 +90,7 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
         let tsStr = tupleSelector.toOrderedJsonStr();
         if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
             let cachedData = this.cacheByTupleSelector[tsStr];
+            cachedData.resetTearDown();
 
             // Emit the data 2 miliseconds later.
             setTimeout(() => {
@@ -89,11 +109,17 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
 
     }
 
-    private cleanupDeadCaches() :void {
+    private cleanupDeadCaches(): void {
         for (let key of dictKeysFromObject(this.cacheByTupleSelector)) {
             let cachedData = this.cacheByTupleSelector[key];
-            if (cachedData.subject.observers.length == 0)
-                delete this.cacheByTupleSelector[key];
+            if (cachedData.subject.observers.length != 0) {
+                cachedData.resetTearDown();
+            } else {
+                if (cachedData.isReadyForTearDown())
+                    delete this.cacheByTupleSelector[key];
+                else
+                    cachedData.markForTearDown();
+            }
         }
     }
 
@@ -151,5 +177,6 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
         }
         this.vortexService.sendPayload(payloads);
     }
+
 }
 

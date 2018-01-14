@@ -14,8 +14,13 @@ export declare class TupleDataObservableNameService {
 }
 export declare class CachedSubscribedData {
     subject: Subject<Tuple[]>;
+    private tearDownDate;
+    private TEARDOWN_WAIT;
     tuples: Tuple[];
     serverResponded: boolean;
+    markForTearDown(): void;
+    resetTearDown(): void;
+    isReadyForTearDown(): boolean;
 }
 export declare class TupleDataObserverService extends ComponentLifecycleEventEmitter {
     protected vortexService: VortexService;

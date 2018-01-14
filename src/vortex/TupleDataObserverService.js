@@ -45,9 +45,23 @@ exports.TupleDataObservableNameService = TupleDataObservableNameService;
 var CachedSubscribedData = /** @class */ (function () {
     function CachedSubscribedData() {
         this.subject = new rxjs_1.Subject();
+        // The date the cache is scheduled to be torn down.
+        // This will be X time after we notice that it has no subscribers
+        this.tearDownDate = null;
+        this.TEARDOWN_WAIT = 120 * 1000; // 2 minutes, in milliseconds
         this.tuples = [];
         this.serverResponded = false;
     }
+    CachedSubscribedData.prototype.markForTearDown = function () {
+        if (this.tearDownDate == null)
+            this.tearDownDate = Date.now() + this.TEARDOWN_WAIT;
+    };
+    CachedSubscribedData.prototype.resetTearDown = function () {
+        this.tearDownDate = null;
+    };
+    CachedSubscribedData.prototype.isReadyForTearDown = function () {
+        return this.tearDownDate != null && this.tearDownDate >= Date.now();
+    };
     return CachedSubscribedData;
 }());
 exports.CachedSubscribedData = CachedSubscribedData;
@@ -89,6 +103,7 @@ var TupleDataObserverService = /** @class */ (function (_super) {
         var tsStr = tupleSelector.toOrderedJsonStr();
         if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
             var cachedData_1 = this.cacheByTupleSelector[tsStr];
+            cachedData_1.resetTearDown();
             // Emit the data 2 miliseconds later.
             setTimeout(function () {
                 _this.notifyObservers(cachedData_1, tupleSelector, cachedData_1.tuples);
@@ -104,8 +119,15 @@ var TupleDataObserverService = /** @class */ (function (_super) {
         for (var _i = 0, _a = UtilMisc_1.dictKeysFromObject(this.cacheByTupleSelector); _i < _a.length; _i++) {
             var key = _a[_i];
             var cachedData = this.cacheByTupleSelector[key];
-            if (cachedData.subject.observers.length == 0)
-                delete this.cacheByTupleSelector[key];
+            if (cachedData.subject.observers.length != 0) {
+                cachedData.resetTearDown();
+            }
+            else {
+                if (cachedData.isReadyForTearDown())
+                    delete this.cacheByTupleSelector[key];
+                else
+                    cachedData.markForTearDown();
+            }
         }
     };
     TupleDataObserverService.prototype.vortexOnlineChanged = function () {

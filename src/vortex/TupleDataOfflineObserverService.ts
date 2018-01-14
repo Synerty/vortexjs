@@ -30,6 +30,7 @@ export class TupleDataOfflineObserverService extends TupleDataObserverService {
 
         if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
             let cachedData = this.cacheByTupleSelector[tsStr];
+            cachedData.resetTearDown();
 
             // Emit the data 2 miliseconds later.
             setTimeout(() => {

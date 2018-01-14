@@ -36,6 +36,7 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
         var tsStr = tupleSelector.toOrderedJsonStr();
         if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
             var cachedData_1 = this.cacheByTupleSelector[tsStr];
+            cachedData_1.resetTearDown();
             // Emit the data 2 miliseconds later.
             setTimeout(function () {
                 _super.prototype.notifyObservers.call(_this, cachedData_1, tupleSelector, cachedData_1.tuples);
