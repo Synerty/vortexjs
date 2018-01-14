@@ -116,7 +116,10 @@ var TupleWebSqlTransaction = /** @class */ (function () {
         var bindParams = [tupleSelectorStr, Date.now(), vortexMsg];
         return this.tx.executeSql(insertSql, bindParams)
             .catch(function (err) {
-            if (err.indexOf('SQLITE.ALL - Database Error5') !== -1) {
+            var hasNsSqlError = err.indexOf('SQLITE.ALL - Database Error5') !== -1;
+            // unable to begin transaction (5 database is locked)
+            var hasWebSqlError = err.indexOf('5 database is locked') !== -1;
+            if (hasNsSqlError || hasWebSqlError) {
                 if (retries == 5) {
                     throw new Error(err + "\nRetried " + retries + " times");
                 }
