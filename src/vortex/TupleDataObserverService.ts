@@ -38,7 +38,7 @@ export class CachedSubscribedData {
     }
 
     isReadyForTearDown(): boolean {
-        return this.tearDownDate != null && this.tearDownDate >= Date.now();
+        return this.tearDownDate != null && this.tearDownDate <= Date.now();
     }
 }
 

@@ -60,7 +60,7 @@ var CachedSubscribedData = /** @class */ (function () {
         this.tearDownDate = null;
     };
     CachedSubscribedData.prototype.isReadyForTearDown = function () {
-        return this.tearDownDate != null && this.tearDownDate >= Date.now();
+        return this.tearDownDate != null && this.tearDownDate <= Date.now();
     };
     return CachedSubscribedData;
 }());
