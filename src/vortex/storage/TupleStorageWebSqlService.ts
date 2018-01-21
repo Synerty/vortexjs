@@ -13,7 +13,7 @@ import {dateStr} from "../UtilMisc";
 
 
 // ----------------------------------------------------------------------------
-let databaseSchema = [
+let createTable =
     `CREATE TABLE IF NOT EXISTS tuples
      (
         tupleSelector TEXT,
@@ -21,8 +21,20 @@ let databaseSchema = [
         payload TEXT,
         PRIMARY KEY (tupleSelector)
      )`
-];
+;
 
+
+let dropTable = `DROP TABLE IF NOT EXISTS tuples`;
+
+
+let deleteBySelectorSql = `DELETE
+                 FROM tuples
+                 WHERE tupleSelector = ?`;
+
+
+let deleteByDateSql = `DELETE
+                 FROM tuples
+                 WHERE dateTime < ?`;
 
 let insertSql = `INSERT OR REPLACE INTO tuples
                  (tupleSelector, dateTime, payload)
@@ -42,7 +54,7 @@ export class TupleStorageWebSqlService extends TupleStorageServiceABC {
     constructor(webSqlFactory: WebSqlFactoryService,
                 name: TupleOfflineStorageNameService) {
         super(name);
-        this.webSql = webSqlFactory.createWebSql(this.dbName, databaseSchema);
+        this.webSql = webSqlFactory.createWebSql(this.dbName, [createTable]);
     }
 
     open(): Promise<void> {
@@ -67,6 +79,18 @@ export class TupleStorageWebSqlService extends TupleStorageServiceABC {
         this.webSql.close()
     }
 
+    truncateStorage(): Promise<void> {
+
+        let prom: any = this.webSql.transaction()
+            .then(tx => {
+                let prom2: any = tx.executeSql(dropTable)
+                    .then(() => tx.executeSql(createTable));
+                return prom2;
+            });
+        return prom;
+
+    }
+
     transaction(forWrite: boolean): Promise<TupleStorageTransaction> {
         return this.webSql.transaction()
             .then(t => new TupleWebSqlTransaction(t, forWrite));
@@ -79,6 +103,20 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
     constructor(private tx: WebSqlTransaction, private txForWrite: boolean) {
 
     }
+
+    private isLockedMsg(msg: string): boolean {
+
+        let hasNsSqlError = msg.indexOf('SQLITE.ALL - Database Error5') !== -1;
+        // unable to begin transaction (5 database is locked)
+        let hasWebSqlError = msg.indexOf('5 database is locked') !== -1;
+
+        if (hasNsSqlError || hasWebSqlError)
+            return true;
+
+        console.log(`WebSQL: Found error message that isn't a lock : ${msg}`);
+        return false;
+    }
+
 
     loadTuples(tupleSelector: TupleSelector): Promise<Tuple[]> {
 
@@ -135,11 +173,7 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
 
         return this.tx.executeSql(insertSql, bindParams)
             .catch(err => {
-                let hasNsSqlError = err.indexOf('SQLITE.ALL - Database Error5') !== -1;
-                // unable to begin transaction (5 database is locked)
-                let hasWebSqlError = err.indexOf('5 database is locked') !== -1;
-
-                if (hasNsSqlError || hasWebSqlError) {
+                if (this.isLockedMsg(err)) {
                     if (retries == 5) {
                         throw new Error(`${err}\nRetried ${retries} times`);
                     }
@@ -149,6 +183,50 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
             })
             .then(() => null); // Convert the result
 
+    }
+
+    deleteTuples(tupleSelector: TupleSelector, retries = 0): Promise<void> {
+
+        if (!this.txForWrite) {
+            let msg = "WebSQL: deleteTuples attempted on read only TX";
+            console.log(`${dateStr()} ${msg}`);
+            return Promise.reject(msg)
+        }
+
+        let tupleSelectorStr = tupleSelector.toOrderedJsonStr();
+
+        return this.tx.executeSql(deleteBySelectorSql, [tupleSelectorStr])
+            .catch(err => {
+                if (this.isLockedMsg(err)) {
+                    if (retries == 5) {
+                        throw new Error(`${err}\nRetried ${retries} times`);
+                    }
+                    return this.deleteTuples(tupleSelector, retries + 1);
+                }
+                throw new Error(err);
+            })
+            .then(() => null); // Convert the result
+    }
+
+    deleteOldTuples(deleteDataBeforeDate: Date, retries = 0): Promise<void> {
+
+        if (!this.txForWrite) {
+            let msg = "WebSQL: deleteOldTuples attempted on read only TX";
+            console.log(`${dateStr()} ${msg}`);
+            return Promise.reject(msg)
+        }
+
+        return this.tx.executeSql(deleteByDateSql, [deleteDataBeforeDate.getTime()])
+            .catch(err => {
+                if (this.isLockedMsg(err)) {
+                    if (retries == 5) {
+                        throw new Error(`${err}\nRetried ${retries} times`);
+                    }
+                    return this.deleteOldTuples(deleteDataBeforeDate, retries + 1);
+                }
+                throw new Error(err);
+            })
+            .then(() => null); // Convert the result
     }
 
     close(): Promise<void> {

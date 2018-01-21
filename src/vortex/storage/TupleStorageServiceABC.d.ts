@@ -6,6 +6,8 @@ export interface TupleStorageTransaction {
     loadTuplesEncoded(tupleSelector: TupleSelector): Promise<string | null>;
     saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void>;
     saveTuplesEncoded(tupleSelector: TupleSelector, vortexMsg: string): Promise<void>;
+    deleteTuples(tupleSelector: TupleSelector): Promise<void>;
+    deleteOldTuples(deleteDataBeforeDate: Date): Promise<void>;
     /** Close
      *
      * This will close the transaction, comitting if required.
@@ -18,5 +20,6 @@ export declare abstract class TupleStorageServiceABC {
     abstract open(): Promise<void>;
     abstract isOpen(): boolean;
     abstract close(): void;
+    abstract truncateStorage(): Promise<void>;
     abstract transaction(forWrite: boolean): Promise<TupleStorageTransaction>;
 }

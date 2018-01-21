@@ -91,6 +91,23 @@ var TupleStorageIndexedDbService = /** @class */ (function (_super) {
         this.db.close();
         this.db = null;
     };
+    TupleStorageIndexedDbService.prototype.truncateStorage = function () {
+        var _this = this;
+        var startTime = now();
+        return new Promise(function (resolve, reject) {
+            var response = IndexedDb_1.indexedDB.deleteDatabase(_this.dbName);
+            IndexedDb_1.addIndexedDbHandlers(response, function () {
+                reject(UtilMisc_1.dateStr() + " IndexedDB: truncateStorage \"truncateStorage\" error");
+                throw new IndexedDb_1.IDBException("deleteDatabase error");
+            });
+            response.oncomplete = function () {
+                var timeTaken = now() - startTime;
+                console.log(UtilMisc_1.dateStr() + " IndexedDB: truncateStorage"
+                    + (" took " + timeTaken + "ms (in thread)"));
+                resolve();
+            };
+        });
+    };
     TupleStorageIndexedDbService.prototype.transaction = function (forWrite) {
         if (!this.isOpen())
             throw new Error("IndexedDB " + this.dbName + " is not open");
@@ -194,6 +211,35 @@ var TupleIndexedDbTransaction = /** @class */ (function () {
         });
     };
     ;
+    TupleIndexedDbTransaction.prototype.deleteTuples = function (tupleSelector) {
+        var _this = this;
+        if (!this.txForWrite) {
+            var msg = "IndexedDB: saveTuples attempted on read only TX";
+            console.log(UtilMisc_1.dateStr() + " " + msg);
+            return Promise.reject(msg);
+        }
+        // The payload is a convenient way to serialise and compress the data
+        var tupleSelectorStr = tupleSelector.toOrderedJsonStr();
+        var startTime = now();
+        return new Promise(function (resolve, reject) {
+            // Run the inserts
+            var response = _this.store.delete(tupleSelectorStr);
+            IndexedDb_1.addIndexedDbHandlers(response, function () {
+                reject(UtilMisc_1.dateStr() + " IndexedDB: deleteTuples \"delete\" error");
+                throw new IndexedDb_1.IDBException("Put error");
+            });
+            response.oncomplete = function () {
+                var timeTaken = now() - startTime;
+                console.log(UtilMisc_1.dateStr() + " IndexedDB: deleteTuples"
+                    + (" took " + timeTaken + "ms (in thread)"));
+                resolve();
+            };
+        });
+    };
+    TupleIndexedDbTransaction.prototype.deleteOldTuples = function (deleteDataBeforeDate) {
+        console.log("WARNING: deleteOldTuple not implemented for IndexedDB");
+        return Promise.resolve();
+    };
     TupleIndexedDbTransaction.prototype.close = function () {
         return Promise.resolve();
         /* Close transaction ???

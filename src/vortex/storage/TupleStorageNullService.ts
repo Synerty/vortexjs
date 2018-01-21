@@ -9,7 +9,6 @@ import {dateStr} from "../UtilMisc";
 
 @Injectable()
 export class TupleStorageNullService extends TupleStorageServiceABC {
-
     constructor(name: TupleOfflineStorageNameService) {
         super(name);
     }
@@ -25,6 +24,11 @@ export class TupleStorageNullService extends TupleStorageServiceABC {
     close(): void {
 
     }
+
+    truncateStorage(): Promise<void> {
+        return Promise.resolve();
+    }
+
 
     transaction(forWrite: boolean): Promise<TupleStorageTransaction> {
         return Promise.resolve(new TupleNullTransaction(forWrite));
@@ -49,7 +53,7 @@ class TupleNullTransaction implements TupleStorageTransaction {
     }
 
     saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> {
-      return this.saveTuplesEncoded(tupleSelector, 'TupleStorageNullService');
+        return this.saveTuplesEncoded(tupleSelector, 'TupleStorageNullService');
     }
 
     saveTuplesEncoded(tupleSelector: TupleSelector, vortexMsg: string): Promise<void> {
@@ -63,6 +67,16 @@ class TupleNullTransaction implements TupleStorageTransaction {
         console.log(`TupleStorageNullService.saveTuples ${tupleSelector.toOrderedJsonStr()}`);
         return Promise.resolve();
 
+    }
+
+    deleteTuples(tupleSelector: TupleSelector): Promise<void> {
+        console.log(`TupleStorageNullService.deleteTuples ${tupleSelector.toOrderedJsonStr()}`);
+        return Promise.resolve();
+    }
+
+    deleteOldTuples(deleteDataBeforeDate: Date): Promise<void> {
+        console.log(`TupleStorageNullService.deleteOldTuples ${deleteDataBeforeDate}`);
+        return Promise.resolve();
     }
 
     close(): Promise<void> {

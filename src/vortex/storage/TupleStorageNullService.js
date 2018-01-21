@@ -37,6 +37,9 @@ var TupleStorageNullService = /** @class */ (function (_super) {
     };
     TupleStorageNullService.prototype.close = function () {
     };
+    TupleStorageNullService.prototype.truncateStorage = function () {
+        return Promise.resolve();
+    };
     TupleStorageNullService.prototype.transaction = function (forWrite) {
         return Promise.resolve(new TupleNullTransaction(forWrite));
     };
@@ -69,6 +72,14 @@ var TupleNullTransaction = /** @class */ (function () {
             return Promise.reject(msg);
         }
         console.log("TupleStorageNullService.saveTuples " + tupleSelector.toOrderedJsonStr());
+        return Promise.resolve();
+    };
+    TupleNullTransaction.prototype.deleteTuples = function (tupleSelector) {
+        console.log("TupleStorageNullService.deleteTuples " + tupleSelector.toOrderedJsonStr());
+        return Promise.resolve();
+    };
+    TupleNullTransaction.prototype.deleteOldTuples = function (deleteDataBeforeDate) {
+        console.log("TupleStorageNullService.deleteOldTuples " + deleteDataBeforeDate);
         return Promise.resolve();
     };
     TupleNullTransaction.prototype.close = function () {

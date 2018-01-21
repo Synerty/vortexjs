@@ -12,5 +12,6 @@ export declare class TupleStorageIndexedDbService extends TupleStorageServiceABC
     open(): Promise<void>;
     isOpen(): boolean;
     close(): void;
+    truncateStorage(): Promise<void>;
     transaction(forWrite: boolean): Promise<TupleStorageTransaction>;
 }

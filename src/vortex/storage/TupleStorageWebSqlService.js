@@ -26,9 +26,10 @@ var TupleStorageServiceABC_1 = require("./TupleStorageServiceABC");
 var TupleOfflineStorageNameService_1 = require("../TupleOfflineStorageNameService");
 var UtilMisc_1 = require("../UtilMisc");
 // ----------------------------------------------------------------------------
-var databaseSchema = [
-    "CREATE TABLE IF NOT EXISTS tuples\n     (\n        tupleSelector TEXT,\n        dateTime REAL,\n        payload TEXT,\n        PRIMARY KEY (tupleSelector)\n     )"
-];
+var createTable = "CREATE TABLE IF NOT EXISTS tuples\n     (\n        tupleSelector TEXT,\n        dateTime REAL,\n        payload TEXT,\n        PRIMARY KEY (tupleSelector)\n     )";
+var dropTable = "DROP TABLE IF NOT EXISTS tuples";
+var deleteBySelectorSql = "DELETE\n                 FROM tuples\n                 WHERE tupleSelector = ?";
+var deleteByDateSql = "DELETE\n                 FROM tuples\n                 WHERE dateTime < ?";
 var insertSql = "INSERT OR REPLACE INTO tuples\n                 (tupleSelector, dateTime, payload)\n                 VALUES (?, ?, ?)";
 var selectSql = "SELECT tupleSelector, dateTime, payload\n                 FROM tuples\n                 WHERE tupleSelector = ?";
 var TupleStorageWebSqlService = /** @class */ (function (_super) {
@@ -36,7 +37,7 @@ var TupleStorageWebSqlService = /** @class */ (function (_super) {
     function TupleStorageWebSqlService(webSqlFactory, name) {
         var _this = _super.call(this, name) || this;
         _this.openInProgressPromise = null;
-        _this.webSql = webSqlFactory.createWebSql(_this.dbName, databaseSchema);
+        _this.webSql = webSqlFactory.createWebSql(_this.dbName, [createTable]);
         return _this;
     }
     TupleStorageWebSqlService.prototype.open = function () {
@@ -57,6 +58,15 @@ var TupleStorageWebSqlService = /** @class */ (function (_super) {
     TupleStorageWebSqlService.prototype.close = function () {
         this.webSql.close();
     };
+    TupleStorageWebSqlService.prototype.truncateStorage = function () {
+        var prom = this.webSql.transaction()
+            .then(function (tx) {
+            var prom2 = tx.executeSql(dropTable)
+                .then(function () { return tx.executeSql(createTable); });
+            return prom2;
+        });
+        return prom;
+    };
     TupleStorageWebSqlService.prototype.transaction = function (forWrite) {
         return this.webSql.transaction()
             .then(function (t) { return new TupleWebSqlTransaction(t, forWrite); });
@@ -74,6 +84,15 @@ var TupleWebSqlTransaction = /** @class */ (function () {
         this.tx = tx;
         this.txForWrite = txForWrite;
     }
+    TupleWebSqlTransaction.prototype.isLockedMsg = function (msg) {
+        var hasNsSqlError = msg.indexOf('SQLITE.ALL - Database Error5') !== -1;
+        // unable to begin transaction (5 database is locked)
+        var hasWebSqlError = msg.indexOf('5 database is locked') !== -1;
+        if (hasNsSqlError || hasWebSqlError)
+            return true;
+        console.log("WebSQL: Found error message that isn't a lock : " + msg);
+        return false;
+    };
     TupleWebSqlTransaction.prototype.loadTuples = function (tupleSelector) {
         return this.loadTuplesEncoded(tupleSelector)
             .then(function (vortexMsg) {
@@ -116,14 +135,52 @@ var TupleWebSqlTransaction = /** @class */ (function () {
         var bindParams = [tupleSelectorStr, Date.now(), vortexMsg];
         return this.tx.executeSql(insertSql, bindParams)
             .catch(function (err) {
-            var hasNsSqlError = err.indexOf('SQLITE.ALL - Database Error5') !== -1;
-            // unable to begin transaction (5 database is locked)
-            var hasWebSqlError = err.indexOf('5 database is locked') !== -1;
-            if (hasNsSqlError || hasWebSqlError) {
+            if (_this.isLockedMsg(err)) {
                 if (retries == 5) {
                     throw new Error(err + "\nRetried " + retries + " times");
                 }
                 return _this.saveTuplesEncoded(tupleSelector, vortexMsg, retries + 1);
+            }
+            throw new Error(err);
+        })
+            .then(function () { return null; }); // Convert the result
+    };
+    TupleWebSqlTransaction.prototype.deleteTuples = function (tupleSelector, retries) {
+        var _this = this;
+        if (retries === void 0) { retries = 0; }
+        if (!this.txForWrite) {
+            var msg = "WebSQL: deleteTuples attempted on read only TX";
+            console.log(UtilMisc_1.dateStr() + " " + msg);
+            return Promise.reject(msg);
+        }
+        var tupleSelectorStr = tupleSelector.toOrderedJsonStr();
+        return this.tx.executeSql(deleteBySelectorSql, [tupleSelectorStr])
+            .catch(function (err) {
+            if (_this.isLockedMsg(err)) {
+                if (retries == 5) {
+                    throw new Error(err + "\nRetried " + retries + " times");
+                }
+                return _this.deleteTuples(tupleSelector, retries + 1);
+            }
+            throw new Error(err);
+        })
+            .then(function () { return null; }); // Convert the result
+    };
+    TupleWebSqlTransaction.prototype.deleteOldTuples = function (deleteDataBeforeDate, retries) {
+        var _this = this;
+        if (retries === void 0) { retries = 0; }
+        if (!this.txForWrite) {
+            var msg = "WebSQL: deleteOldTuples attempted on read only TX";
+            console.log(UtilMisc_1.dateStr() + " " + msg);
+            return Promise.reject(msg);
+        }
+        return this.tx.executeSql(deleteByDateSql, [deleteDataBeforeDate.getTime()])
+            .catch(function (err) {
+            if (_this.isLockedMsg(err)) {
+                if (retries == 5) {
+                    throw new Error(err + "\nRetried " + retries + " times");
+                }
+                return _this.deleteOldTuples(deleteDataBeforeDate, retries + 1);
             }
             throw new Error(err);
         })

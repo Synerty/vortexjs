@@ -8,7 +8,6 @@ import {Payload} from "../Payload";
 import {indexedDB, addIndexedDbHandlers, IDBException} from "./IndexedDb";
 
 
-
 // ----------------------------------------------------------------------------
 
 
@@ -100,6 +99,27 @@ export class TupleStorageIndexedDbService extends TupleStorageServiceABC {
         }
         this.db.close();
         this.db = null;
+    }
+
+    truncateStorage(): Promise<void> {
+        let startTime = now();
+
+        return new Promise<void>((resolve, reject) => {
+
+            let response = indexedDB.deleteDatabase(this.dbName);
+
+            addIndexedDbHandlers(response, () => {
+                reject(`${dateStr()} IndexedDB: truncateStorage "truncateStorage" error`);
+                throw new IDBException("deleteDatabase error");
+            });
+
+            response.oncomplete = () => {
+                let timeTaken = now() - startTime;
+                console.log(`${dateStr()} IndexedDB: truncateStorage`
+                    + ` took ${timeTaken}ms (in thread)`);
+                resolve();
+            };
+        });
     }
 
     transaction(forWrite: boolean): Promise<TupleStorageTransaction> {
@@ -235,6 +255,43 @@ class TupleIndexedDbTransaction implements TupleStorageTransaction {
         });
 
     };
+
+    deleteTuples(tupleSelector: TupleSelector): Promise<void> {
+
+        if (!this.txForWrite) {
+            let msg = "IndexedDB: saveTuples attempted on read only TX";
+            console.log(`${dateStr()} ${msg}`);
+            return Promise.reject(msg)
+        }
+
+        // The payload is a convenient way to serialise and compress the data
+        let tupleSelectorStr = tupleSelector.toOrderedJsonStr();
+
+        let startTime = now();
+
+        return new Promise<void>((resolve, reject) => {
+
+            // Run the inserts
+            let response = this.store.delete(tupleSelectorStr);
+
+            addIndexedDbHandlers(response, () => {
+                reject(`${dateStr()} IndexedDB: deleteTuples "delete" error`);
+                throw new IDBException("Put error");
+            });
+
+            response.oncomplete = () => {
+                let timeTaken = now() - startTime;
+                console.log(`${dateStr()} IndexedDB: deleteTuples`
+                    + ` took ${timeTaken}ms (in thread)`);
+                resolve();
+            };
+        });
+    }
+
+    deleteOldTuples(deleteDataBeforeDate: Date): Promise<void> {
+        console.log("WARNING: deleteOldTuple not implemented for IndexedDB");
+        return Promise.resolve();
+    }
 
     close(): Promise<void> {
         return Promise.resolve();

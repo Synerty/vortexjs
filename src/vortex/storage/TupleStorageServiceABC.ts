@@ -6,19 +6,23 @@ import {TupleOfflineStorageNameService} from "../TupleOfflineStorageNameService"
 
 export interface TupleStorageTransaction {
 
-    loadTuples(tupleSelector: TupleSelector): Promise<Tuple[]> ;
+    loadTuples(tupleSelector: TupleSelector): Promise<Tuple[]>;
 
-    loadTuplesEncoded(tupleSelector: TupleSelector): Promise<string | null> ;
+    loadTuplesEncoded(tupleSelector: TupleSelector): Promise<string | null>;
 
-    saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> ;
+    saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void>;
 
-    saveTuplesEncoded(tupleSelector: TupleSelector, vortexMsg: string): Promise<void> ;
+    saveTuplesEncoded(tupleSelector: TupleSelector, vortexMsg: string): Promise<void>;
+
+    deleteTuples(tupleSelector: TupleSelector): Promise<void>;
+
+    deleteOldTuples(deleteDataBeforeDate: Date): Promise<void>;
 
     /** Close
      *
      * This will close the transaction, comitting if required.
      */
-    close(): Promise<void> ;
+    close(): Promise<void>;
 }
 
 
@@ -37,6 +41,8 @@ export abstract class TupleStorageServiceABC {
     abstract isOpen(): boolean;
 
     abstract close(): void;
+
+    abstract truncateStorage(): Promise<void>;
 
     // NOTE: I'm looking at the WebSQL and IndexedDb implementation and both
     // appear to only provide single use transactions like this.
