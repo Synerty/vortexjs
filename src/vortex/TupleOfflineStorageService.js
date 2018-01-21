@@ -30,7 +30,8 @@ var TupleOfflineStorageService = /** @class */ (function () {
                 .then(function (tuples) {
                 // We have the tuples
                 // close the transaction but disregard it's promise
-                tx.close().catch(function (e) { return console.log("ERROR loadTuples: " + e); });
+                tx.close()
+                    .catch(function (e) { return console.log("ERROR loadTuples: " + e); });
                 return tuples;
             });
         });
@@ -54,7 +55,8 @@ var TupleOfflineStorageService = /** @class */ (function () {
             return tx.saveTuples(tupleSelector, tuples)
                 .then(function () {
                 // Don't add the close to the promise chain
-                tx.close().catch(function (e) { return console.log("ERROR saveTuples: " + e); });
+                tx.close()
+                    .catch(function (e) { return console.log("ERROR saveTuples: " + e); });
             });
         });
     };
@@ -64,9 +66,33 @@ var TupleOfflineStorageService = /** @class */ (function () {
             return tx.saveTuplesEncoded(tupleSelector, vortexMsg)
                 .then(function () {
                 // Don't add the close to the promise chain
-                tx.close().catch(function (e) { return console.log("ERROR saveTuplesEncoded: " + e); });
+                tx.close()
+                    .catch(function (e) { return console.log("ERROR saveTuplesEncoded: " + e); });
             });
         });
+    };
+    TupleOfflineStorageService.prototype.deleteTuples = function (tupleSelector) {
+        return this.transaction(true)
+            .then(function (tx) {
+            return tx.deleteTuples(tupleSelector)
+                .then(function () {
+                tx.close()
+                    .catch(function (e) { return console.log("ERROR deleteTuples: " + e); });
+            });
+        });
+    };
+    TupleOfflineStorageService.prototype.deleteOldTuples = function (deleteDataBeforeDate) {
+        return this.transaction(true)
+            .then(function (tx) {
+            return tx.deleteOldTuples(deleteDataBeforeDate)
+                .then(function () {
+                tx.close()
+                    .catch(function (e) { return console.log("ERROR deleteOldTuples: " + e); });
+            });
+        });
+    };
+    TupleOfflineStorageService.prototype.truncateStorage = function () {
+        return this.storage.truncateStorage();
     };
     TupleOfflineStorageService = __decorate([
         core_1.Injectable(),

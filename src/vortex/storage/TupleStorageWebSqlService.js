@@ -62,7 +62,12 @@ var TupleStorageWebSqlService = /** @class */ (function (_super) {
         var prom = this.webSql.transaction()
             .then(function (tx) {
             var prom2 = tx.executeSql(dropTable)
-                .then(function () { return tx.executeSql(createTable); });
+                .then(function () { return tx.executeSql(createTable); })
+                .then(function () {
+                // CLOSE : TODO
+                // tx.close()
+                //     .catch(e => console.log(`ERROR truncateStorage: ${e}`));
+            });
             return prom2;
         });
         return prom;

@@ -34,7 +34,8 @@ export class TupleOfflineStorageService {
                     .then((tuples: Tuple[]) => {
                         // We have the tuples
                         // close the transaction but disregard it's promise
-                        tx.close().catch(e => console.log(`ERROR loadTuples: ${e}`));
+                        tx.close()
+                            .catch(e => console.log(`ERROR loadTuples: ${e}`));
                         return tuples;
                     });
             });
@@ -61,7 +62,8 @@ export class TupleOfflineStorageService {
                 // Call the TX Close when the save promise is resolved
                     .then(() => {
                         // Don't add the close to the promise chain
-                        tx.close().catch(e => console.log(`ERROR saveTuples: ${e}`));
+                        tx.close()
+                            .catch(e => console.log(`ERROR saveTuples: ${e}`));
                     });
             });
     }
@@ -73,9 +75,36 @@ export class TupleOfflineStorageService {
                 // Call the TX Close when the save promise is resolved
                     .then(() => {
                         // Don't add the close to the promise chain
-                        tx.close().catch(e => console.log(`ERROR saveTuplesEncoded: ${e}`));
+                        tx.close()
+                            .catch(e => console.log(`ERROR saveTuplesEncoded: ${e}`));
                     });
             });
     }
+
+     deleteTuples(tupleSelector: TupleSelector): Promise<void> {
+        return this.transaction(true)
+            .then(tx => {
+                return tx.deleteTuples(tupleSelector)
+                    .then(() => {
+                        tx.close()
+                            .catch(e => console.log(`ERROR deleteTuples: ${e}`));
+                    });
+            });
+     }
+
+     deleteOldTuples(deleteDataBeforeDate: Date): Promise<void> {
+        return this.transaction(true)
+            .then(tx => {
+                return tx.deleteOldTuples(deleteDataBeforeDate)
+                    .then(() => {
+                        tx.close()
+                            .catch(e => console.log(`ERROR deleteOldTuples: ${e}`));
+                    });
+            });
+     }
+
+     truncateStorage(): Promise<void> {
+        return this.storage.truncateStorage();
+     }
 
 }

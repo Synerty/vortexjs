@@ -84,7 +84,12 @@ export class TupleStorageWebSqlService extends TupleStorageServiceABC {
         let prom: any = this.webSql.transaction()
             .then(tx => {
                 let prom2: any = tx.executeSql(dropTable)
-                    .then(() => tx.executeSql(createTable));
+                    .then(() => tx.executeSql(createTable))
+                    .then(() => {
+                        // CLOSE : TODO
+                        // tx.close()
+                        //     .catch(e => console.log(`ERROR truncateStorage: ${e}`));
+                    });
                 return prom2;
             });
         return prom;

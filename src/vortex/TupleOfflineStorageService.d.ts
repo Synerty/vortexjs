@@ -11,4 +11,7 @@ export declare class TupleOfflineStorageService {
     loadTuplesEncoded(tupleSelector: TupleSelector): Promise<string | null>;
     saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void>;
     saveTuplesEncoded(tupleSelector: TupleSelector, vortexMsg: string): Promise<void>;
+    deleteTuples(tupleSelector: TupleSelector): Promise<void>;
+    deleteOldTuples(deleteDataBeforeDate: Date): Promise<void>;
+    truncateStorage(): Promise<void>;
 }
