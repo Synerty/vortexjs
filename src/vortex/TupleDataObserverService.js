@@ -115,14 +115,14 @@ var TupleDataObserverService = /** @class */ (function (_super) {
             }
             else {
                 cachedData_1.tuples = [];
-                this.tellServerWeWantData([tupleSelector]);
+                this.tellServerWeWantData([tupleSelector], enableCache);
             }
             return cachedData_1.subject;
         }
         var newCachedData = new CachedSubscribedData();
         newCachedData.cacheEnabled = enableCache;
         this.cacheByTupleSelector[tsStr] = newCachedData;
-        this.tellServerWeWantData([tupleSelector]);
+        this.tellServerWeWantData([tupleSelector], enableCache);
         return newCachedData.subject;
     };
     TupleDataObserverService.prototype.cleanupDeadCaches = function () {
@@ -168,7 +168,8 @@ var TupleDataObserverService = /** @class */ (function (_super) {
             console.log("ERROR: TupleDataObserverService.notifyObservers, observable has been removed\n            " + e.toString() + "\n            " + tupleSelector.toOrderedJsonStr());
         }
     };
-    TupleDataObserverService.prototype.tellServerWeWantData = function (tupleSelectors) {
+    TupleDataObserverService.prototype.tellServerWeWantData = function (tupleSelectors, enableCache) {
+        if (enableCache === void 0) { enableCache = true; }
         if (!this.statusService.snapshot.isOnline)
             return;
         var startFilt = UtilMisc_1.extend({ "subscribe": true }, this.filt);
@@ -176,7 +177,8 @@ var TupleDataObserverService = /** @class */ (function (_super) {
         for (var _i = 0, tupleSelectors_1 = tupleSelectors; _i < tupleSelectors_1.length; _i++) {
             var tupleSelector = tupleSelectors_1[_i];
             var filt = UtilMisc_1.extend({}, startFilt, {
-                "tupleSelector": tupleSelector
+                "tupleSelector": tupleSelector,
+                "enableCache": enableCache
             });
             payloads.push(new Payload_1.Payload(filt));
         }

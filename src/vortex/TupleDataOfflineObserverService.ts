@@ -41,7 +41,7 @@ export class TupleDataOfflineObserverService extends TupleDataObserverService {
                 }, 0);
             } else {
                 cachedData.tuples = [];
-                this.tellServerWeWantData([tupleSelector]);
+                this.tellServerWeWantData([tupleSelector], enableCache);
             }
 
             return cachedData.subject;
@@ -51,7 +51,7 @@ export class TupleDataOfflineObserverService extends TupleDataObserverService {
         newCachedData.cacheEnabled = enableCache;
         this.cacheByTupleSelector[tsStr] = newCachedData;
 
-        this.tellServerWeWantData([tupleSelector]);
+        this.tellServerWeWantData([tupleSelector], enableCache);
 
         this.tupleOfflineStorageService
           .loadTuples(tupleSelector)

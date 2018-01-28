@@ -47,14 +47,14 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
             }
             else {
                 cachedData_1.tuples = [];
-                this.tellServerWeWantData([tupleSelector]);
+                this.tellServerWeWantData([tupleSelector], enableCache);
             }
             return cachedData_1.subject;
         }
         var newCachedData = new TupleDataObserverService_1.CachedSubscribedData();
         newCachedData.cacheEnabled = enableCache;
         this.cacheByTupleSelector[tsStr] = newCachedData;
-        this.tellServerWeWantData([tupleSelector]);
+        this.tellServerWeWantData([tupleSelector], enableCache);
         this.tupleOfflineStorageService
             .loadTuples(tupleSelector)
             .then(function (tuples) {

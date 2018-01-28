@@ -102,7 +102,7 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
                 }, 0);
             } else {
                 cachedData.tuples = [];
-                this.tellServerWeWantData([tupleSelector]);
+                this.tellServerWeWantData([tupleSelector], enableCache);
             }
 
             return cachedData.subject;
@@ -112,7 +112,7 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
         newCachedData.cacheEnabled = enableCache;
         this.cacheByTupleSelector[tsStr] = newCachedData;
 
-        this.tellServerWeWantData([tupleSelector]);
+        this.tellServerWeWantData([tupleSelector], enableCache);
 
         return newCachedData.subject;
 
@@ -170,7 +170,8 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
 
     }
 
-    protected tellServerWeWantData(tupleSelectors: TupleSelector[]): void {
+    protected tellServerWeWantData(tupleSelectors: TupleSelector[],
+                                   enableCache: boolean = true): void {
         if (!this.statusService.snapshot.isOnline)
             return;
 
@@ -179,7 +180,8 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
         let payloads: Payload[] = [];
         for (let tupleSelector of tupleSelectors) {
             let filt = extend({}, startFilt, {
-                "tupleSelector": tupleSelector
+                "tupleSelector": tupleSelector,
+                "enableCache": enableCache
             });
 
             payloads.push(new Payload(filt));
