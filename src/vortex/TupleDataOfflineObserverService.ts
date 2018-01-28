@@ -24,24 +24,32 @@ export class TupleDataOfflineObserverService extends TupleDataObserverService {
 
     }
 
-    subscribeToTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]> {
+    subscribeToTupleSelector(tupleSelector: TupleSelector,
+                             enableCache:boolean=true): Subject<Tuple[]> {
 
         let tsStr = tupleSelector.toOrderedJsonStr();
 
         if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
             let cachedData = this.cacheByTupleSelector[tsStr];
             cachedData.resetTearDown();
+            cachedData.cacheEnabled = cachedData.cacheEnabled && enableCache;
 
-            // Emit the data 2 miliseconds later.
-            setTimeout(() => {
-                super.notifyObservers(cachedData, tupleSelector, cachedData.tuples);
-            }, 2);
+            if (cachedData.cacheEnabled) {
+                // Emit after we return
+                setTimeout(() => {
+                    this.notifyObservers(cachedData, tupleSelector, cachedData.tuples);
+                }, 0);
+            } else {
+                cachedData.tuples = [];
+                this.tellServerWeWantData([tupleSelector]);
+            }
 
             return cachedData.subject;
         }
 
-        let newCahcedData = new CachedSubscribedData();
-        this.cacheByTupleSelector[tsStr] = newCahcedData;
+        let newCachedData = new CachedSubscribedData();
+        newCachedData.cacheEnabled = enableCache;
+        this.cacheByTupleSelector[tsStr] = newCachedData;
 
         this.tellServerWeWantData([tupleSelector]);
 
@@ -50,19 +58,19 @@ export class TupleDataOfflineObserverService extends TupleDataObserverService {
             .then((tuples: Tuple[]) => {
                // If the server has responded before we loaded the data, then just
                // ignore the cached data.
-               if (newCahcedData.serverResponded)
+               if (newCachedData.serverResponded)
                  return;
 
                // Update the tuples, and notify if them
-               newCahcedData.tuples = tuples;
-               super.notifyObservers(newCahcedData, tupleSelector, tuples);
+               newCachedData.tuples = tuples;
+               super.notifyObservers(newCachedData, tupleSelector, tuples);
             })
             .catch(err => {
                 this.statusService.logError(`loadTuples failed : ${err}`);
                 throw new Error(err);
             });
 
-        return newCahcedData.subject;
+        return newCachedData.subject;
     }
 
     /** Update Offline State

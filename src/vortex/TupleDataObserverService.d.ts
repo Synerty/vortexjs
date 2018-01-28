@@ -18,6 +18,7 @@ export declare class CachedSubscribedData {
     private TEARDOWN_WAIT;
     tuples: Tuple[];
     serverResponded: boolean;
+    cacheEnabled: boolean;
     markForTearDown(): void;
     resetTearDown(): void;
     isReadyForTearDown(): boolean;
@@ -33,7 +34,7 @@ export declare class TupleDataObserverService extends ComponentLifecycleEventEmi
     };
     constructor(vortexService: VortexService, statusService: VortexStatusService, zone: NgZone, tupleDataObservableName: TupleDataObservableNameService);
     pollForTuples(tupleSelector: TupleSelector): Promise<Tuple[]>;
-    subscribeToTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]>;
+    subscribeToTupleSelector(tupleSelector: TupleSelector, enableCache?: boolean): Subject<Tuple[]>;
     private cleanupDeadCaches();
     protected vortexOnlineChanged(): void;
     protected receivePayload(payload: any): void;

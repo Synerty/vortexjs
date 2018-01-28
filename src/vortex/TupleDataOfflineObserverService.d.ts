@@ -9,7 +9,7 @@ import { TupleDataObservableNameService, TupleDataObserverService, CachedSubscri
 export declare class TupleDataOfflineObserverService extends TupleDataObserverService {
     private tupleOfflineStorageService;
     constructor(vortexService: VortexService, vortexStatusService: VortexStatusService, zone: NgZone, tupleDataObservableName: TupleDataObservableNameService, tupleOfflineStorageService: TupleOfflineStorageService);
-    subscribeToTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]>;
+    subscribeToTupleSelector(tupleSelector: TupleSelector, enableCache?: boolean): Subject<Tuple[]>;
     /** Update Offline State
      *
      * This method updates the offline stored data, which will be used until the next

@@ -51,6 +51,7 @@ var CachedSubscribedData = /** @class */ (function () {
         this.TEARDOWN_WAIT = 120 * 1000; // 2 minutes, in milliseconds
         this.tuples = [];
         this.serverResponded = false;
+        this.cacheEnabled = true;
     }
     CachedSubscribedData.prototype.markForTearDown = function () {
         if (this.tearDownDate == null)
@@ -98,22 +99,31 @@ var TupleDataObserverService = /** @class */ (function (_super) {
             .then(function (payload) { return payload.tuples; });
         return promise;
     };
-    TupleDataObserverService.prototype.subscribeToTupleSelector = function (tupleSelector) {
+    TupleDataObserverService.prototype.subscribeToTupleSelector = function (tupleSelector, enableCache) {
         var _this = this;
+        if (enableCache === void 0) { enableCache = true; }
         var tsStr = tupleSelector.toOrderedJsonStr();
         if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
             var cachedData_1 = this.cacheByTupleSelector[tsStr];
             cachedData_1.resetTearDown();
-            // Emit the data 2 miliseconds later.
-            setTimeout(function () {
-                _this.notifyObservers(cachedData_1, tupleSelector, cachedData_1.tuples);
-            }, 2);
+            cachedData_1.cacheEnabled = cachedData_1.cacheEnabled && enableCache;
+            if (cachedData_1.cacheEnabled) {
+                // Emit after we return
+                setTimeout(function () {
+                    _this.notifyObservers(cachedData_1, tupleSelector, cachedData_1.tuples);
+                }, 0);
+            }
+            else {
+                cachedData_1.tuples = [];
+                this.tellServerWeWantData([tupleSelector]);
+            }
             return cachedData_1.subject;
         }
-        var newCahcedData = new CachedSubscribedData();
-        this.cacheByTupleSelector[tsStr] = newCahcedData;
+        var newCachedData = new CachedSubscribedData();
+        newCachedData.cacheEnabled = enableCache;
+        this.cacheByTupleSelector[tsStr] = newCachedData;
         this.tellServerWeWantData([tupleSelector]);
-        return newCahcedData.subject;
+        return newCachedData.subject;
     };
     TupleDataObserverService.prototype.cleanupDeadCaches = function () {
         for (var _i = 0, _a = UtilMisc_1.dictKeysFromObject(this.cacheByTupleSelector); _i < _a.length; _i++) {

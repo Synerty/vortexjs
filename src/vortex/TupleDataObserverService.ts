@@ -27,6 +27,7 @@ export class CachedSubscribedData {
 
     tuples: Tuple[] = [];
     serverResponded = false;
+    cacheEnabled = true;
 
     markForTearDown(): void {
         if (this.tearDownDate == null)
@@ -85,27 +86,35 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
         return promise;
     }
 
-    subscribeToTupleSelector(tupleSelector: TupleSelector): Subject<Tuple[]> {
+    subscribeToTupleSelector(tupleSelector: TupleSelector,
+                             enableCache: boolean = true): Subject<Tuple[]> {
 
         let tsStr = tupleSelector.toOrderedJsonStr();
         if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
             let cachedData = this.cacheByTupleSelector[tsStr];
             cachedData.resetTearDown();
+            cachedData.cacheEnabled = cachedData.cacheEnabled && enableCache;
 
-            // Emit the data 2 miliseconds later.
-            setTimeout(() => {
-                this.notifyObservers(cachedData, tupleSelector, cachedData.tuples);
-            }, 2);
+            if (cachedData.cacheEnabled) {
+                // Emit after we return
+                setTimeout(() => {
+                    this.notifyObservers(cachedData, tupleSelector, cachedData.tuples);
+                }, 0);
+            } else {
+                cachedData.tuples = [];
+                this.tellServerWeWantData([tupleSelector]);
+            }
 
             return cachedData.subject;
         }
 
-        let newCahcedData = new CachedSubscribedData();
-        this.cacheByTupleSelector[tsStr] = newCahcedData;
+        let newCachedData = new CachedSubscribedData();
+        newCachedData.cacheEnabled = enableCache;
+        this.cacheByTupleSelector[tsStr] = newCachedData;
 
         this.tellServerWeWantData([tupleSelector]);
 
-        return newCahcedData.subject;
+        return newCachedData.subject;
 
     }
 
