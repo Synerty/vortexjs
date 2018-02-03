@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {Tuple} from "../Tuple";
 import {TupleSelector} from "../TupleSelector";
-import {TupleOfflineStorageNameService} from "../TupleOfflineStorageNameService";
+import {TupleOfflineStorageNameService} from "./TupleOfflineStorageNameService";
 
 
 export interface TupleStorageTransaction {

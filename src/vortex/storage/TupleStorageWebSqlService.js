@@ -23,7 +23,7 @@ var WebSqlService_1 = require("../../websql/WebSqlService");
 var Payload_1 = require("../Payload");
 var core_1 = require("@angular/core");
 var TupleStorageServiceABC_1 = require("./TupleStorageServiceABC");
-var TupleOfflineStorageNameService_1 = require("../TupleOfflineStorageNameService");
+var TupleOfflineStorageNameService_1 = require("./TupleOfflineStorageNameService");
 var UtilMisc_1 = require("../UtilMisc");
 // ----------------------------------------------------------------------------
 var createTable = "CREATE TABLE IF NOT EXISTS tuples\n     (\n        tupleSelector TEXT,\n        dateTime REAL,\n        payload TEXT,\n        PRIMARY KEY (tupleSelector)\n     )";

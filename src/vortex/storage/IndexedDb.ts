@@ -1,10 +1,4 @@
-import {Injectable} from "@angular/core";
 import {dateStr} from "../UtilMisc";
-import {TupleStorageServiceABC, TupleStorageTransaction} from "./TupleStorageServiceABC";
-import {TupleOfflineStorageNameService} from "../TupleOfflineStorageNameService";
-import {TupleSelector} from "../TupleSelector";
-import {Tuple} from "../Tuple";
-import {Payload} from "../Payload";
 
 // ----------------------------------------------------------------------------
 

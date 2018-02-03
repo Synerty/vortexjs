@@ -2,7 +2,7 @@ import {TupleSelector} from "../TupleSelector";
 import {Tuple} from "../Tuple";
 import {Injectable} from "@angular/core";
 import {TupleStorageServiceABC, TupleStorageTransaction} from "./TupleStorageServiceABC";
-import {TupleOfflineStorageNameService} from "../TupleOfflineStorageNameService";
+import {TupleOfflineStorageNameService} from "./TupleOfflineStorageNameService";
 import {dateStr} from "../UtilMisc";
 
 // ----------------------------------------------------------------------------

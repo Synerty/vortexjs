@@ -1,25 +1,17 @@
-import { Tuple } from "../Tuple";
 import { TupleSelector } from "../TupleSelector";
+import { Tuple } from "../Tuple";
+import { TupleStorageFactoryService } from "../storage-factory/TupleStorageFactoryService";
+import { TupleStorageTransaction } from "./TupleStorageServiceABC";
 import { TupleOfflineStorageNameService } from "./TupleOfflineStorageNameService";
-export interface TupleStorageTransaction {
+export declare class TupleOfflineStorageService {
+    private storage;
+    constructor(storageFactory: TupleStorageFactoryService, tupleOfflineStorageServiceName: TupleOfflineStorageNameService);
+    transaction(forWrite: boolean): Promise<TupleStorageTransaction>;
     loadTuples(tupleSelector: TupleSelector): Promise<Tuple[]>;
     loadTuplesEncoded(tupleSelector: TupleSelector): Promise<string | null>;
     saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void>;
     saveTuplesEncoded(tupleSelector: TupleSelector, vortexMsg: string): Promise<void>;
     deleteTuples(tupleSelector: TupleSelector): Promise<void>;
     deleteOldTuples(deleteDataBeforeDate: Date): Promise<void>;
-    /** Close
-     *
-     * This will close the transaction, comitting if required.
-     */
-    close(): Promise<void>;
-}
-export declare abstract class TupleStorageServiceABC {
-    protected dbName: string;
-    constructor(name: TupleOfflineStorageNameService);
-    abstract open(): Promise<void>;
-    abstract isOpen(): boolean;
-    abstract close(): void;
-    abstract truncateStorage(): Promise<void>;
-    abstract transaction(forWrite: boolean): Promise<TupleStorageTransaction>;
+    truncateStorage(): Promise<void>;
 }

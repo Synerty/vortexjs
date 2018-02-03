@@ -1,5 +1,5 @@
 import { TupleStorageServiceABC, TupleStorageTransaction } from "./TupleStorageServiceABC";
-import { TupleOfflineStorageNameService } from "../TupleOfflineStorageNameService";
+import { TupleOfflineStorageNameService } from "./TupleOfflineStorageNameService";
 /** Tuple Storage IndexedDB
  *
  * This class handles storing and retrieving tuples to/from indexed db.

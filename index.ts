@@ -18,18 +18,18 @@ export {TupleStorageFactoryService} from "./src/vortex/storage-factory/TupleStor
 export {TupleStorageServiceABC} from "./src/vortex/storage/TupleStorageServiceABC";
 
 // Offline Tuple
-export {TupleOfflineStorageService} from "./src/vortex/TupleOfflineStorageService";
-export {TupleOfflineStorageNameService} from "./src/vortex/TupleOfflineStorageNameService";
+export {TupleOfflineStorageService} from "./src/vortex/storage/TupleOfflineStorageService";
+export {TupleOfflineStorageNameService} from "./src/vortex/storage/TupleOfflineStorageNameService";
 
 // Tuple Data Observable
 export {TupleSelector} from "./src/vortex/TupleSelector";
 export {
     TupleDataObserverService,
     TupleDataObservableNameService
-} from "./src/vortex/TupleDataObserverService";
+} from "./src/vortex/observable-service/TupleDataObserverService";
 
 // Offline and Observable
-export {TupleDataOfflineObserverService} from "./src/vortex/TupleDataOfflineObserverService";
+export {TupleDataOfflineObserverService} from "./src/vortex/observable-service/TupleDataOfflineObserverService";
 
 // Tuple Actions Pushers
 export {
@@ -40,18 +40,18 @@ export {
 export {
     TupleActionPushService,
     TupleActionPushNameService
-} from "./src/vortex/TupleActionPushService";
-export {TupleActionPushOfflineService} from "./src/vortex/TupleActionPushOfflineService";
+} from "./src/vortex/action-service/TupleActionPushService";
+export {TupleActionPushOfflineService} from "./src/vortex/action-service/TupleActionPushOfflineService";
 export {
     TupleActionPushOfflineSingletonService
-} from "./src/vortex/TupleActionPushOfflineSingletonService";
+} from "./src/vortex/action-service/TupleActionPushOfflineSingletonService";
 
 // Tuple Actions Processors
 export {
     TupleActionProcessorNameService,
     TupleActionProcessorService
-} from "./src/vortex/TupleActionProcessorService";
-export {TupleActionProcessorDelegateABC} from "./src/vortex/TupleActionProcessorDelegate";
+} from "./src/vortex/action-service/TupleActionProcessorService";
+export {TupleActionProcessorDelegateABC} from "./src/vortex/action-service/TupleActionProcessorDelegate";
 
 // Utility functions
 export {assert, extend} from "./src/vortex/UtilMisc";

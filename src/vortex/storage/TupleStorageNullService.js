@@ -21,7 +21,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var TupleStorageServiceABC_1 = require("./TupleStorageServiceABC");
-var TupleOfflineStorageNameService_1 = require("../TupleOfflineStorageNameService");
+var TupleOfflineStorageNameService_1 = require("./TupleOfflineStorageNameService");
 var UtilMisc_1 = require("../UtilMisc");
 // ----------------------------------------------------------------------------
 var TupleStorageNullService = /** @class */ (function (_super) {

@@ -1,5 +1,5 @@
 import { TupleStorageServiceABC, TupleStorageTransaction } from "./TupleStorageServiceABC";
-import { TupleOfflineStorageNameService } from "../TupleOfflineStorageNameService";
+import { TupleOfflineStorageNameService } from "./TupleOfflineStorageNameService";
 export declare class TupleStorageNullService extends TupleStorageServiceABC {
     constructor(name: TupleOfflineStorageNameService);
     open(): Promise<void>;

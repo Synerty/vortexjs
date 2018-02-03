@@ -1,6 +1,6 @@
 import { WebSqlFactoryService } from "../../websql/WebSqlService";
 import { TupleStorageServiceABC, TupleStorageTransaction } from "./TupleStorageServiceABC";
-import { TupleOfflineStorageNameService } from "../TupleOfflineStorageNameService";
+import { TupleOfflineStorageNameService } from "./TupleOfflineStorageNameService";
 export declare class TupleStorageWebSqlService extends TupleStorageServiceABC {
     private webSql;
     private openInProgressPromise;
