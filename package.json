@@ -24,7 +24,7 @@
   "private": false,
   "dependencies": {
     "@angular/core": "~5.2.0",
-    "@synerty/ng2-balloon-msg": "^0.3.3",
+    "@synerty/ng2-balloon-msg": "^0.3.4",
     "@types/deep-equal": "^0.0.30",
     "base-64": "^0.1.0",
     "core-js": "^2.4.1",
