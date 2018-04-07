@@ -1,4 +1,4 @@
-var NsSqlite = require("nativescript-sqlite");
+var NsSqlite = require("nativescript-sqlite/sqlite");
 var db = null;
 var schemaInstalled = false;
 function postError(call, callNumber, err) {

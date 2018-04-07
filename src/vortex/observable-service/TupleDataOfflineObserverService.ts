@@ -1,5 +1,5 @@
 import {Injectable, NgZone} from "@angular/core";
-import {Subject} from "rxjs";
+import {Subject} from "rxjs/Subject";
 import {VortexService} from "../VortexService";
 import {Tuple} from "../Tuple";
 import {TupleSelector} from "../TupleSelector";

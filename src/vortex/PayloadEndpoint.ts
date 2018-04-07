@@ -3,7 +3,7 @@ import {IPayloadFilt, Payload} from "./Payload";
 import {assert, dictKeysFromObject} from "./UtilMisc";
 import "./UtilArray";
 import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
-import {Subject} from "rxjs"; // Ensure it's included and defined
+import {Subject} from "rxjs/Subject"; // Ensure it's included and defined
 
 
 export class PayloadEndpoint {

@@ -1,4 +1,4 @@
-let NsSqlite = require("nativescript-sqlite");
+let NsSqlite = require("nativescript-sqlite/sqlite");
 
 declare let global: any;
 

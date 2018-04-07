@@ -2,7 +2,7 @@ import {IPayloadFilt, Payload} from "./Payload";
 import {Injectable, NgZone} from "@angular/core";
 import {Tuple} from "./Tuple";
 import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
-import {Observable} from "rxjs";
+import {Observable} from "rxjs/Observable";
 import {PayloadEndpoint} from "./PayloadEndpoint";
 import {IFilterUpdateCallable, TupleLoader} from "./TupleLoader";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";

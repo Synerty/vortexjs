@@ -1,4 +1,5 @@
-import {Observable, Observer} from "rxjs";
+import {Observable} from "rxjs/Observable";
+import { Observer} from "rxjs/Observer";
 import {Payload, IPayloadFilt} from "./Payload";
 import {PayloadEndpoint} from "./PayloadEndpoint";
 import {EventEmitter, NgZone} from "@angular/core";

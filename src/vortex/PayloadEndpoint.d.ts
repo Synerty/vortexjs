@@ -1,7 +1,7 @@
 import { IPayloadFilt, Payload } from "./Payload";
 import "./UtilArray";
 import { ComponentLifecycleEventEmitter } from "./ComponentLifecycleEventEmitter";
-import { Subject } from "rxjs";
+import { Subject } from "rxjs/Subject";
 export declare class PayloadEndpoint {
     private _observable;
     private _filt;

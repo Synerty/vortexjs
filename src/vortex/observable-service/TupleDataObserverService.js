@@ -20,7 +20,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var rxjs_1 = require("rxjs");
+var Subject_1 = require("rxjs/Subject");
 var VortexService_1 = require("../VortexService");
 var TupleSelector_1 = require("../TupleSelector");
 var Payload_1 = require("../Payload");
@@ -45,7 +45,7 @@ exports.TupleDataObservableNameService = TupleDataObservableNameService;
 var CachedSubscribedData = /** @class */ (function () {
     function CachedSubscribedData(tupleSelector) {
         this.tupleSelector = tupleSelector;
-        this.subject = new rxjs_1.Subject();
+        this.subject = new Subject_1.Subject();
         // The date the cache is scheduled to be torn down.
         // This will be X time after we notice that it has no subscribers
         this.tearDownDate = null;

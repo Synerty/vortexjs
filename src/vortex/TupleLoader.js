@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var rxjs_1 = require("rxjs");
+var Observable_1 = require("rxjs/Observable");
 var Payload_1 = require("./Payload");
 var PayloadEndpoint_1 = require("./PayloadEndpoint");
 var core_1 = require("@angular/core");
@@ -58,7 +58,7 @@ var TupleLoader = /** @class */ (function () {
         var doCheckSub = this.component.doCheckEvent
             .subscribe(function () { return _this.filterChangeCheck(); });
         // Create the observable object
-        this._observable = rxjs_1.Observable.create(function (observer) { return _this.observer = observer; });
+        this._observable = Observable_1.Observable.create(function (observer) { return _this.observer = observer; });
         // Call subscribe, otherwise the observer is never created, and we can never call
         // next() on it.
         this._observable.subscribe().unsubscribe();
