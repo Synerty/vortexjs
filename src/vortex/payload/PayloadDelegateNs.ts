@@ -12,7 +12,7 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
   constructor() {
     super();
     if (global.TNS_WEBPACK) {
-      let Worker = require("nativescript-worker-loader!../PayloadDelegateNsEncodeWorker.js");
+      let Worker = require("nativescript-worker-loader!./PayloadDelegateNsEncodeWorker.js");
       this.encodeWorker = new Worker();
     } else {
       this.encodeWorker = new Worker("./PayloadDelegateNsEncodeWorker.js");
@@ -22,7 +22,7 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
     this.encodeWorker.onerror = PayloadDelegateNs.onError;
 
     if (global.TNS_WEBPACK) {
-      let Worker = require("nativescript-worker-loader!../PayloadDelegateNsDecodeWorker.js");
+      let Worker = require("nativescript-worker-loader!./PayloadDelegateNsDecodeWorker.js");
       this.decodeWorker = new Worker();
     } else {
       this.decodeWorker = new Worker("./PayloadDelegateNsDecodeWorker.js");

@@ -18,7 +18,7 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.inMainDelegate = new PayloadDelegateInMain_1.PayloadDelegateInMain();
         if (global.TNS_WEBPACK) {
-            var Worker_1 = require("nativescript-worker-loader!../PayloadDelegateNsEncodeWorker.js");
+            var Worker_1 = require("nativescript-worker-loader!./PayloadDelegateNsEncodeWorker.js");
             _this.encodeWorker = new Worker_1();
         }
         else {
@@ -27,7 +27,7 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
         _this.encodeWorker.onmessage = PayloadDelegateNs.onMessage;
         _this.encodeWorker.onerror = PayloadDelegateNs.onError;
         if (global.TNS_WEBPACK) {
-            var Worker_2 = require("nativescript-worker-loader!../PayloadDelegateNsDecodeWorker.js");
+            var Worker_2 = require("nativescript-worker-loader!./PayloadDelegateNsDecodeWorker.js");
             _this.decodeWorker = new Worker_2();
         }
         else {
