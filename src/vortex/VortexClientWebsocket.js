@@ -113,7 +113,15 @@ var VortexClientWebsocket = /** @class */ (function (_super) {
             .catch(function (e) { return console.log("ERROR VortexClientWebsocket: " + e); });
     };
     VortexClientWebsocket.prototype.onOpen = function (event) {
-        this.vortexStatusService.setOnline(true);
+        var _this = this;
+        var check = function () {
+            if (_this.isReady) {
+                _this.vortexStatusService.setOnline(true);
+                return;
+            }
+            setTimeout(check, 50);
+        };
+        check();
         this.sendMessages();
     };
     VortexClientWebsocket.prototype.onClose = function (event) {

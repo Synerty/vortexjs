@@ -31,17 +31,17 @@ export class VortexClientWebsocket extends VortexClientABC {
         return this.socket != null && this.socket.readyState === this.Socket.OPEN;
     }
 
-  // OVERRIDE Send
-  send(payload: Payload | Payload[]): Promise<void> {
+    // OVERRIDE Send
+    send(payload: Payload | Payload[]): Promise<void> {
         if (!this.isReady) {
-          throw new Error("Websocked vortex is not online.");
+            throw new Error("Websocked vortex is not online.");
         }
 
         return super.send(payload);
     }
 
     // OVERRIDE reconnect
-    reconnect() :void {
+    reconnect(): void {
         if (this.closed)
             throw new Error("An attempt was made to reconnect a closed vortex");
 
@@ -136,7 +136,16 @@ export class VortexClientWebsocket extends VortexClientABC {
     }
 
     private onOpen(event) {
-        this.vortexStatusService.setOnline(true);
+        let check = () => {
+            if (this.isReady) {
+                this.vortexStatusService.setOnline(true);
+                return;
+            }
+
+            setTimeout(check, 50);
+        };
+
+        check();
         this.sendMessages();
     }
 
