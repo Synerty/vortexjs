@@ -3,12 +3,13 @@ import {Subject} from "rxjs/Subject";
 import {VortexService} from "../VortexService";
 import {Tuple} from "../Tuple";
 import {TupleSelector} from "../TupleSelector";
-import {Payload, IPayloadFilt} from "../Payload";
+import {IPayloadFilt, Payload} from "../Payload";
 import {PayloadEndpoint} from "../PayloadEndpoint";
 import {ComponentLifecycleEventEmitter} from "../ComponentLifecycleEventEmitter";
-import {extend, dictKeysFromObject} from "../UtilMisc";
+import {dictKeysFromObject, extend} from "../UtilMisc";
 import {VortexStatusService} from "../VortexStatusService";
 import {PayloadResponse} from "../PayloadResponse";
+import * as moment from "moment";
 
 @Injectable()
 export class TupleDataObservableNameService {
@@ -26,7 +27,13 @@ export class CachedSubscribedData {
     private TEARDOWN_WAIT = 120 * 1000; // 2 minutes, in milliseconds
 
     tuples: Tuple[] = [];
-    serverResponded = false;
+
+    /** Last Server Payload Date
+     * If the server has responded with a payload, this is the date in the payload
+     * @type {Date | null}
+     */
+    lastServerPayloadDate: moment.Moment | null = null;
+
     cacheEnabled = true;
 
     constructor(public tupleSelector: TupleSelector) {
@@ -84,7 +91,7 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
         });
 
         // Optionally typed, No need to worry about the fact that we convert this
-        // and then TypeScript doesn't recignise that data type change
+        // and then TypeScript doesn't recognise that data type change
         let promise: any = new PayloadResponse(this.vortexService, new Payload(startFilt))
             .then(payload => payload.tuples);
         return promise;
@@ -151,16 +158,25 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
         this.tellServerWeWantData(tupleSelectors);
     }
 
-    protected receivePayload(payload): void {
-        let tupleSelector = payload.filt.tupleSelector;
+    protected receivePayload(payload: Payload): void {
+        let tupleSelector = payload.filt["tupleSelector"];
         let tsStr = tupleSelector.toOrderedJsonStr();
 
         if (!this.cacheByTupleSelector.hasOwnProperty(tsStr))
             return;
 
         let cachedData = this.cacheByTupleSelector[tsStr];
+
+        let lastDate = cachedData.lastServerPayloadDate;
+        let thisDate = moment(payload.date);
+
+        // If the data is old, then disregard it.
+        if (lastDate != null && lastDate.isAfter(thisDate))
+            return;
+
+        cachedData.lastServerPayloadDate = thisDate;
         cachedData.tuples = payload.tuples;
-        cachedData.serverResponded = true;
+
         this.notifyObservers(cachedData, tupleSelector, payload.tuples);
     }
 
