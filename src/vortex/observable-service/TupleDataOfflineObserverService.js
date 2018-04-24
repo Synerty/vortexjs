@@ -60,7 +60,7 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
             .then(function (tuples) {
             // If the server has responded before we loaded the data, then just
             // ignore the cached data.
-            if (newCachedData.serverResponded)
+            if (newCachedData.lastServerPayloadDate != null)
                 return;
             // Update the tuples, and notify if them
             newCachedData.tuples = tuples;

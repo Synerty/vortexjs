@@ -58,7 +58,7 @@ export class TupleDataOfflineObserverService extends TupleDataObserverService {
             .then((tuples: Tuple[]) => {
                 // If the server has responded before we loaded the data, then just
                 // ignore the cached data.
-                if (newCachedData.serverResponded)
+                if (newCachedData.lastServerPayloadDate != null)
                     return;
 
                 // Update the tuples, and notify if them

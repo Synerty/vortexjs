@@ -3,10 +3,11 @@ import { Subject } from "rxjs/Subject";
 import { VortexService } from "../VortexService";
 import { Tuple } from "../Tuple";
 import { TupleSelector } from "../TupleSelector";
-import { IPayloadFilt } from "../Payload";
+import { IPayloadFilt, Payload } from "../Payload";
 import { PayloadEndpoint } from "../PayloadEndpoint";
 import { ComponentLifecycleEventEmitter } from "../ComponentLifecycleEventEmitter";
 import { VortexStatusService } from "../VortexStatusService";
+import * as moment from "moment";
 export declare class TupleDataObservableNameService {
     name: string;
     additionalFilt: {};
@@ -18,7 +19,11 @@ export declare class CachedSubscribedData {
     private tearDownDate;
     private TEARDOWN_WAIT;
     tuples: Tuple[];
-    serverResponded: boolean;
+    /** Last Server Payload Date
+     * If the server has responded with a payload, this is the date in the payload
+     * @type {Date | null}
+     */
+    lastServerPayloadDate: moment.Moment | null;
     cacheEnabled: boolean;
     constructor(tupleSelector: TupleSelector);
     markForTearDown(): void;
@@ -39,7 +44,7 @@ export declare class TupleDataObserverService extends ComponentLifecycleEventEmi
     subscribeToTupleSelector(tupleSelector: TupleSelector, enableCache?: boolean): Subject<Tuple[]>;
     private cleanupDeadCaches();
     protected vortexOnlineChanged(): void;
-    protected receivePayload(payload: any): void;
+    protected receivePayload(payload: Payload): void;
     protected notifyObservers(cachedData: CachedSubscribedData, tupleSelector: TupleSelector, tuples: Tuple[]): void;
     protected tellServerWeWantData(tupleSelectors: TupleSelector[], enableCache?: boolean, unsubscribe?: boolean): void;
 }

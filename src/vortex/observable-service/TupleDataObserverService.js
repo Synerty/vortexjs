@@ -29,6 +29,7 @@ var ComponentLifecycleEventEmitter_1 = require("../ComponentLifecycleEventEmitte
 var UtilMisc_1 = require("../UtilMisc");
 var VortexStatusService_1 = require("../VortexStatusService");
 var PayloadResponse_1 = require("../PayloadResponse");
+var moment = require("moment");
 var TupleDataObservableNameService = /** @class */ (function () {
     function TupleDataObservableNameService(name, additionalFilt) {
         if (additionalFilt === void 0) { additionalFilt = {}; }
@@ -51,7 +52,11 @@ var CachedSubscribedData = /** @class */ (function () {
         this.tearDownDate = null;
         this.TEARDOWN_WAIT = 120 * 1000; // 2 minutes, in milliseconds
         this.tuples = [];
-        this.serverResponded = false;
+        /** Last Server Payload Date
+         * If the server has responded with a payload, this is the date in the payload
+         * @type {Date | null}
+         */
+        this.lastServerPayloadDate = null;
         this.cacheEnabled = true;
     }
     CachedSubscribedData.prototype.markForTearDown = function () {
@@ -95,7 +100,7 @@ var TupleDataObserverService = /** @class */ (function (_super) {
             "tupleSelector": tupleSelector
         });
         // Optionally typed, No need to worry about the fact that we convert this
-        // and then TypeScript doesn't recignise that data type change
+        // and then TypeScript doesn't recognise that data type change
         var promise = new PayloadResponse_1.PayloadResponse(this.vortexService, new Payload_1.Payload(startFilt))
             .then(function (payload) { return payload.tuples; });
         return promise;
@@ -154,13 +159,18 @@ var TupleDataObserverService = /** @class */ (function (_super) {
         this.tellServerWeWantData(tupleSelectors);
     };
     TupleDataObserverService.prototype.receivePayload = function (payload) {
-        var tupleSelector = payload.filt.tupleSelector;
+        var tupleSelector = payload.filt["tupleSelector"];
         var tsStr = tupleSelector.toOrderedJsonStr();
         if (!this.cacheByTupleSelector.hasOwnProperty(tsStr))
             return;
         var cachedData = this.cacheByTupleSelector[tsStr];
+        var lastDate = cachedData.lastServerPayloadDate;
+        var thisDate = moment(payload.date);
+        // If the data is old, then disregard it.
+        if (lastDate != null && lastDate.isAfter(thisDate))
+            return;
+        cachedData.lastServerPayloadDate = thisDate;
         cachedData.tuples = payload.tuples;
-        cachedData.serverResponded = true;
         this.notifyObservers(cachedData, tupleSelector, payload.tuples);
     };
     TupleDataObserverService.prototype.notifyObservers = function (cachedData, tupleSelector, tuples) {
