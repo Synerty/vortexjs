@@ -44,7 +44,7 @@ export declare class TupleDataObserverService extends ComponentLifecycleEventEmi
     subscribeToTupleSelector(tupleSelector: TupleSelector, enableCache?: boolean): Subject<Tuple[]>;
     private cleanupDeadCaches();
     protected vortexOnlineChanged(): void;
-    protected receivePayload(payload: Payload): void;
-    protected notifyObservers(cachedData: CachedSubscribedData, tupleSelector: TupleSelector, tuples: Tuple[]): void;
+    protected receivePayload(payload: Payload, encodedPayload: string): void;
+    protected notifyObservers(cachedData: CachedSubscribedData, tupleSelector: TupleSelector, tuples: Tuple[], encodedPayload?: string | null): void;
     protected tellServerWeWantData(tupleSelectors: TupleSelector[], enableCache?: boolean, unsubscribe?: boolean): void;
 }

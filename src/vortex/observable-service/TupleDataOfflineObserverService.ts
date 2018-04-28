@@ -6,9 +6,9 @@ import {TupleSelector} from "../TupleSelector";
 import {VortexStatusService} from "../VortexStatusService";
 import {TupleOfflineStorageService} from "../storage/TupleOfflineStorageService";
 import {
+    CachedSubscribedData,
     TupleDataObservableNameService,
-    TupleDataObserverService,
-    CachedSubscribedData
+    TupleDataObserverService
 } from "./TupleDataObserverService";
 
 
@@ -91,24 +91,34 @@ export class TupleDataOfflineObserverService extends TupleDataObserverService {
             cachedData.tuples = tuples;
             super.notifyObservers(cachedData, tupleSelector, tuples);
         }
-
     }
 
     protected notifyObservers(cachedData: CachedSubscribedData,
                               tupleSelector: TupleSelector,
-                              tuples: Tuple[]): void {
+                              tuples: Tuple[],
+                              encodedPayload: string | null = null): void {
         // Pass the data on
         super.notifyObservers(cachedData, tupleSelector, tuples);
         // AND store the data locally
-        this.storeDataLocally(tupleSelector, tuples);
+        this.storeDataLocally(tupleSelector, tuples, encodedPayload);
     }
 
-    private storeDataLocally(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> {
-        return this.tupleOfflineStorageService.saveTuples(tupleSelector, tuples)
-            .catch(err => {
-                this.statusService.logError(`saveTuples failed : ${err}`);
-                throw new Error(err);
-            });
+    private storeDataLocally(tupleSelector: TupleSelector,
+                             tuples: Tuple[],
+                             encodedPayload: string | null = null): Promise<void> {
+
+        let errFunc = (err: string) => {
+            this.statusService.logError(`saveTuples failed : ${err}`);
+            throw new Error(err);
+        };
+
+        if (encodedPayload == null) {
+            return this.tupleOfflineStorageService.saveTuples(tupleSelector, tuples)
+                .catch(errFunc);
+        }
+
+        this.tupleOfflineStorageService.saveTuplesEncoded(tupleSelector, encodedPayload)
+            .catch(errFunc);
     }
 }
 

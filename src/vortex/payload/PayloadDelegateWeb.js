@@ -11,12 +11,18 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var PayloadDelegateABC_1 = require("./PayloadDelegateABC");
+var PayloadDelegateInMain_1 = require("./PayloadDelegateInMain");
 var PayloadDelegateWeb = /** @class */ (function (_super) {
     __extends(PayloadDelegateWeb, _super);
     function PayloadDelegateWeb() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.inMainDelegate = new PayloadDelegateInMain_1.PayloadDelegateInMain();
+        return _this;
     }
     PayloadDelegateWeb.prototype.deflateAndEncode = function (payloadJson) {
+        // Don't send small messages to the worker
+        if (payloadJson.length < (10 * 1024))
+            return this.inMainDelegate.deflateAndEncode(payloadJson);
         var worker = new Worker('./PayloadDelegateWebEncodeWorker.js');
         return new Promise(function (resolve, reject) {
             function callError(error) {
@@ -41,7 +47,14 @@ var PayloadDelegateWeb = /** @class */ (function (_super) {
             worker.postMessage({ payloadJson: payloadJson });
         });
     };
+    // ------------------------------------------------------------------------
+    PayloadDelegateWeb.prototype.encodeEnvelope = function (payloadJson) {
+        return this.inMainDelegate.encodeEnvelope(payloadJson);
+    };
     PayloadDelegateWeb.prototype.decodeAndInflate = function (vortexStr) {
+        // Don't send small messages to the worker
+        if (vortexStr.length < (5 * 1024))
+            return this.inMainDelegate.decodeAndInflate(vortexStr);
         var worker = new Worker('./PayloadDelegateWebDecodeWorker.js');
         return new Promise(function (resolve, reject) {
             function callError(error) {
@@ -65,6 +78,10 @@ var PayloadDelegateWeb = /** @class */ (function (_super) {
             }, false);
             worker.postMessage({ vortexStr: vortexStr });
         });
+    };
+    // ------------------------------------------------------------------------
+    PayloadDelegateWeb.prototype.decodeEnvelope = function (vortexStr) {
+        return this.inMainDelegate.decodeEnvelope(vortexStr);
     };
     return PayloadDelegateWeb;
 }(PayloadDelegateABC_1.PayloadDelegateABC));

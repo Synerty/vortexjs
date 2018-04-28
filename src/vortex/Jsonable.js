@@ -105,7 +105,8 @@ var Jsonable = /** @class */ (function (_super) {
             convertedValue = UtilMisc_1.deepCopy(value);
         }
         else if (valueType === SerialiseUtil_1.default.T_RAPUI_TUPLE
-            || valueType === SerialiseUtil_1.default.T_RAPUI_PAYLOAD) {
+            || valueType === SerialiseUtil_1.default.T_RAPUI_PAYLOAD
+            || valueType === SerialiseUtil_1.default.T_RAPUI_PAYLOAD_ENVELOPE) {
             convertedValue = value.toJsonDict();
         }
         else if (valueType === SerialiseUtil_1.default.T_DICT) {
@@ -178,7 +179,6 @@ var Jsonable = /** @class */ (function (_super) {
             var tupleType = value[Jsonable.JSON_TUPLE_TYPE];
             var newTuple = null;
             if (TupleMod.TUPLE_TYPES[tupleType] == null) {
-                var Tuple = require("./Tuple");
                 newTuple = new TupleMod.Tuple(tupleType);
             }
             else {
@@ -187,10 +187,15 @@ var Jsonable = /** @class */ (function (_super) {
             }
             return newTuple.fromJsonDict(value);
         }
-        // Payload
+        // Handle the case of payloads within payloads
         if (valueType === SerialiseUtil_1.default.T_RAPUI_PAYLOAD) {
-            var Payload = require("./Payload");
-            return new Payload().fromJsonDict(value);
+            var PayloadMod = require("./Payload");
+            return new PayloadMod.Payload().fromJsonDict(value);
+        }
+        // Payload Endpoint
+        if (valueType === SerialiseUtil_1.default.T_RAPUI_PAYLOAD_ENVELOPE) {
+            var PayloadEnvelopeMod = require("./PayloadEnvelope");
+            return new PayloadEnvelopeMod.PayloadEnvelope().fromJsonDict(value);
         }
         /* SKIP T_GENERIC_CLASS */
         if (valueType === SerialiseUtil_1.default.T_DICT) {

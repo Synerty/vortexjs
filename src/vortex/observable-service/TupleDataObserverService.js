@@ -85,7 +85,17 @@ var TupleDataObserverService = /** @class */ (function (_super) {
             "key": "tupleDataObservable"
         }, tupleDataObservableName.additionalFilt);
         _this.endpoint = new PayloadEndpoint_1.PayloadEndpoint(_this, _this.filt);
-        _this.endpoint.observable.subscribe(function (payload) { return _this.receivePayload(payload); });
+        _this.endpoint.observable
+            .subscribe(function (payloadEnvelope) {
+            payloadEnvelope
+                .decodePayload()
+                .then(function (payload) {
+                _this.receivePayload(payload, payloadEnvelope.encodedPayload);
+            })
+                .catch(function (e) {
+                console.log("TupleActionProcessorService:Error decoding payload " + e);
+            });
+        });
         statusService.isOnline
             .takeUntil(_this.onDestroyEvent)
             .filter(function (online) { return online === true; })
@@ -158,7 +168,7 @@ var TupleDataObserverService = /** @class */ (function (_super) {
         }
         this.tellServerWeWantData(tupleSelectors);
     };
-    TupleDataObserverService.prototype.receivePayload = function (payload) {
+    TupleDataObserverService.prototype.receivePayload = function (payload, encodedPayload) {
         var tupleSelector = payload.filt["tupleSelector"];
         var tsStr = tupleSelector.toOrderedJsonStr();
         if (!this.cacheByTupleSelector.hasOwnProperty(tsStr))
@@ -174,9 +184,10 @@ var TupleDataObserverService = /** @class */ (function (_super) {
             return;
         cachedData.lastServerPayloadDate = thisDate;
         cachedData.tuples = payload.tuples;
-        this.notifyObservers(cachedData, tupleSelector, payload.tuples);
+        this.notifyObservers(cachedData, tupleSelector, payload.tuples, encodedPayload);
     };
-    TupleDataObserverService.prototype.notifyObservers = function (cachedData, tupleSelector, tuples) {
+    TupleDataObserverService.prototype.notifyObservers = function (cachedData, tupleSelector, tuples, encodedPayload) {
+        if (encodedPayload === void 0) { encodedPayload = null; }
         try {
             cachedData.subject.next(tuples);
         }

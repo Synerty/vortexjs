@@ -31,10 +31,24 @@ export class PayloadDelegateInMain extends PayloadDelegateABC {
     });
   }
 
+  encodeEnvelope(payloadJson: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      let encodedData = btoa(payloadJson);
+      resolve(encodedData);
+    });
+  }
+
   decodeAndInflate(vortexStr: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       let compressedData = atob(vortexStr);
       let payloadJson = pako.inflate(compressedData, {to: "string"});
+      resolve(payloadJson);
+    });
+  }
+
+  decodeEnvelope(vortexStr: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      let payloadJson = atob(vortexStr);
       resolve(payloadJson);
     });
   }

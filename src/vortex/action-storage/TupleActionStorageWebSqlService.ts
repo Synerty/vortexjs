@@ -31,13 +31,13 @@ export class TupleActionStorageWebSqlService extends TupleActionStorageServiceAB
 
 
     storeAction(scope: string, tupleAction: TupleActionABC, payload: Payload): Promise<void> {
-        return payload.toVortexMsg()
-            .then((vortexMsg: string) => {
+        return payload.toEncodedPayload()
+            .then((encodedPayload: string) => {
 
                 let sql = `INSERT INTO ${tableName}
                     (scope, uuid, payload)
                     VALUES (?, ?, ?)`;
-                let bindParams = [scope, tupleAction.uuid, vortexMsg];
+                let bindParams = [scope, tupleAction.uuid, encodedPayload];
 
                 return this.webSql.runSql(sql, bindParams)
                     .then(() => null);
@@ -58,7 +58,7 @@ export class TupleActionStorageWebSqlService extends TupleActionStorageServiceAB
                 }
 
                 let row1 = rows[0];
-                return Payload.fromVortexMsg(row1.payload);
+                return Payload.fromEncodedPayload(row1.payload);
             });
     }
 

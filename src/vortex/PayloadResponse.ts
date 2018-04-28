@@ -3,6 +3,7 @@ import {Payload, IPayloadFilt} from "./Payload";
 import {dateStr} from "./UtilMisc";
 import {VortexService} from "./VortexService";
 import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
+import {PayloadEnvelope} from "./PayloadEnvelope";
 
 /** Payload Response
  *
@@ -43,7 +44,7 @@ export class PayloadResponse {
   private _lcEmitter: ComponentLifecycleEventEmitter
     = new ComponentLifecycleEventEmitter();
 
-  private promise: Promise<Payload>;
+  private promise: Promise<PayloadEnvelope>;
 
   /** Constructor
    * @param vortexService:
@@ -55,7 +56,7 @@ export class PayloadResponse {
               private payload: Payload,
               private timeout: number = PayloadResponse.RESPONSE_TIMEOUT_SECONDS,
               private resultCheck: boolean = true) {
-    this.promise = new Promise<Payload>((resolve, reject) => {
+    this.promise = new Promise<PayloadEnvelope>((resolve, reject) => {
 
       // Start the timer
       let timer = null;
@@ -73,7 +74,7 @@ export class PayloadResponse {
           clearTimeout(timer);
           timer = null;
         }
-      }
+      };
 
       let callFail = (status: string, msgArg = '') => {
         let filtStr = JSON.stringify(this.payload.filt);
@@ -87,14 +88,14 @@ export class PayloadResponse {
       // Subscribe
       endpoint.observable
         .takeUntil(this._lcEmitter.onDestroyEvent)
-        .subscribe((payload) => {
+        .subscribe((payloadEnvelope:PayloadEnvelope) => {
 
-          let r = payload.result; // success is null or true
+          let r = payloadEnvelope.result; // success is null or true
           if (this.resultCheck && !(r == null || r === true)) {
             callFail(this.FAILED, r.toString());
           } else {
             finish(this.SUCCESS);
-            resolve(payload);
+            resolve(payloadEnvelope);
           }
 
         });
@@ -116,7 +117,7 @@ export class PayloadResponse {
    * @param onrejected The callback to execute when the Promise is rejected.
    * @returns A Promise for the completion of which ever callback is executed.
    */
-  then(onfulfilled, onrejected = null): Promise<Payload> {
+  then(onfulfilled, onrejected = null): Promise<PayloadEnvelope> {
     return this.promise.then(onfulfilled, onrejected);
   }
 
@@ -126,7 +127,7 @@ export class PayloadResponse {
    * @param onrejected The callback to execute when the Promise is rejected.
    * @returns A Promise for the completion of the callback.
    */
-  catch(onrejected): Promise<Payload> {
+  catch(onrejected): Promise<PayloadEnvelope> {
     return this.promise.catch(onrejected);
   }
 

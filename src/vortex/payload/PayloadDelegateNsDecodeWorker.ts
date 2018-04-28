@@ -7,8 +7,8 @@ global.onmessage = function (postedArg) {
   let callNumber = postedArg["data"]["callNumber"];
 
   try {
-    var compressedData = base64.decode(postedArg["data"]["vortexStr"]);
-    var payloadJson = pako.inflate(compressedData, { to: "string" });
+    let compressedData = base64.decode(postedArg["data"]["vortexStr"]);
+    let payloadJson = pako.inflate(compressedData, { to: "string" });
 
     global.postMessage({
       callNumber: callNumber,

@@ -7,6 +7,7 @@ var core_1 = require("@angular/core");
 var VortexClientABC_1 = require("./VortexClientABC");
 var PayloadFilterKeys_1 = require("./PayloadFilterKeys");
 var UtilMisc_1 = require("./UtilMisc");
+var PayloadEnvelope_1 = require("./PayloadEnvelope");
 // ------------------
 // Some private structures
 var TupleLoaderEventEnum;
@@ -33,12 +34,11 @@ var TupleLoaderEventEnum;
  * * "del()"
  */
 var TupleLoader = /** @class */ (function () {
-    function TupleLoader(vortex, component, zone, filterUpdateCallable, balloonMsg) {
+    function TupleLoader(vortex, component, filterUpdateCallable, balloonMsg) {
         if (balloonMsg === void 0) { balloonMsg = null; }
         var _this = this;
         this.vortex = vortex;
         this.component = component;
-        this.zone = zone;
         this.balloonMsg = balloonMsg;
         this.lastPayloadFilt = null;
         this.lastTuples = null;
@@ -103,8 +103,11 @@ var TupleLoader = /** @class */ (function () {
         }
         this.lastPayloadFilt = newFilter;
         this.endpoint = new PayloadEndpoint_1.PayloadEndpoint(this.component, this.lastPayloadFilt, true);
-        this.endpoint.observable.subscribe(function (payload) { return _this.processPayload(payload); });
-        this.vortex.send(new Payload_1.Payload(this.lastPayloadFilt));
+        this.endpoint.observable
+            .subscribe(function (payloadEnvelope) {
+            _this.processPayloadEnvelope(payloadEnvelope);
+        });
+        this.vortex.send(new PayloadEnvelope_1.PayloadEnvelope(this.lastPayloadFilt));
     };
     /**
      * Load Loads the data from a server
@@ -177,7 +180,10 @@ var TupleLoader = /** @class */ (function () {
                 return promise;
             }
             // Save the tuples
-            this.vortex.send(new Payload_1.Payload(this.lastPayloadFilt, this.lastTuples));
+            new Payload_1.Payload(this.lastPayloadFilt, this.lastTuples)
+                .makePayloadEnvelope()
+                .then(function (pe) { return _this.vortex.send(pe); })
+                .catch(function (e) { return "TupleLoader, failed to encode payload " + e; });
         }
         else {
             throw new Error("Type " + type + " is not implemented.");
@@ -202,14 +208,14 @@ var TupleLoader = /** @class */ (function () {
         delete this.lastPayloadFilt[PayloadFilterKeys_1.plDeleteKey];
         return promise;
     };
-    TupleLoader.prototype.processPayload = function (payload) {
+    TupleLoader.prototype.processPayloadEnvelope = function (payloadEnvelope) {
         var _this = this;
         if (this.timer) {
             clearTimeout(this.timer);
             this.timer = null;
         }
         // No result, means this was a load
-        if (payload.result == null) {
+        if (payloadEnvelope.result == null) {
             try {
                 this.event.emit(TupleLoaderEventEnum.Load);
             }
@@ -219,9 +225,9 @@ var TupleLoader = /** @class */ (function () {
             }
             // Result, means this was a save
         }
-        else if (payload.result === true) {
+        else if (payloadEnvelope.result === true) {
             try {
-                if (payload.filt.hasOwnProperty(PayloadFilterKeys_1.plDeleteKey)) {
+                if (payloadEnvelope.filt.hasOwnProperty(PayloadFilterKeys_1.plDeleteKey)) {
                     this.event.emit(TupleLoaderEventEnum.Delete);
                 }
                 else {
@@ -236,18 +242,22 @@ var TupleLoader = /** @class */ (function () {
         }
         else {
             if (this.lastPromise) {
-                this.lastPromise.reject(payload.result.toString());
+                this.lastPromise.reject(payloadEnvelope.result.toString());
                 this.lastPromise = null;
             }
-            this.balloonMsg && this.balloonMsg.showError(payload.result.toString());
+            this.balloonMsg && this.balloonMsg.showError(payloadEnvelope.result.toString());
             return;
         }
         if (this.lastPromise) {
-            this.lastPromise.resolve(payload);
+            this.lastPromise.resolve(payloadEnvelope);
             this.lastPromise = null;
         }
-        this.lastTuples = payload.tuples;
-        this.zone.run(function () { return _this.observer.next(payload.tuples); });
+        payloadEnvelope.decodePayload()
+            .then(function (payload) {
+            _this.lastTuples = payload.tuples;
+            _this.observer.next(payload.tuples);
+        })
+            .catch(function (e) { return console.log("TupleLoader failed to decode payload " + e); });
     };
     TupleLoader.prototype.resetTimer = function () {
         this.operationTimeout(false);

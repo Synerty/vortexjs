@@ -1,37 +1,33 @@
-import { Tuple } from "./Tuple";
 import Jsonable from "./Jsonable";
 import "./UtilArray";
 import { PayloadDelegateABC } from "./payload/PayloadDelegateABC";
-/**
- * IPayloadFilt
- * This interface defines the structure for a valid payload filter.
- */
-export interface IPayloadFilt {
-    key: string;
-    [more: string]: any;
-}
+import { Payload } from "./Payload";
 /**
  *
  * This class is serialised and transferred over the vortex to the server.
  */
-export declare class Payload extends Jsonable {
+export declare class PayloadEnvelope extends Jsonable {
     private static workerDelegate;
+    static readonly vortexUuidKey: string;
+    static readonly vortexNameKey: string;
     filt: {};
-    tuples: Array<Tuple | any>;
+    encodedPayload: string | null;
+    result: string | {} | null;
     date: Date | null;
     /**
-     * Payload
+     * Payload Envelope
      * This class is serialised and tranferred over the vortex to the server.
      * @param filt The filter that the server handler is listening for
-     * @param tuples: The tuples to init the Payload with
+     * @param encodedPayload: The encoded payload to go into this envelope
      * different location @depreciated
      * @param date The date for this envelope, it should match the payload.
      */
-    constructor(filt?: {}, tuples?: Array<Tuple | any>, date?: Date | null);
+    constructor(filt?: {}, encodedPayload?: string | null, date?: Date | null);
     static setWorkerDelegate(delegate: PayloadDelegateABC): void;
+    isEmpty(): boolean;
+    decodePayload(): Promise<Payload>;
     private _fromJson(jsonStr);
     private _toJson();
-    static fromEncodedPayload(encodedPayloadStr: string): Promise<Payload>;
-    toEncodedPayload(): Promise<string>;
-    makePayloadEnvelope(): Promise<any>;
+    static fromVortexMsg(vortexStr: string): Promise<PayloadEnvelope>;
+    toVortexMsg(): Promise<string>;
 }

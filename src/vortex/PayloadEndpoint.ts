@@ -1,13 +1,15 @@
 import {payloadIO} from "./PayloadIO";
-import {IPayloadFilt, Payload} from "./Payload";
+import {IPayloadFilt} from "./Payload";
 import {assert, dictKeysFromObject} from "./UtilMisc";
 import "./UtilArray";
 import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
-import {Subject} from "rxjs/Subject"; // Ensure it's included and defined
+import {Subject} from "rxjs/Subject";
+import {Observable} from "rxjs/Observable";
+import {PayloadEnvelope} from "./PayloadEnvelope";
 
 
 export class PayloadEndpoint {
-    private _observable: Subject<Payload>;
+    private _observable: Subject<PayloadEnvelope>;
 
     private _filt: { key: string };
     private _lastPayloadDate: Date | null;
@@ -40,10 +42,10 @@ export class PayloadEndpoint {
             }
         );
 
-        this._observable = new Subject<Payload>();
+        this._observable = new Subject<PayloadEnvelope>();
     }
 
-    get observable() {
+    get observable(): Observable<PayloadEnvelope> {
         return this._observable;
     }
 
@@ -54,20 +56,21 @@ export class PayloadEndpoint {
      * @return null, or if the function is overloaded, you could return STOP_PROCESSING
      * from PayloadIO, which will tell it to stop processing further endpoints.
      */
-    process(payload: Payload): null | string {
-        if (!this.checkFilt(this._filt, payload.filt))
+    process(payloadEnvelope: PayloadEnvelope): null | string {
+        if (!this.checkFilt(this._filt, payloadEnvelope.filt))
             return null;
 
-        if (!this.checkDate(payload))
+        if (!this.checkDate(payloadEnvelope))
             return null;
 
         try {
-            this._observable.next(payload);
+            this._observable.next(payloadEnvelope);
+
         } catch (e) {
             // NOTE: Observables automatically remove observers when the raise exceptions.
             console.log(`ERROR: PayloadEndpoint.process, observable has been removed
             ${e.toString()}
-            ${JSON.stringify(payload.filt)}`);
+            ${JSON.stringify(payloadEnvelope.filt)}`);
         }
 
         return null;

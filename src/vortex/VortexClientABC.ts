@@ -4,6 +4,7 @@ import {rapuiClientEcho} from "./PayloadFilterKeys";
 import {payloadIO} from "./PayloadIO";
 import {NgZone} from "@angular/core";
 import {VortexStatusService} from "./VortexStatusService";
+import {PayloadEnvelope} from "./PayloadEnvelope";
 
 
 /**
@@ -28,7 +29,6 @@ export abstract class VortexClientABC {
      * the server.
      */
     constructor(protected vortexStatusService: VortexStatusService,
-                private zone: NgZone,
                 url: string) {
         this._uuid = VortexClientABC.makeUuid();
         this._name = "browser";
@@ -69,23 +69,23 @@ export abstract class VortexClientABC {
         }
     }
 
-    send(payload: Payload | Payload[]): Promise<void> {
+    send(payloadEnvelope: PayloadEnvelope | PayloadEnvelope[]): Promise<void> {
         if (this.closed) {
             let msg = dateStr() + "VortexService is closed, Probably due to a login page reload";
             console.log(msg);
             throw new Error("An attempt was made to reconnect a closed vortex");
         }
 
-        let payloads: Payload[] = [];
-        if (payload instanceof Array)
-            payloads = payload;
+        let payloadEnvelopes: PayloadEnvelope[] = [];
+        if (payloadEnvelope instanceof Array)
+            payloadEnvelopes = payloadEnvelope;
         else
-            payloads = [payload];
+            payloadEnvelopes = [payloadEnvelope];
 
-        for (let p of payloads) {
-            // Empty payloads are like heart beats, don't check them
+        for (let p of payloadEnvelopes) {
+            // Empty payloadEnvelopes are like heart beats, don't check them
             if (!p.isEmpty() && p.filt["key"] == null) {
-                throw new Error("There is no 'key' in the payload filt"
+                throw new Error("There is no 'key' in the payloadEnvelopes filt"
                     + ", There must be one for routing");
             }
         }
@@ -93,9 +93,9 @@ export abstract class VortexClientABC {
         let vortexMsgs: string[] = [];
         let promisies = [];
 
-        for (let payload of payloads) {
+        for (let payloadEnvelope of payloadEnvelopes) {
             promisies.push(
-                payload.toVortexMsg()
+                payloadEnvelope.toVortexMsg()
                     .then((vortexMsg) => vortexMsgs.push(vortexMsg))
             );
         }
@@ -103,9 +103,9 @@ export abstract class VortexClientABC {
         return Promise.all(promisies)
             .then(() => this.sendVortexMsg(vortexMsgs))
             .catch(e => {
-              let msg = `ERROR VortexClientABC: ${e.toString()}`;
-              console.log(msg);
-              throw new Error(msg);
+                let msg = `ERROR VortexClientABC: ${e.toString()}`;
+                console.log(msg);
+                throw new Error(msg);
             });
     }
 
@@ -118,7 +118,7 @@ export abstract class VortexClientABC {
             throw new Error("An attempt was made to reconnect a closed vortex");
 
         this.restartTimer();
-        this.send(new Payload());
+        this.send(new PayloadEnvelope());
     }
 
 
@@ -160,31 +160,29 @@ export abstract class VortexClientABC {
     /**
      * Receive
      * This should only be called only from VortexConnection
-     * @param payload {Payload}
+     * @param payloadEnvelope {Payload}
      */
-    protected receive(payload: Payload): void {
+    protected receive(payloadEnvelope: PayloadEnvelope): void {
         this.beat();
-        if (payload.filt.hasOwnProperty(rapuiClientEcho)) {
-            delete payload[rapuiClientEcho];
-            this.send(payload);
+        if (payloadEnvelope.filt.hasOwnProperty(rapuiClientEcho)) {
+            delete payloadEnvelope[rapuiClientEcho];
+            this.send(payloadEnvelope);
         }
 
-        if (payload.isEmpty()) {
-            if (payload.filt[Payload.vortexUuidKey] != null)
-                this.serverVortexUuid = payload.filt[Payload.vortexUuidKey];
+        if (payloadEnvelope.isEmpty()) {
+            if (payloadEnvelope.filt[PayloadEnvelope.vortexUuidKey] != null)
+                this.serverVortexUuid = payloadEnvelope.filt[PayloadEnvelope.vortexUuidKey];
 
-            if (payload.filt[Payload.vortexNameKey] != null)
-                this.serverVortexName = payload.filt[Payload.vortexNameKey];
+            if (payloadEnvelope.filt[PayloadEnvelope.vortexNameKey] != null)
+                this.serverVortexName = payloadEnvelope.filt[PayloadEnvelope.vortexNameKey];
 
             return;
         }
 
-        // console.log(dateStr() + "Received payload with filt : " + JSON.stringify(payload.filt));
+        // console.log(dateStr() + "Received payloadEnvelope with filt : " + JSON.stringify(payloadEnvelope.filt));
 
         // TODO, Tell the payloadIO the vortexUuid
-        this.zone.run(() => {
-            payloadIO.process(payload);
-        });
+        payloadIO.process(payloadEnvelope);
     }
 
 

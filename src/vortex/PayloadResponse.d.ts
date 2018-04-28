@@ -1,5 +1,6 @@
 import { Payload } from "./Payload";
 import { VortexService } from "./VortexService";
+import { PayloadEnvelope } from "./PayloadEnvelope";
 /** Payload Response
  *
  *    This class is used to catch responses from a sent payload.
@@ -48,13 +49,13 @@ export declare class PayloadResponse {
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of which ever callback is executed.
      */
-    then(onfulfilled: any, onrejected?: any): Promise<Payload>;
+    then(onfulfilled: any, onrejected?: any): Promise<PayloadEnvelope>;
     /**
      * Attaches a callback for only the rejection of the Promise.
      * @param onrejected The callback to execute when the Promise is rejected.
      * @returns A Promise for the completion of the callback.
      */
-    catch(onrejected: any): Promise<Payload>;
+    catch(onrejected: any): Promise<PayloadEnvelope>;
     /** Is Response Payload
      *
      * The PayloadResponse tags the payloads, so it expects a unique message back.

@@ -1,6 +1,5 @@
-import { Payload } from "./Payload";
-import { NgZone } from "@angular/core";
 import { VortexStatusService } from "./VortexStatusService";
+import { PayloadEnvelope } from "./PayloadEnvelope";
 /**
  * Server response timeout in milliseconds
  * @type {number}
@@ -8,7 +7,6 @@ import { VortexStatusService } from "./VortexStatusService";
 export declare let SERVER_RESPONSE_TIMEOUT: number;
 export declare abstract class VortexClientABC {
     protected vortexStatusService: VortexStatusService;
-    private zone;
     private beatTimer;
     private _uuid;
     private _name;
@@ -20,13 +18,13 @@ export declare abstract class VortexClientABC {
      * RapUI VortexService, This class is responsible for sending and receiving payloads to/from
      * the server.
      */
-    constructor(vortexStatusService: VortexStatusService, zone: NgZone, url: string);
+    constructor(vortexStatusService: VortexStatusService, url: string);
     static makeUuid(): string;
     readonly url: string;
     readonly uuid: string;
     readonly name: string;
     closed: boolean;
-    send(payload: Payload | Payload[]): Promise<void>;
+    send(payloadEnvelope: PayloadEnvelope | PayloadEnvelope[]): Promise<void>;
     protected abstract sendVortexMsg(vortexMsgs: string[]): void;
     protected abstract shutdown(): void;
     reconnect(): void;
@@ -37,7 +35,7 @@ export declare abstract class VortexClientABC {
     /**
      * Receive
      * This should only be called only from VortexConnection
-     * @param payload {Payload}
+     * @param payloadEnvelope {Payload}
      */
-    protected receive(payload: Payload): void;
+    protected receive(payloadEnvelope: PayloadEnvelope): void;
 }

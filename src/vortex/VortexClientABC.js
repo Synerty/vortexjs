@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Payload_1 = require("./Payload");
 var UtilMisc_1 = require("./UtilMisc");
 var PayloadFilterKeys_1 = require("./PayloadFilterKeys");
 var PayloadIO_1 = require("./PayloadIO");
+var PayloadEnvelope_1 = require("./PayloadEnvelope");
 /**
  * Server response timeout in milliseconds
  * @type {number}
@@ -14,9 +14,8 @@ var VortexClientABC = /** @class */ (function () {
      * RapUI VortexService, This class is responsible for sending and receiving payloads to/from
      * the server.
      */
-    function VortexClientABC(vortexStatusService, zone, url) {
+    function VortexClientABC(vortexStatusService, url) {
         this.vortexStatusService = vortexStatusService;
-        this.zone = zone;
         this.beatTimer = null;
         this.serverVortexUuid = null;
         this.serverVortexName = null;
@@ -67,31 +66,31 @@ var VortexClientABC = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    VortexClientABC.prototype.send = function (payload) {
+    VortexClientABC.prototype.send = function (payloadEnvelope) {
         var _this = this;
         if (this.closed) {
             var msg = UtilMisc_1.dateStr() + "VortexService is closed, Probably due to a login page reload";
             console.log(msg);
             throw new Error("An attempt was made to reconnect a closed vortex");
         }
-        var payloads = [];
-        if (payload instanceof Array)
-            payloads = payload;
+        var payloadEnvelopes = [];
+        if (payloadEnvelope instanceof Array)
+            payloadEnvelopes = payloadEnvelope;
         else
-            payloads = [payload];
-        for (var _i = 0, payloads_1 = payloads; _i < payloads_1.length; _i++) {
-            var p = payloads_1[_i];
-            // Empty payloads are like heart beats, don't check them
+            payloadEnvelopes = [payloadEnvelope];
+        for (var _i = 0, payloadEnvelopes_1 = payloadEnvelopes; _i < payloadEnvelopes_1.length; _i++) {
+            var p = payloadEnvelopes_1[_i];
+            // Empty payloadEnvelopes are like heart beats, don't check them
             if (!p.isEmpty() && p.filt["key"] == null) {
-                throw new Error("There is no 'key' in the payload filt"
+                throw new Error("There is no 'key' in the payloadEnvelopes filt"
                     + ", There must be one for routing");
             }
         }
         var vortexMsgs = [];
         var promisies = [];
-        for (var _a = 0, payloads_2 = payloads; _a < payloads_2.length; _a++) {
-            var payload_1 = payloads_2[_a];
-            promisies.push(payload_1.toVortexMsg()
+        for (var _a = 0, payloadEnvelopes_2 = payloadEnvelopes; _a < payloadEnvelopes_2.length; _a++) {
+            var payloadEnvelope_1 = payloadEnvelopes_2[_a];
+            promisies.push(payloadEnvelope_1.toVortexMsg()
                 .then(function (vortexMsg) { return vortexMsgs.push(vortexMsg); }));
         }
         return Promise.all(promisies)
@@ -106,7 +105,7 @@ var VortexClientABC = /** @class */ (function () {
         if (this.closed)
             throw new Error("An attempt was made to reconnect a closed vortex");
         this.restartTimer();
-        this.send(new Payload_1.Payload());
+        this.send(new PayloadEnvelope_1.PayloadEnvelope());
     };
     VortexClientABC.prototype.beat = function () {
         // We may still get a beat before the connection closes
@@ -138,26 +137,24 @@ var VortexClientABC = /** @class */ (function () {
     /**
      * Receive
      * This should only be called only from VortexConnection
-     * @param payload {Payload}
+     * @param payloadEnvelope {Payload}
      */
-    VortexClientABC.prototype.receive = function (payload) {
+    VortexClientABC.prototype.receive = function (payloadEnvelope) {
         this.beat();
-        if (payload.filt.hasOwnProperty(PayloadFilterKeys_1.rapuiClientEcho)) {
-            delete payload[PayloadFilterKeys_1.rapuiClientEcho];
-            this.send(payload);
+        if (payloadEnvelope.filt.hasOwnProperty(PayloadFilterKeys_1.rapuiClientEcho)) {
+            delete payloadEnvelope[PayloadFilterKeys_1.rapuiClientEcho];
+            this.send(payloadEnvelope);
         }
-        if (payload.isEmpty()) {
-            if (payload.filt[Payload_1.Payload.vortexUuidKey] != null)
-                this.serverVortexUuid = payload.filt[Payload_1.Payload.vortexUuidKey];
-            if (payload.filt[Payload_1.Payload.vortexNameKey] != null)
-                this.serverVortexName = payload.filt[Payload_1.Payload.vortexNameKey];
+        if (payloadEnvelope.isEmpty()) {
+            if (payloadEnvelope.filt[PayloadEnvelope_1.PayloadEnvelope.vortexUuidKey] != null)
+                this.serverVortexUuid = payloadEnvelope.filt[PayloadEnvelope_1.PayloadEnvelope.vortexUuidKey];
+            if (payloadEnvelope.filt[PayloadEnvelope_1.PayloadEnvelope.vortexNameKey] != null)
+                this.serverVortexName = payloadEnvelope.filt[PayloadEnvelope_1.PayloadEnvelope.vortexNameKey];
             return;
         }
-        // console.log(dateStr() + "Received payload with filt : " + JSON.stringify(payload.filt));
+        // console.log(dateStr() + "Received payloadEnvelope with filt : " + JSON.stringify(payloadEnvelope.filt));
         // TODO, Tell the payloadIO the vortexUuid
-        this.zone.run(function () {
-            PayloadIO_1.payloadIO.process(payload);
-        });
+        PayloadIO_1.payloadIO.process(payloadEnvelope);
     };
     return VortexClientABC;
 }());

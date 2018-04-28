@@ -1,5 +1,5 @@
 import {IPayloadFilt, Payload} from "./Payload";
-import {Injectable, NgZone} from "@angular/core";
+import {Injectable} from "@angular/core";
 import {Tuple} from "./Tuple";
 import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
 import {Observable} from "rxjs/Observable";
@@ -10,6 +10,7 @@ import {VortexStatusService} from "./VortexStatusService";
 import {VortexClientABC} from "./VortexClientABC";
 import {VortexClientHttp} from "./VortexClientHttp";
 import {VortexClientWebsocket} from "./VortexClientWebsocket";
+import {PayloadEnvelope} from "./PayloadEnvelope";
 
 @Injectable()
 export class VortexService {
@@ -17,7 +18,6 @@ export class VortexService {
     private static vortexUrl: string = '/vortex';
 
     constructor(private vortexStatusService: VortexStatusService,
-                private zone: NgZone,
                 private balloonMsg: Ng2BalloonMsgService) {
         //
 
@@ -46,10 +46,10 @@ export class VortexService {
 
         if (VortexService.vortexUrl.toLowerCase().startsWith("ws")) {
             this.vortex = new VortexClientWebsocket(
-                this.vortexStatusService, this.zone, VortexService.vortexUrl);
+                this.vortexStatusService, VortexService.vortexUrl);
         } else {
             this.vortex = new VortexClientHttp(
-                this.vortexStatusService, this.zone, VortexService.vortexUrl);
+                this.vortexStatusService, VortexService.vortexUrl);
         }
 
         this.vortex.reconnect();
@@ -59,7 +59,6 @@ export class VortexService {
         if (typeof filt === "string") {
             filt = {key: filt};
         }
-
         this.sendPayload(new Payload(filt, tuples));
     }
 
@@ -72,16 +71,45 @@ export class VortexService {
      * @param {Payload[] | Payload} payload
      * @returns {Promise<void>}
      */
-    sendPayload(payload:Payload[] | Payload): Promise<void> {
+    sendPayload(payload: Payload[] | Payload): Promise<void> {
         if (this.vortex == null) {
             throw new Error("The vortex is not initialised yet.");
         }
-        return this.vortex.send(payload);
+
+        let payloads: Payload[] = [];
+        if (payload instanceof Array)
+            payloads = payload;
+        else
+            payloads = [payload];
+
+        let promises: Promise<void>[] = [];
+        for (let payload of payloads) {
+            promises.push(
+                payload.toEncodedPayload()
+                    .then((encodedPayload: string) => {
+                        this.vortex.send(new PayloadEnvelope(payload.filt, encodedPayload, payload.date));
+                    })
+            );
+        }
+        let ret: any = Promise.all(promises);
+        return ret;
+    }
+
+    /** Send Payload Envelope(s)
+     *
+     * @param {PayloadEnvelope[] | PayloadEnvelope} payloadEnvelope
+     * @returns {Promise<void>}
+     */
+    sendPayloadEnvelope(payloadEnvelope: PayloadEnvelope[] | PayloadEnvelope): Promise<void> {
+        if (this.vortex == null) {
+            throw new Error("The vortex is not initialised yet.");
+        }
+        return this.vortex.send(payloadEnvelope);
     }
 
     createEndpointObservable(component: ComponentLifecycleEventEmitter,
                              filter: IPayloadFilt,
-                             processLatestOnly: boolean = false): Observable<Payload> {
+                             processLatestOnly: boolean = false): Observable<PayloadEnvelope> {
         let endpoint = new PayloadEndpoint(component, filter, processLatestOnly);
 
         return this.createEndpoint(component, filter, processLatestOnly).observable;
@@ -97,7 +125,6 @@ export class VortexService {
                       filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt) {
         return new TupleLoader(this.vortex,
             component,
-            this.zone,
             filterUpdateCallable,
             this.balloonMsg
         );

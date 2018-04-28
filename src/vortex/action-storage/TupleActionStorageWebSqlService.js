@@ -38,10 +38,10 @@ var TupleActionStorageWebSqlService = /** @class */ (function (_super) {
     }
     TupleActionStorageWebSqlService.prototype.storeAction = function (scope, tupleAction, payload) {
         var _this = this;
-        return payload.toVortexMsg()
-            .then(function (vortexMsg) {
+        return payload.toEncodedPayload()
+            .then(function (encodedPayload) {
             var sql = "INSERT INTO " + tableName + "\n                    (scope, uuid, payload)\n                    VALUES (?, ?, ?)";
-            var bindParams = [scope, tupleAction.uuid, vortexMsg];
+            var bindParams = [scope, tupleAction.uuid, encodedPayload];
             return _this.webSql.runSql(sql, bindParams)
                 .then(function () { return null; });
         });
@@ -55,7 +55,7 @@ var TupleActionStorageWebSqlService = /** @class */ (function (_super) {
                 return;
             }
             var row1 = rows[0];
-            return Payload_1.Payload.fromVortexMsg(row1.payload);
+            return Payload_1.Payload.fromEncodedPayload(row1.payload);
         });
     };
     TupleActionStorageWebSqlService.prototype.countActions = function () {

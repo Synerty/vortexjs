@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var PayloadIO_1 = require("./PayloadIO");
 var UtilMisc_1 = require("./UtilMisc");
 require("./UtilArray");
-var Subject_1 = require("rxjs/Subject"); // Ensure it's included and defined
+var Subject_1 = require("rxjs/Subject");
 var PayloadEndpoint = /** @class */ (function () {
     function PayloadEndpoint(component, filter, processLatestOnly) {
         if (processLatestOnly === void 0) { processLatestOnly = false; }
@@ -40,17 +40,17 @@ var PayloadEndpoint = /** @class */ (function () {
      * @return null, or if the function is overloaded, you could return STOP_PROCESSING
      * from PayloadIO, which will tell it to stop processing further endpoints.
      */
-    PayloadEndpoint.prototype.process = function (payload) {
-        if (!this.checkFilt(this._filt, payload.filt))
+    PayloadEndpoint.prototype.process = function (payloadEnvelope) {
+        if (!this.checkFilt(this._filt, payloadEnvelope.filt))
             return null;
-        if (!this.checkDate(payload))
+        if (!this.checkDate(payloadEnvelope))
             return null;
         try {
-            this._observable.next(payload);
+            this._observable.next(payloadEnvelope);
         }
         catch (e) {
             // NOTE: Observables automatically remove observers when the raise exceptions.
-            console.log("ERROR: PayloadEndpoint.process, observable has been removed\n            " + e.toString() + "\n            " + JSON.stringify(payload.filt));
+            console.log("ERROR: PayloadEndpoint.process, observable has been removed\n            " + e.toString() + "\n            " + JSON.stringify(payloadEnvelope.filt));
         }
         return null;
     };

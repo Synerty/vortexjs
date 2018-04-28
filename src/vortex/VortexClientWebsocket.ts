@@ -1,8 +1,7 @@
-import {Payload} from "./Payload";
 import {VortexClientABC} from "./VortexClientABC";
-import {NgZone} from "@angular/core";
 import {VortexStatusService} from "./VortexStatusService";
 import {getFiltStr} from "./UtilMisc";
+import {PayloadEnvelope} from "./PayloadEnvelope";
 
 // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
 
@@ -21,9 +20,8 @@ export class VortexClientWebsocket extends VortexClientABC {
     private unsentBuffer: string[] = [];
 
     constructor(vortexStatusService: VortexStatusService,
-                zone: NgZone,
                 url: string) {
-        super(vortexStatusService, zone, url);
+        super(vortexStatusService, url);
 
     }
 
@@ -32,12 +30,12 @@ export class VortexClientWebsocket extends VortexClientABC {
     }
 
     // OVERRIDE Send
-    send(payload: Payload | Payload[]): Promise<void> {
+    send(payloadEnvelope: PayloadEnvelope | PayloadEnvelope[]): Promise<void> {
         if (!this.isReady) {
             throw new Error("Websocked vortex is not online.");
         }
 
-        return super.send(payload);
+        return super.send(payloadEnvelope);
     }
 
     // OVERRIDE reconnect
@@ -130,8 +128,8 @@ export class VortexClientWebsocket extends VortexClientABC {
             return;
         }
 
-        Payload.fromVortexMsg(event.data)
-            .then((payload: Payload) => this.receive(payload))
+        PayloadEnvelope.fromVortexMsg(event.data)
+            .then((pe: PayloadEnvelope) => this.receive(pe))
             .catch(e => console.log(`ERROR VortexClientWebsocket: ${e}`));
     }
 

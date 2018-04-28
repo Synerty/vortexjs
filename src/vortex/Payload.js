@@ -30,33 +30,22 @@ var Payload = /** @class */ (function (_super) {
      * @param filt The filter that the server handler is listening for
      * @param tuples: The tuples to init the Payload with
      * different location @depreciated
+     * @param date The date for this envelope, it should match the payload.
      */
-    function Payload(filt, tuples) {
+    function Payload(filt, tuples, date) {
         if (filt === void 0) { filt = {}; }
         if (tuples === void 0) { tuples = []; }
+        if (date === void 0) { date = null; }
         var _this = _super.call(this) || this;
-        _this.result = null;
         _this.date = null;
-        var self = _this;
-        self.__rst = SerialiseUtil_1.default.T_RAPUI_PAYLOAD;
-        self.filt = filt;
-        self.tuples = tuples;
+        _this.__rst = SerialiseUtil_1.default.T_RAPUI_PAYLOAD;
+        _this.filt = filt;
+        _this.tuples = tuples;
+        _this.date = date == null ? new Date() : _this.date;
         return _this;
     }
     Payload.setWorkerDelegate = function (delegate) {
         Payload.workerDelegate = delegate;
-    };
-    Payload.prototype.isEmpty = function () {
-        var self = this;
-        // Ignore the connection start vortexUuid value
-        // It's sent as the first response when we connect.
-        for (var property in self.filt) {
-            if (property === Payload.vortexUuidKey)
-                continue;
-            // Anything else, return false
-            return false;
-        }
-        return (self.tuples.length === 0 && self.result == null);
     };
     // -------------------------------------------
     // JSON Related method
@@ -71,44 +60,48 @@ var Payload = /** @class */ (function (_super) {
         var jsonDict = self.toJsonDict();
         return JSON.stringify(jsonDict);
     };
-    Payload.fromVortexMsg = function (vortexStr) {
+    Payload.fromEncodedPayload = function (encodedPayloadStr) {
         var start = PayloadDelegateABC_1.now();
         return new Promise(function (resolve, reject) {
-            Payload.workerDelegate.decodeAndInflate(vortexStr)
+            Payload.workerDelegate.decodeAndInflate(encodedPayloadStr)
                 .then(function (jsonStr) {
-                PayloadDelegateABC_1.logLong("Payload.fromVortexMsg decode+inflate len=" + vortexStr.length, start);
+                PayloadDelegateABC_1.logLong("Payload.fromEncodedPayload decode+inflate len=" + encodedPayloadStr.length, start);
                 start = PayloadDelegateABC_1.now();
                 var payload = new Payload()._fromJson(jsonStr);
-                PayloadDelegateABC_1.logLong("Payload.fromVortexMsg _fromJson len=" + vortexStr.length, start, payload);
+                PayloadDelegateABC_1.logLong("Payload.fromEncodedPayload _fromJson len=" + encodedPayloadStr.length, start, payload);
                 resolve(payload);
             })
                 .catch(function (err) {
-                console.log("ERROR: fromVortexMsg " + err);
+                console.log("ERROR: fromEncodedPayload " + err);
                 reject(err);
             });
         });
     };
-    Payload.prototype.toVortexMsg = function () {
+    Payload.prototype.toEncodedPayload = function () {
         var _this = this;
         var start = PayloadDelegateABC_1.now();
         return new Promise(function (resolve, reject) {
             var jsonStr = _this._toJson();
-            PayloadDelegateABC_1.logLong("Payload.toVortexMsg _toJson len=" + jsonStr.length, start, _this);
+            PayloadDelegateABC_1.logLong("Payload.toEncodedPayload _toJson len=" + jsonStr.length, start, _this);
             start = PayloadDelegateABC_1.now();
             Payload.workerDelegate.deflateAndEncode(jsonStr)
                 .then(function (jsonStr) {
-                PayloadDelegateABC_1.logLong("Payload.toVortexMsg deflate+encode len=" + jsonStr.length, start, _this);
+                PayloadDelegateABC_1.logLong("Payload.toEncodedPayload deflate+encode len=" + jsonStr.length, start, _this);
                 resolve(jsonStr);
             })
                 .catch(function (err) {
-                console.log("ERROR: toVortexMsg " + err);
+                console.log("ERROR: toEncodedPayload " + err);
                 reject(err);
             });
         });
     };
+    Payload.prototype.makePayloadEnvelope = function () {
+        var _this = this;
+        var PayloadEnvelopeMod = require("./PayloadEnvelope");
+        return this.toEncodedPayload()
+            .then(function (encodedThis) { return new PayloadEnvelopeMod.PayloadEnvelope(_this.filt, encodedThis, _this.date); });
+    };
     Payload.workerDelegate = new PayloadDelegateInMain_1.PayloadDelegateInMain();
-    Payload.vortexUuidKey = "__vortexUuid__";
-    Payload.vortexNameKey = "__vortexName__";
     return Payload;
 }(Jsonable_1.default));
 exports.Payload = Payload;

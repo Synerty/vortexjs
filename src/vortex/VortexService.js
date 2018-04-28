@@ -17,11 +17,11 @@ var ng2_balloon_msg_1 = require("@synerty/ng2-balloon-msg");
 var VortexStatusService_1 = require("./VortexStatusService");
 var VortexClientHttp_1 = require("./VortexClientHttp");
 var VortexClientWebsocket_1 = require("./VortexClientWebsocket");
+var PayloadEnvelope_1 = require("./PayloadEnvelope");
 var VortexService = /** @class */ (function () {
-    function VortexService(vortexStatusService, zone, balloonMsg) {
+    function VortexService(vortexStatusService, balloonMsg) {
         //
         this.vortexStatusService = vortexStatusService;
-        this.zone = zone;
         this.balloonMsg = balloonMsg;
         this.reconnect();
     }
@@ -44,10 +44,10 @@ var VortexService = /** @class */ (function () {
             return;
         }
         if (VortexService_1.vortexUrl.toLowerCase().startsWith("ws")) {
-            this.vortex = new VortexClientWebsocket_1.VortexClientWebsocket(this.vortexStatusService, this.zone, VortexService_1.vortexUrl);
+            this.vortex = new VortexClientWebsocket_1.VortexClientWebsocket(this.vortexStatusService, VortexService_1.vortexUrl);
         }
         else {
-            this.vortex = new VortexClientHttp_1.VortexClientHttp(this.vortexStatusService, this.zone, VortexService_1.vortexUrl);
+            this.vortex = new VortexClientHttp_1.VortexClientHttp(this.vortexStatusService, VortexService_1.vortexUrl);
         }
         this.vortex.reconnect();
     };
@@ -66,10 +66,39 @@ var VortexService = /** @class */ (function () {
      * @returns {Promise<void>}
      */
     VortexService.prototype.sendPayload = function (payload) {
+        var _this = this;
         if (this.vortex == null) {
             throw new Error("The vortex is not initialised yet.");
         }
-        return this.vortex.send(payload);
+        var payloads = [];
+        if (payload instanceof Array)
+            payloads = payload;
+        else
+            payloads = [payload];
+        var promises = [];
+        var _loop_1 = function (payload_1) {
+            promises.push(payload_1.toEncodedPayload()
+                .then(function (encodedPayload) {
+                _this.vortex.send(new PayloadEnvelope_1.PayloadEnvelope(payload_1.filt, encodedPayload, payload_1.date));
+            }));
+        };
+        for (var _i = 0, payloads_1 = payloads; _i < payloads_1.length; _i++) {
+            var payload_1 = payloads_1[_i];
+            _loop_1(payload_1);
+        }
+        var ret = Promise.all(promises);
+        return ret;
+    };
+    /** Send Payload Envelope(s)
+     *
+     * @param {PayloadEnvelope[] | PayloadEnvelope} payloadEnvelope
+     * @returns {Promise<void>}
+     */
+    VortexService.prototype.sendPayloadEnvelope = function (payloadEnvelope) {
+        if (this.vortex == null) {
+            throw new Error("The vortex is not initialised yet.");
+        }
+        return this.vortex.send(payloadEnvelope);
     };
     VortexService.prototype.createEndpointObservable = function (component, filter, processLatestOnly) {
         if (processLatestOnly === void 0) { processLatestOnly = false; }
@@ -81,13 +110,12 @@ var VortexService = /** @class */ (function () {
         return new PayloadEndpoint_1.PayloadEndpoint(component, filter, processLatestOnly);
     };
     VortexService.prototype.createTupleLoader = function (component, filterUpdateCallable) {
-        return new TupleLoader_1.TupleLoader(this.vortex, component, this.zone, filterUpdateCallable, this.balloonMsg);
+        return new TupleLoader_1.TupleLoader(this.vortex, component, filterUpdateCallable, this.balloonMsg);
     };
     VortexService.vortexUrl = '/vortex';
     VortexService = VortexService_1 = __decorate([
         core_1.Injectable(),
         __metadata("design:paramtypes", [VortexStatusService_1.VortexStatusService,
-            core_1.NgZone,
             ng2_balloon_msg_1.Ng2BalloonMsgService])
     ], VortexService);
     return VortexService;

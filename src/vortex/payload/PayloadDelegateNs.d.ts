@@ -5,7 +5,9 @@ export declare class PayloadDelegateNs extends PayloadDelegateABC {
     private inMainDelegate;
     constructor();
     deflateAndEncode(payloadJson: string): Promise<string>;
+    encodeEnvelope(payloadJson: string): Promise<string>;
     decodeAndInflate(vortexStr: string): Promise<string>;
+    decodeEnvelope(vortexStr: string): Promise<string>;
     static _promises: {};
     static _promisesNum: number;
     static popPromise(callNumber: number): {};

@@ -1,5 +1,5 @@
 import SerialiseUtil from "./SerialiseUtil";
-import { dictKeysFromObject, deepCopy } from "./UtilMisc";
+import {deepCopy, dictKeysFromObject} from "./UtilMisc";
 import "./UtilString";
 
 // Typedef for require
@@ -117,8 +117,8 @@ export default class Jsonable extends SerialiseUtil {
 
 
     toJsonField(value: any,
-        jsonDict: {} | null = null,
-        name: string | null = null): any {
+                jsonDict: {} | null = null,
+                name: string | null = null): any {
 
         let self = this;
 
@@ -132,7 +132,8 @@ export default class Jsonable extends SerialiseUtil {
             convertedValue = deepCopy(value);
 
         } else if (valueType === SerialiseUtil.T_RAPUI_TUPLE
-            || valueType === SerialiseUtil.T_RAPUI_PAYLOAD) {
+            || valueType === SerialiseUtil.T_RAPUI_PAYLOAD
+            || valueType === SerialiseUtil.T_RAPUI_PAYLOAD_ENVELOPE) {
             convertedValue = value.toJsonDict();
 
         } else if (valueType === SerialiseUtil.T_DICT) {
@@ -168,8 +169,8 @@ export default class Jsonable extends SerialiseUtil {
         // Non standard values need a dict to store their value type attributes
         // Create a sub dict that contains the value and type
         let jsonStandardTypes = [SerialiseUtil.T_FLOAT, SerialiseUtil.T_STR,
-        SerialiseUtil.T_INT, SerialiseUtil.V_NULL,
-        SerialiseUtil.T_BOOL, SerialiseUtil.T_LIST, SerialiseUtil.T_DICT];
+            SerialiseUtil.T_INT, SerialiseUtil.V_NULL,
+            SerialiseUtil.T_BOOL, SerialiseUtil.T_LIST, SerialiseUtil.T_DICT];
 
         if (jsonStandardTypes.indexOf(valueType) === -1 && !(value instanceof Jsonable)) {
             let typedData = {};
@@ -204,7 +205,7 @@ export default class Jsonable extends SerialiseUtil {
         if (valueType == null) {
             valueType = self.toRapuiType(value);
             if ([SerialiseUtil.T_BOOL, SerialiseUtil.T_FLOAT,
-            SerialiseUtil.T_INT, SerialiseUtil.T_STR].indexOf(valueType) !== -1)
+                SerialiseUtil.T_INT, SerialiseUtil.T_STR].indexOf(valueType) !== -1)
                 return value;
         }
 
@@ -222,7 +223,6 @@ export default class Jsonable extends SerialiseUtil {
 
             let newTuple = null;
             if (TupleMod.TUPLE_TYPES[tupleType] == null) {
-                let Tuple = require("./Tuple");
                 newTuple = new TupleMod.Tuple(tupleType);
             } else {
                 // Tuples set their own types, don't pass anything to the constructor
@@ -233,11 +233,17 @@ export default class Jsonable extends SerialiseUtil {
 
         }
 
-        // Payload
-        if (valueType === SerialiseUtil.T_RAPUI_PAYLOAD) {
 
-            let Payload = require("./Payload");
-            return new Payload().fromJsonDict(value);
+        // Handle the case of payloads within payloads
+        if (valueType === SerialiseUtil.T_RAPUI_PAYLOAD) {
+            let PayloadMod = require("./Payload");
+            return new PayloadMod.Payload().fromJsonDict(value);
+        }
+
+        // Payload Endpoint
+        if (valueType === SerialiseUtil.T_RAPUI_PAYLOAD_ENVELOPE) {
+            let PayloadEnvelopeMod = require("./PayloadEnvelope");
+            return new PayloadEnvelopeMod.PayloadEnvelope().fromJsonDict(value);
         }
 
         /* SKIP T_GENERIC_CLASS */

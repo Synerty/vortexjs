@@ -15,6 +15,7 @@ export default class SerialiseUtil {
 
     public static readonly T_RAPUI_TUPLE = "rt";
     public static readonly T_RAPUI_PAYLOAD = "rp";
+    public static readonly T_RAPUI_PAYLOAD_ENVELOPE = "rpe";
     public static readonly T_GENERIC_CLASS = "gen"; // NOT SUPPORTED
     public static readonly T_FLOAT = "float";
     public static readonly T_INT = "int";
@@ -81,12 +82,16 @@ export default class SerialiseUtil {
 
         let TupleMod = require("./Tuple");
         let PayloadMod = require("./Payload");
+        let PayloadEnvelopeMod = require("./PayloadEnvelope");
 
         if (value instanceof TupleMod.Tuple)
             return SerialiseUtil.T_RAPUI_TUPLE;
 
         if (value instanceof PayloadMod.Payload)
             return SerialiseUtil.T_RAPUI_PAYLOAD;
+
+        if (value instanceof PayloadEnvelopeMod.PayloadEnvelope)
+            return SerialiseUtil.T_RAPUI_PAYLOAD_ENVELOPE;
 
         if (value instanceof Date)
             return SerialiseUtil.T_DATETIME;
@@ -142,7 +147,8 @@ export default class SerialiseUtil {
                 return false;
 
             if (type1 === SerialiseUtil.T_RAPUI_TUPLE
-                || type1 === SerialiseUtil.T_RAPUI_PAYLOAD) {
+                || type1 === SerialiseUtil.T_RAPUI_PAYLOAD
+                || type1 === SerialiseUtil.T_RAPUI_PAYLOAD_ENVELOPE) {
                 if (!field1.equals(field2))
                     return false;
 

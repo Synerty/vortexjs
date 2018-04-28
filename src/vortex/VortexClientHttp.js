@@ -10,13 +10,13 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Payload_1 = require("./Payload");
 var UtilMisc_1 = require("./UtilMisc");
 var VortexClientABC_1 = require("./VortexClientABC");
+var PayloadEnvelope_1 = require("./PayloadEnvelope");
 var VortexClientHttp = /** @class */ (function (_super) {
     __extends(VortexClientHttp, _super);
-    function VortexClientHttp(vortexStatusService, zone, url) {
-        var _this = _super.call(this, vortexStatusService, zone, url) || this;
+    function VortexClientHttp(vortexStatusService, url) {
+        var _this = _super.call(this, vortexStatusService, url) || this;
         /**
          * RapUI VortexService, This class is responsible for sending and receiving payloads to/from
          * the server.
@@ -133,8 +133,8 @@ var _VortexClientHttpConnection = /** @class */ (function () {
             else {
                 // Create payload object from it
                 // Send to vortex
-                Payload_1.Payload.fromVortexMsg(vortexStr)
-                    .then(function (payload) { return self.receiveCallback(payload); })
+                PayloadEnvelope_1.PayloadEnvelope.fromVortexMsg(vortexStr)
+                    .then(function (pe) { return self.receiveCallback(pe); })
                     .catch(function (e) { return console.log("An error occured deserialising " + e); });
             }
             data = self._http.responseText.substr(self._responseParseIndex);

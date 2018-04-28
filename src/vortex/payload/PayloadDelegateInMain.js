@@ -41,10 +41,22 @@ var PayloadDelegateInMain = /** @class */ (function (_super) {
             resolve(encodedData);
         });
     };
+    PayloadDelegateInMain.prototype.encodeEnvelope = function (payloadJson) {
+        return new Promise(function (resolve, reject) {
+            var encodedData = btoa(payloadJson);
+            resolve(encodedData);
+        });
+    };
     PayloadDelegateInMain.prototype.decodeAndInflate = function (vortexStr) {
         return new Promise(function (resolve, reject) {
             var compressedData = atob(vortexStr);
             var payloadJson = pako.inflate(compressedData, { to: "string" });
+            resolve(payloadJson);
+        });
+    };
+    PayloadDelegateInMain.prototype.decodeEnvelope = function (vortexStr) {
+        return new Promise(function (resolve, reject) {
+            var payloadJson = atob(vortexStr);
             resolve(payloadJson);
         });
     };

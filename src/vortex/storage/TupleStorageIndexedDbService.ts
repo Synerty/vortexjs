@@ -156,7 +156,7 @@ class TupleIndexedDbTransaction implements TupleStorageTransaction {
                     return [];
                 }
 
-                return Payload.fromVortexMsg(vortexMsg)
+                return Payload.fromEncodedPayload(vortexMsg)
                     .then((payload: Payload) => payload.tuples);
             });
     }
@@ -205,10 +205,10 @@ class TupleIndexedDbTransaction implements TupleStorageTransaction {
         let startTime = now();
 
         // The payload is a convenient way to serialise and compress the data
-        return new Payload({}, tuples).toVortexMsg()
+        return new Payload({}, tuples).toEncodedPayload()
             .then((vortexMsg: string) => {
                 let timeTaken = now() - startTime;
-                console.log(`${dateStr()} IndexedDB: toVortexMsg took ${timeTaken}ms `);
+                console.log(`${dateStr()} IndexedDB: toEncodedPayload took ${timeTaken}ms `);
 
                 return this.saveTuplesEncoded(tupleSelector, vortexMsg);
             });

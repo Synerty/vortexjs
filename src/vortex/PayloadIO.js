@@ -14,13 +14,13 @@ var PayloadIO = /** @class */ (function () {
         var self = this;
         self._endpoints.remove(endpoint);
     };
-    PayloadIO.prototype.process = function (payload) {
+    PayloadIO.prototype.process = function (payloadEnvelope) {
         var self = this;
         // Make a copy of the endpoints array, it may change endpoints
         // can remove them selves during iteration.
         var endpoints = self._endpoints.slice(0);
         for (var i = 0; i < endpoints.length; ++i) {
-            if (endpoints[i].process(payload) === exports.STOP_PROCESSING)
+            if (endpoints[i].process(payloadEnvelope) === exports.STOP_PROCESSING)
                 break;
         }
     };

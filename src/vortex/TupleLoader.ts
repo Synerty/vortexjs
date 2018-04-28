@@ -1,14 +1,15 @@
 import {Observable} from "rxjs/Observable";
-import { Observer} from "rxjs/Observer";
-import {Payload, IPayloadFilt} from "./Payload";
+import {Observer} from "rxjs/Observer";
+import {IPayloadFilt, Payload} from "./Payload";
 import {PayloadEndpoint} from "./PayloadEndpoint";
-import {EventEmitter, NgZone} from "@angular/core";
+import {EventEmitter} from "@angular/core";
 import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
-import {VortexClientABC, SERVER_RESPONSE_TIMEOUT} from "./VortexClientABC";
+import {SERVER_RESPONSE_TIMEOUT, VortexClientABC} from "./VortexClientABC";
 import {Tuple} from "./Tuple";
 import {plDeleteKey} from "./PayloadFilterKeys";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
-import {bind, extend, deepEqual} from "./UtilMisc";
+import {bind, deepEqual, extend} from "./UtilMisc";
+import {PayloadEnvelope} from "./PayloadEnvelope";
 
 
 // ------------------
@@ -66,7 +67,7 @@ export class TupleLoader {
 
     private timer: number | null = null;
 
-    private lastPromise: IPromiseCallbacks| null = null;
+    private lastPromise: IPromiseCallbacks | null = null;
 
     event: EventEmitter<TupleLoaderEventEnum> = new EventEmitter<TupleLoaderEventEnum>();
 
@@ -78,7 +79,6 @@ export class TupleLoader {
 
     constructor(private vortex: VortexClientABC,
                 private component: ComponentLifecycleEventEmitter,
-                private zone: NgZone,
                 filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt,
                 private balloonMsg: Ng2BalloonMsgService | null = null) {
 
@@ -143,9 +143,12 @@ export class TupleLoader {
 
         this.lastPayloadFilt = newFilter;
         this.endpoint = new PayloadEndpoint(this.component, this.lastPayloadFilt, true);
-        this.endpoint.observable.subscribe(payload => this.processPayload(payload));
+        this.endpoint.observable
+            .subscribe((payloadEnvelope: PayloadEnvelope) => {
+                this.processPayloadEnvelope(payloadEnvelope);
+            });
 
-        this.vortex.send(new Payload(this.lastPayloadFilt));
+        this.vortex.send(new PayloadEnvelope(this.lastPayloadFilt));
     }
 
     /**
@@ -228,7 +231,11 @@ export class TupleLoader {
             }
 
             // Save the tuples
-            this.vortex.send(new Payload(this.lastPayloadFilt, this.lastTuples));
+            new Payload(this.lastPayloadFilt, this.lastTuples)
+                .makePayloadEnvelope()
+                .then((pe: PayloadEnvelope) => this.vortex.send(pe))
+                .catch(e => `TupleLoader, failed to encode payload ${e}`);
+
 
         } else {
             throw new Error(`Type ${type} is not implemented.`);
@@ -259,7 +266,7 @@ export class TupleLoader {
 
     }
 
-    private processPayload(payload: Payload) {
+    private processPayloadEnvelope(payloadEnvelope: PayloadEnvelope) {
 
         if (this.timer) {
             clearTimeout(this.timer);
@@ -267,7 +274,7 @@ export class TupleLoader {
         }
 
         // No result, means this was a load
-        if (payload.result == null) {
+        if (payloadEnvelope.result == null) {
             try {
                 this.event.emit(TupleLoaderEventEnum.Load);
             } catch (e) {
@@ -276,9 +283,9 @@ export class TupleLoader {
             }
 
             // Result, means this was a save
-        } else if (payload.result === true) {
+        } else if (payloadEnvelope.result === true) {
             try {
-                if (payload.filt.hasOwnProperty(plDeleteKey)) {
+                if (payloadEnvelope.filt.hasOwnProperty(plDeleteKey)) {
                     this.event.emit(TupleLoaderEventEnum.Delete);
                 } else {
                     this.event.emit(TupleLoaderEventEnum.Save);
@@ -292,22 +299,26 @@ export class TupleLoader {
             // Else, treat this as a failure
         } else {
             if (this.lastPromise) {
-                this.lastPromise.reject(payload.result.toString());
+                this.lastPromise.reject(payloadEnvelope.result.toString());
                 this.lastPromise = null;
             }
 
-            this.balloonMsg && this.balloonMsg.showError(payload.result.toString());
+            this.balloonMsg && this.balloonMsg.showError(payloadEnvelope.result.toString());
 
             return;
         }
 
         if (this.lastPromise) {
-            this.lastPromise.resolve(payload);
+            this.lastPromise.resolve(payloadEnvelope);
             this.lastPromise = null;
         }
 
-        this.lastTuples = payload.tuples;
-        this.zone.run(() => this.observer.next(payload.tuples));
+        payloadEnvelope.decodePayload()
+            .then((payload: Payload) => {
+                this.lastTuples = payload.tuples;
+                this.observer.next(payload.tuples);
+            })
+            .catch(e => console.log(`TupleLoader failed to decode payload ${e}`));
     }
 
     private resetTimer(): void {

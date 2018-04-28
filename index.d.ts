@@ -4,6 +4,7 @@ export { TupleLoader, IFilterUpdateCallable } from "./src/vortex/TupleLoader";
 export { PayloadEndpoint } from "./src/vortex/PayloadEndpoint";
 export { PayloadResponse } from "./src/vortex/PayloadResponse";
 export { Payload, IPayloadFilt } from "./src/vortex/Payload";
+export { PayloadEnvelope } from "./src/vortex/PayloadEnvelope";
 export { Tuple, TupleChangeI, addTupleType } from "./src/vortex/Tuple";
 export { ComponentLifecycleEventEmitter } from "./src/vortex/ComponentLifecycleEventEmitter";
 export * from "./src/vortex/PayloadFilterKeys";

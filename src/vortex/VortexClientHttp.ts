@@ -1,8 +1,7 @@
-import {Payload} from "./Payload";
 import {bind, getFiltStr} from "./UtilMisc";
 import {VortexClientABC} from "./VortexClientABC";
-import {NgZone} from "@angular/core";
 import {VortexStatusService} from "./VortexStatusService";
+import {PayloadEnvelope} from "./PayloadEnvelope";
 
 
 interface ReceivePayloadCallable {
@@ -23,9 +22,8 @@ export class VortexClientHttp extends VortexClientABC {
     private lastConn: _VortexClientHttpConnection | null = null;
 
     constructor(vortexStatusService: VortexStatusService,
-                zone: NgZone,
                 url: string) {
-        super(vortexStatusService, zone, url);
+        super(vortexStatusService, url);
 
     }
 
@@ -176,8 +174,8 @@ class _VortexClientHttpConnection {
             } else {
                 // Create payload object from it
                 // Send to vortex
-                Payload.fromVortexMsg(vortexStr)
-                    .then((payload: Payload) => self.receiveCallback(payload))
+                PayloadEnvelope.fromVortexMsg(vortexStr)
+                    .then((pe: PayloadEnvelope) => self.receiveCallback(pe))
                     .catch(e => console.log(`An error occured deserialising ${e}`));
             }
 

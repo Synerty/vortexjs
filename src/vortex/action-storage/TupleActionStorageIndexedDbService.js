@@ -48,7 +48,7 @@ var TupleActionStorageIndexedDbService = /** @class */ (function (_super) {
         var retval = this.transaction(true)
             .then(function (tx) {
             var store = tx.objectStore(ACTION_STORE);
-            return new Payload_1.Payload({}, [tupleAction]).toVortexMsg()
+            return new Payload_1.Payload({}, [tupleAction]).toEncodedPayload()
                 .then(function (vortexMsg) {
                 var item = {
                     scope: scope,
@@ -93,7 +93,7 @@ var TupleActionStorageIndexedDbService = /** @class */ (function (_super) {
                         resolve(new Payload_1.Payload());
                         return;
                     }
-                    Payload_1.Payload.fromVortexMsg(cursor.value.encodedPayload)
+                    Payload_1.Payload.fromEncodedPayload(cursor.value.encodedPayload)
                         .then(function (payload) {
                         resolve(payload);
                         try {

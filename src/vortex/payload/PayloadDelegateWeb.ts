@@ -1,79 +1,104 @@
 import {PayloadDelegateABC} from "./PayloadDelegateABC";
+import {PayloadDelegateInMain} from "./PayloadDelegateInMain";
 
 export class PayloadDelegateWeb extends PayloadDelegateABC {
 
-  deflateAndEncode(payloadJson: string): Promise<string> {
-    let worker = new Worker('./PayloadDelegateWebEncodeWorker.js');
+    private inMainDelegate = new PayloadDelegateInMain();
 
-    return new Promise<string>((resolve, reject) => {
 
-      function callError(error) {
-        reject(error);
-        console.log(
-          `ERROR: PayloadDelegateWeb.deflateAndEncode ${error}`
-        );
-      }
+    deflateAndEncode(payloadJson: string): Promise<string> {
+        // Don't send small messages to the worker
+        if (payloadJson.length < (10 * 1024))
+            return this.inMainDelegate.deflateAndEncode(payloadJson);
 
-      worker.addEventListener('message', (result) => {
-        let resultAny: any = result["data"];
-        let error = resultAny.error;
+        let worker = new Worker('./PayloadDelegateWebEncodeWorker.js');
 
-        if (error == null) {
-          resolve(resultAny["encodedData"]);
+        return new Promise<string>((resolve, reject) => {
 
-        } else {
-          callError(error);
-        }
+            function callError(error) {
+                reject(error);
+                console.log(
+                    `ERROR: PayloadDelegateWeb.deflateAndEncode ${error}`
+                );
+            }
 
-        worker.terminate();
-      }, false);
+            worker.addEventListener('message', (result) => {
+                let resultAny: any = result["data"];
+                let error = resultAny.error;
 
-      worker.addEventListener('error' , (error) => {
-        callError(error);
-        worker.terminate();
-      }, false);
+                if (error == null) {
+                    resolve(resultAny["encodedData"]);
 
-      worker.postMessage({payloadJson: payloadJson});
+                } else {
+                    callError(error);
+                }
 
-    });
+                worker.terminate();
+            }, false);
 
-  }
+            worker.addEventListener('error', (error) => {
+                callError(error);
+                worker.terminate();
+            }, false);
 
-  decodeAndInflate(vortexStr: string): Promise<string> {
-    let worker = new Worker('./PayloadDelegateWebDecodeWorker.js');
+            worker.postMessage({payloadJson: payloadJson});
 
-    return new Promise<string>((resolve, reject) => {
+        });
 
-      function callError(error) {
-        reject(error);
-        console.log(
-          `ERROR: PayloadDelegateWeb.decodeAndInflate ${error}`
-        );
-      }
+    }
 
-      worker.addEventListener('message', (result) => {
-        let resultAny: any = result["data"];
-        let error = resultAny.error;
+    // ------------------------------------------------------------------------
 
-        if (error == null) {
-          resolve(resultAny["payloadJson"]);
+    encodeEnvelope(payloadJson: string): Promise<string> {
+        return this.inMainDelegate.encodeEnvelope(payloadJson);
 
-        } else {
-          callError(error);
-        }
+    }
 
-        worker.terminate();
-      }, false);
+    decodeAndInflate(vortexStr: string): Promise<string> {
+        // Don't send small messages to the worker
+        if (vortexStr.length < (5 * 1024))
+            return this.inMainDelegate.decodeAndInflate(vortexStr);
 
-      worker.addEventListener('error' , (error) => {
-        callError(error);
-        worker.terminate();
-      }, false);
+        let worker = new Worker('./PayloadDelegateWebDecodeWorker.js');
 
-      worker.postMessage({vortexStr: vortexStr});
+        return new Promise<string>((resolve, reject) => {
 
-    });
+            function callError(error) {
+                reject(error);
+                console.log(
+                    `ERROR: PayloadDelegateWeb.decodeAndInflate ${error}`
+                );
+            }
 
-  }
+            worker.addEventListener('message', (result) => {
+                let resultAny: any = result["data"];
+                let error = resultAny.error;
+
+                if (error == null) {
+                    resolve(resultAny["payloadJson"]);
+
+                } else {
+                    callError(error);
+                }
+
+                worker.terminate();
+            }, false);
+
+            worker.addEventListener('error', (error) => {
+                callError(error);
+                worker.terminate();
+            }, false);
+
+            worker.postMessage({vortexStr: vortexStr});
+
+        });
+
+    }
+
+    // ------------------------------------------------------------------------
+
+    decodeEnvelope(vortexStr: string): Promise<string> {
+        return this.inMainDelegate.decodeEnvelope(vortexStr);
+    }
 
 }

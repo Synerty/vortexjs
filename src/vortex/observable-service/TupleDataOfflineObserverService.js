@@ -89,19 +89,26 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
             _super.prototype.notifyObservers.call(this, cachedData, tupleSelector, tuples);
         }
     };
-    TupleDataOfflineObserverService.prototype.notifyObservers = function (cachedData, tupleSelector, tuples) {
+    TupleDataOfflineObserverService.prototype.notifyObservers = function (cachedData, tupleSelector, tuples, encodedPayload) {
+        if (encodedPayload === void 0) { encodedPayload = null; }
         // Pass the data on
         _super.prototype.notifyObservers.call(this, cachedData, tupleSelector, tuples);
         // AND store the data locally
-        this.storeDataLocally(tupleSelector, tuples);
+        this.storeDataLocally(tupleSelector, tuples, encodedPayload);
     };
-    TupleDataOfflineObserverService.prototype.storeDataLocally = function (tupleSelector, tuples) {
+    TupleDataOfflineObserverService.prototype.storeDataLocally = function (tupleSelector, tuples, encodedPayload) {
         var _this = this;
-        return this.tupleOfflineStorageService.saveTuples(tupleSelector, tuples)
-            .catch(function (err) {
+        if (encodedPayload === void 0) { encodedPayload = null; }
+        var errFunc = function (err) {
             _this.statusService.logError("saveTuples failed : " + err);
             throw new Error(err);
-        });
+        };
+        if (encodedPayload == null) {
+            return this.tupleOfflineStorageService.saveTuples(tupleSelector, tuples)
+                .catch(errFunc);
+        }
+        this.tupleOfflineStorageService.saveTuplesEncoded(tupleSelector, encodedPayload)
+            .catch(errFunc);
     };
     TupleDataOfflineObserverService = __decorate([
         core_1.Injectable(),

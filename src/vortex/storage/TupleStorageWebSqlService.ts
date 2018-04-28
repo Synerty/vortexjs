@@ -131,7 +131,7 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
                     return [];
                 }
 
-                return Payload.fromVortexMsg(vortexMsg)
+                return Payload.fromEncodedPayload(vortexMsg)
                     .then((payload: Payload) => payload.tuples);
             });
     }
@@ -154,7 +154,7 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
     saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> {
 
         // The payload is a convenient way to serialise and compress the data
-        return new Payload({}, tuples).toVortexMsg()
+        return new Payload({}, tuples).toEncodedPayload()
             .then((vortexMsg: string) => {
                 return this.saveTuplesEncoded(tupleSelector, vortexMsg);
             });

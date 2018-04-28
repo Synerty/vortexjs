@@ -17,13 +17,13 @@ export declare class TupleActionProcessorService extends ComponentLifecycleEvent
     /** Add Tuple Action Processor Delegate
      *
      *@param tupleName: The tuple name to process actions for.
-     *@param processor: The processor to use for processing this tuple name.
+     *@param delegate: The processor to use for processing this tuple name.
      *
      */
     setDelegate(tupleName: string, delegate: TupleActionProcessorDelegateABC): void;
     /** Set Default Tuple Action Processor Delegate
      *
-     *@param processor: The processor to use for processing unhandled TupleActions.
+     *@param delegate: The processor to use for processing unhandled TupleActions.
      *
      */
     setDefaultDelegate(delegate: TupleActionProcessorDelegateABC): void;

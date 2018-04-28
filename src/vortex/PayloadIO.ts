@@ -1,4 +1,5 @@
 import {PayloadEndpoint} from "./PayloadEndpoint";
+import {PayloadEnvelope} from "./PayloadEnvelope";
 
 export let STOP_PROCESSING = "STOP_PROCESSING";
 
@@ -21,13 +22,13 @@ export class PayloadIO {
     }
 
 
-    process(payload) {
+    process(payloadEnvelope: PayloadEnvelope) {
         let self = this;
         // Make a copy of the endpoints array, it may change endpoints
         // can remove them selves during iteration.
         let endpoints = self._endpoints.slice(0);
         for (let i = 0; i < endpoints.length; ++i) {
-            if (endpoints[i].process(payload) === STOP_PROCESSING)
+            if (endpoints[i].process(payloadEnvelope) === STOP_PROCESSING)
                 break;
         }
     }

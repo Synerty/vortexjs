@@ -25,6 +25,7 @@ var VortexService_1 = require("../VortexService");
 var ComponentLifecycleEventEmitter_1 = require("../ComponentLifecycleEventEmitter");
 var VortexStatusService_1 = require("../VortexStatusService");
 var core_1 = require("@angular/core");
+var PayloadEnvelope_1 = require("../PayloadEnvelope");
 var TupleActionProcessorNameService = /** @class */ (function () {
     function TupleActionProcessorNameService(name, additionalFilt) {
         if (additionalFilt === void 0) { additionalFilt = {}; }
@@ -52,13 +53,18 @@ var TupleActionProcessorService = /** @class */ (function (_super) {
             key: "tupleActionProcessorName"
         }, tupleActionProcessorName.additionalFilt);
         vortexService.createEndpointObservable(_this, filt)
-            .subscribe(function (payload) { return _this._process(payload); });
+            .subscribe(function (payloadEnvelope) {
+            payloadEnvelope
+                .decodePayload()
+                .then(function (payload) { return _this._process(payload); })
+                .catch(function (e) { return console.log("TupleActionProcessorService:Error decoding payload " + e); });
+        });
         return _this;
     }
     /** Add Tuple Action Processor Delegate
      *
      *@param tupleName: The tuple name to process actions for.
-     *@param processor: The processor to use for processing this tuple name.
+     *@param delegate: The processor to use for processing this tuple name.
      *
      */
     TupleActionProcessorService.prototype.setDelegate = function (tupleName, delegate) {
@@ -68,7 +74,7 @@ var TupleActionProcessorService = /** @class */ (function (_super) {
     };
     /** Set Default Tuple Action Processor Delegate
      *
-     *@param processor: The processor to use for processing unhandled TupleActions.
+     *@param delegate: The processor to use for processing unhandled TupleActions.
      *
      */
     TupleActionProcessorService.prototype.setDefaultDelegate = function (delegate) {
@@ -107,9 +113,9 @@ var TupleActionProcessorService = /** @class */ (function (_super) {
     TupleActionProcessorService.prototype.errback = function (err, replyFilt, tupleName) {
         this.vortexStatusService.logError("TupleActionProcessor:" + this.tupleActionProcessorName.name +
             (" Failed to process TupleActon, " + err));
-        var payload = new Payload_1.Payload(replyFilt);
-        payload.result = err;
-        this.vortexService.sendPayload(payload);
+        var payloadEnvelope = new PayloadEnvelope_1.PayloadEnvelope(replyFilt);
+        payloadEnvelope.result = err;
+        this.vortexService.sendPayloadEnvelope(payloadEnvelope);
     };
     TupleActionProcessorService = __decorate([
         core_1.Injectable(),

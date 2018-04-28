@@ -41,10 +41,13 @@ var SerialiseUtil = /** @class */ (function () {
             return SerialiseUtil.V_NULL;
         var TupleMod = require("./Tuple");
         var PayloadMod = require("./Payload");
+        var PayloadEnvelopeMod = require("./PayloadEnvelope");
         if (value instanceof TupleMod.Tuple)
             return SerialiseUtil.T_RAPUI_TUPLE;
         if (value instanceof PayloadMod.Payload)
             return SerialiseUtil.T_RAPUI_PAYLOAD;
+        if (value instanceof PayloadEnvelopeMod.PayloadEnvelope)
+            return SerialiseUtil.T_RAPUI_PAYLOAD_ENVELOPE;
         if (value instanceof Date)
             return SerialiseUtil.T_DATETIME;
         if (value.constructor === Number)
@@ -81,7 +84,8 @@ var SerialiseUtil = /** @class */ (function () {
             if (type1 !== type2)
                 return false;
             if (type1 === SerialiseUtil.T_RAPUI_TUPLE
-                || type1 === SerialiseUtil.T_RAPUI_PAYLOAD) {
+                || type1 === SerialiseUtil.T_RAPUI_PAYLOAD
+                || type1 === SerialiseUtil.T_RAPUI_PAYLOAD_ENVELOPE) {
                 if (!field1.equals(field2))
                     return false;
             }
@@ -112,6 +116,7 @@ var SerialiseUtil = /** @class */ (function () {
     };
     SerialiseUtil.T_RAPUI_TUPLE = "rt";
     SerialiseUtil.T_RAPUI_PAYLOAD = "rp";
+    SerialiseUtil.T_RAPUI_PAYLOAD_ENVELOPE = "rpe";
     SerialiseUtil.T_GENERIC_CLASS = "gen"; // NOT SUPPORTED
     SerialiseUtil.T_FLOAT = "float";
     SerialiseUtil.T_INT = "int";

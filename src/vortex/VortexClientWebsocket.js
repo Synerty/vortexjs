@@ -10,13 +10,13 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Payload_1 = require("./Payload");
 var VortexClientABC_1 = require("./VortexClientABC");
 var UtilMisc_1 = require("./UtilMisc");
+var PayloadEnvelope_1 = require("./PayloadEnvelope");
 var VortexClientWebsocket = /** @class */ (function (_super) {
     __extends(VortexClientWebsocket, _super);
-    function VortexClientWebsocket(vortexStatusService, zone, url) {
-        var _this = _super.call(this, vortexStatusService, zone, url) || this;
+    function VortexClientWebsocket(vortexStatusService, url) {
+        var _this = _super.call(this, vortexStatusService, url) || this;
         _this.Socket = WebSocket || MozWebSocket;
         _this.socket = null;
         _this.lastReconnectDate = Date.parse("01-Jan-2017");
@@ -31,11 +31,11 @@ var VortexClientWebsocket = /** @class */ (function (_super) {
         configurable: true
     });
     // OVERRIDE Send
-    VortexClientWebsocket.prototype.send = function (payload) {
+    VortexClientWebsocket.prototype.send = function (payloadEnvelope) {
         if (!this.isReady) {
             throw new Error("Websocked vortex is not online.");
         }
-        return _super.prototype.send.call(this, payload);
+        return _super.prototype.send.call(this, payloadEnvelope);
     };
     // OVERRIDE reconnect
     VortexClientWebsocket.prototype.reconnect = function () {
@@ -108,8 +108,8 @@ var VortexClientWebsocket = /** @class */ (function (_super) {
             this.socket != null && this.socket.send('.');
             return;
         }
-        Payload_1.Payload.fromVortexMsg(event.data)
-            .then(function (payload) { return _this.receive(payload); })
+        PayloadEnvelope_1.PayloadEnvelope.fromVortexMsg(event.data)
+            .then(function (pe) { return _this.receive(pe); })
             .catch(function (e) { return console.log("ERROR VortexClientWebsocket: " + e); });
     };
     VortexClientWebsocket.prototype.onOpen = function (event) {

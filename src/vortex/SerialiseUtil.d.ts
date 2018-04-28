@@ -1,6 +1,7 @@
 export default class SerialiseUtil {
     static readonly T_RAPUI_TUPLE: string;
     static readonly T_RAPUI_PAYLOAD: string;
+    static readonly T_RAPUI_PAYLOAD_ENVELOPE: string;
     static readonly T_GENERIC_CLASS: string;
     static readonly T_FLOAT: string;
     static readonly T_INT: string;

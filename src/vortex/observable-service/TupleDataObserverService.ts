@@ -10,6 +10,7 @@ import {dictKeysFromObject, extend} from "../UtilMisc";
 import {VortexStatusService} from "../VortexStatusService";
 import {PayloadResponse} from "../PayloadResponse";
 import * as moment from "moment";
+import {PayloadEnvelope} from "../PayloadEnvelope";
 
 @Injectable()
 export class TupleDataObservableNameService {
@@ -72,7 +73,17 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
         }, tupleDataObservableName.additionalFilt);
 
         this.endpoint = new PayloadEndpoint(this, this.filt);
-        this.endpoint.observable.subscribe((payload) => this.receivePayload(payload));
+        this.endpoint.observable
+            .subscribe((payloadEnvelope: PayloadEnvelope) => {
+                payloadEnvelope
+                    .decodePayload()
+                    .then((payload: Payload) => {
+                        this.receivePayload(payload, payloadEnvelope.encodedPayload)
+                    })
+                    .catch(e => {
+                        console.log(`TupleActionProcessorService:Error decoding payload ${e}`)
+                    });
+            });
 
         statusService.isOnline
             .takeUntil(this.onDestroyEvent)
@@ -158,7 +169,7 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
         this.tellServerWeWantData(tupleSelectors);
     }
 
-    protected receivePayload(payload: Payload): void {
+    protected receivePayload(payload: Payload, encodedPayload: string): void {
         let tupleSelector = payload.filt["tupleSelector"];
         let tsStr = tupleSelector.toOrderedJsonStr();
 
@@ -181,12 +192,13 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
         cachedData.lastServerPayloadDate = thisDate;
         cachedData.tuples = payload.tuples;
 
-        this.notifyObservers(cachedData, tupleSelector, payload.tuples);
+        this.notifyObservers(cachedData, tupleSelector, payload.tuples, encodedPayload);
     }
 
     protected notifyObservers(cachedData: CachedSubscribedData,
                               tupleSelector: TupleSelector,
-                              tuples: Tuple[]): void {
+                              tuples: Tuple[],
+                              encodedPayload: string | null = null): void {
 
         try {
             cachedData.subject.next(tuples);

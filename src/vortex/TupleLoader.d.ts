@@ -1,6 +1,6 @@
 import { Observable } from "rxjs/Observable";
-import { Payload, IPayloadFilt } from "./Payload";
-import { EventEmitter, NgZone } from "@angular/core";
+import { IPayloadFilt, Payload } from "./Payload";
+import { EventEmitter } from "@angular/core";
 import { ComponentLifecycleEventEmitter } from "./ComponentLifecycleEventEmitter";
 import { VortexClientABC } from "./VortexClientABC";
 import { Tuple } from "./Tuple";
@@ -44,7 +44,6 @@ export interface IFilterUpdateCallable {
 export declare class TupleLoader {
     private vortex;
     private component;
-    private zone;
     private balloonMsg;
     private filterUpdateCallable;
     private lastPayloadFilt;
@@ -55,7 +54,7 @@ export declare class TupleLoader {
     private endpoint;
     private _observable;
     private observer;
-    constructor(vortex: VortexClientABC, component: ComponentLifecycleEventEmitter, zone: NgZone, filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt, balloonMsg?: Ng2BalloonMsgService | null);
+    constructor(vortex: VortexClientABC, component: ComponentLifecycleEventEmitter, filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt, balloonMsg?: Ng2BalloonMsgService | null);
     /**
      * @property: The tuple observable to subscribe to.
      */
@@ -91,7 +90,7 @@ export declare class TupleLoader {
      *
      */
     del(tuples?: any[] | Tuple[] | null): Promise<Payload>;
-    private processPayload(payload);
+    private processPayloadEnvelope(payloadEnvelope);
     private resetTimer();
     private setupTimer();
     private operationTimeout(showBaloon?);

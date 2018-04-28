@@ -72,14 +72,14 @@ var PayloadResponse = /** @class */ (function () {
             // Subscribe
             endpoint.observable
                 .takeUntil(_this._lcEmitter.onDestroyEvent)
-                .subscribe(function (payload) {
-                var r = payload.result; // success is null or true
+                .subscribe(function (payloadEnvelope) {
+                var r = payloadEnvelope.result; // success is null or true
                 if (_this.resultCheck && !(r == null || r === true)) {
                     callFail(_this.FAILED, r.toString());
                 }
                 else {
                     finish(_this.SUCCESS);
-                    resolve(payload);
+                    resolve(payloadEnvelope);
                 }
             });
             vortexService.sendPayload(_this.payload)

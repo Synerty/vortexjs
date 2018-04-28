@@ -1,5 +1,4 @@
 import { IPayloadFilt, Payload } from "./Payload";
-import { NgZone } from "@angular/core";
 import { Tuple } from "./Tuple";
 import { ComponentLifecycleEventEmitter } from "./ComponentLifecycleEventEmitter";
 import { Observable } from "rxjs/Observable";
@@ -7,13 +6,13 @@ import { PayloadEndpoint } from "./PayloadEndpoint";
 import { IFilterUpdateCallable, TupleLoader } from "./TupleLoader";
 import { Ng2BalloonMsgService } from "@synerty/ng2-balloon-msg";
 import { VortexStatusService } from "./VortexStatusService";
+import { PayloadEnvelope } from "./PayloadEnvelope";
 export declare class VortexService {
     private vortexStatusService;
-    private zone;
     private balloonMsg;
     private vortex;
     private static vortexUrl;
-    constructor(vortexStatusService: VortexStatusService, zone: NgZone, balloonMsg: Ng2BalloonMsgService);
+    constructor(vortexStatusService: VortexStatusService, balloonMsg: Ng2BalloonMsgService);
     /**
      * Set Vortex URL
      *
@@ -31,7 +30,13 @@ export declare class VortexService {
      * @returns {Promise<void>}
      */
     sendPayload(payload: Payload[] | Payload): Promise<void>;
-    createEndpointObservable(component: ComponentLifecycleEventEmitter, filter: IPayloadFilt, processLatestOnly?: boolean): Observable<Payload>;
+    /** Send Payload Envelope(s)
+     *
+     * @param {PayloadEnvelope[] | PayloadEnvelope} payloadEnvelope
+     * @returns {Promise<void>}
+     */
+    sendPayloadEnvelope(payloadEnvelope: PayloadEnvelope[] | PayloadEnvelope): Promise<void>;
+    createEndpointObservable(component: ComponentLifecycleEventEmitter, filter: IPayloadFilt, processLatestOnly?: boolean): Observable<PayloadEnvelope>;
     createEndpoint(component: ComponentLifecycleEventEmitter, filter: IPayloadFilt, processLatestOnly?: boolean): PayloadEndpoint;
     createTupleLoader(component: ComponentLifecycleEventEmitter, filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt): TupleLoader;
 }

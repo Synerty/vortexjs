@@ -5,7 +5,7 @@ import { Tuple } from "../Tuple";
 import { TupleSelector } from "../TupleSelector";
 import { VortexStatusService } from "../VortexStatusService";
 import { TupleOfflineStorageService } from "../storage/TupleOfflineStorageService";
-import { TupleDataObservableNameService, TupleDataObserverService, CachedSubscribedData } from "./TupleDataObserverService";
+import { CachedSubscribedData, TupleDataObservableNameService, TupleDataObserverService } from "./TupleDataObserverService";
 export declare class TupleDataOfflineObserverService extends TupleDataObserverService {
     private tupleOfflineStorageService;
     constructor(vortexService: VortexService, vortexStatusService: VortexStatusService, zone: NgZone, tupleDataObservableName: TupleDataObservableNameService, tupleOfflineStorageService: TupleOfflineStorageService);
@@ -18,6 +18,6 @@ export declare class TupleDataOfflineObserverService extends TupleDataObserverSe
      * @param tuples: The new data to store
      */
     updateOfflineState(tupleSelector: TupleSelector, tuples: Tuple[]): void;
-    protected notifyObservers(cachedData: CachedSubscribedData, tupleSelector: TupleSelector, tuples: Tuple[]): void;
-    private storeDataLocally(tupleSelector, tuples);
+    protected notifyObservers(cachedData: CachedSubscribedData, tupleSelector: TupleSelector, tuples: Tuple[], encodedPayload?: string | null): void;
+    private storeDataLocally(tupleSelector, tuples, encodedPayload?);
 }

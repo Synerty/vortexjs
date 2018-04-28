@@ -104,7 +104,7 @@ var TupleWebSqlTransaction = /** @class */ (function () {
             if (vortexMsg == null) {
                 return [];
             }
-            return Payload_1.Payload.fromVortexMsg(vortexMsg)
+            return Payload_1.Payload.fromEncodedPayload(vortexMsg)
                 .then(function (payload) { return payload.tuples; });
         });
     };
@@ -122,7 +122,7 @@ var TupleWebSqlTransaction = /** @class */ (function () {
     TupleWebSqlTransaction.prototype.saveTuples = function (tupleSelector, tuples) {
         var _this = this;
         // The payload is a convenient way to serialise and compress the data
-        return new Payload_1.Payload({}, tuples).toVortexMsg()
+        return new Payload_1.Payload({}, tuples).toEncodedPayload()
             .then(function (vortexMsg) {
             return _this.saveTuplesEncoded(tupleSelector, vortexMsg);
         });

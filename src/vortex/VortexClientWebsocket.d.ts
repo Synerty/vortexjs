@@ -1,16 +1,15 @@
-import { Payload } from "./Payload";
 import { VortexClientABC } from "./VortexClientABC";
-import { NgZone } from "@angular/core";
 import { VortexStatusService } from "./VortexStatusService";
+import { PayloadEnvelope } from "./PayloadEnvelope";
 export declare class VortexClientWebsocket extends VortexClientABC {
     private static readonly RECONNECT_BACKOFF;
     private Socket;
     private socket;
     private lastReconnectDate;
     private unsentBuffer;
-    constructor(vortexStatusService: VortexStatusService, zone: NgZone, url: string);
+    constructor(vortexStatusService: VortexStatusService, url: string);
     readonly isReady: boolean;
-    send(payload: Payload | Payload[]): Promise<void>;
+    send(payloadEnvelope: PayloadEnvelope | PayloadEnvelope[]): Promise<void>;
     reconnect(): void;
     protected sendVortexMsg(vortexMsgs: string[]): void;
     private sendMessages();

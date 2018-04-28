@@ -37,6 +37,7 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
         _this.decodeWorker.onerror = PayloadDelegateNs.onError;
         return _this;
     }
+    // ------------------------------------------------------------------------
     PayloadDelegateNs.prototype.deflateAndEncode = function (payloadJson) {
         var _this = this;
         // Don't send small messages to the worker
@@ -50,6 +51,11 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
             });
         });
     };
+    // ------------------------------------------------------------------------
+    PayloadDelegateNs.prototype.encodeEnvelope = function (payloadJson) {
+        return this.inMainDelegate.encodeEnvelope(payloadJson);
+    };
+    // ------------------------------------------------------------------------
     PayloadDelegateNs.prototype.decodeAndInflate = function (vortexStr) {
         var _this = this;
         // Don't send small messages to the worker
@@ -62,7 +68,11 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
                 vortexStr: vortexStr
             });
         });
-    }; // ------------------------------------------------------------------------
+    };
+    // ------------------------------------------------------------------------
+    PayloadDelegateNs.prototype.decodeEnvelope = function (vortexStr) {
+        return this.inMainDelegate.decodeEnvelope(vortexStr);
+    };
     PayloadDelegateNs.popPromise = function (callNumber) {
         var promise = PayloadDelegateNs._promises[callNumber];
         delete PayloadDelegateNs._promises[callNumber];
@@ -95,6 +105,7 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
     PayloadDelegateNs.onError = function (error) {
         console.log("PayloadDelegateNs.onerror " + error);
     };
+    // ------------------------------------------------------------------------
     PayloadDelegateNs._promises = {};
     PayloadDelegateNs._promisesNum = 1;
     return PayloadDelegateNs;

@@ -5,6 +5,7 @@ import {VortexService} from "../VortexService";
 import {ComponentLifecycleEventEmitter} from "../ComponentLifecycleEventEmitter";
 import {VortexStatusService} from "../VortexStatusService";
 import {Injectable} from "@angular/core";
+import {PayloadEnvelope} from "../PayloadEnvelope";
 
 
 @Injectable()
@@ -17,7 +18,7 @@ export class TupleActionProcessorNameService {
 @Injectable()
 export class TupleActionProcessorService extends ComponentLifecycleEventEmitter {
     private _tupleProcessorsByTupleName = {};
-    private defaultDelegate :null | TupleActionProcessorDelegateABC = null;
+    private defaultDelegate: null | TupleActionProcessorDelegateABC = null;
 
 
     constructor(private tupleActionProcessorName: TupleActionProcessorNameService,
@@ -30,14 +31,19 @@ export class TupleActionProcessorService extends ComponentLifecycleEventEmitter 
         }, tupleActionProcessorName.additionalFilt);
 
         vortexService.createEndpointObservable(this, filt)
-            .subscribe(payload => this._process(payload));
+            .subscribe((payloadEnvelope: PayloadEnvelope) => {
+                payloadEnvelope
+                    .decodePayload()
+                    .then((payload: Payload) => this._process(payload))
+                    .catch(e => console.log(`TupleActionProcessorService:Error decoding payload ${e}`));
+            });
 
     }
 
     /** Add Tuple Action Processor Delegate
      *
      *@param tupleName: The tuple name to process actions for.
-     *@param processor: The processor to use for processing this tuple name.
+     *@param delegate: The processor to use for processing this tuple name.
      *
      */
     setDelegate(tupleName: string, delegate: TupleActionProcessorDelegateABC) {
@@ -51,7 +57,7 @@ export class TupleActionProcessorService extends ComponentLifecycleEventEmitter 
 
     /** Set Default Tuple Action Processor Delegate
      *
-     *@param processor: The processor to use for processing unhandled TupleActions.
+     *@param delegate: The processor to use for processing unhandled TupleActions.
      *
      */
     setDefaultDelegate(delegate: TupleActionProcessorDelegateABC) {
@@ -104,10 +110,10 @@ export class TupleActionProcessorService extends ComponentLifecycleEventEmitter 
             `TupleActionProcessor:${this.tupleActionProcessorName.name}` +
             ` Failed to process TupleActon, ${err}`);
 
-        let payload = new Payload(replyFilt);
-        payload.result = err;
+        let payloadEnvelope = new PayloadEnvelope(replyFilt);
+        payloadEnvelope.result = err;
 
-        this.vortexService.sendPayload(payload);
+        this.vortexService.sendPayloadEnvelope(payloadEnvelope);
     }
 
 }
