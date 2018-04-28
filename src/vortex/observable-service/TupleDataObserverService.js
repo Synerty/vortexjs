@@ -165,6 +165,9 @@ var TupleDataObserverService = /** @class */ (function (_super) {
             return;
         var cachedData = this.cacheByTupleSelector[tsStr];
         var lastDate = cachedData.lastServerPayloadDate;
+        if (payload.date == null) {
+            throw new Error("payload.date can not be null");
+        }
         var thisDate = moment(payload.date);
         // If the data is old, then disregard it.
         if (lastDate != null && lastDate.isAfter(thisDate))

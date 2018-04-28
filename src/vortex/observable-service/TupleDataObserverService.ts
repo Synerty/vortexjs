@@ -168,6 +168,10 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
         let cachedData = this.cacheByTupleSelector[tsStr];
 
         let lastDate = cachedData.lastServerPayloadDate;
+
+        if (payload.date == null) {
+            throw new Error("payload.date can not be null");
+        }
         let thisDate = moment(payload.date);
 
         // If the data is old, then disregard it.
