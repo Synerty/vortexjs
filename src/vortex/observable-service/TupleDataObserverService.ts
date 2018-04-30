@@ -103,8 +103,18 @@ export class TupleDataObserverService extends ComponentLifecycleEventEmitter {
 
         // Optionally typed, No need to worry about the fact that we convert this
         // and then TypeScript doesn't recognise that data type change
-        let promise: any = new PayloadResponse(this.vortexService, new Payload(startFilt))
-            .then(payload => payload.tuples);
+        let promise: any = new Payload(startFilt).makePayloadEnvelope();
+
+        promise = promise.then((payloadEnvelope: PayloadEnvelope) => {
+            return new PayloadResponse(this.vortexService, payloadEnvelope)
+        });
+
+        promise = promise.then((payloadEnvelope: PayloadEnvelope) => {
+            return payloadEnvelope.decodePayload();
+        });
+
+        promise = promise.then((payload: Payload) => payload.tuples);
+
         return promise;
     }
 

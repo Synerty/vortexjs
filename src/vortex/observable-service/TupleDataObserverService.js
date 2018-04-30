@@ -106,13 +106,20 @@ var TupleDataObserverService = /** @class */ (function (_super) {
         return _this;
     }
     TupleDataObserverService.prototype.pollForTuples = function (tupleSelector) {
+        var _this = this;
         var startFilt = UtilMisc_1.extend({ "subscribe": false }, this.filt, {
             "tupleSelector": tupleSelector
         });
         // Optionally typed, No need to worry about the fact that we convert this
         // and then TypeScript doesn't recognise that data type change
-        var promise = new PayloadResponse_1.PayloadResponse(this.vortexService, new Payload_1.Payload(startFilt))
-            .then(function (payload) { return payload.tuples; });
+        var promise = new Payload_1.Payload(startFilt).makePayloadEnvelope();
+        promise = promise.then(function (payloadEnvelope) {
+            return new PayloadResponse_1.PayloadResponse(_this.vortexService, payloadEnvelope);
+        });
+        promise = promise.then(function (payloadEnvelope) {
+            return payloadEnvelope.decodePayload();
+        });
+        promise = promise.then(function (payload) { return payload.tuples; });
         return promise;
     };
     TupleDataObserverService.prototype.subscribeToTupleSelector = function (tupleSelector, enableCache) {

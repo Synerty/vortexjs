@@ -26,15 +26,15 @@ var ComponentLifecycleEventEmitter_1 = require("./ComponentLifecycleEventEmitter
 var PayloadResponse = /** @class */ (function () {
     /** Constructor
      * @param vortexService:
-     * @param payload: The payload to mark and send.
+     * @param payloadEnvelope: The PayloadEnvelope to send.
      * @param timeout: The timeout to wait for a response - in seconds;
      * @param resultCheck: Should the result of the payload response be checked.
      */
-    function PayloadResponse(vortexService, payload, timeout, resultCheck) {
+    function PayloadResponse(vortexService, payloadEnvelope, timeout, resultCheck) {
         if (timeout === void 0) { timeout = PayloadResponse.RESPONSE_TIMEOUT_SECONDS; }
         if (resultCheck === void 0) { resultCheck = true; }
         var _this = this;
-        this.payload = payload;
+        this.payloadEnvelope = payloadEnvelope;
         this.timeout = timeout;
         this.resultCheck = resultCheck;
         this.PROCESSING = "Processing";
@@ -50,9 +50,9 @@ var PayloadResponse = /** @class */ (function () {
             // Start the timer
             var timer = null;
             // Create the endpoint
-            _this.payload.filt[PayloadResponse.messageIdKey] = _this._messageId;
+            _this.payloadEnvelope.filt[PayloadResponse.messageIdKey] = _this._messageId;
             var endpoint = vortexService
-                .createEndpoint(_this._lcEmitter, _this.payload.filt);
+                .createEndpoint(_this._lcEmitter, _this.payloadEnvelope.filt);
             var finish = function (status) {
                 _this._status = status;
                 _this._lcEmitter.onDestroyEvent.emit("OnDestroy");
@@ -63,7 +63,7 @@ var PayloadResponse = /** @class */ (function () {
             };
             var callFail = function (status, msgArg) {
                 if (msgArg === void 0) { msgArg = ''; }
-                var filtStr = JSON.stringify(_this.payload.filt);
+                var filtStr = JSON.stringify(_this.payloadEnvelope.filt);
                 var msg = UtilMisc_1.dateStr() + " PayloadEndpoing " + status + " Failed : " + msgArg + "\n" + filtStr;
                 console.log(msg);
                 finish(status);
@@ -82,7 +82,7 @@ var PayloadResponse = /** @class */ (function () {
                     resolve(payloadEnvelope);
                 }
             });
-            vortexService.sendPayload(_this.payload)
+            vortexService.sendPayloadEnvelope(_this.payloadEnvelope)
                 .then(function () {
                 timer = setTimeout(function () { return callFail(_this.TIMED_OUT); }, timeout);
             })
@@ -115,8 +115,8 @@ var PayloadResponse = /** @class */ (function () {
      *
      * @returns True if this payload has been tagged by a PayloadResponse class
      */
-    PayloadResponse.isResponsePayload = function (payload) {
-        return payload.filt.hasOwnProperty(PayloadResponse.messageIdKey);
+    PayloadResponse.isResponsePayloadEnvelope = function (payloadEnvelope) {
+        return payloadEnvelope.filt.hasOwnProperty(PayloadResponse.messageIdKey);
     };
     Object.defineProperty(PayloadResponse.prototype, "status", {
         get: function () {

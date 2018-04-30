@@ -44,14 +44,19 @@ var TupleActionPushService = /** @class */ (function () {
      * responded.
      */
     TupleActionPushService.prototype.pushAction = function (tupleAction) {
+        var _this = this;
         if (!this.vortexStatus.snapshot.isOnline)
             return Promise.reject("Vortex is offline");
-        var payloadResponse = new PayloadResponse_1.PayloadResponse(this.vortexService, this.makePayload(tupleAction));
-        var convertedPromise = payloadResponse
-            .then(function (payload) {
-            return payload.tuples;
+        var promise = this.makePayload(tupleAction)
+            .makePayloadEnvelope();
+        promise = promise.then(function (payloadEnvelope) {
+            return new PayloadResponse_1.PayloadResponse(_this.vortexService, payloadEnvelope);
         });
-        return convertedPromise;
+        promise = promise.then(function (payloadEnvelope) {
+            return payloadEnvelope.decodePayload();
+        });
+        promise = promise.then(function (payload) { return payload.tuples; });
+        return promise;
     };
     /** Make Payload
      *

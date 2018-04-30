@@ -83,22 +83,25 @@ var TupleActionPushOfflineSingletonService = /** @class */ (function () {
                 _this.sendingTuple = false;
                 return;
             }
-            var uuid = sendPayload.tuples[0].uuid;
-            var scope = sendPayload.filt["name"];
-            return new PayloadResponse_1.PayloadResponse(_this.vortexService, sendPayload, PayloadResponse_1.PayloadResponse.RESPONSE_TIMEOUT_SECONDS, // Timeout
-            false // don't check result, only reject if it times out
-            ).then(function (responsePayload) {
-                // If we received a payload, but it has an error message
-                // Log an error, it's out of our hands, move on.
-                var r = responsePayload.result; // success is null or true
-                if (!(r == null || r === true)) {
-                    _this.vortexStatus.logError('Server failed to process Action: ' + responsePayload.result.toString());
-                }
-                _this.storage.deleteAction(scope, uuid).then(function () {
-                    _this.vortexStatus.decrementQueuedActionCount();
+            return sendPayload.makePayloadEnvelope()
+                .then(function (sendPayloadEnvelope) {
+                var uuid = sendPayload.tuples[0].uuid;
+                var scope = sendPayload.filt["name"];
+                return new PayloadResponse_1.PayloadResponse(_this.vortexService, sendPayloadEnvelope, PayloadResponse_1.PayloadResponse.RESPONSE_TIMEOUT_SECONDS, // Timeout
+                false // don't check result, only reject if it times out
+                ).then(function (responsePayload) {
+                    // If we received a payload, but it has an error message
+                    // Log an error, it's out of our hands, move on.
+                    var r = responsePayload.result; // success is null or true
+                    if (!(r == null || r === true)) {
+                        _this.vortexStatus.logError('Server failed to process Action: ' + responsePayload.result.toString());
+                    }
+                    _this.storage.deleteAction(scope, uuid).then(function () {
+                        _this.vortexStatus.decrementQueuedActionCount();
+                    });
+                    _this.sendingTuple = false;
+                    _this.sendNextAction();
                 });
-                _this.sendingTuple = false;
-                _this.sendNextAction();
             });
         })
             .catch(function (err) {

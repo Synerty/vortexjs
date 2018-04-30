@@ -7,6 +7,7 @@ import {errToStr} from "../UtilMisc";
 import {PayloadResponse} from "../PayloadResponse";
 import {TupleStorageFactoryService} from "../storage-factory/TupleStorageFactoryService";
 import {TupleActionStorageServiceABC} from "../action-storage/TupleActionStorageServiceABC";
+import {PayloadEnvelope} from "../PayloadEnvelope";
 
 
 @Injectable()
@@ -93,29 +94,32 @@ export class TupleActionPushOfflineSingletonService {
                     this.sendingTuple = false;
                     return;
                 }
+                return sendPayload.makePayloadEnvelope()
+                    .then((sendPayloadEnvelope:PayloadEnvelope) => {
 
-                let uuid = (<TupleActionABC> sendPayload.tuples[0]).uuid;
-                let scope = sendPayload.filt["name"];
+                        let uuid = (<TupleActionABC> sendPayload.tuples[0]).uuid;
+                        let scope = sendPayload.filt["name"];
 
-                return new PayloadResponse(this.vortexService,
-                    sendPayload,
-                    PayloadResponse.RESPONSE_TIMEOUT_SECONDS, // Timeout
-                    false // don't check result, only reject if it times out
-                ).then(responsePayload => {
-                    // If we received a payload, but it has an error message
-                    // Log an error, it's out of our hands, move on.
-                    let r = responsePayload.result; // success is null or true
-                    if (!(r == null || r === true)) {
-                        this.vortexStatus.logError(
-                            'Server failed to process Action: ' + responsePayload.result.toString());
-                    }
+                        return new PayloadResponse(this.vortexService,
+                            sendPayloadEnvelope,
+                            PayloadResponse.RESPONSE_TIMEOUT_SECONDS, // Timeout
+                            false // don't check result, only reject if it times out
+                        ).then(responsePayload => {
+                            // If we received a payload, but it has an error message
+                            // Log an error, it's out of our hands, move on.
+                            let r = responsePayload.result; // success is null or true
+                            if (!(r == null || r === true)) {
+                                this.vortexStatus.logError(
+                                    'Server failed to process Action: ' + responsePayload.result.toString());
+                            }
 
-                    this.storage.deleteAction(scope, uuid).then(() => {
-                        this.vortexStatus.decrementQueuedActionCount();
+                            this.storage.deleteAction(scope, uuid).then(() => {
+                                this.vortexStatus.decrementQueuedActionCount();
+                            });
+                            this.sendingTuple = false;
+                            this.sendNextAction();
+                        })
                     });
-                    this.sendingTuple = false;
-                    this.sendNextAction();
-                })
 
             })
 

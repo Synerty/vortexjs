@@ -6,6 +6,7 @@ import {VortexService} from "../VortexService";
 import {PayloadResponse} from "../PayloadResponse";
 import {Payload} from "../Payload";
 import {extend} from "../UtilMisc";
+import {PayloadEnvelope} from "../PayloadEnvelope";
 
 
 @Injectable()
@@ -37,14 +38,20 @@ export class TupleActionPushService {
         if (!this.vortexStatus.snapshot.isOnline)
             return Promise.reject("Vortex is offline");
 
-        let payloadResponse = new PayloadResponse(
-            this.vortexService, this.makePayload(tupleAction));
+        let promise: any = this.makePayload(tupleAction)
+            .makePayloadEnvelope();
 
-        let convertedPromise: any = payloadResponse
-            .then(payload => {
-                return payload.tuples;
-            });
-        return convertedPromise;
+        promise = promise.then((payloadEnvelope: PayloadEnvelope) => {
+            return new PayloadResponse(this.vortexService, payloadEnvelope);
+        });
+
+        promise = promise.then((payloadEnvelope: PayloadEnvelope) => {
+            return payloadEnvelope.decodePayload();
+        });
+
+        promise = promise.then((payload: Payload) => payload.tuples);
+
+        return promise;
 
     }
 

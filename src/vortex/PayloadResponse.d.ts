@@ -1,4 +1,3 @@
-import { Payload } from "./Payload";
 import { VortexService } from "./VortexService";
 import { PayloadEnvelope } from "./PayloadEnvelope";
 /** Payload Response
@@ -22,7 +21,7 @@ import { PayloadEnvelope } from "./PayloadEnvelope";
  *
  */
 export declare class PayloadResponse {
-    private payload;
+    private payloadEnvelope;
     private timeout;
     private resultCheck;
     static readonly RESPONSE_TIMEOUT_SECONDS: number;
@@ -38,11 +37,11 @@ export declare class PayloadResponse {
     private promise;
     /** Constructor
      * @param vortexService:
-     * @param payload: The payload to mark and send.
+     * @param payloadEnvelope: The PayloadEnvelope to send.
      * @param timeout: The timeout to wait for a response - in seconds;
      * @param resultCheck: Should the result of the payload response be checked.
      */
-    constructor(vortexService: VortexService, payload: Payload, timeout?: number, resultCheck?: boolean);
+    constructor(vortexService: VortexService, payloadEnvelope: PayloadEnvelope, timeout?: number, resultCheck?: boolean);
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -62,6 +61,6 @@ export declare class PayloadResponse {
      *
      * @returns True if this payload has been tagged by a PayloadResponse class
      */
-    static isResponsePayload(payload: any): any;
+    static isResponsePayloadEnvelope(payloadEnvelope: PayloadEnvelope): boolean;
     readonly status: any;
 }
