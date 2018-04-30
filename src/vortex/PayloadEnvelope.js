@@ -40,7 +40,7 @@ var PayloadEnvelope = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.result = null;
         _this.date = null;
-        _this.__rst = SerialiseUtil_1.default.T_RAPUI_PAYLOAD;
+        _this.__rst = SerialiseUtil_1.default.T_RAPUI_PAYLOAD_ENVELOPE;
         _this.filt = filt;
         _this.encodedPayload = encodedPayload;
         _this.date = date == null ? new Date() : _this.date;

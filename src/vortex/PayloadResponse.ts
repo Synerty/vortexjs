@@ -78,7 +78,7 @@ export class PayloadResponse {
 
             let callFail = (status: string, msgArg = '') => {
                 let filtStr = JSON.stringify(this.payloadEnvelope.filt);
-                let msg = `${dateStr()} PayloadEndpoing ${status} Failed : ${msgArg}\n${filtStr}`;
+                let msg = `${dateStr()} PayloadEndpoint ${status} Failed : ${msgArg}\n${filtStr}`;
                 console.log(msg);
 
                 finish(status);

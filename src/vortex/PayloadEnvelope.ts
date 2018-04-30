@@ -39,7 +39,7 @@ export class PayloadEnvelope extends Jsonable {
                 date: Date | null = null) {
         super();
 
-        this.__rst = SerialiseUtil.T_RAPUI_PAYLOAD;
+        this.__rst = SerialiseUtil.T_RAPUI_PAYLOAD_ENVELOPE;
 
         this.filt = filt;
         this.encodedPayload = encodedPayload;
