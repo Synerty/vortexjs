@@ -85,9 +85,9 @@ export class VortexService {
         let promises: Promise<void>[] = [];
         for (let payload of payloads) {
             promises.push(
-                payload.toEncodedPayload()
-                    .then((encodedPayload: string) => {
-                        this.vortex.send(new PayloadEnvelope(payload.filt, encodedPayload, payload.date));
+                payload.makePayloadEnvelope()
+                    .then((payloadEnvelope: PayloadEnvelope) =>  {
+                        this.vortex.send(payloadEnvelope);
                     })
             );
         }

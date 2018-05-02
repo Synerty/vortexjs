@@ -17,7 +17,6 @@ var ng2_balloon_msg_1 = require("@synerty/ng2-balloon-msg");
 var VortexStatusService_1 = require("./VortexStatusService");
 var VortexClientHttp_1 = require("./VortexClientHttp");
 var VortexClientWebsocket_1 = require("./VortexClientWebsocket");
-var PayloadEnvelope_1 = require("./PayloadEnvelope");
 var VortexService = /** @class */ (function () {
     function VortexService(vortexStatusService, balloonMsg) {
         //
@@ -76,15 +75,12 @@ var VortexService = /** @class */ (function () {
         else
             payloads = [payload];
         var promises = [];
-        var _loop_1 = function (payload_1) {
-            promises.push(payload_1.toEncodedPayload()
-                .then(function (encodedPayload) {
-                _this.vortex.send(new PayloadEnvelope_1.PayloadEnvelope(payload_1.filt, encodedPayload, payload_1.date));
-            }));
-        };
         for (var _i = 0, payloads_1 = payloads; _i < payloads_1.length; _i++) {
             var payload_1 = payloads_1[_i];
-            _loop_1(payload_1);
+            promises.push(payload_1.makePayloadEnvelope()
+                .then(function (payloadEnvelope) {
+                _this.vortex.send(payloadEnvelope);
+            }));
         }
         var ret = Promise.all(promises);
         return ret;
