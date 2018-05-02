@@ -64,7 +64,7 @@ var PayloadResponse = /** @class */ (function () {
             var callFail = function (status, msgArg) {
                 if (msgArg === void 0) { msgArg = ''; }
                 var filtStr = JSON.stringify(_this.payloadEnvelope.filt);
-                var msg = UtilMisc_1.dateStr() + " PayloadEndpoing " + status + " Failed : " + msgArg + "\n" + filtStr;
+                var msg = UtilMisc_1.dateStr() + " PayloadEndpoint " + status + " Failed : " + msgArg + "\n" + filtStr;
                 console.log(msg);
                 finish(status);
                 reject(msgArg);
