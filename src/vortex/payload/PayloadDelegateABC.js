@@ -11,7 +11,7 @@ function logLong(message, start, payload) {
     var duration = now() - start;
     var desc = '';
     // You get 5ms to do what you need before i call the performance cops.
-    if (duration < 5)
+    if (duration < 10)
         return;
     if (payload != null) {
         desc = ', ' + JSON.stringify(payload.filt);

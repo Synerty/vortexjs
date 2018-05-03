@@ -37,6 +37,16 @@ var TupleDataObservableNameService = /** @class */ (function () {
         this.name = name;
         this.additionalFilt = additionalFilt;
     }
+    TupleDataObservableNameService.prototype.equals = function (other) {
+        if (other == null)
+            return false;
+        if (this.name != other.name)
+            return false;
+        return JSON.stringify(this.additionalFilt) == JSON.stringify(other.additionalFilt);
+    };
+    TupleDataObservableNameService.prototype.toString = function () {
+        return this.name + ":" + JSON.stringify(this.additionalFilt);
+    };
     TupleDataObservableNameService = __decorate([
         core_1.Injectable(),
         __metadata("design:paramtypes", [String, Object])
@@ -108,6 +118,9 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
         _this.onDestroyEvent.subscribe(function () { return clearInterval(cleanupTimer); });
         return _this;
     }
+    TupleDataOfflineObserverService.prototype._nameService = function () {
+        return this.tupleDataObservableName;
+    };
     TupleDataOfflineObserverService.prototype.pollForTuples = function (tupleSelector) {
         var _this = this;
         var startFilt = UtilMisc_1.extend({ "subscribe": false }, this.filt, {
@@ -135,7 +148,7 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
             cachedData_1.resetTearDown();
             cachedData_1.cacheEnabled = cachedData_1.cacheEnabled && enableCache;
             cachedData_1.storageEnabled = cachedData_1.storageEnabled && enableStorage;
-            if (cachedData_1.cacheEnabled) {
+            if (cachedData_1.cacheEnabled && cachedData_1.lastServerPayloadDate != null) {
                 // Emit after we return
                 setTimeout(function () {
                     _this.notifyObservers(cachedData_1, tupleSelector, cachedData_1.tuples);

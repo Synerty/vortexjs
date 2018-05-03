@@ -14,8 +14,16 @@ var TupleDataOfflineObserverService_1 = require("./TupleDataOfflineObserverServi
 var TupleDataOfflineObserverService_2 = require("./TupleDataOfflineObserverService");
 exports.TupleDataObservableNameService = TupleDataOfflineObserverService_2.TupleDataObservableNameService;
 var TupleDataObserverService = /** @class */ (function () {
-    function TupleDataObserverService(delegate) {
+    function TupleDataObserverService(delegate, tupleDataObservableName) {
         this.delegate = delegate;
+        this.tupleDataObservableName = tupleDataObservableName;
+        var delegateName = delegate._nameService();
+        if (!this.tupleDataObservableName.equals(delegateName)) {
+            throw new Error("ERROR: The TupleDataObserverService was injected"
+                + " with the wrong TupleDataOfflineObserverService name service"
+                + (" " + delegateName + " VS " + this.tupleDataObservableName)
+                + " ensure TupleDataOfflineObserverService is provided first.");
+        }
     }
     TupleDataObserverService.prototype.pollForTuples = function (tupleSelector) {
         return this.delegate.pollForTuples(tupleSelector);
@@ -26,7 +34,8 @@ var TupleDataObserverService = /** @class */ (function () {
     };
     TupleDataObserverService = __decorate([
         core_1.Injectable(),
-        __metadata("design:paramtypes", [TupleDataOfflineObserverService_1.TupleDataOfflineObserverService])
+        __metadata("design:paramtypes", [TupleDataOfflineObserverService_1.TupleDataOfflineObserverService,
+            TupleDataOfflineObserverService_1.TupleDataObservableNameService])
     ], TupleDataObserverService);
     return TupleDataObserverService;
 }());

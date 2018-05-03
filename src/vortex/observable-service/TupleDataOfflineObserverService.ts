@@ -18,6 +18,18 @@ export class TupleDataObservableNameService {
     constructor(public name: string, public additionalFilt = {}) {
 
     }
+
+    equals(other: TupleDataObservableNameService): boolean {
+        if (other == null)
+            return false;
+        if (this.name != other.name)
+            return false;
+        return JSON.stringify(this.additionalFilt) == JSON.stringify(other.additionalFilt);
+    }
+
+    toString(): string {
+        return `${this.name}:${JSON.stringify(this.additionalFilt)}`;
+    }
 }
 
 
@@ -100,6 +112,10 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
 
     }
 
+    _nameService(): TupleDataObservableNameService {
+        return this.tupleDataObservableName;
+    }
+
     pollForTuples(tupleSelector: TupleSelector): Promise<Tuple[]> {
 
         let startFilt = extend({"subscribe": false}, this.filt, {
@@ -135,7 +151,7 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
             cachedData.cacheEnabled = cachedData.cacheEnabled && enableCache;
             cachedData.storageEnabled = cachedData.storageEnabled && enableStorage;
 
-            if (cachedData.cacheEnabled) {
+            if (cachedData.cacheEnabled && cachedData.lastServerPayloadDate != null) {
                 // Emit after we return
                 setTimeout(() => {
                     this.notifyObservers(cachedData, tupleSelector, cachedData.tuples);
@@ -254,8 +270,8 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
 
 
     private tellServerWeWantData(tupleSelectors: TupleSelector[],
-                                   enableCache: boolean = true,
-                                   unsubscribe: boolean = false): void {
+                                 enableCache: boolean = true,
+                                 unsubscribe: boolean = false): void {
         if (!this.vortexStatusService.snapshot.isOnline)
             return;
 
@@ -275,9 +291,9 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
     }
 
     private notifyObservers(cachedData: CachedSubscribedData,
-                              tupleSelector: TupleSelector,
-                              tuples: Tuple[],
-                              encodedPayload: string | null = null): void {
+                            tupleSelector: TupleSelector,
+                            tuples: Tuple[],
+                            encodedPayload: string | null = null): void {
         // Notify Observers
         try {
             cachedData.subject.next(tuples);

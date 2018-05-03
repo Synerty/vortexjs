@@ -10,6 +10,8 @@ export declare class TupleDataObservableNameService {
     name: string;
     additionalFilt: {};
     constructor(name: string, additionalFilt?: {});
+    equals(other: TupleDataObservableNameService): boolean;
+    toString(): string;
 }
 export declare class CachedSubscribedData {
     tupleSelector: TupleSelector;
@@ -38,6 +40,7 @@ export declare class TupleDataOfflineObserverService extends ComponentLifecycleE
     private filt;
     private cacheByTupleSelector;
     constructor(vortexService: VortexService, vortexStatusService: VortexStatusService, tupleDataObservableName: TupleDataObservableNameService, tupleOfflineStorageService: TupleOfflineStorageService);
+    _nameService(): TupleDataObservableNameService;
     pollForTuples(tupleSelector: TupleSelector): Promise<Tuple[]>;
     subscribeToTupleSelector(tupleSelector: TupleSelector, enableCache?: boolean, enableStorage?: boolean): Subject<Tuple[]>;
     /** Update Offline State

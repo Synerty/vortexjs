@@ -13,7 +13,7 @@ export function logLong(message: string, start: any, payload: any | null = null)
   let desc = '';
 
   // You get 5ms to do what you need before i call the performance cops.
-  if (duration < 5)
+  if (duration < 10)
     return;
 
   if (payload != null) {
