@@ -5,6 +5,7 @@ import { ComponentLifecycleEventEmitter } from "./ComponentLifecycleEventEmitter
 import { VortexClientABC } from "./VortexClientABC";
 import { Tuple } from "./Tuple";
 import { Ng2BalloonMsgService } from "@synerty/ng2-balloon-msg";
+import { VortexStatusService } from "./VortexStatusService";
 export declare enum TupleLoaderEventEnum {
     Load = 0,
     Save = 1,
@@ -43,6 +44,7 @@ export interface IFilterUpdateCallable {
  */
 export declare class TupleLoader {
     private vortex;
+    private vortexStatusService;
     private component;
     private balloonMsg;
     private filterUpdateCallable;
@@ -53,8 +55,7 @@ export declare class TupleLoader {
     event: EventEmitter<TupleLoaderEventEnum>;
     private endpoint;
     private _observable;
-    private observer;
-    constructor(vortex: VortexClientABC, component: ComponentLifecycleEventEmitter, filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt, balloonMsg?: Ng2BalloonMsgService | null);
+    constructor(vortex: VortexClientABC, vortexStatusService: VortexStatusService, component: ComponentLifecycleEventEmitter, filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt, balloonMsg?: Ng2BalloonMsgService | null);
     /**
      * @property: The tuple observable to subscribe to.
      */

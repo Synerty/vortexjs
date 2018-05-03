@@ -124,6 +124,7 @@ export class VortexService {
     createTupleLoader(component: ComponentLifecycleEventEmitter,
                       filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt) {
         return new TupleLoader(this.vortex,
+            this.vortexStatusService,
             component,
             filterUpdateCallable,
             this.balloonMsg

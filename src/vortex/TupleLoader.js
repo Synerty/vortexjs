@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Observable_1 = require("rxjs/Observable");
+var Subject_1 = require("rxjs/Subject");
 var Payload_1 = require("./Payload");
 var PayloadEndpoint_1 = require("./PayloadEndpoint");
 var core_1 = require("@angular/core");
@@ -34,10 +34,11 @@ var TupleLoaderEventEnum;
  * * "del()"
  */
 var TupleLoader = /** @class */ (function () {
-    function TupleLoader(vortex, component, filterUpdateCallable, balloonMsg) {
+    function TupleLoader(vortex, vortexStatusService, component, filterUpdateCallable, balloonMsg) {
         if (balloonMsg === void 0) { balloonMsg = null; }
         var _this = this;
         this.vortex = vortex;
+        this.vortexStatusService = vortexStatusService;
         this.component = component;
         this.balloonMsg = balloonMsg;
         this.lastPayloadFilt = null;
@@ -55,24 +56,15 @@ var TupleLoader = /** @class */ (function () {
             });
         }
         // Regiseter for the angular docheck
-        var doCheckSub = this.component.doCheckEvent
+        this.component.doCheckEvent
+            .takeUntil(this.component.onDestroyEvent)
             .subscribe(function () { return _this.filterChangeCheck(); });
         // Create the observable object
-        this._observable = Observable_1.Observable.create(function (observer) { return _this.observer = observer; });
-        // Call subscribe, otherwise the observer is never created, and we can never call
-        // next() on it.
-        this._observable.subscribe().unsubscribe();
+        this._observable = new Subject_1.Subject();
         // Remove all observers when the component is destroyed.
-        var onDestroySub = this.component.onDestroyEvent.subscribe(function () {
-            if (_this._observable['observers'] != null) {
-                for (var _i = 0, _a = _this._observable['observers']; _i < _a.length; _i++) {
-                    var observer = _a[_i];
-                    observer.unsubscribe();
-                }
-            }
-            doCheckSub.unsubscribe();
-            onDestroySub.unsubscribe();
-        });
+        this.component.onDestroyEvent
+            .first()
+            .subscribe(function () { return _this._observable.complete(); });
     }
     Object.defineProperty(TupleLoader.prototype, "observable", {
         /**
@@ -86,6 +78,8 @@ var TupleLoader = /** @class */ (function () {
     });
     TupleLoader.prototype.filterChangeCheck = function () {
         var _this = this;
+        if (!this.vortexStatusService.snapshot.isOnline)
+            return;
         // Create a copy
         var newFilter = UtilMisc_1.extend({}, this.filterUpdateCallable());
         if (newFilter == null) {
@@ -255,7 +249,7 @@ var TupleLoader = /** @class */ (function () {
         payloadEnvelope.decodePayload()
             .then(function (payload) {
             _this.lastTuples = payload.tuples;
-            _this.observer.next(payload.tuples);
+            _this._observable.next(payload.tuples);
         })
             .catch(function (e) { return console.log("TupleLoader failed to decode payload " + e); });
     };

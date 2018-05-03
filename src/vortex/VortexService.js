@@ -106,7 +106,7 @@ var VortexService = /** @class */ (function () {
         return new PayloadEndpoint_1.PayloadEndpoint(component, filter, processLatestOnly);
     };
     VortexService.prototype.createTupleLoader = function (component, filterUpdateCallable) {
-        return new TupleLoader_1.TupleLoader(this.vortex, component, filterUpdateCallable, this.balloonMsg);
+        return new TupleLoader_1.TupleLoader(this.vortex, this.vortexStatusService, component, filterUpdateCallable, this.balloonMsg);
     };
     VortexService.vortexUrl = '/vortex';
     VortexService = VortexService_1 = __decorate([

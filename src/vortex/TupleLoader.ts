@@ -1,5 +1,5 @@
+import {Subject} from "rxjs/Subject";
 import {Observable} from "rxjs/Observable";
-import {Observer} from "rxjs/Observer";
 import {IPayloadFilt, Payload} from "./Payload";
 import {PayloadEndpoint} from "./PayloadEndpoint";
 import {EventEmitter} from "@angular/core";
@@ -10,6 +10,7 @@ import {plDeleteKey} from "./PayloadFilterKeys";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 import {bind, deepEqual, extend} from "./UtilMisc";
 import {PayloadEnvelope} from "./PayloadEnvelope";
+import {VortexStatusService} from "./VortexStatusService";
 
 
 // ------------------
@@ -73,11 +74,11 @@ export class TupleLoader {
 
     private endpoint: PayloadEndpoint | null = null;
 
-    private _observable: Observable<Tuple[] | any[]>;
-    private observer: Observer<Tuple[] | any[]>;
+    private _observable: Subject<Tuple[] | any[]>;
 
 
     constructor(private vortex: VortexClientABC,
+                private vortexStatusService: VortexStatusService,
                 private component: ComponentLifecycleEventEmitter,
                 filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt,
                 private balloonMsg: Ng2BalloonMsgService | null = null) {
@@ -91,26 +92,17 @@ export class TupleLoader {
         }
 
         // Regiseter for the angular docheck
-        let doCheckSub = this.component.doCheckEvent
+        this.component.doCheckEvent
+            .takeUntil(this.component.onDestroyEvent)
             .subscribe(() => this.filterChangeCheck());
 
         // Create the observable object
-        this._observable = Observable.create(observer => this.observer = observer);
-
-        // Call subscribe, otherwise the observer is never created, and we can never call
-        // next() on it.
-        this._observable.subscribe().unsubscribe();
+        this._observable = new Subject();
 
         // Remove all observers when the component is destroyed.
-        let onDestroySub = this.component.onDestroyEvent.subscribe(() => {
-            if (this._observable['observers'] != null) {
-                for (let observer of this._observable['observers']) {
-                    observer.unsubscribe();
-                }
-            }
-            doCheckSub.unsubscribe();
-            onDestroySub.unsubscribe();
-        });
+        this.component.onDestroyEvent
+            .first()
+            .subscribe(() => this._observable.complete());
     }
 
     /**
@@ -121,6 +113,9 @@ export class TupleLoader {
     }
 
     filterChangeCheck(): void {
+        if (!this.vortexStatusService.snapshot.isOnline)
+            return;
+
         // Create a copy
         let newFilter = extend({}, this.filterUpdateCallable());
 
@@ -316,7 +311,7 @@ export class TupleLoader {
         payloadEnvelope.decodePayload()
             .then((payload: Payload) => {
                 this.lastTuples = payload.tuples;
-                this.observer.next(payload.tuples);
+                this._observable.next(payload.tuples);
             })
             .catch(e => console.log(`TupleLoader failed to decode payload ${e}`));
     }
