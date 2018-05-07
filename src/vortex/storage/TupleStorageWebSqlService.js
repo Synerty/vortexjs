@@ -88,7 +88,16 @@ var TupleWebSqlTransaction = /** @class */ (function () {
     function TupleWebSqlTransaction(tx, txForWrite) {
         this.tx = tx;
         this.txForWrite = txForWrite;
+        this.RETRY_DELAY_MS_MAX = 500;
+        this.RETRY_COUNT = 20;
     }
+    Object.defineProperty(TupleWebSqlTransaction.prototype, "retryMs", {
+        get: function () {
+            return Math.floor((Math.random() * this.RETRY_DELAY_MS_MAX) + 1);
+        },
+        enumerable: true,
+        configurable: true
+    });
     TupleWebSqlTransaction.prototype.isLockedMsg = function (msg) {
         var hasNsSqlError = msg.indexOf('SQLITE.ALL - Database Error5') !== -1;
         // unable to begin transaction (5 database is locked)
@@ -110,7 +119,7 @@ var TupleWebSqlTransaction = /** @class */ (function () {
     };
     TupleWebSqlTransaction.prototype.loadTuplesEncoded = function (tupleSelector) {
         var bindParams = [tupleSelector.toOrderedJsonStr()];
-        return this.tx.executeSql(selectSql, bindParams)
+        var ret = this.tx.executeSql(selectSql, bindParams)
             .then(function (rows) {
             if (rows.length === 0) {
                 return null;
@@ -118,6 +127,7 @@ var TupleWebSqlTransaction = /** @class */ (function () {
             var row1 = rows[0];
             return row1.payload;
         });
+        return ret;
     };
     TupleWebSqlTransaction.prototype.saveTuples = function (tupleSelector, tuples) {
         var _this = this;
@@ -138,17 +148,24 @@ var TupleWebSqlTransaction = /** @class */ (function () {
         // The payload is a convenient way to serialise and compress the data
         var tupleSelectorStr = tupleSelector.toOrderedJsonStr();
         var bindParams = [tupleSelectorStr, Date.now(), vortexMsg];
-        return this.tx.executeSql(insertSql, bindParams)
+        var ret = this.tx.executeSql(insertSql, bindParams)
             .catch(function (err) {
             if (_this.isLockedMsg(err)) {
-                if (retries == 5) {
+                if (retries == _this.RETRY_COUNT) {
                     throw new Error(err + "\nRetried " + retries + " times");
                 }
-                return _this.saveTuplesEncoded(tupleSelector, vortexMsg, retries + 1);
+                return new Promise(function (resolve, reject) {
+                    setTimeout(function () {
+                        _this.saveTuplesEncoded(tupleSelector, vortexMsg, retries + 1)
+                            .then(resolve)
+                            .catch(reject);
+                    }, _this.retryMs);
+                });
             }
             throw new Error(err);
         })
             .then(function () { return null; }); // Convert the result
+        return ret;
     };
     TupleWebSqlTransaction.prototype.deleteTuples = function (tupleSelector, retries) {
         var _this = this;
@@ -159,17 +176,24 @@ var TupleWebSqlTransaction = /** @class */ (function () {
             return Promise.reject(msg);
         }
         var tupleSelectorStr = tupleSelector.toOrderedJsonStr();
-        return this.tx.executeSql(deleteBySelectorSql, [tupleSelectorStr])
+        var ret = this.tx.executeSql(deleteBySelectorSql, [tupleSelectorStr])
             .catch(function (err) {
             if (_this.isLockedMsg(err)) {
-                if (retries == 5) {
+                if (retries == _this.RETRY_COUNT) {
                     throw new Error(err + "\nRetried " + retries + " times");
                 }
-                return _this.deleteTuples(tupleSelector, retries + 1);
+                return new Promise(function (resolve, reject) {
+                    setTimeout(function () {
+                        _this.deleteTuples(tupleSelector, retries + 1)
+                            .then(resolve)
+                            .catch(reject);
+                    }, _this.retryMs);
+                });
             }
             throw new Error(err);
         })
             .then(function () { return null; }); // Convert the result
+        return ret;
     };
     TupleWebSqlTransaction.prototype.deleteOldTuples = function (deleteDataBeforeDate, retries) {
         var _this = this;
@@ -179,17 +203,24 @@ var TupleWebSqlTransaction = /** @class */ (function () {
             console.log(UtilMisc_1.dateStr() + " " + msg);
             return Promise.reject(msg);
         }
-        return this.tx.executeSql(deleteByDateSql, [deleteDataBeforeDate.getTime()])
+        var ret = this.tx.executeSql(deleteByDateSql, [deleteDataBeforeDate.getTime()])
             .catch(function (err) {
             if (_this.isLockedMsg(err)) {
-                if (retries == 5) {
+                if (retries == _this.RETRY_COUNT) {
                     throw new Error(err + "\nRetried " + retries + " times");
                 }
-                return _this.deleteOldTuples(deleteDataBeforeDate, retries + 1);
+                return new Promise(function (resolve, reject) {
+                    setTimeout(function () {
+                        _this.deleteOldTuples(deleteDataBeforeDate, retries + 1)
+                            .then(resolve)
+                            .catch(reject);
+                    }, _this.retryMs);
+                });
             }
             throw new Error(err);
         })
             .then(function () { return null; }); // Convert the result
+        return ret;
     };
     TupleWebSqlTransaction.prototype.close = function () {
         return Promise.resolve();

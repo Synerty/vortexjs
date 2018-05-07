@@ -105,8 +105,16 @@ export class TupleStorageWebSqlService extends TupleStorageServiceABC {
 
 class TupleWebSqlTransaction implements TupleStorageTransaction {
 
+    RETRY_DELAY_MS_MAX = 500;
+    RETRY_COUNT = 20;
+
     constructor(private tx: WebSqlTransaction, private txForWrite: boolean) {
 
+    }
+
+
+    private get retryMs(): number {
+        return Math.floor((Math.random() * this.RETRY_DELAY_MS_MAX) + 1);
     }
 
     private isLockedMsg(msg: string): boolean {
@@ -140,7 +148,7 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
 
         let bindParams = [tupleSelector.toOrderedJsonStr()];
 
-        return this.tx.executeSql(selectSql, bindParams)
+        let ret: any = this.tx.executeSql(selectSql, bindParams)
             .then((rows: any[]) => {
                 if (rows.length === 0) {
                     return null;
@@ -149,6 +157,7 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
                 let row1 = rows[0];
                 return row1.payload;
             });
+        return ret;
     }
 
     saveTuples(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> {
@@ -176,17 +185,25 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
         let tupleSelectorStr = tupleSelector.toOrderedJsonStr();
         let bindParams = [tupleSelectorStr, Date.now(), vortexMsg];
 
-        return this.tx.executeSql(insertSql, bindParams)
+        let ret: any = this.tx.executeSql(insertSql, bindParams)
             .catch(err => {
                 if (this.isLockedMsg(err)) {
-                    if (retries == 5) {
+                    if (retries == this.RETRY_COUNT) {
                         throw new Error(`${err}\nRetried ${retries} times`);
                     }
-                    return this.saveTuplesEncoded(tupleSelector, vortexMsg, retries + 1);
+
+                    return new Promise<void>((resolve, reject) => {
+                        setTimeout(() => {
+                            this.saveTuplesEncoded(tupleSelector, vortexMsg, retries + 1)
+                                .then(resolve)
+                                .catch(reject);
+                        }, this.retryMs);
+                    });
                 }
                 throw new Error(err);
             })
             .then(() => null); // Convert the result
+        return ret;
 
     }
 
@@ -200,17 +217,24 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
 
         let tupleSelectorStr = tupleSelector.toOrderedJsonStr();
 
-        return this.tx.executeSql(deleteBySelectorSql, [tupleSelectorStr])
+        let ret: any = this.tx.executeSql(deleteBySelectorSql, [tupleSelectorStr])
             .catch(err => {
                 if (this.isLockedMsg(err)) {
-                    if (retries == 5) {
+                    if (retries == this.RETRY_COUNT) {
                         throw new Error(`${err}\nRetried ${retries} times`);
                     }
-                    return this.deleteTuples(tupleSelector, retries + 1);
+                    return new Promise<void>((resolve, reject) => {
+                        setTimeout(() => {
+                            this.deleteTuples(tupleSelector, retries + 1)
+                                .then(resolve)
+                                .catch(reject);
+                        }, this.retryMs);
+                    });
                 }
                 throw new Error(err);
             })
             .then(() => null); // Convert the result
+        return ret;
     }
 
     deleteOldTuples(deleteDataBeforeDate: Date, retries = 0): Promise<void> {
@@ -221,17 +245,24 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
             return Promise.reject(msg)
         }
 
-        return this.tx.executeSql(deleteByDateSql, [deleteDataBeforeDate.getTime()])
+        let ret: any = this.tx.executeSql(deleteByDateSql, [deleteDataBeforeDate.getTime()])
             .catch(err => {
                 if (this.isLockedMsg(err)) {
-                    if (retries == 5) {
+                    if (retries == this.RETRY_COUNT) {
                         throw new Error(`${err}\nRetried ${retries} times`);
                     }
-                    return this.deleteOldTuples(deleteDataBeforeDate, retries + 1);
+                    return new Promise<void>((resolve, reject) => {
+                        setTimeout(() => {
+                            this.deleteOldTuples(deleteDataBeforeDate, retries + 1)
+                                .then(resolve)
+                                .catch(reject);
+                        }, this.retryMs);
+                    });
                 }
                 throw new Error(err);
             })
             .then(() => null); // Convert the result
+        return ret;
     }
 
     close(): Promise<void> {
