@@ -173,16 +173,24 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
 
         if (newCachedData.storageEnabled) {
             this.tupleOfflineStorageService
-                .loadTuples(tupleSelector)
-                .then((tuples: Tuple[]) => {
-                    // If the server has responded before we loaded the data, then just
-                    // ignore the cached data.
-                    if (newCachedData.lastServerPayloadDate != null)
+                .loadTuplesEncoded(tupleSelector)
+                .then((vortexMsgOrNull: string | null) => {
+                    // There is no data, return
+                    if (vortexMsgOrNull == null)
                         return;
 
-                    // Update the tuples, and notify if them
-                    newCachedData.tuples = tuples;
-                    this.notifyObservers(newCachedData, tupleSelector, tuples);
+                    return Payload.fromEncodedPayload(vortexMsgOrNull)
+                        .then((payload: Payload) => {
+
+                            // If the server has responded before we loaded the data, then just
+                            // ignore the cached data.
+                            if (newCachedData.lastServerPayloadDate != null)
+                                return;
+
+                            // Update the tuples, and notify if them
+                            newCachedData.tuples = payload.tuples;
+                            this.notifyObservers(newCachedData, tupleSelector, payload.tuples);
+                        });
                 })
                 .catch(err => {
                     this.vortexStatusService.logError(`loadTuples failed : ${err}`);

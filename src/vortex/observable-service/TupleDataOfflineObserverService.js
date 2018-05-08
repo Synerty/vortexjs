@@ -167,15 +167,21 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
         this.tellServerWeWantData([tupleSelector], enableCache);
         if (newCachedData.storageEnabled) {
             this.tupleOfflineStorageService
-                .loadTuples(tupleSelector)
-                .then(function (tuples) {
-                // If the server has responded before we loaded the data, then just
-                // ignore the cached data.
-                if (newCachedData.lastServerPayloadDate != null)
+                .loadTuplesEncoded(tupleSelector)
+                .then(function (vortexMsgOrNull) {
+                // There is no data, return
+                if (vortexMsgOrNull == null)
                     return;
-                // Update the tuples, and notify if them
-                newCachedData.tuples = tuples;
-                _this.notifyObservers(newCachedData, tupleSelector, tuples);
+                return Payload_1.Payload.fromEncodedPayload(vortexMsgOrNull)
+                    .then(function (payload) {
+                    // If the server has responded before we loaded the data, then just
+                    // ignore the cached data.
+                    if (newCachedData.lastServerPayloadDate != null)
+                        return;
+                    // Update the tuples, and notify if them
+                    newCachedData.tuples = payload.tuples;
+                    _this.notifyObservers(newCachedData, tupleSelector, payload.tuples);
+                });
             })
                 .catch(function (err) {
                 _this.vortexStatusService.logError("loadTuples failed : " + err);
