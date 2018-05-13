@@ -22,8 +22,9 @@ export class VortexClientHttp extends VortexClientABC {
     private lastConn: _VortexClientHttpConnection | null = null;
 
     constructor(vortexStatusService: VortexStatusService,
-                url: string) {
-        super(vortexStatusService, url);
+                url: string,
+                vortexClientName: string) {
+        super(vortexStatusService, url, vortexClientName);
 
     }
 

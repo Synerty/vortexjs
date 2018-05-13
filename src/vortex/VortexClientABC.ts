@@ -2,7 +2,6 @@ import {Payload} from "./Payload";
 import {dateStr} from "./UtilMisc";
 import {rapuiClientEcho} from "./PayloadFilterKeys";
 import {payloadIO} from "./PayloadIO";
-import {NgZone} from "@angular/core";
 import {VortexStatusService} from "./VortexStatusService";
 import {PayloadEnvelope} from "./PayloadEnvelope";
 
@@ -29,9 +28,10 @@ export abstract class VortexClientABC {
      * the server.
      */
     constructor(protected vortexStatusService: VortexStatusService,
-                url: string) {
+                url: string,
+                vortexClientName: string) {
         this._uuid = VortexClientABC.makeUuid();
-        this._name = "browser";
+        this._name = vortexClientName;
         this._url = url;
         this._vortexClosed = false;
     }

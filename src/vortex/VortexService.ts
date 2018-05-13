@@ -16,10 +16,10 @@ import {PayloadEnvelope} from "./PayloadEnvelope";
 export class VortexService {
     private vortex: VortexClientABC;
     private static vortexUrl: string = '/vortex';
+    private static vortexClientName: string = '';
 
     constructor(private vortexStatusService: VortexStatusService,
                 private balloonMsg: Ng2BalloonMsgService) {
-        //
 
         this.reconnect();
     }
@@ -35,7 +35,20 @@ export class VortexService {
         VortexService.vortexUrl = url;
     }
 
+    /**
+     * Set Vortex Name
+     *
+     * @param vortexClientName: The vortexClientName to tell the server that we are.
+     */
+    static setVortexClientName(vortexClientName: string) {
+        VortexService.vortexClientName = vortexClientName;
+    }
+
     reconnect() {
+        if (VortexService.vortexClientName == '') {
+            throw new Error('VortexService.setVortexClientName() not set yet');
+        }
+
         if (this.vortex != null)
             this.vortex.closed = true;
 
@@ -46,10 +59,16 @@ export class VortexService {
 
         if (VortexService.vortexUrl.toLowerCase().startsWith("ws")) {
             this.vortex = new VortexClientWebsocket(
-                this.vortexStatusService, VortexService.vortexUrl);
+                this.vortexStatusService,
+                VortexService.vortexUrl,
+                VortexService.vortexClientName
+            );
         } else {
             this.vortex = new VortexClientHttp(
-                this.vortexStatusService, VortexService.vortexUrl);
+                this.vortexStatusService,
+                VortexService.vortexUrl,
+                VortexService.vortexClientName
+            );
         }
 
         this.vortex.reconnect();
@@ -86,7 +105,7 @@ export class VortexService {
         for (let payload of payloads) {
             promises.push(
                 payload.makePayloadEnvelope()
-                    .then((payloadEnvelope: PayloadEnvelope) =>  {
+                    .then((payloadEnvelope: PayloadEnvelope) => {
                         this.vortex.send(payloadEnvelope);
                     })
             );

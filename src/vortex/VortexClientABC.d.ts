@@ -18,7 +18,7 @@ export declare abstract class VortexClientABC {
      * RapUI VortexService, This class is responsible for sending and receiving payloads to/from
      * the server.
      */
-    constructor(vortexStatusService: VortexStatusService, url: string);
+    constructor(vortexStatusService: VortexStatusService, url: string, vortexClientName: string);
     static makeUuid(): string;
     readonly url: string;
     readonly uuid: string;

@@ -20,8 +20,9 @@ export class VortexClientWebsocket extends VortexClientABC {
     private unsentBuffer: string[] = [];
 
     constructor(vortexStatusService: VortexStatusService,
-                url: string) {
-        super(vortexStatusService, url);
+                url: string,
+                vortexClientName: string) {
+        super(vortexStatusService, url, vortexClientName);
 
     }
 

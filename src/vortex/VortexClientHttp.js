@@ -15,8 +15,8 @@ var VortexClientABC_1 = require("./VortexClientABC");
 var PayloadEnvelope_1 = require("./PayloadEnvelope");
 var VortexClientHttp = /** @class */ (function (_super) {
     __extends(VortexClientHttp, _super);
-    function VortexClientHttp(vortexStatusService, url) {
-        var _this = _super.call(this, vortexStatusService, url) || this;
+    function VortexClientHttp(vortexStatusService, url, vortexClientName) {
+        var _this = _super.call(this, vortexStatusService, url, vortexClientName) || this;
         /**
          * RapUI VortexService, This class is responsible for sending and receiving payloads to/from
          * the server.

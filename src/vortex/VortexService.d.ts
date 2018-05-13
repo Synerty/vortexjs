@@ -12,6 +12,7 @@ export declare class VortexService {
     private balloonMsg;
     private vortex;
     private static vortexUrl;
+    private static vortexClientName;
     constructor(vortexStatusService: VortexStatusService, balloonMsg: Ng2BalloonMsgService);
     /**
      * Set Vortex URL
@@ -21,6 +22,12 @@ export declare class VortexService {
      * @param url: The new URL for the vortex to use.
      */
     static setVortexUrl(url: string): void;
+    /**
+     * Set Vortex Name
+     *
+     * @param vortexClientName: The vortexClientName to tell the server that we are.
+     */
+    static setVortexClientName(vortexClientName: string): void;
     reconnect(): void;
     sendTuple(filt: IPayloadFilt | string, tuples: any[] | Tuple[]): void;
     sendFilt(filt: any): void;

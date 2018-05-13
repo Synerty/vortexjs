@@ -7,7 +7,7 @@ export declare class VortexClientWebsocket extends VortexClientABC {
     private socket;
     private lastReconnectDate;
     private unsentBuffer;
-    constructor(vortexStatusService: VortexStatusService, url: string);
+    constructor(vortexStatusService: VortexStatusService, url: string, vortexClientName: string);
     readonly isReady: boolean;
     send(payloadEnvelope: PayloadEnvelope | PayloadEnvelope[]): Promise<void>;
     reconnect(): void;

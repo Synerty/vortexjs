@@ -6,7 +6,7 @@ export declare class VortexClientHttp extends VortexClientABC {
      * the server.
      */
     private lastConn;
-    constructor(vortexStatusService: VortexStatusService, url: string);
+    constructor(vortexStatusService: VortexStatusService, url: string, vortexClientName: string);
     protected shutdown(): void;
     protected sendVortexMsg(vortexMsgs: string[]): void;
 }

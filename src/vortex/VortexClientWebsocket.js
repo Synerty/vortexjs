@@ -15,8 +15,8 @@ var UtilMisc_1 = require("./UtilMisc");
 var PayloadEnvelope_1 = require("./PayloadEnvelope");
 var VortexClientWebsocket = /** @class */ (function (_super) {
     __extends(VortexClientWebsocket, _super);
-    function VortexClientWebsocket(vortexStatusService, url) {
-        var _this = _super.call(this, vortexStatusService, url) || this;
+    function VortexClientWebsocket(vortexStatusService, url, vortexClientName) {
+        var _this = _super.call(this, vortexStatusService, url, vortexClientName) || this;
         _this.Socket = WebSocket || MozWebSocket;
         _this.socket = null;
         _this.lastReconnectDate = Date.parse("01-Jan-2017");

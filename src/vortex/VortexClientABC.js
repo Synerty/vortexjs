@@ -14,13 +14,13 @@ var VortexClientABC = /** @class */ (function () {
      * RapUI VortexService, This class is responsible for sending and receiving payloads to/from
      * the server.
      */
-    function VortexClientABC(vortexStatusService, url) {
+    function VortexClientABC(vortexStatusService, url, vortexClientName) {
         this.vortexStatusService = vortexStatusService;
         this.beatTimer = null;
         this.serverVortexUuid = null;
         this.serverVortexName = null;
         this._uuid = VortexClientABC.makeUuid();
-        this._name = "browser";
+        this._name = vortexClientName;
         this._url = url;
         this._vortexClosed = false;
     }

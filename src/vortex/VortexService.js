@@ -19,7 +19,6 @@ var VortexClientHttp_1 = require("./VortexClientHttp");
 var VortexClientWebsocket_1 = require("./VortexClientWebsocket");
 var VortexService = /** @class */ (function () {
     function VortexService(vortexStatusService, balloonMsg) {
-        //
         this.vortexStatusService = vortexStatusService;
         this.balloonMsg = balloonMsg;
         this.reconnect();
@@ -35,7 +34,18 @@ var VortexService = /** @class */ (function () {
     VortexService.setVortexUrl = function (url) {
         VortexService_1.vortexUrl = url;
     };
+    /**
+     * Set Vortex Name
+     *
+     * @param vortexClientName: The vortexClientName to tell the server that we are.
+     */
+    VortexService.setVortexClientName = function (vortexClientName) {
+        VortexService_1.vortexClientName = vortexClientName;
+    };
     VortexService.prototype.reconnect = function () {
+        if (VortexService_1.vortexClientName == '') {
+            throw new Error('VortexService.setVortexClientName() not set yet');
+        }
         if (this.vortex != null)
             this.vortex.closed = true;
         if (VortexService_1.vortexUrl == null) {
@@ -43,10 +53,10 @@ var VortexService = /** @class */ (function () {
             return;
         }
         if (VortexService_1.vortexUrl.toLowerCase().startsWith("ws")) {
-            this.vortex = new VortexClientWebsocket_1.VortexClientWebsocket(this.vortexStatusService, VortexService_1.vortexUrl);
+            this.vortex = new VortexClientWebsocket_1.VortexClientWebsocket(this.vortexStatusService, VortexService_1.vortexUrl, VortexService_1.vortexClientName);
         }
         else {
-            this.vortex = new VortexClientHttp_1.VortexClientHttp(this.vortexStatusService, VortexService_1.vortexUrl);
+            this.vortex = new VortexClientHttp_1.VortexClientHttp(this.vortexStatusService, VortexService_1.vortexUrl, VortexService_1.vortexClientName);
         }
         this.vortex.reconnect();
     };
@@ -109,6 +119,7 @@ var VortexService = /** @class */ (function () {
         return new TupleLoader_1.TupleLoader(this.vortex, this.vortexStatusService, component, filterUpdateCallable, this.balloonMsg);
     };
     VortexService.vortexUrl = '/vortex';
+    VortexService.vortexClientName = '';
     VortexService = VortexService_1 = __decorate([
         core_1.Injectable(),
         __metadata("design:paramtypes", [VortexStatusService_1.VortexStatusService,
