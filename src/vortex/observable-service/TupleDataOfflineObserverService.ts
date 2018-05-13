@@ -118,6 +118,24 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
 
     pollForTuples(tupleSelector: TupleSelector): Promise<Tuple[]> {
 
+        // --- If the data exists in the cache, then return it
+        let tsStr = tupleSelector.toOrderedJsonStr();
+
+        if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
+            let cachedData = this.cacheByTupleSelector[tsStr];
+            cachedData.resetTearDown();
+
+            if (cachedData.cacheEnabled && cachedData.lastServerPayloadDate != null) {
+                return Promise.resolve(cachedData.tuples);
+            }
+        }
+
+
+        // --- Else, we want the data from the server
+        // The PayloadEndpoint for this observable should also pickup and process
+        // the response. So that will take care of the cache update and notify of
+        // subscribers.
+
         let startFilt = extend({"subscribe": false}, this.filt, {
             "tupleSelector": tupleSelector
         });

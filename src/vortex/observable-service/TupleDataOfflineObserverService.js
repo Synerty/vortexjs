@@ -123,6 +123,19 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
     };
     TupleDataOfflineObserverService.prototype.pollForTuples = function (tupleSelector) {
         var _this = this;
+        // --- If the data exists in the cache, then return it
+        var tsStr = tupleSelector.toOrderedJsonStr();
+        if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
+            var cachedData = this.cacheByTupleSelector[tsStr];
+            cachedData.resetTearDown();
+            if (cachedData.cacheEnabled && cachedData.lastServerPayloadDate != null) {
+                return Promise.resolve(cachedData.tuples);
+            }
+        }
+        // --- Else, we want the data from the server
+        // The PayloadEndpoint for this observable should also pickup and process
+        // the response. So that will take care of the cache update and notify of
+        // subscribers.
         var startFilt = UtilMisc_1.extend({ "subscribe": false }, this.filt, {
             "tupleSelector": tupleSelector
         });
