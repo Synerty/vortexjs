@@ -8,5 +8,5 @@ export declare class TupleDataObserverService {
     private tupleDataObservableName;
     constructor(delegate: TupleDataOfflineObserverService, tupleDataObservableName: TupleDataObservableNameService);
     pollForTuples(tupleSelector: TupleSelector): Promise<Tuple[]>;
-    subscribeToTupleSelector(tupleSelector: TupleSelector, enableCache?: boolean): Subject<Tuple[]>;
+    subscribeToTupleSelector(tupleSelector: TupleSelector, disableCache?: boolean): Subject<Tuple[]>;
 }

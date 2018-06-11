@@ -39,7 +39,7 @@ export class CachedSubscribedData {
     // The date the cache is scheduled to be torn down.
     // This will be X time after we notice that it has no subscribers
     private tearDownDate: number | null = null;
-    private TEARDOWN_WAIT = 120 * 1000; // 2 minutes, in milliseconds
+    private TEARDOWN_WAIT = 30 * 1000; // 30 seconds, in milliseconds
 
     tuples: Tuple[] = [];
 
@@ -107,7 +107,7 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
             .subscribe(online => this.vortexOnlineChanged());
 
         // Cleanup dead subscribers every 30 seconds.
-        let cleanupTimer = setInterval(() => this.cleanupDeadCaches(), 30000);
+        let cleanupTimer = setInterval(() => this.cleanupDeadCaches(), 2000);
         this.onDestroyEvent.subscribe(() => clearInterval(cleanupTimer));
 
     }
@@ -157,17 +157,48 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
         return promise;
     }
 
+    /** Flush Cache
+     *
+     * The Data Offine Observer can be used to offline cache data by observing a large
+     * amounts of data, more data then the user would normally look at.
+     *
+     * If it's being used like this then the cache should be flushed during the process
+     * to ensure it's not all being kept in memory.
+     *
+     * @param {TupleSelector} tupleSelector The tuple selector to flush the cache for
+     */
+    flushCache(tupleSelector: TupleSelector): void {
+
+        let tsStr = tupleSelector.toOrderedJsonStr();
+        if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
+            let cachedData = this.cacheByTupleSelector[tsStr];
+            cachedData.markForTearDown();
+        }
+        this.cleanupDeadCaches()
+
+    }
+
+    /** Subscribe to Tuple Selector
+     *
+     * Get an observable that will be fired when any new data updates are available
+     * * either from the server, or if they are locally updated with updateOfflineState()
+     *
+     * @param {TupleSelector} tupleSelector
+     * @param {boolean} disableCache
+     * @param {boolean} disableStorage
+     * @returns {Subject<Tuple[]>}
+     */
     subscribeToTupleSelector(tupleSelector: TupleSelector,
-                             enableCache: boolean = true,
-                             enableStorage: boolean = true): Subject<Tuple[]> {
+                             disableCache: boolean = false,
+                             disableStorage: boolean = false): Subject<Tuple[]> {
 
         let tsStr = tupleSelector.toOrderedJsonStr();
 
         if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
             let cachedData = this.cacheByTupleSelector[tsStr];
             cachedData.resetTearDown();
-            cachedData.cacheEnabled = cachedData.cacheEnabled && enableCache;
-            cachedData.storageEnabled = cachedData.storageEnabled && enableStorage;
+            cachedData.cacheEnabled = cachedData.cacheEnabled && !disableCache;
+            cachedData.storageEnabled = cachedData.storageEnabled && !disableStorage;
 
             if (cachedData.cacheEnabled && cachedData.lastServerPayloadDate != null) {
                 // Emit after we return
@@ -176,18 +207,18 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
                 }, 0);
             } else {
                 cachedData.tuples = [];
-                this.tellServerWeWantData([tupleSelector], enableCache);
+                this.tellServerWeWantData([tupleSelector], disableCache);
             }
 
             return cachedData.subject;
         }
 
         let newCachedData = new CachedSubscribedData(tupleSelector);
-        newCachedData.cacheEnabled = enableCache;
-        newCachedData.storageEnabled = enableStorage;
+        newCachedData.cacheEnabled = !disableCache;
+        newCachedData.storageEnabled = !disableStorage;
         this.cacheByTupleSelector[tsStr] = newCachedData;
 
-        this.tellServerWeWantData([tupleSelector], enableCache);
+        this.tellServerWeWantData([tupleSelector], disableCache);
 
         if (newCachedData.storageEnabled) {
             this.tupleOfflineStorageService
@@ -249,7 +280,7 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
                     delete this.cacheByTupleSelector[key];
                     this.tellServerWeWantData(
                         [cachedData.tupleSelector],
-                        cachedData.cacheEnabled,
+                        null,
                         true
                     );
                 } else {
@@ -296,7 +327,7 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
 
 
     private tellServerWeWantData(tupleSelectors: TupleSelector[],
-                                 enableCache: boolean = true,
+                                 disableCache: boolean | null = false,
                                  unsubscribe: boolean = false): void {
         if (!this.vortexStatusService.snapshot.isOnline)
             return;
@@ -307,9 +338,11 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
         for (let tupleSelector of tupleSelectors) {
             let filt = extend({}, startFilt, {
                 "tupleSelector": tupleSelector,
-                "enableCache": enableCache,
                 "unsubscribe": unsubscribe
             });
+
+            if (disableCache != null)
+                filt["disableCache"] = disableCache;
 
             payloads.push(new Payload(filt));
         }

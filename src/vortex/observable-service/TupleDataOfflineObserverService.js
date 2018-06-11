@@ -61,7 +61,7 @@ var CachedSubscribedData = /** @class */ (function () {
         // The date the cache is scheduled to be torn down.
         // This will be X time after we notice that it has no subscribers
         this.tearDownDate = null;
-        this.TEARDOWN_WAIT = 120 * 1000; // 2 minutes, in milliseconds
+        this.TEARDOWN_WAIT = 30 * 1000; // 30 seconds, in milliseconds
         this.tuples = [];
         /** Last Server Payload Date
          * If the server has responded with a payload, this is the date in the payload
@@ -114,7 +114,7 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
             .filter(function (online) { return online === true; })
             .subscribe(function (online) { return _this.vortexOnlineChanged(); });
         // Cleanup dead subscribers every 30 seconds.
-        var cleanupTimer = setInterval(function () { return _this.cleanupDeadCaches(); }, 30000);
+        var cleanupTimer = setInterval(function () { return _this.cleanupDeadCaches(); }, 2000);
         _this.onDestroyEvent.subscribe(function () { return clearInterval(cleanupTimer); });
         return _this;
     }
@@ -151,16 +151,44 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
         promise = promise.then(function (payload) { return payload.tuples; });
         return promise;
     };
-    TupleDataOfflineObserverService.prototype.subscribeToTupleSelector = function (tupleSelector, enableCache, enableStorage) {
+    /** Flush Cache
+     *
+     * The Data Offine Observer can be used to offline cache data by observing a large
+     * amounts of data, more data then the user would normally look at.
+     *
+     * If it's being used like this then the cache should be flushed during the process
+     * to ensure it's not all being kept in memory.
+     *
+     * @param {TupleSelector} tupleSelector The tuple selector to flush the cache for
+     */
+    TupleDataOfflineObserverService.prototype.flushCache = function (tupleSelector) {
+        var tsStr = tupleSelector.toOrderedJsonStr();
+        if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
+            var cachedData = this.cacheByTupleSelector[tsStr];
+            cachedData.markForTearDown();
+        }
+        this.cleanupDeadCaches();
+    };
+    /** Subscribe to Tuple Selector
+     *
+     * Get an observable that will be fired when any new data updates are available
+     * * either from the server, or if they are locally updated with updateOfflineState()
+     *
+     * @param {TupleSelector} tupleSelector
+     * @param {boolean} disableCache
+     * @param {boolean} disableStorage
+     * @returns {Subject<Tuple[]>}
+     */
+    TupleDataOfflineObserverService.prototype.subscribeToTupleSelector = function (tupleSelector, disableCache, disableStorage) {
         var _this = this;
-        if (enableCache === void 0) { enableCache = true; }
-        if (enableStorage === void 0) { enableStorage = true; }
+        if (disableCache === void 0) { disableCache = false; }
+        if (disableStorage === void 0) { disableStorage = false; }
         var tsStr = tupleSelector.toOrderedJsonStr();
         if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
             var cachedData_1 = this.cacheByTupleSelector[tsStr];
             cachedData_1.resetTearDown();
-            cachedData_1.cacheEnabled = cachedData_1.cacheEnabled && enableCache;
-            cachedData_1.storageEnabled = cachedData_1.storageEnabled && enableStorage;
+            cachedData_1.cacheEnabled = cachedData_1.cacheEnabled && !disableCache;
+            cachedData_1.storageEnabled = cachedData_1.storageEnabled && !disableStorage;
             if (cachedData_1.cacheEnabled && cachedData_1.lastServerPayloadDate != null) {
                 // Emit after we return
                 setTimeout(function () {
@@ -169,15 +197,15 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
             }
             else {
                 cachedData_1.tuples = [];
-                this.tellServerWeWantData([tupleSelector], enableCache);
+                this.tellServerWeWantData([tupleSelector], disableCache);
             }
             return cachedData_1.subject;
         }
         var newCachedData = new CachedSubscribedData(tupleSelector);
-        newCachedData.cacheEnabled = enableCache;
-        newCachedData.storageEnabled = enableStorage;
+        newCachedData.cacheEnabled = !disableCache;
+        newCachedData.storageEnabled = !disableStorage;
         this.cacheByTupleSelector[tsStr] = newCachedData;
-        this.tellServerWeWantData([tupleSelector], enableCache);
+        this.tellServerWeWantData([tupleSelector], disableCache);
         if (newCachedData.storageEnabled) {
             this.tupleOfflineStorageService
                 .loadTuplesEncoded(tupleSelector)
@@ -230,7 +258,7 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
             else {
                 if (cachedData.isReadyForTearDown()) {
                     delete this.cacheByTupleSelector[key];
-                    this.tellServerWeWantData([cachedData.tupleSelector], cachedData.cacheEnabled, true);
+                    this.tellServerWeWantData([cachedData.tupleSelector], null, true);
                 }
                 else {
                     cachedData.markForTearDown();
@@ -265,8 +293,8 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
         cachedData.tuples = payload.tuples;
         this.notifyObservers(cachedData, tupleSelector, payload.tuples, encodedPayload);
     };
-    TupleDataOfflineObserverService.prototype.tellServerWeWantData = function (tupleSelectors, enableCache, unsubscribe) {
-        if (enableCache === void 0) { enableCache = true; }
+    TupleDataOfflineObserverService.prototype.tellServerWeWantData = function (tupleSelectors, disableCache, unsubscribe) {
+        if (disableCache === void 0) { disableCache = false; }
         if (unsubscribe === void 0) { unsubscribe = false; }
         if (!this.vortexStatusService.snapshot.isOnline)
             return;
@@ -276,9 +304,10 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
             var tupleSelector = tupleSelectors_1[_i];
             var filt = UtilMisc_1.extend({}, startFilt, {
                 "tupleSelector": tupleSelector,
-                "enableCache": enableCache,
                 "unsubscribe": unsubscribe
             });
+            if (disableCache != null)
+                filt["disableCache"] = disableCache;
             payloads.push(new Payload_1.Payload(filt));
         }
         this.vortexService.sendPayload(payloads);

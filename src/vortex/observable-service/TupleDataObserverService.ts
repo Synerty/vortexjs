@@ -32,9 +32,9 @@ export class TupleDataObserverService {
     }
 
     subscribeToTupleSelector(tupleSelector: TupleSelector,
-                             enableCache: boolean = true): Subject<Tuple[]> {
+                             disableCache: boolean = false): Subject<Tuple[]> {
         return this.delegate.subscribeToTupleSelector(
-            tupleSelector, enableCache, false)
+            tupleSelector, disableCache, true)
     }
 }
 

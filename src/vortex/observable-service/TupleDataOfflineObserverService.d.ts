@@ -42,7 +42,28 @@ export declare class TupleDataOfflineObserverService extends ComponentLifecycleE
     constructor(vortexService: VortexService, vortexStatusService: VortexStatusService, tupleDataObservableName: TupleDataObservableNameService, tupleOfflineStorageService: TupleOfflineStorageService);
     _nameService(): TupleDataObservableNameService;
     pollForTuples(tupleSelector: TupleSelector): Promise<Tuple[]>;
-    subscribeToTupleSelector(tupleSelector: TupleSelector, enableCache?: boolean, enableStorage?: boolean): Subject<Tuple[]>;
+    /** Flush Cache
+     *
+     * The Data Offine Observer can be used to offline cache data by observing a large
+     * amounts of data, more data then the user would normally look at.
+     *
+     * If it's being used like this then the cache should be flushed during the process
+     * to ensure it's not all being kept in memory.
+     *
+     * @param {TupleSelector} tupleSelector The tuple selector to flush the cache for
+     */
+    flushCache(tupleSelector: TupleSelector): void;
+    /** Subscribe to Tuple Selector
+     *
+     * Get an observable that will be fired when any new data updates are available
+     * * either from the server, or if they are locally updated with updateOfflineState()
+     *
+     * @param {TupleSelector} tupleSelector
+     * @param {boolean} disableCache
+     * @param {boolean} disableStorage
+     * @returns {Subject<Tuple[]>}
+     */
+    subscribeToTupleSelector(tupleSelector: TupleSelector, disableCache?: boolean, disableStorage?: boolean): Subject<Tuple[]>;
     /** Update Offline State
      *
      * This method updates the offline stored data, which will be used until the next
@@ -54,7 +75,7 @@ export declare class TupleDataOfflineObserverService extends ComponentLifecycleE
     private cleanupDeadCaches();
     private vortexOnlineChanged();
     private receivePayload(payload, encodedPayload);
-    private tellServerWeWantData(tupleSelectors, enableCache?, unsubscribe?);
+    private tellServerWeWantData(tupleSelectors, disableCache?, unsubscribe?);
     private notifyObservers(cachedData, tupleSelector, tuples, encodedPayload?);
     private storeDataLocally(tupleSelector, tuples, encodedPayload?);
 }

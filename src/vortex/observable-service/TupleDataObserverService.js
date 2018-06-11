@@ -28,9 +28,9 @@ var TupleDataObserverService = /** @class */ (function () {
     TupleDataObserverService.prototype.pollForTuples = function (tupleSelector) {
         return this.delegate.pollForTuples(tupleSelector);
     };
-    TupleDataObserverService.prototype.subscribeToTupleSelector = function (tupleSelector, enableCache) {
-        if (enableCache === void 0) { enableCache = true; }
-        return this.delegate.subscribeToTupleSelector(tupleSelector, enableCache, false);
+    TupleDataObserverService.prototype.subscribeToTupleSelector = function (tupleSelector, disableCache) {
+        if (disableCache === void 0) { disableCache = false; }
+        return this.delegate.subscribeToTupleSelector(tupleSelector, disableCache, true);
     };
     TupleDataObserverService = __decorate([
         core_1.Injectable(),
