@@ -25,6 +25,10 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
         else {
             _this.encodeWorker = new Worker("./PayloadDelegateNsEncodeWorker.js");
         }
+        // Make this compatible with promise-worker
+        _this.encodeWorker.addEventListener = function (listener) {
+            _this.encodeWorker.onmessage = listener;
+        };
         _this.encodePromiseWorker = new PromiseWorker(_this.encodeWorker);
         if (global.TNS_WEBPACK) {
             var Worker_2 = require("nativescript-worker-loader!./PayloadDelegateNsDecodeWorker.js");
@@ -33,6 +37,10 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
         else {
             _this.decodeWorker = new Worker("./PayloadDelegateNsDecodeWorker.js");
         }
+        // Make this compatible with promise-worker
+        _this.decodeWorker.addEventListener = function (listener) {
+            _this.decodeWorker.onmessage = listener;
+        };
         _this.decodePromiseWorker = new PromiseWorker(_this.decodeWorker);
         return _this;
     }

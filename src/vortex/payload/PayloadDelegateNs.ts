@@ -22,6 +22,12 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
         } else {
             this.encodeWorker = new Worker("./PayloadDelegateNsEncodeWorker.js");
         }
+
+        // Make this compatible with promise-worker
+        this.encodeWorker.addEventListener = (listener) => {
+            this.encodeWorker.onmessage = listener;
+        };
+
         this.encodePromiseWorker = new PromiseWorker(this.encodeWorker);
 
         if (global.TNS_WEBPACK) {
@@ -30,6 +36,12 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
         } else {
             this.decodeWorker = new Worker("./PayloadDelegateNsDecodeWorker.js");
         }
+
+        // Make this compatible with promise-worker
+        this.decodeWorker.addEventListener = (listener) => {
+            this.decodeWorker.onmessage = listener;
+        };
+
         this.decodePromiseWorker = new PromiseWorker(this.decodeWorker);
 
     }
