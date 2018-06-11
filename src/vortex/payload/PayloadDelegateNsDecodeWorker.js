@@ -2,23 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var pako = require("pako");
 var base64 = require("base-64");
-global.onmessage = function (postedArg) {
-    var callNumber = postedArg["data"]["callNumber"];
-    try {
-        var compressedData = base64.decode(postedArg["data"]["vortexStr"]);
-        var payloadJson = pako.inflate(compressedData, { to: "string" });
-        global.postMessage({
-            callNumber: callNumber,
-            result: payloadJson,
-            error: null
-        });
-    }
-    catch (e) {
-        global.postMessage({
-            callNumber: callNumber,
-            result: null,
-            error: e.toString()
-        });
-    }
-};
+var registerPromiseWorker = require("promise-worker/register");
+registerPromiseWorker(function (vortexStr) {
+    var compressedData = base64.decode(vortexStr);
+    return pako.inflate(compressedData, { to: "string" });
+});
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/payload/PayloadDelegateNsDecodeWorker.js.map

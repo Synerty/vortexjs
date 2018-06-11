@@ -1,11 +1,16 @@
 import {PayloadDelegateABC} from "./PayloadDelegateABC";
 import {PayloadDelegateInMain} from "./PayloadDelegateInMain";
 
+import * as PromiseWorker from "promise-worker";
+
 declare let global: any;
 
 export class PayloadDelegateNs extends PayloadDelegateABC {
     private encodeWorker: Worker;
     private decodeWorker: Worker;
+
+    private encodePromiseWorker: PromiseWorker;
+    private decodePromiseWorker: PromiseWorker;
 
     private inMainDelegate = new PayloadDelegateInMain();
 
@@ -17,9 +22,7 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
         } else {
             this.encodeWorker = new Worker("./PayloadDelegateNsEncodeWorker.js");
         }
-
-        this.encodeWorker.onmessage = PayloadDelegateNs.onMessage;
-        this.encodeWorker.onerror = PayloadDelegateNs.onError;
+        this.encodePromiseWorker = new PromiseWorker(this.encodeWorker);
 
         if (global.TNS_WEBPACK) {
             let Worker = require("nativescript-worker-loader!./PayloadDelegateNsDecodeWorker.js");
@@ -27,9 +30,8 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
         } else {
             this.decodeWorker = new Worker("./PayloadDelegateNsDecodeWorker.js");
         }
+        this.decodePromiseWorker = new PromiseWorker(this.decodeWorker);
 
-        this.decodeWorker.onmessage = PayloadDelegateNs.onMessage;
-        this.decodeWorker.onerror = PayloadDelegateNs.onError;
     }
 
     // ------------------------------------------------------------------------
@@ -39,23 +41,13 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
         if (payloadJson.length < (10 * 1024))
             return this.inMainDelegate.deflateAndEncode(payloadJson);
 
-        return new Promise<string>((resolve, reject) => {
-            let callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
-
-            this.encodeWorker.postMessage({
-                callNumber: callNumber,
-                payloadJson: payloadJson
-            });
-
-        });
-
+        return this.encodePromiseWorker.postMessage(payloadJson);
     }
 
     // ------------------------------------------------------------------------
 
     encodeEnvelope(payloadJson: string): Promise<string> {
         return this.inMainDelegate.encodeEnvelope(payloadJson);
-
     }
 
     // ------------------------------------------------------------------------
@@ -65,16 +57,7 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
         if (vortexStr.length < (5 * 1024))
             return this.inMainDelegate.decodeAndInflate(vortexStr);
 
-        return new Promise<string>((resolve, reject) => {
-            let callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
-
-            this.decodeWorker.postMessage({
-                callNumber: callNumber,
-                vortexStr: vortexStr
-            });
-
-        });
-
+        return this.decodePromiseWorker.postMessage(vortexStr);
     }
 
     // ------------------------------------------------------------------------
@@ -85,46 +68,5 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
 
     // ------------------------------------------------------------------------
 
-    static _promises = {};
-    static _promisesNum = 1;
-
-    static popPromise(callNumber: number): {} {
-        let promise = PayloadDelegateNs._promises[callNumber];
-        delete PayloadDelegateNs._promises[callNumber];
-        return promise;
-    }
-
-    static pushPromise(resolve, reject): number {
-        let callNumber = PayloadDelegateNs._promisesNum++;
-        PayloadDelegateNs._promises[callNumber] = {
-            resolve: resolve,
-            reject: reject
-        };
-        return callNumber;
-    }
-
-    static onMessage(postResult) {
-        let resultAny: any = postResult.data;
-        // console.log(`WebSQL Service, Tx Receiving : ${JSON.stringify(resultAny)}`);
-
-        let error = resultAny["error"];
-        let callNumber = resultAny["callNumber"];
-        let result = resultAny["result"];
-
-        let promise = PayloadDelegateNs.popPromise(callNumber);
-        let resolve = promise["resolve"];
-        let reject = promise["reject"];
-
-        if (error == null) {
-            resolve(result);
-
-        } else {
-            reject(error);
-        }
-    }
-
-    static onError(error) {
-        console.log(`PayloadDelegateNs.onerror ${error}`);
-    }
 
 }

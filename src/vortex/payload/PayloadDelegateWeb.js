@@ -12,40 +12,23 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var PayloadDelegateABC_1 = require("./PayloadDelegateABC");
 var PayloadDelegateInMain_1 = require("./PayloadDelegateInMain");
+var PromiseWorker = require("promise-worker");
 var PayloadDelegateWeb = /** @class */ (function (_super) {
     __extends(PayloadDelegateWeb, _super);
     function PayloadDelegateWeb() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super.call(this) || this;
         _this.inMainDelegate = new PayloadDelegateInMain_1.PayloadDelegateInMain();
+        _this.encodeWorker = new Worker('./PayloadDelegateWebEncodeWorker.js');
+        _this.encodePromiseWorker = new PromiseWorker(_this.encodeWorker);
+        _this.decodeWorker = new Worker('./PayloadDelegateWebDecodeWorker.js');
+        _this.decodePromiseWorker = new PromiseWorker(_this.decodeWorker);
         return _this;
     }
     PayloadDelegateWeb.prototype.deflateAndEncode = function (payloadJson) {
         // Don't send small messages to the worker
         if (payloadJson.length < (10 * 1024))
             return this.inMainDelegate.deflateAndEncode(payloadJson);
-        var worker = new Worker('./PayloadDelegateWebEncodeWorker.js');
-        return new Promise(function (resolve, reject) {
-            function callError(error) {
-                reject(error);
-                console.log("ERROR: PayloadDelegateWeb.deflateAndEncode " + error);
-            }
-            worker.addEventListener('message', function (result) {
-                var resultAny = result["data"];
-                var error = resultAny.error;
-                if (error == null) {
-                    resolve(resultAny["encodedData"]);
-                }
-                else {
-                    callError(error);
-                }
-                worker.terminate();
-            }, false);
-            worker.addEventListener('error', function (error) {
-                callError(error);
-                worker.terminate();
-            }, false);
-            worker.postMessage({ payloadJson: payloadJson });
-        });
+        return this.encodePromiseWorker.postMessage(payloadJson);
     };
     // ------------------------------------------------------------------------
     PayloadDelegateWeb.prototype.encodeEnvelope = function (payloadJson) {
@@ -55,29 +38,7 @@ var PayloadDelegateWeb = /** @class */ (function (_super) {
         // Don't send small messages to the worker
         if (vortexStr.length < (5 * 1024))
             return this.inMainDelegate.decodeAndInflate(vortexStr);
-        var worker = new Worker('./PayloadDelegateWebDecodeWorker.js');
-        return new Promise(function (resolve, reject) {
-            function callError(error) {
-                reject(error);
-                console.log("ERROR: PayloadDelegateWeb.decodeAndInflate " + error);
-            }
-            worker.addEventListener('message', function (result) {
-                var resultAny = result["data"];
-                var error = resultAny.error;
-                if (error == null) {
-                    resolve(resultAny["payloadJson"]);
-                }
-                else {
-                    callError(error);
-                }
-                worker.terminate();
-            }, false);
-            worker.addEventListener('error', function (error) {
-                callError(error);
-                worker.terminate();
-            }, false);
-            worker.postMessage({ vortexStr: vortexStr });
-        });
+        return this.decodePromiseWorker.postMessage(vortexStr);
     };
     // ------------------------------------------------------------------------
     PayloadDelegateWeb.prototype.decodeEnvelope = function (vortexStr) {

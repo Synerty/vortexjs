@@ -1,21 +1,7 @@
 import * as pako from "pako";
+import * as registerPromiseWorker from "promise-worker/register";
 
-
-self.addEventListener('message', function (postedArg) {
-  var compressedData = pako.deflate(postedArg["data"]["payloadJson"], { to: "string" });
-  var encodedData = btoa(compressedData);
-
-  self.postMessage({
-    encodedData: encodedData,
-    error: null
-  }, undefined, undefined);
-}, false);
-
-
-self.addEventListener('error', function (e) {
-  self.postMessage({
-    encodedData: null,
-    error: e
-  }, undefined, undefined);
-}, false);
-
+registerPromiseWorker((payloadJson: string) => {
+    let compressedData = pako.deflate(payloadJson, {to: "string"});
+    return btoa(compressedData);
+});
