@@ -51,6 +51,7 @@ export class CachedSubscribedData {
 
     cacheEnabled = true;
     storageEnabled = true;
+    askServerEnabled = true;
 
     constructor(public tupleSelector: TupleSelector) {
 
@@ -186,11 +187,14 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
      * @param {TupleSelector} tupleSelector
      * @param {boolean} disableCache
      * @param {boolean} disableStorage
+     * @param {boolean} disableAskServer, Use this to store and observe data completely
+     *      within the angular app.
      * @returns {Subject<Tuple[]>}
      */
     subscribeToTupleSelector(tupleSelector: TupleSelector,
                              disableCache: boolean = false,
-                             disableStorage: boolean = false): Subject<Tuple[]> {
+                             disableStorage: boolean = false,
+                             disableAskServer: boolean = false): Subject<Tuple[]> {
 
         let tsStr = tupleSelector.toOrderedJsonStr();
 
@@ -199,6 +203,7 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
             cachedData.resetTearDown();
             cachedData.cacheEnabled = cachedData.cacheEnabled && !disableCache;
             cachedData.storageEnabled = cachedData.storageEnabled && !disableStorage;
+            cachedData.askServerEnabled = cachedData.askServerEnabled && !disableAskServer;
 
             if (cachedData.cacheEnabled && cachedData.lastServerPayloadDate != null) {
                 // Emit after we return
@@ -207,7 +212,8 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
                 }, 0);
             } else {
                 cachedData.tuples = [];
-                this.tellServerWeWantData([tupleSelector], disableCache);
+                if (cachedData.askServerEnabled)
+                    this.tellServerWeWantData([tupleSelector], disableCache);
             }
 
             return cachedData.subject;
@@ -216,9 +222,12 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
         let newCachedData = new CachedSubscribedData(tupleSelector);
         newCachedData.cacheEnabled = !disableCache;
         newCachedData.storageEnabled = !disableStorage;
+        newCachedData.askServerEnabled = !disableAskServer;
+
         this.cacheByTupleSelector[tsStr] = newCachedData;
 
-        this.tellServerWeWantData([tupleSelector], disableCache);
+        if (newCachedData.askServerEnabled)
+            this.tellServerWeWantData([tupleSelector], disableCache);
 
         if (newCachedData.storageEnabled) {
             this.tupleOfflineStorageService
@@ -294,7 +303,9 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
         this.cleanupDeadCaches();
         let tupleSelectors: TupleSelector[] = [];
         for (let key of dictKeysFromObject(this.cacheByTupleSelector)) {
-            tupleSelectors.push(TupleSelector.fromJsonStr(key));
+            let cache = this.cacheByTupleSelector[key];
+            if (cache.askServerEnabled)
+                tupleSelectors.push(TupleSelector.fromJsonStr(key));
         }
         this.tellServerWeWantData(tupleSelectors);
     }
@@ -383,7 +394,7 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
                 .catch(errFunc);
         }
 
-        this.tupleOfflineStorageService.saveTuplesEncoded(tupleSelector, encodedPayload)
+        return this.tupleOfflineStorageService.saveTuplesEncoded(tupleSelector, encodedPayload)
             .catch(errFunc);
     }
 }

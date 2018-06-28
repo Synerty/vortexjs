@@ -70,6 +70,7 @@ var CachedSubscribedData = /** @class */ (function () {
         this.lastServerPayloadDate = null;
         this.cacheEnabled = true;
         this.storageEnabled = true;
+        this.askServerEnabled = true;
     }
     CachedSubscribedData.prototype.markForTearDown = function () {
         if (this.tearDownDate == null)
@@ -177,18 +178,22 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
      * @param {TupleSelector} tupleSelector
      * @param {boolean} disableCache
      * @param {boolean} disableStorage
+     * @param {boolean} disableAskServer, Use this to store and observe data completely
+     *      within the angular app.
      * @returns {Subject<Tuple[]>}
      */
-    TupleDataOfflineObserverService.prototype.subscribeToTupleSelector = function (tupleSelector, disableCache, disableStorage) {
+    TupleDataOfflineObserverService.prototype.subscribeToTupleSelector = function (tupleSelector, disableCache, disableStorage, disableAskServer) {
         var _this = this;
         if (disableCache === void 0) { disableCache = false; }
         if (disableStorage === void 0) { disableStorage = false; }
+        if (disableAskServer === void 0) { disableAskServer = false; }
         var tsStr = tupleSelector.toOrderedJsonStr();
         if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
             var cachedData_1 = this.cacheByTupleSelector[tsStr];
             cachedData_1.resetTearDown();
             cachedData_1.cacheEnabled = cachedData_1.cacheEnabled && !disableCache;
             cachedData_1.storageEnabled = cachedData_1.storageEnabled && !disableStorage;
+            cachedData_1.askServerEnabled = cachedData_1.askServerEnabled && !disableAskServer;
             if (cachedData_1.cacheEnabled && cachedData_1.lastServerPayloadDate != null) {
                 // Emit after we return
                 setTimeout(function () {
@@ -197,15 +202,18 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
             }
             else {
                 cachedData_1.tuples = [];
-                this.tellServerWeWantData([tupleSelector], disableCache);
+                if (cachedData_1.askServerEnabled)
+                    this.tellServerWeWantData([tupleSelector], disableCache);
             }
             return cachedData_1.subject;
         }
         var newCachedData = new CachedSubscribedData(tupleSelector);
         newCachedData.cacheEnabled = !disableCache;
         newCachedData.storageEnabled = !disableStorage;
+        newCachedData.askServerEnabled = !disableAskServer;
         this.cacheByTupleSelector[tsStr] = newCachedData;
-        this.tellServerWeWantData([tupleSelector], disableCache);
+        if (newCachedData.askServerEnabled)
+            this.tellServerWeWantData([tupleSelector], disableCache);
         if (newCachedData.storageEnabled) {
             this.tupleOfflineStorageService
                 .loadTuplesEncoded(tupleSelector)
@@ -271,7 +279,9 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
         var tupleSelectors = [];
         for (var _i = 0, _a = UtilMisc_1.dictKeysFromObject(this.cacheByTupleSelector); _i < _a.length; _i++) {
             var key = _a[_i];
-            tupleSelectors.push(TupleSelector_1.TupleSelector.fromJsonStr(key));
+            var cache = this.cacheByTupleSelector[key];
+            if (cache.askServerEnabled)
+                tupleSelectors.push(TupleSelector_1.TupleSelector.fromJsonStr(key));
         }
         this.tellServerWeWantData(tupleSelectors);
     };
@@ -337,7 +347,7 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
             return this.tupleOfflineStorageService.saveTuples(tupleSelector, tuples)
                 .catch(errFunc);
         }
-        this.tupleOfflineStorageService.saveTuplesEncoded(tupleSelector, encodedPayload)
+        return this.tupleOfflineStorageService.saveTuplesEncoded(tupleSelector, encodedPayload)
             .catch(errFunc);
     };
     TupleDataOfflineObserverService = __decorate([

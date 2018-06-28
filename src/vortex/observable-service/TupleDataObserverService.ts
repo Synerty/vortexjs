@@ -31,10 +31,23 @@ export class TupleDataObserverService {
         return this.delegate.pollForTuples(tupleSelector);
     }
 
+
+    /** Subscribe to Tuple Selector
+     *
+     * Get an observable that will be fired when any new data updates are available
+     * * either from the server, or if they are locally updated with updateOfflineState()
+     *
+     * @param {TupleSelector} tupleSelector
+     * @param {boolean} disableCache
+     * @param {boolean} disableAskServer, Use this to store and observe data completely
+     *      within the angular app.
+     * @returns {Subject<Tuple[]>}
+     */
     subscribeToTupleSelector(tupleSelector: TupleSelector,
-                             disableCache: boolean = false): Subject<Tuple[]> {
+                             disableCache: boolean = false,
+                             disableAskServer: boolean = false): Subject<Tuple[]> {
         return this.delegate.subscribeToTupleSelector(
-            tupleSelector, disableCache, true)
+            tupleSelector, disableCache, true, disableAskServer)
     }
 }
 

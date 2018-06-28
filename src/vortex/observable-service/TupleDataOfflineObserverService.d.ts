@@ -26,6 +26,7 @@ export declare class CachedSubscribedData {
     lastServerPayloadDate: moment.Moment | null;
     cacheEnabled: boolean;
     storageEnabled: boolean;
+    askServerEnabled: boolean;
     constructor(tupleSelector: TupleSelector);
     markForTearDown(): void;
     resetTearDown(): void;
@@ -61,9 +62,11 @@ export declare class TupleDataOfflineObserverService extends ComponentLifecycleE
      * @param {TupleSelector} tupleSelector
      * @param {boolean} disableCache
      * @param {boolean} disableStorage
+     * @param {boolean} disableAskServer, Use this to store and observe data completely
+     *      within the angular app.
      * @returns {Subject<Tuple[]>}
      */
-    subscribeToTupleSelector(tupleSelector: TupleSelector, disableCache?: boolean, disableStorage?: boolean): Subject<Tuple[]>;
+    subscribeToTupleSelector(tupleSelector: TupleSelector, disableCache?: boolean, disableStorage?: boolean, disableAskServer?: boolean): Subject<Tuple[]>;
     /** Update Offline State
      *
      * This method updates the offline stored data, which will be used until the next
