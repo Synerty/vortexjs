@@ -122,11 +122,11 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
     TupleDataOfflineObserverService.prototype._nameService = function () {
         return this.tupleDataObservableName;
     };
-    TupleDataOfflineObserverService.prototype.pollForTuples = function (tupleSelector) {
+    TupleDataOfflineObserverService.prototype.pollForTuples = function (tupleSelector, useCache) {
         var _this = this;
         // --- If the data exists in the cache, then return it
         var tsStr = tupleSelector.toOrderedJsonStr();
-        if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
+        if (useCache && this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
             var cachedData = this.cacheByTupleSelector[tsStr];
             cachedData.resetTearDown();
             if (cachedData.cacheEnabled && cachedData.lastServerPayloadDate != null) {
@@ -137,7 +137,7 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
         // The PayloadEndpoint for this observable should also pickup and process
         // the response. So that will take care of the cache update and notify of
         // subscribers.
-        var startFilt = UtilMisc_1.extend({ "subscribe": false }, this.filt, {
+        var startFilt = UtilMisc_1.extend({ "subscribe": false, useCache: useCache }, this.filt, {
             "tupleSelector": tupleSelector
         });
         // Optionally typed, No need to worry about the fact that we convert this

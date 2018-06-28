@@ -117,12 +117,12 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
         return this.tupleDataObservableName;
     }
 
-    pollForTuples(tupleSelector: TupleSelector): Promise<Tuple[]> {
+    pollForTuples(tupleSelector: TupleSelector, useCache: true): Promise<Tuple[]> {
 
         // --- If the data exists in the cache, then return it
         let tsStr = tupleSelector.toOrderedJsonStr();
 
-        if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
+        if (useCache && this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
             let cachedData = this.cacheByTupleSelector[tsStr];
             cachedData.resetTearDown();
 
@@ -137,7 +137,7 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
         // the response. So that will take care of the cache update and notify of
         // subscribers.
 
-        let startFilt = extend({"subscribe": false}, this.filt, {
+        let startFilt = extend({"subscribe": false, useCache: useCache}, this.filt, {
             "tupleSelector": tupleSelector
         });
 

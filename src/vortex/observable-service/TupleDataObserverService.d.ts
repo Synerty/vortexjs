@@ -7,7 +7,7 @@ export declare class TupleDataObserverService {
     private delegate;
     private tupleDataObservableName;
     constructor(delegate: TupleDataOfflineObserverService, tupleDataObservableName: TupleDataObservableNameService);
-    pollForTuples(tupleSelector: TupleSelector): Promise<Tuple[]>;
+    pollForTuples(tupleSelector: TupleSelector, useCache: true): Promise<Tuple[]>;
     /** Subscribe to Tuple Selector
      *
      * Get an observable that will be fired when any new data updates are available

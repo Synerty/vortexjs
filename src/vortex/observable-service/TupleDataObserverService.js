@@ -25,8 +25,8 @@ var TupleDataObserverService = /** @class */ (function () {
                 + " ensure TupleDataOfflineObserverService is provided first.");
         }
     }
-    TupleDataObserverService.prototype.pollForTuples = function (tupleSelector) {
-        return this.delegate.pollForTuples(tupleSelector);
+    TupleDataObserverService.prototype.pollForTuples = function (tupleSelector, useCache) {
+        return this.delegate.pollForTuples(tupleSelector, useCache);
     };
     /** Subscribe to Tuple Selector
      *
