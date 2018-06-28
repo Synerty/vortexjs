@@ -124,6 +124,7 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
     };
     TupleDataOfflineObserverService.prototype.pollForTuples = function (tupleSelector, useCache) {
         var _this = this;
+        if (useCache === void 0) { useCache = true; }
         // --- If the data exists in the cache, then return it
         var tsStr = tupleSelector.toOrderedJsonStr();
         if (useCache && this.cacheByTupleSelector.hasOwnProperty(tsStr)) {

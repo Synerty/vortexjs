@@ -27,7 +27,7 @@ export class TupleDataObserverService {
 
     }
 
-    pollForTuples(tupleSelector: TupleSelector, useCache: true): Promise<Tuple[]> {
+    pollForTuples(tupleSelector: TupleSelector, useCache: boolean = true): Promise<Tuple[]> {
         return this.delegate.pollForTuples(tupleSelector, useCache);
     }
 

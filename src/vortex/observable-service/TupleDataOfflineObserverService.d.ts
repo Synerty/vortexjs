@@ -42,7 +42,7 @@ export declare class TupleDataOfflineObserverService extends ComponentLifecycleE
     private cacheByTupleSelector;
     constructor(vortexService: VortexService, vortexStatusService: VortexStatusService, tupleDataObservableName: TupleDataObservableNameService, tupleOfflineStorageService: TupleOfflineStorageService);
     _nameService(): TupleDataObservableNameService;
-    pollForTuples(tupleSelector: TupleSelector, useCache: true): Promise<Tuple[]>;
+    pollForTuples(tupleSelector: TupleSelector, useCache?: boolean): Promise<Tuple[]>;
     /** Flush Cache
      *
      * The Data Offine Observer can be used to offline cache data by observing a large

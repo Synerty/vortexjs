@@ -117,7 +117,7 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
         return this.tupleDataObservableName;
     }
 
-    pollForTuples(tupleSelector: TupleSelector, useCache: true): Promise<Tuple[]> {
+    pollForTuples(tupleSelector: TupleSelector, useCache: boolean = true): Promise<Tuple[]> {
 
         // --- If the data exists in the cache, then return it
         let tsStr = tupleSelector.toOrderedJsonStr();

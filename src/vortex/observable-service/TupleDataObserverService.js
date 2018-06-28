@@ -26,6 +26,7 @@ var TupleDataObserverService = /** @class */ (function () {
         }
     }
     TupleDataObserverService.prototype.pollForTuples = function (tupleSelector, useCache) {
+        if (useCache === void 0) { useCache = true; }
         return this.delegate.pollForTuples(tupleSelector, useCache);
     };
     /** Subscribe to Tuple Selector
