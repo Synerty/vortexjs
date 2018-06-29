@@ -62,6 +62,9 @@ var PayloadEndpoint = /** @class */ (function () {
                 return false;
             var left = leftFilt[key];
             var right = rightFilt[key];
+            // Handle the case of null !== undefined
+            if (left == null && right == null)
+                return true;
             if (typeof left !== typeof right)
                 return false;
             // Handle special case for Arrays using our equals method in ArrayUtil

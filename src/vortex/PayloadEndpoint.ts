@@ -85,6 +85,10 @@ export class PayloadEndpoint {
             let left = leftFilt[key];
             let right = rightFilt[key];
 
+            // Handle the case of null !== undefined
+            if (left == null && right == null)
+                return true;
+
             if (typeof left !== typeof right)
                 return false;
 
