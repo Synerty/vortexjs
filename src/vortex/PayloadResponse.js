@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var VortexClientABC_1 = require("./VortexClientABC");
 var UtilMisc_1 = require("./UtilMisc");
 var ComponentLifecycleEventEmitter_1 = require("./ComponentLifecycleEventEmitter");
+var operators_1 = require("rxjs/operators");
 /** Payload Response
  *
  *    This class is used to catch responses from a sent payload.
@@ -71,7 +72,7 @@ var PayloadResponse = /** @class */ (function () {
             };
             // Subscribe
             endpoint.observable
-                .takeUntil(_this._lcEmitter.onDestroyEvent)
+                .pipe(operators_1.takeUntil(_this._lcEmitter.onDestroyEvent))
                 .subscribe(function (payloadEnvelope) {
                 var r = payloadEnvelope.result; // success is null or true
                 if (_this.resultCheck && !(r == null || r === true)) {

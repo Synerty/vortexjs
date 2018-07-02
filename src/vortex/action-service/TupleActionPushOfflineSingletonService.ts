@@ -8,6 +8,7 @@ import {PayloadResponse} from "../PayloadResponse";
 import {TupleStorageFactoryService} from "../storage-factory/TupleStorageFactoryService";
 import {TupleActionStorageServiceABC} from "../action-storage/TupleActionStorageServiceABC";
 import {PayloadEnvelope} from "../PayloadEnvelope";
+import {filter} from "rxjs/operators";
 
 
 @Injectable()
@@ -28,7 +29,7 @@ export class TupleActionPushOfflineSingletonService {
 
         // This is a global service, there is no point unsubscribing it
         this.vortexStatus.isOnline
-            .filter(online => online === true)
+            .pipe(filter(online => online === true))
             .subscribe(online => this.sendNextAction());
 
         this.storage.countActions()

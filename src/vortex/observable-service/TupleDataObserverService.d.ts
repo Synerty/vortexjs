@@ -1,4 +1,4 @@
-import { Subject } from "rxjs/Subject";
+import { Subject } from "rxjs";
 import { Tuple } from "../Tuple";
 import { TupleSelector } from "../TupleSelector";
 import { TupleDataObservableNameService, TupleDataOfflineObserverService } from "./TupleDataOfflineObserverService";

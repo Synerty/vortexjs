@@ -4,6 +4,7 @@ import {dateStr} from "./UtilMisc";
 import {VortexService} from "./VortexService";
 import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
 import {PayloadEnvelope} from "./PayloadEnvelope";
+import {takeUntil} from "rxjs/operators";
 
 /** Payload Response
  *
@@ -87,7 +88,7 @@ export class PayloadResponse {
 
             // Subscribe
             endpoint.observable
-                .takeUntil(this._lcEmitter.onDestroyEvent)
+                .pipe(takeUntil(this._lcEmitter.onDestroyEvent))
                 .subscribe((payloadEnvelope: PayloadEnvelope) => {
 
                     let r = payloadEnvelope.result; // success is null or true

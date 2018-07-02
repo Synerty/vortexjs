@@ -1,4 +1,4 @@
-import { Subject } from "rxjs/Subject";
+import { Subject } from "rxjs";
 import { VortexService } from "../VortexService";
 import { Tuple } from "../Tuple";
 import { TupleSelector } from "../TupleSelector";

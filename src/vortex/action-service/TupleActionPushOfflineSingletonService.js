@@ -15,6 +15,7 @@ var VortexService_1 = require("../VortexService");
 var UtilMisc_1 = require("../UtilMisc");
 var PayloadResponse_1 = require("../PayloadResponse");
 var TupleStorageFactoryService_1 = require("../storage-factory/TupleStorageFactoryService");
+var operators_1 = require("rxjs/operators");
 var TupleActionPushOfflineSingletonService = /** @class */ (function () {
     function TupleActionPushOfflineSingletonService(vortexService, vortexStatus, factoryService) {
         var _this = this;
@@ -28,7 +29,7 @@ var TupleActionPushOfflineSingletonService = /** @class */ (function () {
         this.storage = factoryService.createActionStorage();
         // This is a global service, there is no point unsubscribing it
         this.vortexStatus.isOnline
-            .filter(function (online) { return online === true; })
+            .pipe(operators_1.filter(function (online) { return online === true; }))
             .subscribe(function (online) { return _this.sendNextAction(); });
         this.storage.countActions()
             .then(function (count) {

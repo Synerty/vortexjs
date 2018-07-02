@@ -20,7 +20,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var Subject_1 = require("rxjs/Subject");
+var rxjs_1 = require("rxjs");
+var operators_1 = require("rxjs/operators");
 var VortexService_1 = require("../VortexService");
 var TupleSelector_1 = require("../TupleSelector");
 var Payload_1 = require("../Payload");
@@ -57,7 +58,7 @@ exports.TupleDataObservableNameService = TupleDataObservableNameService;
 var CachedSubscribedData = /** @class */ (function () {
     function CachedSubscribedData(tupleSelector) {
         this.tupleSelector = tupleSelector;
-        this.subject = new Subject_1.Subject();
+        this.subject = new rxjs_1.Subject();
         // The date the cache is scheduled to be torn down.
         // This will be X time after we notice that it has no subscribers
         this.tearDownDate = null;
@@ -111,8 +112,7 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
             });
         });
         vortexStatusService.isOnline
-            .takeUntil(_this.onDestroyEvent)
-            .filter(function (online) { return online === true; })
+            .pipe(operators_1.takeUntil(_this.onDestroyEvent), operators_1.filter(function (online) { return online === true; }))
             .subscribe(function (online) { return _this.vortexOnlineChanged(); });
         // Cleanup dead subscribers every 30 seconds.
         var cleanupTimer = setInterval(function () { return _this.cleanupDeadCaches(); }, 2000);

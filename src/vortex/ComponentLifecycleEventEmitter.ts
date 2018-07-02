@@ -1,5 +1,4 @@
 import {EventEmitter, OnDestroy, OnInit, DoCheck} from "@angular/core";
-import {Observer} from "rxjs/Observer";
 
 // Post to here if it works
 // http://stackoverflow.com/questions/34743069/angular2-ngondestroy-emit-event

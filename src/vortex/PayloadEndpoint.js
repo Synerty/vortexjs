@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var PayloadIO_1 = require("./PayloadIO");
 var UtilMisc_1 = require("./UtilMisc");
 require("./UtilArray");
-var Subject_1 = require("rxjs/Subject");
+var rxjs_1 = require("rxjs");
 var PayloadEndpoint = /** @class */ (function () {
     function PayloadEndpoint(component, filter, processLatestOnly) {
         if (processLatestOnly === void 0) { processLatestOnly = false; }
@@ -24,7 +24,7 @@ var PayloadEndpoint = /** @class */ (function () {
             _this.shutdown();
             subscription.unsubscribe();
         });
-        this._observable = new Subject_1.Subject();
+        this._observable = new rxjs_1.Subject();
     }
     Object.defineProperty(PayloadEndpoint.prototype, "observable", {
         get: function () {

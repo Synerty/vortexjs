@@ -1,5 +1,4 @@
-import {Subject} from "rxjs/Subject";
-import {Observable} from "rxjs/Observable";
+import {Observable, Subject} from "rxjs";
 import {IPayloadFilt, Payload} from "./Payload";
 import {PayloadEndpoint} from "./PayloadEndpoint";
 import {EventEmitter} from "@angular/core";
@@ -11,6 +10,7 @@ import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 import {bind, deepEqual, extend} from "./UtilMisc";
 import {PayloadEnvelope} from "./PayloadEnvelope";
 import {VortexStatusService} from "./VortexStatusService";
+import {first, takeUntil} from "rxjs/operators";
 
 
 // ------------------
@@ -93,7 +93,7 @@ export class TupleLoader {
 
         // Regiseter for the angular docheck
         this.component.doCheckEvent
-            .takeUntil(this.component.onDestroyEvent)
+            .pipe(takeUntil(this.component.onDestroyEvent))
             .subscribe(() => this.filterChangeCheck());
 
         // Create the observable object
@@ -101,7 +101,7 @@ export class TupleLoader {
 
         // Remove all observers when the component is destroyed.
         this.component.onDestroyEvent
-            .first()
+            .pipe(first())
             .subscribe(() => this._observable.complete());
     }
 

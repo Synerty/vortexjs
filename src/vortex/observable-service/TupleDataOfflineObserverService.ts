@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core";
-import {Subject} from "rxjs/Subject";
+import {Subject} from "rxjs";
+import {filter, takeUntil} from "rxjs/operators";
 import {VortexService} from "../VortexService";
 import {Tuple} from "../Tuple";
 import {TupleSelector} from "../TupleSelector";
@@ -103,8 +104,9 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
             });
 
         vortexStatusService.isOnline
-            .takeUntil(this.onDestroyEvent)
-            .filter(online => online === true)
+            .pipe(
+                takeUntil(this.onDestroyEvent),
+                filter(online => online === true))
             .subscribe(online => this.vortexOnlineChanged());
 
         // Cleanup dead subscribers every 30 seconds.

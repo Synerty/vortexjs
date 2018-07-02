@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
-var Subject_1 = require("rxjs/Subject");
+var rxjs_1 = require("rxjs");
 var UtilMisc_1 = require("./UtilMisc");
 // Node compatibility
 var logDebug = console.debug ? UtilMisc_1.bind(console, console.debug) : UtilMisc_1.bind(console, console.log);
@@ -19,11 +19,11 @@ var logError = console.error ? UtilMisc_1.bind(console, console.error) : UtilMis
 var VortexStatusService = /** @class */ (function () {
     function VortexStatusService(zone) {
         this.zone = zone;
-        this.isOnline = new Subject_1.Subject();
-        this.info = new Subject_1.Subject();
-        this.errors = new Subject_1.Subject();
+        this.isOnline = new rxjs_1.Subject();
+        this.info = new rxjs_1.Subject();
+        this.errors = new rxjs_1.Subject();
         this.wasOnline = false;
-        this.queuedActionCount = new Subject_1.Subject();
+        this.queuedActionCount = new rxjs_1.Subject();
         this.lastQueuedTupleActions = 0;
     }
     Object.defineProperty(VortexStatusService.prototype, "snapshot", {

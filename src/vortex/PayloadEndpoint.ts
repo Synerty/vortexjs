@@ -3,8 +3,7 @@ import {IPayloadFilt} from "./Payload";
 import {assert, dictKeysFromObject} from "./UtilMisc";
 import "./UtilArray";
 import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
-import {Subject} from "rxjs/Subject";
-import {Observable} from "rxjs/Observable";
+import {Observable, Subject} from "rxjs";
 import {PayloadEnvelope} from "./PayloadEnvelope";
 
 

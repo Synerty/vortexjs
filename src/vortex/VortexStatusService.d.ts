@@ -1,5 +1,5 @@
 import { NgZone } from "@angular/core";
-import { Subject } from "rxjs/Subject";
+import { Subject } from "rxjs";
 export interface VortexStatusServiceSnapshot {
     isOnline: boolean;
     queuedActionCount: number;

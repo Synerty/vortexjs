@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Subject_1 = require("rxjs/Subject");
+var rxjs_1 = require("rxjs");
 var Payload_1 = require("./Payload");
 var PayloadEndpoint_1 = require("./PayloadEndpoint");
 var core_1 = require("@angular/core");
@@ -8,6 +8,7 @@ var VortexClientABC_1 = require("./VortexClientABC");
 var PayloadFilterKeys_1 = require("./PayloadFilterKeys");
 var UtilMisc_1 = require("./UtilMisc");
 var PayloadEnvelope_1 = require("./PayloadEnvelope");
+var operators_1 = require("rxjs/operators");
 // ------------------
 // Some private structures
 var TupleLoaderEventEnum;
@@ -57,13 +58,13 @@ var TupleLoader = /** @class */ (function () {
         }
         // Regiseter for the angular docheck
         this.component.doCheckEvent
-            .takeUntil(this.component.onDestroyEvent)
+            .pipe(operators_1.takeUntil(this.component.onDestroyEvent))
             .subscribe(function () { return _this.filterChangeCheck(); });
         // Create the observable object
-        this._observable = new Subject_1.Subject();
+        this._observable = new rxjs_1.Subject();
         // Remove all observers when the component is destroyed.
         this.component.onDestroyEvent
-            .first()
+            .pipe(operators_1.first())
             .subscribe(function () { return _this._observable.complete(); });
     }
     Object.defineProperty(TupleLoader.prototype, "observable", {

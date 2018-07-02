@@ -1,7 +1,7 @@
 import { IPayloadFilt, Payload } from "./Payload";
 import { Tuple } from "./Tuple";
 import { ComponentLifecycleEventEmitter } from "./ComponentLifecycleEventEmitter";
-import { Observable } from "rxjs/Observable";
+import { Observable } from "rxjs";
 import { PayloadEndpoint } from "./PayloadEndpoint";
 import { IFilterUpdateCallable, TupleLoader } from "./TupleLoader";
 import { Ng2BalloonMsgService } from "@synerty/ng2-balloon-msg";
