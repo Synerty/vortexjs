@@ -1,15 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var pako = require("pako");
 var base64 = require("base-64");
 global.onmessage = function (postedArg) {
     var callNumber = postedArg["data"]["callNumber"];
     try {
-        var compressedData = pako.deflate(postedArg["data"]["payloadJson"], { to: "string" });
-        var encodedData = base64.encode(compressedData);
+        var payloadJson = base64.decode(postedArg["data"]["vortexStr"]);
         global.postMessage({
             callNumber: callNumber,
-            result: encodedData,
+            result: payloadJson,
             error: null
         });
     }
@@ -21,4 +19,4 @@ global.onmessage = function (postedArg) {
         });
     }
 };
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/payload/PayloadDelegateNsEncodeWorker.js.map
+//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/payload/PayloadEnvelopeDelegateNsDecodeWorker.js.map

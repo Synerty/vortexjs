@@ -12,12 +12,12 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var PayloadDelegateABC_1 = require("./PayloadDelegateABC");
 var PayloadDelegateInMain_1 = require("./PayloadDelegateInMain");
-var PromiseWorker = require("promise-worker");
 var PayloadDelegateNs = /** @class */ (function (_super) {
     __extends(PayloadDelegateNs, _super);
     function PayloadDelegateNs() {
         var _this = _super.call(this) || this;
         _this.inMainDelegate = new PayloadDelegateInMain_1.PayloadDelegateInMain();
+        // --------------------------------------------------------------------
         if (global.TNS_WEBPACK) {
             var Worker_1 = require("nativescript-worker-loader!./PayloadDelegateNsEncodeWorker.js");
             _this.encodeWorker = new Worker_1();
@@ -25,11 +25,9 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
         else {
             _this.encodeWorker = new Worker("./PayloadDelegateNsEncodeWorker.js");
         }
-        // Make this compatible with promise-worker
-        _this.encodeWorker.addEventListener = function (listener) {
-            _this.encodeWorker.onmessage = listener;
-        };
-        _this.encodePromiseWorker = new PromiseWorker(_this.encodeWorker);
+        _this.encodeWorker.onmessage = PayloadDelegateNs.onMessage;
+        _this.encodeWorker.onerror = PayloadDelegateNs.onError;
+        // --------------------------------------------------------------------
         if (global.TNS_WEBPACK) {
             var Worker_2 = require("nativescript-worker-loader!./PayloadDelegateNsDecodeWorker.js");
             _this.decodeWorker = new Worker_2();
@@ -37,35 +35,119 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
         else {
             _this.decodeWorker = new Worker("./PayloadDelegateNsDecodeWorker.js");
         }
-        // Make this compatible with promise-worker
-        _this.decodeWorker.addEventListener = function (listener) {
-            _this.decodeWorker.onmessage = listener;
-        };
-        _this.decodePromiseWorker = new PromiseWorker(_this.decodeWorker);
+        _this.decodeWorker.onmessage = PayloadDelegateNs.onMessage;
+        _this.decodeWorker.onerror = PayloadDelegateNs.onError;
+        // --------------------------------------------------------------------
+        if (global.TNS_WEBPACK) {
+            var Worker_3 = require("nativescript-worker-loader!./PayloadEnvelopeDelegateNsEncodeWorker.js");
+            _this.encodeEnvelopeWorker = new Worker_3();
+        }
+        else {
+            _this.encodeEnvelopeWorker = new Worker("./PayloadEnvelopeDelegateNsEncodeWorker.js");
+        }
+        _this.encodeEnvelopeWorker.onmessage = PayloadDelegateNs.onMessage;
+        _this.encodeEnvelopeWorker.onerror = PayloadDelegateNs.onError;
+        // --------------------------------------------------------------------
+        if (global.TNS_WEBPACK) {
+            var Worker_4 = require("nativescript-worker-loader!./PayloadEnvelopeDelegateNsDecodeWorker.js");
+            _this.decodeEnvelopeWorker = new Worker_4();
+        }
+        else {
+            _this.decodeEnvelopeWorker = new Worker("./PayloadEnvelopeDelegateNsDecodeWorker.js");
+        }
+        _this.decodeEnvelopeWorker.onmessage = PayloadDelegateNs.onMessage;
+        _this.decodeEnvelopeWorker.onerror = PayloadDelegateNs.onError;
         return _this;
     }
     // ------------------------------------------------------------------------
     PayloadDelegateNs.prototype.deflateAndEncode = function (payloadJson) {
+        var _this = this;
         // Don't send small messages to the worker
         if (payloadJson.length < (10 * 1024))
             return this.inMainDelegate.deflateAndEncode(payloadJson);
-        return this.encodePromiseWorker.postMessage(payloadJson);
+        return new Promise(function (resolve, reject) {
+            var callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
+            _this.encodeWorker.postMessage({
+                callNumber: callNumber,
+                payloadJson: payloadJson
+            });
+        });
     };
     // ------------------------------------------------------------------------
     PayloadDelegateNs.prototype.encodeEnvelope = function (payloadJson) {
-        return this.inMainDelegate.encodeEnvelope(payloadJson);
+        var _this = this;
+        if (payloadJson.length < (10 * 1024))
+            return this.inMainDelegate.encodeEnvelope(payloadJson);
+        return new Promise(function (resolve, reject) {
+            var callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
+            _this.encodeEnvelopeWorker.postMessage({
+                callNumber: callNumber,
+                payloadJson: payloadJson
+            });
+        });
     };
     // ------------------------------------------------------------------------
     PayloadDelegateNs.prototype.decodeAndInflate = function (vortexStr) {
+        var _this = this;
         // Don't send small messages to the worker
         if (vortexStr.length < (5 * 1024))
             return this.inMainDelegate.decodeAndInflate(vortexStr);
-        return this.decodePromiseWorker.postMessage(vortexStr);
+        return new Promise(function (resolve, reject) {
+            var callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
+            _this.decodeWorker.postMessage({
+                callNumber: callNumber,
+                vortexStr: vortexStr
+            });
+        });
     };
     // ------------------------------------------------------------------------
     PayloadDelegateNs.prototype.decodeEnvelope = function (vortexStr) {
-        return this.inMainDelegate.decodeEnvelope(vortexStr);
+        var _this = this;
+        if (vortexStr.length < (5 * 1024))
+            return this.inMainDelegate.decodeEnvelope(vortexStr);
+        return new Promise(function (resolve, reject) {
+            var callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
+            _this.decodeEnvelopeWorker.postMessage({
+                callNumber: callNumber,
+                vortexStr: vortexStr
+            });
+        });
     };
+    PayloadDelegateNs.popPromise = function (callNumber) {
+        var promise = PayloadDelegateNs._promises[callNumber];
+        delete PayloadDelegateNs._promises[callNumber];
+        return promise;
+    };
+    PayloadDelegateNs.pushPromise = function (resolve, reject) {
+        var callNumber = PayloadDelegateNs._promisesNum++;
+        PayloadDelegateNs._promises[callNumber] = {
+            resolve: resolve,
+            reject: reject
+        };
+        return callNumber;
+    };
+    PayloadDelegateNs.onMessage = function (postResult) {
+        var resultAny = postResult.data;
+        // console.log(`WebSQL Service, Tx Receiving : ${JSON.stringify(resultAny)}`);
+        var error = resultAny["error"];
+        var callNumber = resultAny["callNumber"];
+        var result = resultAny["result"];
+        var promise = PayloadDelegateNs.popPromise(callNumber);
+        var resolve = promise["resolve"];
+        var reject = promise["reject"];
+        if (error == null) {
+            resolve(result);
+        }
+        else {
+            reject(error);
+        }
+    };
+    PayloadDelegateNs.onError = function (error) {
+        console.log("PayloadDelegateNs.onerror " + error);
+    };
+    // ------------------------------------------------------------------------
+    PayloadDelegateNs._promises = {};
+    PayloadDelegateNs._promisesNum = 1;
     return PayloadDelegateNs;
 }(PayloadDelegateABC_1.PayloadDelegateABC));
 exports.PayloadDelegateNs = PayloadDelegateNs;
