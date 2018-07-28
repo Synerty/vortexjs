@@ -14,7 +14,7 @@ var SerialiseUtil_1 = require("./SerialiseUtil");
 var Jsonable_1 = require("./Jsonable");
 var UtilMisc_1 = require("./UtilMisc");
 require("./UtilArray");
-var PayloadDelegateInMain_1 = require("./payload/PayloadDelegateInMain");
+var PayloadDelegateInMainWeb_1 = require("./payload/PayloadDelegateInMainWeb");
 var PayloadDelegateABC_1 = require("./payload/PayloadDelegateABC");
 // ----------------------------------------------------------------------------
 // Payload class
@@ -101,7 +101,7 @@ var Payload = /** @class */ (function (_super) {
         return this.toEncodedPayload()
             .then(function (encodedThis) { return new PayloadEnvelopeMod.PayloadEnvelope(_this.filt, encodedThis, _this.date); });
     };
-    Payload.workerDelegate = new PayloadDelegateInMain_1.PayloadDelegateInMain();
+    Payload.workerDelegate = new PayloadDelegateInMainWeb_1.PayloadDelegateInMainWeb();
     return Payload;
 }(Jsonable_1.default));
 exports.Payload = Payload;

@@ -11,13 +11,13 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var PayloadDelegateABC_1 = require("./PayloadDelegateABC");
-var PayloadDelegateInMain_1 = require("./PayloadDelegateInMain");
+var PayloadDelegateInMainWeb_1 = require("./PayloadDelegateInMainWeb");
 var PromiseWorker = require("promise-worker");
 var PayloadDelegateWeb = /** @class */ (function (_super) {
     __extends(PayloadDelegateWeb, _super);
     function PayloadDelegateWeb() {
         var _this = _super.call(this) || this;
-        _this.inMainDelegate = new PayloadDelegateInMain_1.PayloadDelegateInMain();
+        _this.inMainDelegate = new PayloadDelegateInMainWeb_1.PayloadDelegateInMainWeb();
         _this.encodeWorker = new Worker('./PayloadDelegateWebEncodeWorker.js');
         _this.encodePromiseWorker = new PromiseWorker(_this.encodeWorker);
         _this.decodeWorker = new Worker('./PayloadDelegateWebDecodeWorker.js');

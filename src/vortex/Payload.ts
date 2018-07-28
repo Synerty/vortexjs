@@ -3,7 +3,7 @@ import SerialiseUtil from "./SerialiseUtil";
 import Jsonable from "./Jsonable";
 import {assert} from "./UtilMisc";
 import "./UtilArray";
-import {PayloadDelegateInMain} from "./payload/PayloadDelegateInMain";
+import {PayloadDelegateInMainWeb} from "./payload/PayloadDelegateInMainWeb";
 import {logLong, now, PayloadDelegateABC} from "./payload/PayloadDelegateABC";
 
 
@@ -29,7 +29,7 @@ export interface IPayloadFilt {
  */
 export class Payload extends Jsonable {
 
-    private static workerDelegate = new PayloadDelegateInMain();
+    private static workerDelegate = new PayloadDelegateInMainWeb();
 
     filt: {};
     tuples: Array<Tuple | any>;

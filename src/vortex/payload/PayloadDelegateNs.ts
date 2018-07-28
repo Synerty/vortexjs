@@ -1,5 +1,5 @@
 import {PayloadDelegateABC} from "./PayloadDelegateABC";
-import {PayloadDelegateInMain} from "./PayloadDelegateInMain";
+import {PayloadDelegateInMainNs} from "./PayloadDelegateInMainNs";
 
 declare let global: any;
 
@@ -9,7 +9,7 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
     private encodeEnvelopeWorker: Worker;
     private decodeEnvelopeWorker: Worker;
 
-    private inMainDelegate = new PayloadDelegateInMain();
+    private inMainDelegate = new PayloadDelegateInMainNs();
 
     constructor() {
         super();

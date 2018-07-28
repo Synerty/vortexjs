@@ -15,7 +15,7 @@ var Jsonable_1 = require("./Jsonable");
 var UtilMisc_1 = require("./UtilMisc");
 require("./UtilArray");
 var PayloadDelegateABC_1 = require("./payload/PayloadDelegateABC");
-var PayloadDelegateInMain_1 = require("./payload/PayloadDelegateInMain");
+var PayloadDelegateInMainWeb_1 = require("./payload/PayloadDelegateInMainWeb");
 var Payload_1 = require("./Payload");
 // ----------------------------------------------------------------------------
 // Payload class
@@ -114,7 +114,7 @@ var PayloadEnvelope = /** @class */ (function (_super) {
             });
         });
     };
-    PayloadEnvelope.workerDelegate = new PayloadDelegateInMain_1.PayloadDelegateInMain();
+    PayloadEnvelope.workerDelegate = new PayloadDelegateInMainWeb_1.PayloadDelegateInMainWeb();
     PayloadEnvelope.vortexUuidKey = "__vortexUuid__";
     PayloadEnvelope.vortexNameKey = "__vortexName__";
     return PayloadEnvelope;

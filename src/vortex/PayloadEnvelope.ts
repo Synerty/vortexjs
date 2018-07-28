@@ -3,7 +3,7 @@ import Jsonable from "./Jsonable";
 import {assert} from "./UtilMisc";
 import "./UtilArray";
 import {logLong, now, PayloadDelegateABC} from "./payload/PayloadDelegateABC";
-import {PayloadDelegateInMain} from "./payload/PayloadDelegateInMain";
+import {PayloadDelegateInMainWeb} from "./payload/PayloadDelegateInMainWeb";
 import {Payload} from "./Payload";
 
 
@@ -16,7 +16,7 @@ import {Payload} from "./Payload";
  */
 export class PayloadEnvelope extends Jsonable {
 
-    private static workerDelegate = new PayloadDelegateInMain();
+    private static workerDelegate = new PayloadDelegateInMainWeb();
 
     static readonly vortexUuidKey = "__vortexUuid__";
     static readonly vortexNameKey = "__vortexName__";

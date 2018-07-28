@@ -3,24 +3,14 @@ import * as base64 from "base-64";
 import {PayloadDelegateABC} from "./PayloadDelegateABC";
 
 function btoa(data) {
-    try {
-        return window["btoa"](data);
-    }
-    catch (e) {
-        return base64.encode(data);
-    }
+    return base64.encode(data);
 }
 
 function atob(data) {
-    try {
-        return window["atob"](data);
-    }
-    catch (e) {
-        return base64.decode(data);
-    }
+    return base64.decode(data);
 }
 
-export class PayloadDelegateInMain extends PayloadDelegateABC {
+export class PayloadDelegateInMainNs extends PayloadDelegateABC {
 
     deflateAndEncode(payloadJson: string): Promise<string> {
         return new Promise<string>((resolve, reject) => {

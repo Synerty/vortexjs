@@ -1,5 +1,5 @@
 import { PayloadDelegateABC } from "./PayloadDelegateABC";
-export declare class PayloadDelegateInMain extends PayloadDelegateABC {
+export declare class PayloadDelegateInMainWeb extends PayloadDelegateABC {
     deflateAndEncode(payloadJson: string): Promise<string>;
     encodeEnvelope(payloadJson: string): Promise<string>;
     decodeAndInflate(vortexStr: string): Promise<string>;

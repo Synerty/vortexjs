@@ -14,27 +14,17 @@ var pako = require("pako");
 var base64 = require("base-64");
 var PayloadDelegateABC_1 = require("./PayloadDelegateABC");
 function btoa(data) {
-    try {
-        return window["btoa"](data);
-    }
-    catch (e) {
-        return base64.encode(data);
-    }
+    return base64.encode(data);
 }
 function atob(data) {
-    try {
-        return window["atob"](data);
-    }
-    catch (e) {
-        return base64.decode(data);
-    }
+    return base64.decode(data);
 }
-var PayloadDelegateInMain = /** @class */ (function (_super) {
-    __extends(PayloadDelegateInMain, _super);
-    function PayloadDelegateInMain() {
+var PayloadDelegateInMainNs = /** @class */ (function (_super) {
+    __extends(PayloadDelegateInMainNs, _super);
+    function PayloadDelegateInMainNs() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    PayloadDelegateInMain.prototype.deflateAndEncode = function (payloadJson) {
+    PayloadDelegateInMainNs.prototype.deflateAndEncode = function (payloadJson) {
         return new Promise(function (resolve, reject) {
             setTimeout(function () {
                 var compressedData = pako.deflate(payloadJson, { to: "string" });
@@ -45,7 +35,7 @@ var PayloadDelegateInMain = /** @class */ (function (_super) {
             }, 0);
         });
     };
-    PayloadDelegateInMain.prototype.encodeEnvelope = function (payloadJson) {
+    PayloadDelegateInMainNs.prototype.encodeEnvelope = function (payloadJson) {
         return new Promise(function (resolve, reject) {
             setTimeout(function () {
                 var encodedData = btoa(payloadJson);
@@ -53,7 +43,7 @@ var PayloadDelegateInMain = /** @class */ (function (_super) {
             }, 0);
         });
     };
-    PayloadDelegateInMain.prototype.decodeAndInflate = function (vortexStr) {
+    PayloadDelegateInMainNs.prototype.decodeAndInflate = function (vortexStr) {
         return new Promise(function (resolve, reject) {
             setTimeout(function () {
                 var compressedData = atob(vortexStr);
@@ -64,7 +54,7 @@ var PayloadDelegateInMain = /** @class */ (function (_super) {
             }, 0);
         });
     };
-    PayloadDelegateInMain.prototype.decodeEnvelope = function (vortexStr) {
+    PayloadDelegateInMainNs.prototype.decodeEnvelope = function (vortexStr) {
         return new Promise(function (resolve, reject) {
             setTimeout(function () {
                 var payloadJson = atob(vortexStr);
@@ -72,7 +62,7 @@ var PayloadDelegateInMain = /** @class */ (function (_super) {
             }, 0);
         });
     };
-    return PayloadDelegateInMain;
+    return PayloadDelegateInMainNs;
 }(PayloadDelegateABC_1.PayloadDelegateABC));
-exports.PayloadDelegateInMain = PayloadDelegateInMain;
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/payload/PayloadDelegateInMain.js.map
+exports.PayloadDelegateInMainNs = PayloadDelegateInMainNs;
+//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/payload/PayloadDelegateInMainNs.js.map

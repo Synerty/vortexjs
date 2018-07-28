@@ -11,12 +11,12 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var PayloadDelegateABC_1 = require("./PayloadDelegateABC");
-var PayloadDelegateInMain_1 = require("./PayloadDelegateInMain");
+var PayloadDelegateInMainNs_1 = require("./PayloadDelegateInMainNs");
 var PayloadDelegateNs = /** @class */ (function (_super) {
     __extends(PayloadDelegateNs, _super);
     function PayloadDelegateNs() {
         var _this = _super.call(this) || this;
-        _this.inMainDelegate = new PayloadDelegateInMain_1.PayloadDelegateInMain();
+        _this.inMainDelegate = new PayloadDelegateInMainNs_1.PayloadDelegateInMainNs();
         // --------------------------------------------------------------------
         if (global.TNS_WEBPACK) {
             var Worker_1 = require("nativescript-worker-loader!./PayloadDelegateNsEncodeWorker.js");

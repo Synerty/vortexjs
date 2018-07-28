@@ -1,5 +1,5 @@
 import {PayloadDelegateABC} from "./PayloadDelegateABC";
-import {PayloadDelegateInMain} from "./PayloadDelegateInMain";
+import {PayloadDelegateInMainWeb} from "./PayloadDelegateInMainWeb";
 
 import * as PromiseWorker from "promise-worker";
 
@@ -11,7 +11,7 @@ export class PayloadDelegateWeb extends PayloadDelegateABC {
     private encodePromiseWorker: PromiseWorker;
     private decodePromiseWorker: PromiseWorker;
 
-    private inMainDelegate = new PayloadDelegateInMain();
+    private inMainDelegate = new PayloadDelegateInMainWeb();
 
     constructor() {
         super();
