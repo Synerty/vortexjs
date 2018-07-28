@@ -32,7 +32,7 @@ export declare class CachedSubscribedData {
     resetTearDown(): void;
     isReadyForTearDown(): boolean;
     private _tuples;
-    tuples: Tuple[];
+    tuples: Tuple[] | null;
     /** Last Touched
      *
      * The last date that this cache was touched (subscribed or updated)

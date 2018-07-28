@@ -113,7 +113,6 @@ var CachedSubscribedData = /** @class */ (function () {
             && (this._lastTouched + this.FLUSH_WAIT) <= Date.now();
     };
     CachedSubscribedData.prototype.flush = function () {
-        console.log("Flushing cache " + this.tupleSelector.toOrderedJsonStr());
         this.lastServerAskDate = null;
         this.lastServerPayloadDate = null;
         this._tuples = null;
@@ -303,8 +302,10 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
             var key = _a[_i];
             var cachedData = this.cacheByTupleSelector[key];
             // If no activity has occured on the cache, then flush it
-            if (cachedData.isReadyForFlush())
+            if (cachedData.isReadyForFlush()) {
+                console.log("Flushing cache due to expiry " + key);
                 cachedData.flush();
+            }
             // Tear down happens 30s after the last subscriber unsubscribes
             // If there are subscribers, then reset the teardown clock
             if (cachedData.subject.observers.length != 0) {

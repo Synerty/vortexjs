@@ -101,7 +101,6 @@ export class CachedSubscribedData {
     }
 
     flush(): void {
-        console.log(`Flushing cache ${this.tupleSelector.toOrderedJsonStr()}`);
         this.lastServerAskDate = null;
         this.lastServerPayloadDate = null;
         this._tuples = null;
@@ -329,8 +328,10 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
             let cachedData = this.cacheByTupleSelector[key];
 
             // If no activity has occured on the cache, then flush it
-            if (cachedData.isReadyForFlush())
+            if (cachedData.isReadyForFlush()) {
+                console.log(`Flushing cache due to expiry ${key}`);
                 cachedData.flush();
+            }
 
             // Tear down happens 30s after the last subscriber unsubscribes
             // If there are subscribers, then reset the teardown clock
