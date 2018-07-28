@@ -117,9 +117,11 @@ class TupleWebSqlTransaction implements TupleStorageTransaction {
         return Math.floor((Math.random() * this.RETRY_DELAY_MS_MAX) + 1);
     }
 
-    private isLockedMsg(msg: string): boolean {
+    private isLockedMsg(err: any): boolean {
+        let msg = err.toString();
 
         let hasNsSqlError = msg.indexOf('SQLITE.ALL - Database Error5') !== -1;
+
         // unable to begin transaction (5 database is locked)
         let hasWebSqlError = msg.indexOf('5 database is locked') !== -1;
 

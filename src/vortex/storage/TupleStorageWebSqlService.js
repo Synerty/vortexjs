@@ -98,7 +98,8 @@ var TupleWebSqlTransaction = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    TupleWebSqlTransaction.prototype.isLockedMsg = function (msg) {
+    TupleWebSqlTransaction.prototype.isLockedMsg = function (err) {
+        var msg = err.toString();
         var hasNsSqlError = msg.indexOf('SQLITE.ALL - Database Error5') !== -1;
         // unable to begin transaction (5 database is locked)
         var hasWebSqlError = msg.indexOf('5 database is locked') !== -1;
