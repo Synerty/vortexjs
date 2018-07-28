@@ -16,21 +16,33 @@ export declare class TupleDataObservableNameService {
 export declare class CachedSubscribedData {
     tupleSelector: TupleSelector;
     subject: Subject<Tuple[]>;
-    private tearDownDate;
-    private TEARDOWN_WAIT;
-    tuples: Tuple[];
     /** Last Server Payload Date
      * If the server has responded with a payload, this is the date in the payload
      * @type {Date | null}
      */
     lastServerPayloadDate: moment.Moment | null;
+    lastServerAskDate: moment.Moment | null;
     cacheEnabled: boolean;
     storageEnabled: boolean;
     askServerEnabled: boolean;
     constructor(tupleSelector: TupleSelector);
+    private tearDownDate;
+    private TEARDOWN_WAIT;
     markForTearDown(): void;
     resetTearDown(): void;
     isReadyForTearDown(): boolean;
+    private _tuples;
+    tuples: Tuple[];
+    /** Last Touched
+     *
+     * The last date that this cache was touched (subscribed or updated)
+     * @type {Date | null}
+     */
+    private FLUSH_WAIT;
+    private _lastTouched;
+    touch(): void;
+    isReadyForFlush(): boolean;
+    flush(): void;
 }
 export declare class TupleDataOfflineObserverService extends ComponentLifecycleEventEmitter {
     private vortexService;
@@ -57,6 +69,7 @@ export declare class TupleDataOfflineObserverService extends ComponentLifecycleE
     /** Subscribe to Tuple Selector
      *
      * Get an observable that will be fired when any new data updates are available
+     * Data is loaded from the local db cache, while it waits for the server to respond.
      * * either from the server, or if they are locally updated with updateOfflineState()
      *
      * @param {TupleSelector} tupleSelector
@@ -79,6 +92,7 @@ export declare class TupleDataOfflineObserverService extends ComponentLifecycleE
     private vortexOnlineChanged();
     private receivePayload(payload, encodedPayload);
     private tellServerWeWantData(tupleSelectors, disableCache?, unsubscribe?);
-    private notifyObservers(cachedData, tupleSelector, tuples, encodedPayload?);
+    private notifyObservers(cachedData, tupleSelector, tuples);
+    private notifyObserversAndStore(cachedData, tupleSelector, tuples, encodedPayload?);
     private storeDataLocally(tupleSelector, tuples, encodedPayload?);
 }

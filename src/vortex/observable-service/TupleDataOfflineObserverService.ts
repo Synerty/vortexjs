@@ -37,38 +37,74 @@ export class TupleDataObservableNameService {
 export class CachedSubscribedData {
     subject: Subject<Tuple[]> = new Subject<Tuple[]>();
 
-    // The date the cache is scheduled to be torn down.
-    // This will be X time after we notice that it has no subscribers
-    private tearDownDate: number | null = null;
-    private TEARDOWN_WAIT = 30 * 1000; // 30 seconds, in milliseconds
-
-    tuples: Tuple[] = [];
-
     /** Last Server Payload Date
      * If the server has responded with a payload, this is the date in the payload
      * @type {Date | null}
      */
     lastServerPayloadDate: moment.Moment | null = null;
+    lastServerAskDate: moment.Moment | null = null;
 
     cacheEnabled = true;
     storageEnabled = true;
     askServerEnabled = true;
 
     constructor(public tupleSelector: TupleSelector) {
-
+        this.touch();
     }
+
+    // The date the cache is scheduled to be torn down.
+    // This will be X time after we notice that it has no subscribers
+    private tearDownDate: number | null = null;
+    private TEARDOWN_WAIT = 30 * 1000; // 30 seconds, in milliseconds
 
     markForTearDown(): void {
         if (this.tearDownDate == null)
-            this.tearDownDate = Date.now() + this.TEARDOWN_WAIT;
+            this.tearDownDate = Date.now();
     }
 
     resetTearDown(): void {
         this.tearDownDate = null;
+        this.touch();
     }
 
     isReadyForTearDown(): boolean {
-        return this.tearDownDate != null && this.tearDownDate <= Date.now();
+        return this.tearDownDate != null
+            && (this.tearDownDate + this.TEARDOWN_WAIT) <= Date.now();
+    }
+
+    private _tuples: Tuple[] | null = null;
+
+    get tuples(): Tuple[] | null {
+        return this._tuples;
+    }
+
+    set tuples(tuples: Tuple[]) {
+        this.touch();
+        this._tuples = tuples;
+    }
+
+    /** Last Touched
+     *
+     * The last date that this cache was touched (subscribed or updated)
+     * @type {Date | null}
+     */
+    private FLUSH_WAIT = 120 * 1000; // 2 minutes, in milliseconds
+    private _lastTouched: number | null = null;
+
+    touch(): void {
+        this._lastTouched = Date.now();
+    }
+
+    isReadyForFlush(): boolean {
+        return this._lastTouched != null
+            && (this._lastTouched + this.FLUSH_WAIT) <= Date.now();
+    }
+
+    flush(): void {
+        console.log(`Flushing cache ${this.tupleSelector.toOrderedJsonStr()}`);
+        this.lastServerAskDate = null;
+        this.lastServerPayloadDate = null;
+        this._tuples = null;
     }
 }
 
@@ -175,7 +211,7 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
         let tsStr = tupleSelector.toOrderedJsonStr();
         if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
             let cachedData = this.cacheByTupleSelector[tsStr];
-            cachedData.markForTearDown();
+            cachedData.flush();
         }
         this.cleanupDeadCaches()
 
@@ -184,6 +220,7 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
     /** Subscribe to Tuple Selector
      *
      * Get an observable that will be fired when any new data updates are available
+     * Data is loaded from the local db cache, while it waits for the server to respond.
      * * either from the server, or if they are locally updated with updateOfflineState()
      *
      * @param {TupleSelector} tupleSelector
@@ -199,39 +236,44 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
                              disableAskServer: boolean = false): Subject<Tuple[]> {
 
         let tsStr = tupleSelector.toOrderedJsonStr();
+        let cachedData: CachedSubscribedData | null = null;
 
+        // If the cache exists, use it
         if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
-            let cachedData = this.cacheByTupleSelector[tsStr];
-            cachedData.resetTearDown();
+            cachedData = this.cacheByTupleSelector[tsStr];
             cachedData.cacheEnabled = cachedData.cacheEnabled && !disableCache;
             cachedData.storageEnabled = cachedData.storageEnabled && !disableStorage;
             cachedData.askServerEnabled = cachedData.askServerEnabled && !disableAskServer;
 
-            if (cachedData.cacheEnabled && cachedData.lastServerPayloadDate != null) {
-                // Emit after we return
+            // If the cache is enabled, and we have tuple data, then notify
+            if (cachedData.cacheEnabled && cachedData.tuples != null) {
+                // Emit after we return, to ensure the subscribe happens first
                 setTimeout(() => {
                     this.notifyObservers(cachedData, tupleSelector, cachedData.tuples);
                 }, 0);
-            } else {
-                cachedData.tuples = [];
-                if (cachedData.askServerEnabled)
-                    this.tellServerWeWantData([tupleSelector], disableCache);
+
+                return cachedData.subject;
             }
 
-            return cachedData.subject;
+            // ELSE, Create the cache
+        } else {
+
+            cachedData = new CachedSubscribedData(tupleSelector);
+            cachedData.cacheEnabled = !disableCache;
+            cachedData.storageEnabled = !disableStorage;
+            cachedData.askServerEnabled = !disableAskServer;
+
+            this.cacheByTupleSelector[tsStr] = cachedData;
         }
 
-        let newCachedData = new CachedSubscribedData(tupleSelector);
-        newCachedData.cacheEnabled = !disableCache;
-        newCachedData.storageEnabled = !disableStorage;
-        newCachedData.askServerEnabled = !disableAskServer;
-
-        this.cacheByTupleSelector[tsStr] = newCachedData;
-
-        if (newCachedData.askServerEnabled)
+        // If asking the server is enabled and we have not asked the server, then ask
+        if (cachedData.askServerEnabled && cachedData.lastServerAskDate == null) {
             this.tellServerWeWantData([tupleSelector], disableCache);
+        }
 
-        if (newCachedData.storageEnabled) {
+        // If the tuples are null (because it's new or been flushed),
+        // Then ask the local DB again for it.
+        if (cachedData.storageEnabled && cachedData.tuples == null) {
             this.tupleOfflineStorageService
                 .loadTuplesEncoded(tupleSelector)
                 .then((vortexMsgOrNull: string | null) => {
@@ -244,12 +286,12 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
 
                             // If the server has responded before we loaded the data, then just
                             // ignore the cached data.
-                            if (newCachedData.lastServerPayloadDate != null)
+                            if (cachedData.lastServerPayloadDate != null)
                                 return;
 
                             // Update the tuples, and notify if them
-                            newCachedData.tuples = payload.tuples;
-                            this.notifyObservers(newCachedData, tupleSelector, payload.tuples);
+                            cachedData.tuples = payload.tuples;
+                            this.notifyObservers(cachedData, tupleSelector, payload.tuples);
                         });
                 })
                 .catch(err => {
@@ -258,7 +300,8 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
                 });
         }
 
-        return newCachedData.subject;
+        cachedData.resetTearDown();
+        return cachedData.subject;
     }
 
     /** Update Offline State
@@ -277,27 +320,41 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
         if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
             let cachedData = this.cacheByTupleSelector[tsStr];
             cachedData.tuples = tuples;
-            this.notifyObservers(cachedData, tupleSelector, tuples);
+            this.notifyObserversAndStore(cachedData, tupleSelector, tuples);
         }
     }
 
     private cleanupDeadCaches(): void {
         for (let key of dictKeysFromObject(this.cacheByTupleSelector)) {
             let cachedData = this.cacheByTupleSelector[key];
+
+            // If no activity has occured on the cache, then flush it
+            if (cachedData.isReadyForFlush())
+                cachedData.flush();
+
+            // Tear down happens 30s after the last subscriber unsubscribes
+            // If there are subscribers, then reset the teardown clock
             if (cachedData.subject.observers.length != 0) {
                 cachedData.resetTearDown();
+
+                // Tear down the cahce, including telling the server we're no longer
+                // observing the data
+            } else if (cachedData.isReadyForTearDown()) {
+                console.log(`Tearing down cache ${key}`);
+                cachedData.flush();
+                delete this.cacheByTupleSelector[key];
+                this.tellServerWeWantData(
+                    [cachedData.tupleSelector],
+                    null,
+                    true
+                );
+
+                // if there are no subscribers, then mark it for tear down (30s time)
             } else {
-                if (cachedData.isReadyForTearDown()) {
-                    delete this.cacheByTupleSelector[key];
-                    this.tellServerWeWantData(
-                        [cachedData.tupleSelector],
-                        null,
-                        true
-                    );
-                } else {
-                    cachedData.markForTearDown();
-                }
+                cachedData.markForTearDown();
+
             }
+
         }
     }
 
@@ -335,7 +392,7 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
         cachedData.lastServerPayloadDate = thisDate;
         cachedData.tuples = payload.tuples;
 
-        this.notifyObservers(cachedData, tupleSelector, payload.tuples, encodedPayload);
+        this.notifyObserversAndStore(cachedData, tupleSelector, payload.tuples, encodedPayload);
     }
 
 
@@ -349,6 +406,11 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
 
         let payloads: Payload[] = [];
         for (let tupleSelector of tupleSelectors) {
+            let tsStr = tupleSelector.toOrderedJsonStr();
+
+            if (this.cacheByTupleSelector.hasOwnProperty(tsStr))
+                this.cacheByTupleSelector[tsStr].lastServerAskDate = moment();
+
             let filt = extend({}, startFilt, {
                 "tupleSelector": tupleSelector,
                 "unsubscribe": unsubscribe
@@ -364,8 +426,7 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
 
     private notifyObservers(cachedData: CachedSubscribedData,
                             tupleSelector: TupleSelector,
-                            tuples: Tuple[],
-                            encodedPayload: string | null = null): void {
+                            tuples: Tuple[]): void {
         // Notify Observers
         try {
             cachedData.subject.next(tuples);
@@ -376,6 +437,15 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
             ${e.toString()}
             ${tupleSelector.toOrderedJsonStr()}`);
         }
+
+    }
+
+    private notifyObserversAndStore(cachedData: CachedSubscribedData,
+                                    tupleSelector: TupleSelector,
+                                    tuples: Tuple[],
+                                    encodedPayload: string | null = null): void {
+
+        this.notifyObservers(cachedData, tupleSelector, tuples);
 
         // AND store the data locally
         if (cachedData.storageEnabled)
