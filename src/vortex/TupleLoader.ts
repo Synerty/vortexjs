@@ -210,8 +210,7 @@ export class TupleLoader {
                 return promise;
             }
 
-        } else if (type === TupleLoaderEventEnum.Save
-            || type === TupleLoaderEventEnum.Delete) {
+        } else if (type === TupleLoaderEventEnum.Save) {
             if (tuples != null)
                 this.lastTuples = tuples;
 
@@ -229,8 +228,28 @@ export class TupleLoader {
             new Payload(this.lastPayloadFilt, this.lastTuples)
                 .makePayloadEnvelope()
                 .then((pe: PayloadEnvelope) => this.vortex.send(pe))
-                .catch(e => `TupleLoader, failed to encode payload ${e}`);
+                .catch(e => `TupleLoader, failed to save tuples ${e}`);
 
+
+        } else if (type === TupleLoaderEventEnum.Delete) {
+            // Check if we have tuples to save.
+            if (tuples == null || tuples.length == null) {
+                this.lastPromise.reject(
+                    "No tuples to delete. " +
+                    " Provide one or more with the del(tuples) call");
+                this.lastPromise = null;
+                return promise;
+            }
+
+            // Set the delete key. The server will delete objects with this set.
+            let filt = extend({}, this.lastPayloadFilt);
+            filt[plDeleteKey] = true;
+
+            // Save the tuples
+            new Payload(filt, tuples)
+                .makePayloadEnvelope()
+                .then((pe: PayloadEnvelope) => this.vortex.send(pe))
+                .catch(e => `TupleLoader, failed to delete tuples ${e}`);
 
         } else {
             throw new Error(`Type ${type} is not implemented.`);
@@ -249,13 +268,7 @@ export class TupleLoader {
      *
      */
     del(tuples: any[] | Tuple[] | null = null): Promise<Payload> {
-        // Set the delete key. The server will delete objects with this set.
-        this.lastPayloadFilt[plDeleteKey] = true;
-
         let promise = this.saveOrLoad(TupleLoaderEventEnum.Delete, tuples);
-
-        // Remove the delete key
-        delete this.lastPayloadFilt[plDeleteKey];
 
         return promise;
 

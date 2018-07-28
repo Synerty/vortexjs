@@ -162,8 +162,7 @@ var TupleLoader = /** @class */ (function () {
                 return promise;
             }
         }
-        else if (type === TupleLoaderEventEnum.Save
-            || type === TupleLoaderEventEnum.Delete) {
+        else if (type === TupleLoaderEventEnum.Save) {
             if (tuples != null)
                 this.lastTuples = tuples;
             // Check if we have tuples to save.
@@ -178,7 +177,24 @@ var TupleLoader = /** @class */ (function () {
             new Payload_1.Payload(this.lastPayloadFilt, this.lastTuples)
                 .makePayloadEnvelope()
                 .then(function (pe) { return _this.vortex.send(pe); })
-                .catch(function (e) { return "TupleLoader, failed to encode payload " + e; });
+                .catch(function (e) { return "TupleLoader, failed to save tuples " + e; });
+        }
+        else if (type === TupleLoaderEventEnum.Delete) {
+            // Check if we have tuples to save.
+            if (tuples == null || tuples.length == null) {
+                this.lastPromise.reject("No tuples to delete. " +
+                    " Provide one or more with the del(tuples) call");
+                this.lastPromise = null;
+                return promise;
+            }
+            // Set the delete key. The server will delete objects with this set.
+            var filt = UtilMisc_1.extend({}, this.lastPayloadFilt);
+            filt[PayloadFilterKeys_1.plDeleteKey] = true;
+            // Save the tuples
+            new Payload_1.Payload(filt, tuples)
+                .makePayloadEnvelope()
+                .then(function (pe) { return _this.vortex.send(pe); })
+                .catch(function (e) { return "TupleLoader, failed to delete tuples " + e; });
         }
         else {
             throw new Error("Type " + type + " is not implemented.");
@@ -196,11 +212,7 @@ var TupleLoader = /** @class */ (function () {
      */
     TupleLoader.prototype.del = function (tuples) {
         if (tuples === void 0) { tuples = null; }
-        // Set the delete key. The server will delete objects with this set.
-        this.lastPayloadFilt[PayloadFilterKeys_1.plDeleteKey] = true;
         var promise = this.saveOrLoad(TupleLoaderEventEnum.Delete, tuples);
-        // Remove the delete key
-        delete this.lastPayloadFilt[PayloadFilterKeys_1.plDeleteKey];
         return promise;
     };
     TupleLoader.prototype.processPayloadEnvelope = function (payloadEnvelope) {
