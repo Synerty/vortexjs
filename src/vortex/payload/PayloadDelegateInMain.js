@@ -12,6 +12,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var pako = require("pako");
 var base64 = require("base-64");
+var PayloadDelegateABC_1 = require("./PayloadDelegateABC");
 function btoa(data) {
     try {
         return window["btoa"](data);
@@ -28,7 +29,6 @@ function atob(data) {
         return base64.decode(data);
     }
 }
-var PayloadDelegateABC_1 = require("./PayloadDelegateABC");
 var PayloadDelegateInMain = /** @class */ (function (_super) {
     __extends(PayloadDelegateInMain, _super);
     function PayloadDelegateInMain() {
@@ -36,28 +36,40 @@ var PayloadDelegateInMain = /** @class */ (function (_super) {
     }
     PayloadDelegateInMain.prototype.deflateAndEncode = function (payloadJson) {
         return new Promise(function (resolve, reject) {
-            var compressedData = pako.deflate(payloadJson, { to: "string" });
-            var encodedData = btoa(compressedData);
-            resolve(encodedData);
+            setTimeout(function () {
+                var compressedData = pako.deflate(payloadJson, { to: "string" });
+                setTimeout(function () {
+                    var encodedData = btoa(compressedData);
+                    resolve(encodedData);
+                }, 0);
+            }, 0);
         });
     };
     PayloadDelegateInMain.prototype.encodeEnvelope = function (payloadJson) {
         return new Promise(function (resolve, reject) {
-            var encodedData = btoa(payloadJson);
-            resolve(encodedData);
+            setTimeout(function () {
+                var encodedData = btoa(payloadJson);
+                resolve(encodedData);
+            }, 0);
         });
     };
     PayloadDelegateInMain.prototype.decodeAndInflate = function (vortexStr) {
         return new Promise(function (resolve, reject) {
-            var compressedData = atob(vortexStr);
-            var payloadJson = pako.inflate(compressedData, { to: "string" });
-            resolve(payloadJson);
+            setTimeout(function () {
+                var compressedData = atob(vortexStr);
+                setTimeout(function () {
+                    var payloadJson = pako.inflate(compressedData, { to: "string" });
+                    resolve(payloadJson);
+                }, 0);
+            }, 0);
         });
     };
     PayloadDelegateInMain.prototype.decodeEnvelope = function (vortexStr) {
         return new Promise(function (resolve, reject) {
-            var payloadJson = atob(vortexStr);
-            resolve(payloadJson);
+            setTimeout(function () {
+                var payloadJson = atob(vortexStr);
+                resolve(payloadJson);
+            }, 0);
         });
     };
     return PayloadDelegateInMain;
