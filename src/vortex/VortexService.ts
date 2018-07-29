@@ -15,7 +15,7 @@ import {PayloadEnvelope} from "./PayloadEnvelope";
 @Injectable()
 export class VortexService {
     private vortex: VortexClientABC;
-    private static vortexUrl: string = '/vortex';
+    private static vortexUrl: string | null  = '/vortex';
     private static vortexClientName: string = '';
 
     constructor(private vortexStatusService: VortexStatusService,
@@ -31,7 +31,7 @@ export class VortexService {
      *
      * @param url: The new URL for the vortex to use.
      */
-    static setVortexUrl(url: string) {
+    static setVortexUrl(url: string | null) {
         VortexService.vortexUrl = url;
     }
 
@@ -45,17 +45,17 @@ export class VortexService {
     }
 
     reconnect() {
+        if (VortexService.vortexUrl == null) {
+            this.vortexStatusService.setOnline(false);
+            return;
+        }
+
         if (VortexService.vortexClientName == '') {
             throw new Error('VortexService.setVortexClientName() not set yet');
         }
 
         if (this.vortex != null)
             this.vortex.closed = true;
-
-        if (VortexService.vortexUrl == null) {
-            this.vortexStatusService.setOnline(false);
-            return;
-        }
 
         if (VortexService.vortexUrl.toLowerCase().startsWith("ws")) {
             this.vortex = new VortexClientWebsocket(

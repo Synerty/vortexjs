@@ -21,7 +21,7 @@ export declare class VortexService {
      *
      * @param url: The new URL for the vortex to use.
      */
-    static setVortexUrl(url: string): void;
+    static setVortexUrl(url: string | null): void;
     /**
      * Set Vortex Name
      *

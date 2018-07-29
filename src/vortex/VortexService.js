@@ -43,15 +43,15 @@ var VortexService = /** @class */ (function () {
         VortexService_1.vortexClientName = vortexClientName;
     };
     VortexService.prototype.reconnect = function () {
+        if (VortexService_1.vortexUrl == null) {
+            this.vortexStatusService.setOnline(false);
+            return;
+        }
         if (VortexService_1.vortexClientName == '') {
             throw new Error('VortexService.setVortexClientName() not set yet');
         }
         if (this.vortex != null)
             this.vortex.closed = true;
-        if (VortexService_1.vortexUrl == null) {
-            this.vortexStatusService.setOnline(false);
-            return;
-        }
         if (VortexService_1.vortexUrl.toLowerCase().startsWith("ws")) {
             this.vortex = new VortexClientWebsocket_1.VortexClientWebsocket(this.vortexStatusService, VortexService_1.vortexUrl, VortexService_1.vortexClientName);
         }
