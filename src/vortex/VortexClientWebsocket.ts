@@ -135,9 +135,14 @@ export class VortexClientWebsocket extends VortexClientABC {
     }
 
     private onOpen(event) {
+        let readyCount = 0;
         let check = () => {
             if (this.isReady) {
+              readyCount++;
+            }
+            if (readyCount >= 4) { // Must be ready 4 times in a row
                 this.vortexStatusService.setOnline(true);
+                this.sendMessages();
                 return;
             }
 
@@ -145,7 +150,6 @@ export class VortexClientWebsocket extends VortexClientABC {
         };
 
         check();
-        this.sendMessages();
     }
 
     private onClose(event) {

@@ -114,15 +114,19 @@ var VortexClientWebsocket = /** @class */ (function (_super) {
     };
     VortexClientWebsocket.prototype.onOpen = function (event) {
         var _this = this;
+        var readyCount = 0;
         var check = function () {
             if (_this.isReady) {
+                readyCount++;
+            }
+            if (readyCount >= 4) {
                 _this.vortexStatusService.setOnline(true);
+                _this.sendMessages();
                 return;
             }
             setTimeout(check, 50);
         };
         check();
-        this.sendMessages();
     };
     VortexClientWebsocket.prototype.onClose = function (event) {
         this.vortexStatusService.logInfo("WebSocket, closed");
