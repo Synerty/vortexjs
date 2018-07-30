@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {Subject} from "rxjs";
+import {Observable, Subject} from "rxjs";
 import {Tuple} from "../Tuple";
 import {TupleSelector} from "../TupleSelector";
 import {
@@ -45,7 +45,7 @@ export class TupleDataObserverService {
      */
     subscribeToTupleSelector(tupleSelector: TupleSelector,
                              disableCache: boolean = false,
-                             disableAskServer: boolean = false): Subject<Tuple[]> {
+                             disableAskServer: boolean = false): Observable<Tuple[]> {
         return this.delegate.subscribeToTupleSelector(
             tupleSelector, disableCache, true, disableAskServer)
     }

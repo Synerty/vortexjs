@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {Subject} from "rxjs";
+import {Observable, Subject} from "rxjs";
 import {filter, takeUntil} from "rxjs/operators";
 import {VortexService} from "../VortexService";
 import {Tuple} from "../Tuple";
@@ -216,6 +216,45 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
 
     }
 
+    /** Promise from to Tuple Selector
+     *
+     * See the subscribeToTupleSelector method for more details.
+     * The promise will fire on the first emit of data.
+     *
+     * Do not use this when there will be no data present,
+     * or it may cause a memory leak.
+     *
+     * @param {TupleSelector} tupleSelector
+     * @param {boolean} disableCache
+     * @param {boolean} disableStorage
+     * @param {boolean} disableAskServer, Use this to store and observe data completely
+     *      within the angular app.
+     * @returns {Subject<Tuple[]>}
+     */
+    promiseFromTupleSelector(tupleSelector: TupleSelector,
+                             disableCache: boolean = false,
+                             disableStorage: boolean = false,
+                             disableAskServer: boolean = false): Promise<Tuple[]> {
+        let observable = this.subscribeToTupleSelector(
+            tupleSelector, disableCache, disableStorage, disableAskServer
+        );
+
+        return new Promise<Tuple[]>((resolve, reject) => {
+            let subscription = observable
+                .subscribe((x) => {
+                    subscription.unsubscribe();
+                    resolve(x);
+                }, (err) => {
+                    subscription.unsubscribe();
+                    reject(err);
+                }, () => {
+                    subscription.unsubscribe();
+                    resolve([]);
+                });
+        });
+
+    }
+
     /** Subscribe to Tuple Selector
      *
      * Get an observable that will be fired when any new data updates are available
@@ -232,7 +271,7 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
     subscribeToTupleSelector(tupleSelector: TupleSelector,
                              disableCache: boolean = false,
                              disableStorage: boolean = false,
-                             disableAskServer: boolean = false): Subject<Tuple[]> {
+                             disableAskServer: boolean = false): Observable<Tuple[]> {
 
         let tsStr = tupleSelector.toOrderedJsonStr();
         let cachedData: CachedSubscribedData | null = null;

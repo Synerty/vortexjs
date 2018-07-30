@@ -1,4 +1,4 @@
-import { Subject } from "rxjs";
+import { Observable } from "rxjs";
 import { Tuple } from "../Tuple";
 import { TupleSelector } from "../TupleSelector";
 import { TupleDataObservableNameService, TupleDataOfflineObserverService } from "./TupleDataOfflineObserverService";
@@ -19,5 +19,5 @@ export declare class TupleDataObserverService {
      *      within the angular app.
      * @returns {Subject<Tuple[]>}
      */
-    subscribeToTupleSelector(tupleSelector: TupleSelector, disableCache?: boolean, disableAskServer?: boolean): Subject<Tuple[]>;
+    subscribeToTupleSelector(tupleSelector: TupleSelector, disableCache?: boolean, disableAskServer?: boolean): Observable<Tuple[]>;
 }

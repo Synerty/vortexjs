@@ -1,4 +1,4 @@
-import { Subject } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { VortexService } from "../VortexService";
 import { Tuple } from "../Tuple";
 import { TupleSelector } from "../TupleSelector";
@@ -66,6 +66,22 @@ export declare class TupleDataOfflineObserverService extends ComponentLifecycleE
      * @param {TupleSelector} tupleSelector The tuple selector to flush the cache for
      */
     flushCache(tupleSelector: TupleSelector): void;
+    /** Promise from to Tuple Selector
+     *
+     * See the subscribeToTupleSelector method for more details.
+     * The promise will fire on the first emit of data.
+     *
+     * Do not use this when there will be no data present,
+     * or it may cause a memory leak.
+     *
+     * @param {TupleSelector} tupleSelector
+     * @param {boolean} disableCache
+     * @param {boolean} disableStorage
+     * @param {boolean} disableAskServer, Use this to store and observe data completely
+     *      within the angular app.
+     * @returns {Subject<Tuple[]>}
+     */
+    promiseFromTupleSelector(tupleSelector: TupleSelector, disableCache?: boolean, disableStorage?: boolean, disableAskServer?: boolean): Promise<Tuple[]>;
     /** Subscribe to Tuple Selector
      *
      * Get an observable that will be fired when any new data updates are available
@@ -79,7 +95,7 @@ export declare class TupleDataOfflineObserverService extends ComponentLifecycleE
      *      within the angular app.
      * @returns {Subject<Tuple[]>}
      */
-    subscribeToTupleSelector(tupleSelector: TupleSelector, disableCache?: boolean, disableStorage?: boolean, disableAskServer?: boolean): Subject<Tuple[]>;
+    subscribeToTupleSelector(tupleSelector: TupleSelector, disableCache?: boolean, disableStorage?: boolean, disableAskServer?: boolean): Observable<Tuple[]>;
     /** Update Offline State
      *
      * This method updates the offline stored data, which will be used until the next

@@ -205,6 +205,40 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
         }
         this.cleanupDeadCaches();
     };
+    /** Promise from to Tuple Selector
+     *
+     * See the subscribeToTupleSelector method for more details.
+     * The promise will fire on the first emit of data.
+     *
+     * Do not use this when there will be no data present,
+     * or it may cause a memory leak.
+     *
+     * @param {TupleSelector} tupleSelector
+     * @param {boolean} disableCache
+     * @param {boolean} disableStorage
+     * @param {boolean} disableAskServer, Use this to store and observe data completely
+     *      within the angular app.
+     * @returns {Subject<Tuple[]>}
+     */
+    TupleDataOfflineObserverService.prototype.promiseFromTupleSelector = function (tupleSelector, disableCache, disableStorage, disableAskServer) {
+        if (disableCache === void 0) { disableCache = false; }
+        if (disableStorage === void 0) { disableStorage = false; }
+        if (disableAskServer === void 0) { disableAskServer = false; }
+        var observable = this.subscribeToTupleSelector(tupleSelector, disableCache, disableStorage, disableAskServer);
+        return new Promise(function (resolve, reject) {
+            var subscription = observable
+                .subscribe(function (x) {
+                subscription.unsubscribe();
+                resolve(x);
+            }, function (err) {
+                subscription.unsubscribe();
+                reject(err);
+            }, function () {
+                subscription.unsubscribe();
+                resolve([]);
+            });
+        });
+    };
     /** Subscribe to Tuple Selector
      *
      * Get an observable that will be fired when any new data updates are available
