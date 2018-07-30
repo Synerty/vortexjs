@@ -289,13 +289,19 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
      */
     TupleDataOfflineObserverService.prototype.updateOfflineState = function (tupleSelector, tuples) {
         var _this = this;
+        var tsStr = tupleSelector.toOrderedJsonStr();
+        if (!this.cacheByTupleSelector.hasOwnProperty(tsStr))
+            return;
+        var cachedData = this.cacheByTupleSelector[tsStr];
+        // Make note of the last server update date
+        var lastServerDate = cachedData.lastServerPayloadDate;
         // AND store the data locally
         return this.storeDataLocally(tupleSelector, tuples)
             .then(function () {
-            var tsStr = tupleSelector.toOrderedJsonStr();
-            if (!_this.cacheByTupleSelector.hasOwnProperty(tsStr))
+            // If the server has updated the data since the last update,
+            // then don't notify.
+            if (lastServerDate != cachedData.lastServerPayloadDate)
                 return;
-            var cachedData = _this.cacheByTupleSelector[tsStr];
             cachedData.tuples = tuples;
             _this.notifyObservers(cachedData, tupleSelector, tuples);
         });
