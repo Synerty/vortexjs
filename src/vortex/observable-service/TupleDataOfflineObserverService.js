@@ -288,14 +288,17 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
      * @param tuples: The new data to store
      */
     TupleDataOfflineObserverService.prototype.updateOfflineState = function (tupleSelector, tuples) {
+        var _this = this;
         // AND store the data locally
-        this.storeDataLocally(tupleSelector, tuples);
-        var tsStr = tupleSelector.toOrderedJsonStr();
-        if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
-            var cachedData = this.cacheByTupleSelector[tsStr];
+        return this.storeDataLocally(tupleSelector, tuples)
+            .then(function () {
+            var tsStr = tupleSelector.toOrderedJsonStr();
+            if (!_this.cacheByTupleSelector.hasOwnProperty(tsStr))
+                return;
+            var cachedData = _this.cacheByTupleSelector[tsStr];
             cachedData.tuples = tuples;
-            this.notifyObserversAndStore(cachedData, tupleSelector, tuples);
-        }
+            _this.notifyObservers(cachedData, tupleSelector, tuples);
+        });
     };
     TupleDataOfflineObserverService.prototype.cleanupDeadCaches = function () {
         for (var _i = 0, _a = UtilMisc_1.dictKeysFromObject(this.cacheByTupleSelector); _i < _a.length; _i++) {

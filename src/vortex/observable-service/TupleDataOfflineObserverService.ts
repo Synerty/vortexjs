@@ -310,17 +310,19 @@ export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmit
      * @param tupleSelector: The tuple selector to update tuples for
      * @param tuples: The new data to store
      */
-    updateOfflineState(tupleSelector: TupleSelector, tuples: Tuple[]): void {
+    updateOfflineState(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void> {
         // AND store the data locally
-        this.storeDataLocally(tupleSelector, tuples);
+        return this.storeDataLocally(tupleSelector, tuples)
+            .then(() => {
+                let tsStr = tupleSelector.toOrderedJsonStr();
 
-        let tsStr = tupleSelector.toOrderedJsonStr();
+                if (!this.cacheByTupleSelector.hasOwnProperty(tsStr))
+                    return;
 
-        if (this.cacheByTupleSelector.hasOwnProperty(tsStr)) {
-            let cachedData = this.cacheByTupleSelector[tsStr];
-            cachedData.tuples = tuples;
-            this.notifyObserversAndStore(cachedData, tupleSelector, tuples);
-        }
+                let cachedData = this.cacheByTupleSelector[tsStr];
+                cachedData.tuples = tuples;
+                this.notifyObservers(cachedData, tupleSelector, tuples);
+            });
     }
 
     private cleanupDeadCaches(): void {
