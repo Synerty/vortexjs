@@ -4,7 +4,6 @@ export declare class PayloadDelegateNs extends PayloadDelegateABC {
     private decodeWorker;
     private encodeEnvelopeWorker;
     private decodeEnvelopeWorker;
-    private inMainDelegate;
     constructor();
     deflateAndEncode(payloadJson: string): Promise<string>;
     encodeEnvelope(payloadJson: string): Promise<string>;

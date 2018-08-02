@@ -11,12 +11,10 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var PayloadDelegateABC_1 = require("./PayloadDelegateABC");
-var PayloadDelegateInMainNs_1 = require("./PayloadDelegateInMainNs");
 var PayloadDelegateNs = /** @class */ (function (_super) {
     __extends(PayloadDelegateNs, _super);
     function PayloadDelegateNs() {
         var _this = _super.call(this) || this;
-        _this.inMainDelegate = new PayloadDelegateInMainNs_1.PayloadDelegateInMainNs();
         // --------------------------------------------------------------------
         if (global.TNS_WEBPACK) {
             var Worker_1 = require("nativescript-worker-loader!./PayloadDelegateNsEncodeWorker.js");
@@ -62,9 +60,6 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
     // ------------------------------------------------------------------------
     PayloadDelegateNs.prototype.deflateAndEncode = function (payloadJson) {
         var _this = this;
-        // Don't send small messages to the worker
-        if (payloadJson.length < (10 * 1024))
-            return this.inMainDelegate.deflateAndEncode(payloadJson);
         return new Promise(function (resolve, reject) {
             var callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
             _this.encodeWorker.postMessage({
@@ -76,8 +71,6 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
     // ------------------------------------------------------------------------
     PayloadDelegateNs.prototype.encodeEnvelope = function (payloadJson) {
         var _this = this;
-        if (payloadJson.length < (10 * 1024))
-            return this.inMainDelegate.encodeEnvelope(payloadJson);
         return new Promise(function (resolve, reject) {
             var callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
             _this.encodeEnvelopeWorker.postMessage({
@@ -89,9 +82,6 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
     // ------------------------------------------------------------------------
     PayloadDelegateNs.prototype.decodeAndInflate = function (vortexStr) {
         var _this = this;
-        // Don't send small messages to the worker
-        if (vortexStr.length < (5 * 1024))
-            return this.inMainDelegate.decodeAndInflate(vortexStr);
         return new Promise(function (resolve, reject) {
             var callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
             _this.decodeWorker.postMessage({
@@ -103,8 +93,6 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
     // ------------------------------------------------------------------------
     PayloadDelegateNs.prototype.decodeEnvelope = function (vortexStr) {
         var _this = this;
-        if (vortexStr.length < (5 * 1024))
-            return this.inMainDelegate.decodeEnvelope(vortexStr);
         return new Promise(function (resolve, reject) {
             var callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
             _this.decodeEnvelopeWorker.postMessage({
@@ -120,6 +108,9 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
     };
     PayloadDelegateNs.pushPromise = function (resolve, reject) {
         var callNumber = PayloadDelegateNs._promisesNum++;
+        // Roll it over
+        if (PayloadDelegateNs._promisesNum > 1000000)
+            PayloadDelegateNs._promisesNum = 1;
         PayloadDelegateNs._promises[callNumber] = {
             resolve: resolve,
             reject: reject

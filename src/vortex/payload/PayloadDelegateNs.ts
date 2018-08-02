@@ -1,5 +1,4 @@
 import {PayloadDelegateABC} from "./PayloadDelegateABC";
-import {PayloadDelegateInMainNs} from "./PayloadDelegateInMainNs";
 
 declare let global: any;
 
@@ -8,8 +7,6 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
     private decodeWorker: Worker;
     private encodeEnvelopeWorker: Worker;
     private decodeEnvelopeWorker: Worker;
-
-    private inMainDelegate = new PayloadDelegateInMainNs();
 
     constructor() {
         super();
@@ -61,9 +58,6 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
     // ------------------------------------------------------------------------
 
     deflateAndEncode(payloadJson: string): Promise<string> {
-        // Don't send small messages to the worker
-        if (payloadJson.length < (10 * 1024))
-            return this.inMainDelegate.deflateAndEncode(payloadJson);
 
         return new Promise<string>((resolve, reject) => {
             let callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
@@ -80,8 +74,6 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
     // ------------------------------------------------------------------------
 
     encodeEnvelope(payloadJson: string): Promise<string> {
-        if (payloadJson.length < (10 * 1024))
-        return this.inMainDelegate.encodeEnvelope(payloadJson);
 
         return new Promise<string>((resolve, reject) => {
             let callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
@@ -98,9 +90,6 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
     // ------------------------------------------------------------------------
 
     decodeAndInflate(vortexStr: string): Promise<string> {
-        // Don't send small messages to the worker
-        if (vortexStr.length < (5 * 1024))
-            return this.inMainDelegate.decodeAndInflate(vortexStr);
 
         return new Promise<string>((resolve, reject) => {
             let callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
@@ -117,8 +106,6 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
     // ------------------------------------------------------------------------
 
     decodeEnvelope(vortexStr: string): Promise<string> {
-        if (vortexStr.length < (5 * 1024))
-        return this.inMainDelegate.decodeEnvelope(vortexStr);
 
         return new Promise<string>((resolve, reject) => {
             let callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
@@ -144,6 +131,11 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
 
     static pushPromise(resolve, reject): number {
         let callNumber = PayloadDelegateNs._promisesNum++;
+
+        // Roll it over
+        if (PayloadDelegateNs._promisesNum > 1000000) // 1 million
+            PayloadDelegateNs._promisesNum = 1;
+
         PayloadDelegateNs._promises[callNumber] = {
             resolve: resolve,
             reject: reject
