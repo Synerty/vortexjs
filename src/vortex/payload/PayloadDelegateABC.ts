@@ -20,7 +20,7 @@ export function logLong(message: string, start: any, payload: any | null = null)
     desc = ', ' + JSON.stringify(payload.filt);
   }
 
-  console.log(`${message}, took ${duration}${desc}`);
+  // console.log(`${message}, took ${duration}${desc}`);
 }
 
 

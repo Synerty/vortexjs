@@ -16,7 +16,7 @@ function logLong(message, start, payload) {
     if (payload != null) {
         desc = ', ' + JSON.stringify(payload.filt);
     }
-    console.log(message + ", took " + duration + desc);
+    // console.log(`${message}, took ${duration}${desc}`);
 }
 exports.logLong = logLong;
 // ----------------------------------------------------------------------------
