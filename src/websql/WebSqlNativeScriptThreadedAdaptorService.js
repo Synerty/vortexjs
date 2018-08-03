@@ -21,6 +21,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var WebSqlService_1 = require("./WebSqlService");
+var CALL_DB_OPEN = 1;
+var CALL_DB_CLOSE = 2;
+var CALL_DB_EXECUTE = 3;
 var WebSqlNativeScriptThreadedFactoryService = /** @class */ (function () {
     function WebSqlNativeScriptThreadedFactoryService() {
     }
@@ -45,63 +48,26 @@ var WebSqlNativeScriptThreadedAdaptorService = /** @class */ (function (_super) 
         var _this = _super.call(this, dbName, dbSchema) || this;
         _this.dbName = dbName;
         _this.dbSchema = dbSchema;
+        _this.workerController = new _WorkerController();
         _this._isOpen = false;
-        if (global.TNS_WEBPACK) {
-            var Worker_1 = require("nativescript-worker-loader!./WebSqlNativeScriptThreadedAdaptorWorker.js");
-            _this.worker = new Worker_1();
-        }
-        else {
-            _this.worker = new Worker("./WebSqlNativeScriptThreadedAdaptorWorker.js");
-        }
         return _this;
     }
-    WebSqlNativeScriptThreadedAdaptorService_1 = WebSqlNativeScriptThreadedAdaptorService;
     WebSqlNativeScriptThreadedAdaptorService.prototype.open = function () {
         var _this = this;
-        return new Promise(function (resolve, reject) {
-            if (_this.isOpen()) {
-                resolve();
-                return;
-            }
-            function callError(error) {
-                reject(error);
-                console.log("ERROR: WebSqlNativeScriptThreadedAdaptorService.open " + error);
-            }
-            _this.worker.onmessage = function (postResult) {
-                var resultAny = postResult.data;
-                //console.log(`WebSQL Service, DB Receiving : ${JSON.stringify(resultAny)}`);
-                var error = resultAny["error"];
-                if (error == null) {
-                    _this._isOpen = true;
-                    _this.worker.onerror = WebSqlNativeScriptThreadedAdaptorService_1.onError;
-                    _this.worker.onmessage = WebSqlNativeScriptThreadedAdaptorService_1.onMessage;
-                    resolve();
-                }
-                else {
-                    callError(error);
-                }
-            };
-            _this.worker.onerror = function (error) {
-                console.log("WebSQL Service, DB Erroring : " + error);
-                callError(error);
-            };
-            var postArg = {
-                call: 1,
-                dbName: _this.dbName,
-                dbSchema: _this.dbSchema[0],
-                version: 1
-            };
-            //console.log(`WebSQL Service, Sending : ${JSON.stringify(postArg)}`);
-            _this.worker.postMessage(postArg);
+        if (this.isOpen())
+            return Promise.resolve();
+        return this.workerController
+            .openDb(this.dbName, this.dbSchema, "1")
+            .then(function () {
+            _this._isOpen = true;
         });
     };
     WebSqlNativeScriptThreadedAdaptorService.prototype.isOpen = function () {
-        return this.worker != null && this._isOpen;
-        ;
+        return this.workerController != null && this._isOpen;
     };
     WebSqlNativeScriptThreadedAdaptorService.prototype.close = function () {
-        this.worker.terminate();
-        this.worker = null;
+        this.workerController.close();
+        this.workerController = null;
     };
     WebSqlNativeScriptThreadedAdaptorService.prototype.transaction = function () {
         var _this = this;
@@ -109,69 +75,130 @@ var WebSqlNativeScriptThreadedAdaptorService = /** @class */ (function (_super) 
         if (!this.isOpen())
             throw new Error("SQLDatabase " + this.dbName + " is not open");
         return new Promise(function (resolve, reject) {
-            resolve(new WebSqlNativeScriptThreadedTransactionAdaptor(_this.worker));
+            resolve(new WebSqlNativeScriptThreadedTransactionAdaptor(_this.workerController));
         });
     };
-    WebSqlNativeScriptThreadedAdaptorService.popPromise = function (callNumber) {
-        var promise = WebSqlNativeScriptThreadedAdaptorService_1._promises[callNumber];
-        delete WebSqlNativeScriptThreadedAdaptorService_1._promises[callNumber];
+    WebSqlNativeScriptThreadedAdaptorService = __decorate([
+        core_1.Injectable(),
+        __metadata("design:paramtypes", [String, Array])
+    ], WebSqlNativeScriptThreadedAdaptorService);
+    return WebSqlNativeScriptThreadedAdaptorService;
+}(WebSqlService_1.WebSqlService));
+var WebSqlNativeScriptThreadedTransactionAdaptor = /** @class */ (function () {
+    function WebSqlNativeScriptThreadedTransactionAdaptor(workerController) {
+        this.workerController = workerController;
+    }
+    WebSqlNativeScriptThreadedTransactionAdaptor.prototype.executeSql = function (sql, bindParams) {
+        if (bindParams === void 0) { bindParams = []; }
+        return this.workerController.execSql(sql, bindParams);
+    };
+    return WebSqlNativeScriptThreadedTransactionAdaptor;
+}());
+var _WorkerController = /** @class */ (function () {
+    function _WorkerController() {
+        if (global.TNS_WEBPACK) {
+            var Worker_1 = require("nativescript-worker-loader!./WebSqlNativeScriptThreadedAdaptorWorker.js");
+            this.worker = new Worker_1();
+        }
+        else {
+            this.worker = new Worker("./WebSqlNativeScriptThreadedAdaptorWorker.js");
+        }
+        this.worker.onmessage = _WorkerController.onMessage;
+        this.worker.onerror = _WorkerController.onError;
+    }
+    // ------------------------------------------------------------------------
+    _WorkerController.prototype.openDb = function (dbName, dbSchema, dbVersion) {
+        if (this.worker == null)
+            return Promise.reject("Worker has been closed");
+        var _a = this.pushPromise(), callNumber = _a.callNumber, promise = _a.promise;
+        var postArg = {
+            call: CALL_DB_OPEN,
+            callNumber: callNumber,
+            dbName: dbName,
+            dbSchema: dbSchema,
+            dbVersion: dbVersion
+        };
+        // console.log(`WebSQL Opening, Sending : ${JSON.stringify(postArg)}`);
+        this.worker.postMessage(postArg);
         return promise;
     };
-    WebSqlNativeScriptThreadedAdaptorService.pushPromise = function (callNumber, resolve, reject) {
-        WebSqlNativeScriptThreadedAdaptorService_1._promises[callNumber] = {
-            resolve: resolve,
-            reject: reject
+    _WorkerController.prototype.close = function () {
+        var _this = this;
+        var _a = this.pushPromise(), callNumber = _a.callNumber, promise = _a.promise;
+        var postArg = {
+            call: CALL_DB_CLOSE,
+            callNumber: callNumber
         };
+        console.log("WebSQL Closing, Sending : " + JSON.stringify(postArg));
+        this.worker.postMessage(postArg);
+        promise
+            .catch(function (err) { return console.log("WebSQL Failed to close: " + err); })
+            .then(function () {
+            _this.worker.terminate();
+            _this.worker = null;
+        });
     };
-    WebSqlNativeScriptThreadedAdaptorService.onMessage = function (postResult) {
+    _WorkerController.prototype.execSql = function (sql, bindParams) {
+        if (this.worker == null)
+            return Promise.reject("Worker has been closed");
+        var _a = this.pushPromise(), callNumber = _a.callNumber, promise = _a.promise;
+        var postArg = {
+            call: CALL_DB_EXECUTE,
+            callNumber: callNumber,
+            sql: sql,
+            bindParams: bindParams
+        };
+        // console.log(`WebSQL Executing, Sending : ${JSON.stringify(postArg)}`);
+        this.worker.postMessage(postArg);
+        return promise;
+    };
+    _WorkerController.prototype.pushPromise = function () {
+        var callNumber = _WorkerController._promisesNum++;
+        if (_WorkerController._promisesNum > 10000)
+            _WorkerController._promisesNum = 1;
+        var promise = new Promise(function (resolve, reject) {
+            _WorkerController._promises[callNumber] = {
+                resolve: resolve,
+                reject: reject
+            };
+        });
+        return { callNumber: callNumber, promise: promise };
+    };
+    _WorkerController.popPromise = function (callNumber) {
+        var promise = _WorkerController._promises[callNumber];
+        delete _WorkerController._promises[callNumber];
+        return promise;
+    };
+    _WorkerController.onMessage = function (postResult, retry) {
+        if (retry === void 0) { retry = 0; }
         var resultAny = postResult.data;
-        // console.log(`WebSQL Service, Tx Receiving : ${JSON.stringify(resultAny)}`);
+        // console.log(`WebSQL Worker,  Receiving : ${JSON.stringify(resultAny)}`);
         var error = resultAny["error"];
         var callNumber = resultAny["callNumber"];
         var result = resultAny["result"];
-        var promise = WebSqlNativeScriptThreadedAdaptorService_1.popPromise(callNumber);
+        if (callNumber == null) {
+            console.log("ERROR: _WorkerController.onerror " + error);
+            return;
+        }
+        var promise = _WorkerController.popPromise(callNumber);
+        if (promise == null) {
+            console.log("ERROR: _WorkerController, Double worker callback " + error);
+            return;
+        }
         var resolve = promise["resolve"];
         var reject = promise["reject"];
         if (error == null) {
-            resolve(result);
+            setTimeout(function () { return resolve(result); }, 0);
         }
         else {
             reject(error);
         }
     };
-    WebSqlNativeScriptThreadedAdaptorService.onError = function (error) {
-        console.log("WebSqlNativeScriptThreadedAdaptorService.onerror " + error);
+    _WorkerController.onError = function (error) {
+        console.log("ERROR: _WorkerController.onerror " + error);
     };
-    // ------------------------------------------------------------------------
-    WebSqlNativeScriptThreadedAdaptorService._promises = {};
-    WebSqlNativeScriptThreadedAdaptorService._promisesNum = 1;
-    WebSqlNativeScriptThreadedAdaptorService = WebSqlNativeScriptThreadedAdaptorService_1 = __decorate([
-        core_1.Injectable(),
-        __metadata("design:paramtypes", [String, Array])
-    ], WebSqlNativeScriptThreadedAdaptorService);
-    return WebSqlNativeScriptThreadedAdaptorService;
-    var WebSqlNativeScriptThreadedAdaptorService_1;
-}(WebSqlService_1.WebSqlService));
-var WebSqlNativeScriptThreadedTransactionAdaptor = /** @class */ (function () {
-    function WebSqlNativeScriptThreadedTransactionAdaptor(worker) {
-        this.worker = worker;
-    }
-    WebSqlNativeScriptThreadedTransactionAdaptor.prototype.executeSql = function (sql, bindParams) {
-        var _this = this;
-        if (bindParams === void 0) { bindParams = []; }
-        var callNumber = WebSqlNativeScriptThreadedAdaptorService._promisesNum++;
-        return new Promise(function (resolve, reject) {
-            var postArg = {
-                call: 3,
-                callNumber: callNumber,
-                sql: sql,
-                bindParams: bindParams
-            };
-            //console.log(`WebSQL Transaction, Sending : ${JSON.stringify(postArg)}`);
-            _this.worker.postMessage(postArg);
-            WebSqlNativeScriptThreadedAdaptorService.pushPromise(callNumber, resolve, reject);
-        });
-    };
-    return WebSqlNativeScriptThreadedTransactionAdaptor;
+    _WorkerController._promises = {};
+    _WorkerController._promisesNum = 1;
+    return _WorkerController;
 }());
 //# sourceMappingURL=/Users/jchesney/project/vortexjs/src/websql/WebSqlNativeScriptThreadedAdaptorService.js.map

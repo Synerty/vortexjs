@@ -9,10 +9,10 @@ export declare class PayloadDelegateNs extends PayloadDelegateABC {
     encodeEnvelope(payloadJson: string): Promise<string>;
     decodeAndInflate(vortexStr: string): Promise<string>;
     decodeEnvelope(vortexStr: string): Promise<string>;
-    static _promises: {};
-    static _promisesNum: number;
-    static popPromise(callNumber: number): {};
-    static pushPromise(resolve: any, reject: any): number;
-    static onMessage(postResult: any): void;
-    static onError(error: any): void;
+    private static _promises;
+    private static _promisesNum;
+    private pushPromise();
+    private static popPromise(callNumber);
+    private static onMessage(postResult);
+    private static onError(error);
 }

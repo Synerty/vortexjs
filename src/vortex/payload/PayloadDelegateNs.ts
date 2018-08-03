@@ -58,112 +58,118 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
     // ------------------------------------------------------------------------
 
     deflateAndEncode(payloadJson: string): Promise<string> {
+        let {callNumber, promise} = this.pushPromise();
 
-        return new Promise<string>((resolve, reject) => {
-            let callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
-
-            this.encodeWorker.postMessage({
-                callNumber: callNumber,
-                payloadJson: payloadJson
-            });
-
+        this.encodeWorker.postMessage({
+            callNumber: callNumber,
+            payloadJson: payloadJson
         });
+
+        return promise;
 
     }
 
     // ------------------------------------------------------------------------
 
     encodeEnvelope(payloadJson: string): Promise<string> {
+        let {callNumber, promise} = this.pushPromise();
 
-        return new Promise<string>((resolve, reject) => {
-            let callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
-
-            this.encodeEnvelopeWorker.postMessage({
-                callNumber: callNumber,
-                payloadJson: payloadJson
-            });
-
+        this.encodeEnvelopeWorker.postMessage({
+            callNumber: callNumber,
+            payloadJson: payloadJson
         });
+
+        return promise;
 
     }
 
     // ------------------------------------------------------------------------
 
     decodeAndInflate(vortexStr: string): Promise<string> {
+        let {callNumber, promise} = this.pushPromise();
 
-        return new Promise<string>((resolve, reject) => {
-            let callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
-
-            this.decodeWorker.postMessage({
-                callNumber: callNumber,
-                vortexStr: vortexStr
-            });
-
+        this.decodeWorker.postMessage({
+            callNumber: callNumber,
+            vortexStr: vortexStr
         });
+
+        return promise;
 
     }
 
     // ------------------------------------------------------------------------
 
     decodeEnvelope(vortexStr: string): Promise<string> {
+        let {callNumber, promise} = this.pushPromise();
 
-        return new Promise<string>((resolve, reject) => {
-            let callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
-
-            this.decodeEnvelopeWorker.postMessage({
-                callNumber: callNumber,
-                vortexStr: vortexStr
-            });
-
+        this.decodeEnvelopeWorker.postMessage({
+            callNumber: callNumber,
+            vortexStr: vortexStr
         });
+
+        return promise;
     }
 
     // ------------------------------------------------------------------------
 
-    static _promises = {};
-    static _promisesNum = 1;
+    private static _promises = {};
+    private static _promisesNum = 1;
 
-    static popPromise(callNumber: number): {} {
+    private pushPromise(): { callNumber: any; promise: Promise<any> } {
+        let callNumber = PayloadDelegateNs._promisesNum++;
+
+        // Roll it over
+        if (PayloadDelegateNs._promisesNum > 10000) // 10 thousand
+            PayloadDelegateNs._promisesNum = 1;
+
+        let promise = new Promise((resolve, reject) => {
+            PayloadDelegateNs._promises[callNumber] = {
+                resolve: resolve,
+                reject: reject
+            };
+        });
+
+        return {callNumber, promise};
+    }
+
+    private static popPromise(callNumber: number): {} {
         let promise = PayloadDelegateNs._promises[callNumber];
         delete PayloadDelegateNs._promises[callNumber];
         return promise;
     }
 
-    static pushPromise(resolve, reject): number {
-        let callNumber = PayloadDelegateNs._promisesNum++;
-
-        // Roll it over
-        if (PayloadDelegateNs._promisesNum > 1000000) // 1 million
-            PayloadDelegateNs._promisesNum = 1;
-
-        PayloadDelegateNs._promises[callNumber] = {
-            resolve: resolve,
-            reject: reject
-        };
-        return callNumber;
-    }
-
-    static onMessage(postResult) {
+    private static onMessage(postResult) {
         let resultAny: any = postResult.data;
-        // console.log(`WebSQL Service, Tx Receiving : ${JSON.stringify(resultAny)}`);
+        console.log(`PayloadDelegateNS, Receiving : ${JSON.stringify(resultAny)}`);
 
         let error = resultAny["error"];
         let callNumber = resultAny["callNumber"];
         let result = resultAny["result"];
 
+        if (callNumber == null) {
+            console.log(`PayloadDelegateNs.onerror ${error}`);
+            return;
+        }
+
         let promise = PayloadDelegateNs.popPromise(callNumber);
+
+        if (promise == null) {
+            console.log(`PayloadDelegateNs, Double worker callback ${error}`);
+            return;
+        }
+
         let resolve = promise["resolve"];
         let reject = promise["reject"];
 
         if (error == null) {
-            resolve(result);
+            setTimeout(() => resolve(result), 0);
 
         } else {
             reject(error);
         }
     }
 
-    static onError(error) {
+    private static onError(error) {
         console.log(`PayloadDelegateNs.onerror ${error}`);
     }
 

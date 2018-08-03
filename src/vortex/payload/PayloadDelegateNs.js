@@ -59,75 +59,77 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
     }
     // ------------------------------------------------------------------------
     PayloadDelegateNs.prototype.deflateAndEncode = function (payloadJson) {
-        var _this = this;
-        return new Promise(function (resolve, reject) {
-            var callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
-            _this.encodeWorker.postMessage({
-                callNumber: callNumber,
-                payloadJson: payloadJson
-            });
+        var _a = this.pushPromise(), callNumber = _a.callNumber, promise = _a.promise;
+        this.encodeWorker.postMessage({
+            callNumber: callNumber,
+            payloadJson: payloadJson
         });
+        return promise;
     };
     // ------------------------------------------------------------------------
     PayloadDelegateNs.prototype.encodeEnvelope = function (payloadJson) {
-        var _this = this;
-        return new Promise(function (resolve, reject) {
-            var callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
-            _this.encodeEnvelopeWorker.postMessage({
-                callNumber: callNumber,
-                payloadJson: payloadJson
-            });
+        var _a = this.pushPromise(), callNumber = _a.callNumber, promise = _a.promise;
+        this.encodeEnvelopeWorker.postMessage({
+            callNumber: callNumber,
+            payloadJson: payloadJson
         });
+        return promise;
     };
     // ------------------------------------------------------------------------
     PayloadDelegateNs.prototype.decodeAndInflate = function (vortexStr) {
-        var _this = this;
-        return new Promise(function (resolve, reject) {
-            var callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
-            _this.decodeWorker.postMessage({
-                callNumber: callNumber,
-                vortexStr: vortexStr
-            });
+        var _a = this.pushPromise(), callNumber = _a.callNumber, promise = _a.promise;
+        this.decodeWorker.postMessage({
+            callNumber: callNumber,
+            vortexStr: vortexStr
         });
+        return promise;
     };
     // ------------------------------------------------------------------------
     PayloadDelegateNs.prototype.decodeEnvelope = function (vortexStr) {
-        var _this = this;
-        return new Promise(function (resolve, reject) {
-            var callNumber = PayloadDelegateNs.pushPromise(resolve, reject);
-            _this.decodeEnvelopeWorker.postMessage({
-                callNumber: callNumber,
-                vortexStr: vortexStr
-            });
+        var _a = this.pushPromise(), callNumber = _a.callNumber, promise = _a.promise;
+        this.decodeEnvelopeWorker.postMessage({
+            callNumber: callNumber,
+            vortexStr: vortexStr
         });
+        return promise;
+    };
+    PayloadDelegateNs.prototype.pushPromise = function () {
+        var callNumber = PayloadDelegateNs._promisesNum++;
+        // Roll it over
+        if (PayloadDelegateNs._promisesNum > 10000)
+            PayloadDelegateNs._promisesNum = 1;
+        var promise = new Promise(function (resolve, reject) {
+            PayloadDelegateNs._promises[callNumber] = {
+                resolve: resolve,
+                reject: reject
+            };
+        });
+        return { callNumber: callNumber, promise: promise };
     };
     PayloadDelegateNs.popPromise = function (callNumber) {
         var promise = PayloadDelegateNs._promises[callNumber];
         delete PayloadDelegateNs._promises[callNumber];
         return promise;
     };
-    PayloadDelegateNs.pushPromise = function (resolve, reject) {
-        var callNumber = PayloadDelegateNs._promisesNum++;
-        // Roll it over
-        if (PayloadDelegateNs._promisesNum > 1000000)
-            PayloadDelegateNs._promisesNum = 1;
-        PayloadDelegateNs._promises[callNumber] = {
-            resolve: resolve,
-            reject: reject
-        };
-        return callNumber;
-    };
     PayloadDelegateNs.onMessage = function (postResult) {
         var resultAny = postResult.data;
-        // console.log(`WebSQL Service, Tx Receiving : ${JSON.stringify(resultAny)}`);
+        console.log("PayloadDelegateNS, Receiving : " + JSON.stringify(resultAny));
         var error = resultAny["error"];
         var callNumber = resultAny["callNumber"];
         var result = resultAny["result"];
+        if (callNumber == null) {
+            console.log("PayloadDelegateNs.onerror " + error);
+            return;
+        }
         var promise = PayloadDelegateNs.popPromise(callNumber);
+        if (promise == null) {
+            console.log("PayloadDelegateNs, Double worker callback " + error);
+            return;
+        }
         var resolve = promise["resolve"];
         var reject = promise["reject"];
         if (error == null) {
-            resolve(result);
+            setTimeout(function () { return resolve(result); }, 0);
         }
         else {
             reject(error);
