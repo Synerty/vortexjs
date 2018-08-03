@@ -140,7 +140,7 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
 
     private static onMessage(postResult) {
         let resultAny: any = postResult.data;
-        console.log(`PayloadDelegateNS, Receiving : ${JSON.stringify(resultAny)}`);
+        // console.log(`PayloadDelegateNS, Receiving : ${JSON.stringify(resultAny)}`);
 
         let error = resultAny["error"];
         let callNumber = resultAny["callNumber"];

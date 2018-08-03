@@ -113,7 +113,7 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
     };
     PayloadDelegateNs.onMessage = function (postResult) {
         var resultAny = postResult.data;
-        console.log("PayloadDelegateNS, Receiving : " + JSON.stringify(resultAny));
+        // console.log(`PayloadDelegateNS, Receiving : ${JSON.stringify(resultAny)}`);
         var error = resultAny["error"];
         var callNumber = resultAny["callNumber"];
         var result = resultAny["result"];
