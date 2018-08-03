@@ -2,7 +2,7 @@ import SerialiseUtil from "./SerialiseUtil";
 import Jsonable from "./Jsonable";
 import {assert} from "./UtilMisc";
 import "./UtilArray";
-import {logLong, now, PayloadDelegateABC} from "./payload/PayloadDelegateABC";
+import {PayloadDelegateABC} from "./payload/PayloadDelegateABC";
 import {PayloadDelegateInMainWeb} from "./payload/PayloadDelegateInMainWeb";
 import {Payload} from "./Payload";
 
@@ -79,61 +79,27 @@ export class PayloadEnvelope extends Jsonable {
     // -------------------------------------------
     // JSON Related method
 
-    private _fromJson(jsonStr: string): PayloadEnvelope {
-        let self = this;
-        let jsonDict = JSON.parse(jsonStr);
-
-        assert(jsonDict[Jsonable.JSON_CLASS_TYPE] === self.__rst);
-        return self.fromJsonDict(jsonDict);
+    private _fromJson(jsonStr: string): Promise<PayloadEnvelope> {
+        return Promise.resolve(JSON.parse(jsonStr))
+            .then((jsonDict) => {
+                assert(jsonDict[Jsonable.JSON_CLASS_TYPE] === this.__rst);
+                return this.fromJsonDict(jsonDict);
+            });
     }
 
-    private _toJson(): string {
-        let self = this;
-        let jsonDict = self.toJsonDict();
-        return JSON.stringify(jsonDict);
+    private _toJson(): Promise<string> {
+        return Promise.resolve(this.toJsonDict())
+            .then((jsonDict) => JSON.stringify(jsonDict));
     }
 
     static fromVortexMsg(vortexStr: string): Promise<PayloadEnvelope> {
-        let start = now();
-
-        return new Promise<PayloadEnvelope>((resolve, reject) => {
-
-            PayloadEnvelope.workerDelegate.decodeEnvelope(vortexStr)
-                .then((jsonStr) => {
-
-                    let payload = new PayloadEnvelope()._fromJson(jsonStr);
-                    logLong(`PayloadEnvelope.fromVortexMsg _fromJson len=${vortexStr.length}`, start, payload);
-
-                    resolve(payload);
-                })
-                .catch((err) => {
-                    console.log(`ERROR: fromVortexMsg ${err}`);
-                    reject(err);
-                });
-
-        });
+        return PayloadEnvelope.workerDelegate.decodeEnvelope(vortexStr)
+            .then((jsonStr) => new PayloadEnvelope()._fromJson(jsonStr));
     }
 
     toVortexMsg(): Promise<string> {
-        let start = now();
-
-        return new Promise<string>((resolve, reject) => {
-
-            let jsonStr = this._toJson();
-            logLong(`PayloadEnvelope.toVortexMsg _toJson len=${jsonStr.length}`, start, this);
-            start = now();
-
-            PayloadEnvelope.workerDelegate.encodeEnvelope(jsonStr)
-                .then((jsonStr) => {
-                    logLong(`PayloadEnvelope.toVortexMsg encodeEnvelope len=${jsonStr.length}`, start, this);
-                    resolve(jsonStr);
-                })
-                .catch((err) => {
-                    console.log(`ERROR: toVortexMsg ${err}`);
-                    reject(err);
-                });
-
-        });
+        return this._toJson()
+            .then((jsonStr) => PayloadEnvelope.workerDelegate.encodeEnvelope(jsonStr));
     }
 
 }

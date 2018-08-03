@@ -15,7 +15,6 @@ var Jsonable_1 = require("./Jsonable");
 var UtilMisc_1 = require("./UtilMisc");
 require("./UtilArray");
 var PayloadDelegateInMainWeb_1 = require("./payload/PayloadDelegateInMainWeb");
-var PayloadDelegateABC_1 = require("./payload/PayloadDelegateABC");
 // ----------------------------------------------------------------------------
 // Payload class
 /**
@@ -50,50 +49,24 @@ var Payload = /** @class */ (function (_super) {
     // -------------------------------------------
     // JSON Related method
     Payload.prototype._fromJson = function (jsonStr) {
-        var self = this;
-        var jsonDict = JSON.parse(jsonStr);
-        UtilMisc_1.assert(jsonDict[Jsonable_1.default.JSON_CLASS_TYPE] === self.__rst);
-        return self.fromJsonDict(jsonDict);
+        var _this = this;
+        return Promise.resolve(JSON.parse(jsonStr))
+            .then(function (jsonDict) {
+            UtilMisc_1.assert(jsonDict[Jsonable_1.default.JSON_CLASS_TYPE] === _this.__rst);
+            return _this.fromJsonDict(jsonDict);
+        });
     };
     Payload.prototype._toJson = function () {
-        var self = this;
-        var jsonDict = self.toJsonDict();
-        return JSON.stringify(jsonDict);
+        return Promise.resolve(this.toJsonDict())
+            .then(function (jsonDict) { return JSON.stringify(jsonDict); });
     };
     Payload.fromEncodedPayload = function (encodedPayloadStr) {
-        var start = PayloadDelegateABC_1.now();
-        return new Promise(function (resolve, reject) {
-            Payload.workerDelegate.decodeAndInflate(encodedPayloadStr)
-                .then(function (jsonStr) {
-                PayloadDelegateABC_1.logLong("Payload.fromEncodedPayload decode+inflate len=" + encodedPayloadStr.length, start);
-                start = PayloadDelegateABC_1.now();
-                var payload = new Payload()._fromJson(jsonStr);
-                PayloadDelegateABC_1.logLong("Payload.fromEncodedPayload _fromJson len=" + encodedPayloadStr.length, start, payload);
-                resolve(payload);
-            })
-                .catch(function (err) {
-                console.log("ERROR: fromEncodedPayload " + err);
-                reject(err);
-            });
-        });
+        return Payload.workerDelegate.decodeAndInflate(encodedPayloadStr)
+            .then(function (jsonStr) { return new Payload()._fromJson(jsonStr); });
     };
     Payload.prototype.toEncodedPayload = function () {
-        var _this = this;
-        var start = PayloadDelegateABC_1.now();
-        return new Promise(function (resolve, reject) {
-            var jsonStr = _this._toJson();
-            PayloadDelegateABC_1.logLong("Payload.toEncodedPayload _toJson len=" + jsonStr.length, start, _this);
-            start = PayloadDelegateABC_1.now();
-            Payload.workerDelegate.deflateAndEncode(jsonStr)
-                .then(function (jsonStr) {
-                PayloadDelegateABC_1.logLong("Payload.toEncodedPayload deflate+encode len=" + jsonStr.length, start, _this);
-                resolve(jsonStr);
-            })
-                .catch(function (err) {
-                console.log("ERROR: toEncodedPayload " + err);
-                reject(err);
-            });
-        });
+        return this._toJson()
+            .then(function (jsonStr) { return Payload.workerDelegate.deflateAndEncode(jsonStr); });
     };
     Payload.prototype.makePayloadEnvelope = function () {
         var _this = this;

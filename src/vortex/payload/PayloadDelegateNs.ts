@@ -2,57 +2,44 @@ import {PayloadDelegateABC} from "./PayloadDelegateABC";
 
 declare let global: any;
 
+const CALL_PAYLOAD_ENCODE = 1;
+const CALL_PAYLOAD_DECODE = 2;
+const CALL_PAYLOAD_ENVELOPE_ENCODE = 3;
+const CALL_PAYLOAD_ENVELOPE_DECODE = 4;
+
 export class PayloadDelegateNs extends PayloadDelegateABC {
-    private encodeWorker: Worker;
-    private decodeWorker: Worker;
-    private encodeEnvelopeWorker: Worker;
-    private decodeEnvelopeWorker: Worker;
+    private static readonly MAX_WORKERS = 8;
+    private workers: Worker[] = [];
+    private nextWorkerIndex: number = 0;
 
     constructor() {
         super();
+
+        for (let i = 0; i < PayloadDelegateNs.MAX_WORKERS; i++)
+            this.workers.push(this.createWorker());
+    }
+
+    private nextWorker(): Worker {
+        let worker: Worker = this.workers[this.nextWorkerIndex];
+        if (PayloadDelegateNs.MAX_WORKERS == ++this.nextWorkerIndex)
+            this.nextWorkerIndex = 0;
+        return worker;
+    }
+
+    // noinspection JSMethodCanBeStatic
+    private createWorker(): Worker {
+        let worker: Worker;
         // --------------------------------------------------------------------
         if (global.TNS_WEBPACK) {
-            let Worker = require("nativescript-worker-loader!./PayloadDelegateNsEncodeWorker.js");
-            this.encodeWorker = new Worker();
+            let Worker = require("nativescript-worker-loader!./PayloadDelegateNsWorker.js");
+            worker = new Worker();
         } else {
-            this.encodeWorker = new Worker("./PayloadDelegateNsEncodeWorker.js");
+            worker = new Worker("./PayloadDelegateNsWorker.js");
         }
 
-        this.encodeWorker.onmessage = PayloadDelegateNs.onMessage;
-        this.encodeWorker.onerror = PayloadDelegateNs.onError;
-
-        // --------------------------------------------------------------------
-        if (global.TNS_WEBPACK) {
-            let Worker = require("nativescript-worker-loader!./PayloadDelegateNsDecodeWorker.js");
-            this.decodeWorker = new Worker();
-        } else {
-            this.decodeWorker = new Worker("./PayloadDelegateNsDecodeWorker.js");
-        }
-
-        this.decodeWorker.onmessage = PayloadDelegateNs.onMessage;
-        this.decodeWorker.onerror = PayloadDelegateNs.onError;
-
-        // --------------------------------------------------------------------
-        if (global.TNS_WEBPACK) {
-            let Worker = require("nativescript-worker-loader!./PayloadEnvelopeDelegateNsEncodeWorker.js");
-            this.encodeEnvelopeWorker = new Worker();
-        } else {
-            this.encodeEnvelopeWorker = new Worker("./PayloadEnvelopeDelegateNsEncodeWorker.js");
-        }
-
-        this.encodeEnvelopeWorker.onmessage = PayloadDelegateNs.onMessage;
-        this.encodeEnvelopeWorker.onerror = PayloadDelegateNs.onError;
-
-        // --------------------------------------------------------------------
-        if (global.TNS_WEBPACK) {
-            let Worker = require("nativescript-worker-loader!./PayloadEnvelopeDelegateNsDecodeWorker.js");
-            this.decodeEnvelopeWorker = new Worker();
-        } else {
-            this.decodeEnvelopeWorker = new Worker("./PayloadEnvelopeDelegateNsDecodeWorker.js");
-        }
-
-        this.decodeEnvelopeWorker.onmessage = PayloadDelegateNs.onMessage;
-        this.decodeEnvelopeWorker.onerror = PayloadDelegateNs.onError;
+        worker.onmessage = PayloadDelegateNs.onMessage;
+        worker.onerror = PayloadDelegateNs.onError;
+        return worker;
     }
 
     // ------------------------------------------------------------------------
@@ -60,21 +47,8 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
     deflateAndEncode(payloadJson: string): Promise<string> {
         let {callNumber, promise} = this.pushPromise();
 
-        this.encodeWorker.postMessage({
-            callNumber: callNumber,
-            payloadJson: payloadJson
-        });
-
-        return promise;
-
-    }
-
-    // ------------------------------------------------------------------------
-
-    encodeEnvelope(payloadJson: string): Promise<string> {
-        let {callNumber, promise} = this.pushPromise();
-
-        this.encodeEnvelopeWorker.postMessage({
+        this.nextWorker().postMessage({
+            call:CALL_PAYLOAD_ENCODE,
             callNumber: callNumber,
             payloadJson: payloadJson
         });
@@ -88,9 +62,25 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
     decodeAndInflate(vortexStr: string): Promise<string> {
         let {callNumber, promise} = this.pushPromise();
 
-        this.decodeWorker.postMessage({
+        this.nextWorker().postMessage({
+            call:CALL_PAYLOAD_DECODE,
             callNumber: callNumber,
             vortexStr: vortexStr
+        });
+
+        return promise;
+
+    }
+
+    // ------------------------------------------------------------------------
+
+    encodeEnvelope(payloadEnvelopeJson: string): Promise<string> {
+        let {callNumber, promise} = this.pushPromise();
+
+        this.nextWorker().postMessage({
+            call:CALL_PAYLOAD_ENVELOPE_ENCODE,
+            callNumber: callNumber,
+            payloadEnvelopeJson: payloadEnvelopeJson
         });
 
         return promise;
@@ -102,7 +92,8 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
     decodeEnvelope(vortexStr: string): Promise<string> {
         let {callNumber, promise} = this.pushPromise();
 
-        this.decodeEnvelopeWorker.postMessage({
+        this.nextWorker().postMessage({
+            call:CALL_PAYLOAD_ENVELOPE_DECODE,
             callNumber: callNumber,
             vortexStr: vortexStr
         });

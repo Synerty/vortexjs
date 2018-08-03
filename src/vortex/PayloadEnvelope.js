@@ -14,7 +14,6 @@ var SerialiseUtil_1 = require("./SerialiseUtil");
 var Jsonable_1 = require("./Jsonable");
 var UtilMisc_1 = require("./UtilMisc");
 require("./UtilArray");
-var PayloadDelegateABC_1 = require("./payload/PayloadDelegateABC");
 var PayloadDelegateInMainWeb_1 = require("./payload/PayloadDelegateInMainWeb");
 var Payload_1 = require("./Payload");
 // ----------------------------------------------------------------------------
@@ -71,48 +70,24 @@ var PayloadEnvelope = /** @class */ (function (_super) {
     // -------------------------------------------
     // JSON Related method
     PayloadEnvelope.prototype._fromJson = function (jsonStr) {
-        var self = this;
-        var jsonDict = JSON.parse(jsonStr);
-        UtilMisc_1.assert(jsonDict[Jsonable_1.default.JSON_CLASS_TYPE] === self.__rst);
-        return self.fromJsonDict(jsonDict);
+        var _this = this;
+        return Promise.resolve(JSON.parse(jsonStr))
+            .then(function (jsonDict) {
+            UtilMisc_1.assert(jsonDict[Jsonable_1.default.JSON_CLASS_TYPE] === _this.__rst);
+            return _this.fromJsonDict(jsonDict);
+        });
     };
     PayloadEnvelope.prototype._toJson = function () {
-        var self = this;
-        var jsonDict = self.toJsonDict();
-        return JSON.stringify(jsonDict);
+        return Promise.resolve(this.toJsonDict())
+            .then(function (jsonDict) { return JSON.stringify(jsonDict); });
     };
     PayloadEnvelope.fromVortexMsg = function (vortexStr) {
-        var start = PayloadDelegateABC_1.now();
-        return new Promise(function (resolve, reject) {
-            PayloadEnvelope.workerDelegate.decodeEnvelope(vortexStr)
-                .then(function (jsonStr) {
-                var payload = new PayloadEnvelope()._fromJson(jsonStr);
-                PayloadDelegateABC_1.logLong("PayloadEnvelope.fromVortexMsg _fromJson len=" + vortexStr.length, start, payload);
-                resolve(payload);
-            })
-                .catch(function (err) {
-                console.log("ERROR: fromVortexMsg " + err);
-                reject(err);
-            });
-        });
+        return PayloadEnvelope.workerDelegate.decodeEnvelope(vortexStr)
+            .then(function (jsonStr) { return new PayloadEnvelope()._fromJson(jsonStr); });
     };
     PayloadEnvelope.prototype.toVortexMsg = function () {
-        var _this = this;
-        var start = PayloadDelegateABC_1.now();
-        return new Promise(function (resolve, reject) {
-            var jsonStr = _this._toJson();
-            PayloadDelegateABC_1.logLong("PayloadEnvelope.toVortexMsg _toJson len=" + jsonStr.length, start, _this);
-            start = PayloadDelegateABC_1.now();
-            PayloadEnvelope.workerDelegate.encodeEnvelope(jsonStr)
-                .then(function (jsonStr) {
-                PayloadDelegateABC_1.logLong("PayloadEnvelope.toVortexMsg encodeEnvelope len=" + jsonStr.length, start, _this);
-                resolve(jsonStr);
-            })
-                .catch(function (err) {
-                console.log("ERROR: toVortexMsg " + err);
-                reject(err);
-            });
-        });
+        return this._toJson()
+            .then(function (jsonStr) { return PayloadEnvelope.workerDelegate.encodeEnvelope(jsonStr); });
     };
     PayloadEnvelope.workerDelegate = new PayloadDelegateInMainWeb_1.PayloadDelegateInMainWeb();
     PayloadEnvelope.vortexUuidKey = "__vortexUuid__";

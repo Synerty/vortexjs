@@ -11,65 +11,46 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var PayloadDelegateABC_1 = require("./PayloadDelegateABC");
+var CALL_PAYLOAD_ENCODE = 1;
+var CALL_PAYLOAD_DECODE = 2;
+var CALL_PAYLOAD_ENVELOPE_ENCODE = 3;
+var CALL_PAYLOAD_ENVELOPE_DECODE = 4;
 var PayloadDelegateNs = /** @class */ (function (_super) {
     __extends(PayloadDelegateNs, _super);
     function PayloadDelegateNs() {
         var _this = _super.call(this) || this;
-        // --------------------------------------------------------------------
-        if (global.TNS_WEBPACK) {
-            var Worker_1 = require("nativescript-worker-loader!./PayloadDelegateNsEncodeWorker.js");
-            _this.encodeWorker = new Worker_1();
-        }
-        else {
-            _this.encodeWorker = new Worker("./PayloadDelegateNsEncodeWorker.js");
-        }
-        _this.encodeWorker.onmessage = PayloadDelegateNs.onMessage;
-        _this.encodeWorker.onerror = PayloadDelegateNs.onError;
-        // --------------------------------------------------------------------
-        if (global.TNS_WEBPACK) {
-            var Worker_2 = require("nativescript-worker-loader!./PayloadDelegateNsDecodeWorker.js");
-            _this.decodeWorker = new Worker_2();
-        }
-        else {
-            _this.decodeWorker = new Worker("./PayloadDelegateNsDecodeWorker.js");
-        }
-        _this.decodeWorker.onmessage = PayloadDelegateNs.onMessage;
-        _this.decodeWorker.onerror = PayloadDelegateNs.onError;
-        // --------------------------------------------------------------------
-        if (global.TNS_WEBPACK) {
-            var Worker_3 = require("nativescript-worker-loader!./PayloadEnvelopeDelegateNsEncodeWorker.js");
-            _this.encodeEnvelopeWorker = new Worker_3();
-        }
-        else {
-            _this.encodeEnvelopeWorker = new Worker("./PayloadEnvelopeDelegateNsEncodeWorker.js");
-        }
-        _this.encodeEnvelopeWorker.onmessage = PayloadDelegateNs.onMessage;
-        _this.encodeEnvelopeWorker.onerror = PayloadDelegateNs.onError;
-        // --------------------------------------------------------------------
-        if (global.TNS_WEBPACK) {
-            var Worker_4 = require("nativescript-worker-loader!./PayloadEnvelopeDelegateNsDecodeWorker.js");
-            _this.decodeEnvelopeWorker = new Worker_4();
-        }
-        else {
-            _this.decodeEnvelopeWorker = new Worker("./PayloadEnvelopeDelegateNsDecodeWorker.js");
-        }
-        _this.decodeEnvelopeWorker.onmessage = PayloadDelegateNs.onMessage;
-        _this.decodeEnvelopeWorker.onerror = PayloadDelegateNs.onError;
+        _this.workers = [];
+        _this.nextWorkerIndex = 0;
+        for (var i = 0; i < PayloadDelegateNs.MAX_WORKERS; i++)
+            _this.workers.push(_this.createWorker());
         return _this;
     }
+    PayloadDelegateNs.prototype.nextWorker = function () {
+        var worker = this.workers[this.nextWorkerIndex];
+        if (PayloadDelegateNs.MAX_WORKERS == ++this.nextWorkerIndex)
+            this.nextWorkerIndex = 0;
+        return worker;
+    };
+    // noinspection JSMethodCanBeStatic
+    PayloadDelegateNs.prototype.createWorker = function () {
+        var worker;
+        // --------------------------------------------------------------------
+        if (global.TNS_WEBPACK) {
+            var Worker_1 = require("nativescript-worker-loader!./PayloadDelegateNsWorker.js");
+            worker = new Worker_1();
+        }
+        else {
+            worker = new Worker("./PayloadDelegateNsWorker.js");
+        }
+        worker.onmessage = PayloadDelegateNs.onMessage;
+        worker.onerror = PayloadDelegateNs.onError;
+        return worker;
+    };
     // ------------------------------------------------------------------------
     PayloadDelegateNs.prototype.deflateAndEncode = function (payloadJson) {
         var _a = this.pushPromise(), callNumber = _a.callNumber, promise = _a.promise;
-        this.encodeWorker.postMessage({
-            callNumber: callNumber,
-            payloadJson: payloadJson
-        });
-        return promise;
-    };
-    // ------------------------------------------------------------------------
-    PayloadDelegateNs.prototype.encodeEnvelope = function (payloadJson) {
-        var _a = this.pushPromise(), callNumber = _a.callNumber, promise = _a.promise;
-        this.encodeEnvelopeWorker.postMessage({
+        this.nextWorker().postMessage({
+            call: CALL_PAYLOAD_ENCODE,
             callNumber: callNumber,
             payloadJson: payloadJson
         });
@@ -78,16 +59,28 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
     // ------------------------------------------------------------------------
     PayloadDelegateNs.prototype.decodeAndInflate = function (vortexStr) {
         var _a = this.pushPromise(), callNumber = _a.callNumber, promise = _a.promise;
-        this.decodeWorker.postMessage({
+        this.nextWorker().postMessage({
+            call: CALL_PAYLOAD_DECODE,
             callNumber: callNumber,
             vortexStr: vortexStr
         });
         return promise;
     };
     // ------------------------------------------------------------------------
+    PayloadDelegateNs.prototype.encodeEnvelope = function (payloadEnvelopeJson) {
+        var _a = this.pushPromise(), callNumber = _a.callNumber, promise = _a.promise;
+        this.nextWorker().postMessage({
+            call: CALL_PAYLOAD_ENVELOPE_ENCODE,
+            callNumber: callNumber,
+            payloadEnvelopeJson: payloadEnvelopeJson
+        });
+        return promise;
+    };
+    // ------------------------------------------------------------------------
     PayloadDelegateNs.prototype.decodeEnvelope = function (vortexStr) {
         var _a = this.pushPromise(), callNumber = _a.callNumber, promise = _a.promise;
-        this.decodeEnvelopeWorker.postMessage({
+        this.nextWorker().postMessage({
+            call: CALL_PAYLOAD_ENVELOPE_DECODE,
             callNumber: callNumber,
             vortexStr: vortexStr
         });
@@ -138,6 +131,7 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
     PayloadDelegateNs.onError = function (error) {
         console.log("PayloadDelegateNs.onerror " + error);
     };
+    PayloadDelegateNs.MAX_WORKERS = 8;
     // ------------------------------------------------------------------------
     PayloadDelegateNs._promises = {};
     PayloadDelegateNs._promisesNum = 1;

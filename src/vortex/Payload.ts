@@ -4,7 +4,7 @@ import Jsonable from "./Jsonable";
 import {assert} from "./UtilMisc";
 import "./UtilArray";
 import {PayloadDelegateInMainWeb} from "./payload/PayloadDelegateInMainWeb";
-import {logLong, now, PayloadDelegateABC} from "./payload/PayloadDelegateABC";
+import {PayloadDelegateABC} from "./payload/PayloadDelegateABC";
 
 
 // ----------------------------------------------------------------------------
@@ -63,63 +63,27 @@ export class Payload extends Jsonable {
     // -------------------------------------------
     // JSON Related method
 
-    private _fromJson(jsonStr: string): Payload {
-        let self = this;
-        let jsonDict = JSON.parse(jsonStr);
-
-        assert(jsonDict[Jsonable.JSON_CLASS_TYPE] === self.__rst);
-        return self.fromJsonDict(jsonDict);
+    private _fromJson(jsonStr: string): Promise<Payload> {
+        return Promise.resolve(JSON.parse(jsonStr))
+            .then((jsonDict) => {
+                assert(jsonDict[Jsonable.JSON_CLASS_TYPE] === this.__rst);
+                return this.fromJsonDict(jsonDict);
+            });
     }
 
-    private _toJson(): string {
-        let self = this;
-        let jsonDict = self.toJsonDict();
-        return JSON.stringify(jsonDict);
+    private _toJson(): Promise<string> {
+        return Promise.resolve(this.toJsonDict())
+            .then((jsonDict) => JSON.stringify(jsonDict));
     }
 
     static fromEncodedPayload(encodedPayloadStr: string): Promise<Payload> {
-        let start = now();
-
-        return new Promise<Payload>((resolve, reject) => {
-
-            Payload.workerDelegate.decodeAndInflate(encodedPayloadStr)
-                .then((jsonStr) => {
-                    logLong(`Payload.fromEncodedPayload decode+inflate len=${encodedPayloadStr.length}`, start);
-                    start = now();
-
-                    let payload = new Payload()._fromJson(jsonStr);
-                    logLong(`Payload.fromEncodedPayload _fromJson len=${encodedPayloadStr.length}`, start, payload);
-
-                    resolve(payload);
-                })
-                .catch((err) => {
-                    console.log(`ERROR: fromEncodedPayload ${err}`);
-                    reject(err);
-                });
-
-        });
+        return Payload.workerDelegate.decodeAndInflate(encodedPayloadStr)
+            .then((jsonStr) => new Payload()._fromJson(jsonStr));
     }
 
     toEncodedPayload(): Promise<string> {
-        let start = now();
-
-        return new Promise<string>((resolve, reject) => {
-
-            let jsonStr = this._toJson();
-            logLong(`Payload.toEncodedPayload _toJson len=${jsonStr.length}`, start, this);
-            start = now();
-
-            Payload.workerDelegate.deflateAndEncode(jsonStr)
-                .then((jsonStr) => {
-                    logLong(`Payload.toEncodedPayload deflate+encode len=${jsonStr.length}`, start, this);
-                    resolve(jsonStr);
-                })
-                .catch((err) => {
-                    console.log(`ERROR: toEncodedPayload ${err}`);
-                    reject(err);
-                });
-
-        });
+        return this._toJson()
+            .then((jsonStr) => Payload.workerDelegate.deflateAndEncode(jsonStr));
     }
 
     makePayloadEnvelope(): Promise<any> {
