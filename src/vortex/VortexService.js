@@ -129,4 +129,4 @@ var VortexService = /** @class */ (function () {
     var VortexService_1;
 }());
 exports.VortexService = VortexService;
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/VortexService.js.map
+//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/VortexService.js.map

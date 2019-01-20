@@ -111,4 +111,4 @@ var PayloadEndpoint = /** @class */ (function () {
     return PayloadEndpoint;
 }());
 exports.PayloadEndpoint = PayloadEndpoint;
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/PayloadEndpoint.js.map
+//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/PayloadEndpoint.js.map

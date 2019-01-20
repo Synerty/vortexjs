@@ -95,4 +95,4 @@ var PayloadEnvelope = /** @class */ (function (_super) {
     return PayloadEnvelope;
 }(Jsonable_1.default));
 exports.PayloadEnvelope = PayloadEnvelope;
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/PayloadEnvelope.js.map
+//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/PayloadEnvelope.js.map

@@ -72,4 +72,4 @@ function executeSql(callNumber, sql, bindParams) {
         .then(function (result) { return postResult(callNumber, result); })
         .catch(function (err) { return postError(callNumber, err); });
 }
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/websql/WebSqlNativeScriptThreadedAdaptorWorker.js.map
+//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/websql/WebSqlNativeScriptThreadedAdaptorWorker.js.map

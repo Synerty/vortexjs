@@ -23,9 +23,9 @@
   "homepage": "https://github.com/Synerty/vortexjs#readme",
   "private": false,
   "dependencies": {
-    "@angular/core": "~6.0.0",
-    "@angular/common": "~6.0.0",
-    "@angular/router": "~6.0.0",
+    "@angular/core": "^6.0.0",
+    "@angular/common": "^6.0.0",
+    "@angular/router": "^6.0.0",
     "@synerty/ng2-balloon-msg": "^0.4.0",
     "@types/deep-equal": "^0.0.30",
     "base-64": "^0.1.0",

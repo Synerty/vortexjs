@@ -41,4 +41,4 @@ function addIndexedDbHandlers(request, stacktraceFunctor) {
     };
 }
 exports.addIndexedDbHandlers = addIndexedDbHandlers;
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/storage/IndexedDb.js.map
+//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/storage/IndexedDb.js.map

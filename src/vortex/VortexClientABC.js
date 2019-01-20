@@ -159,4 +159,4 @@ var VortexClientABC = /** @class */ (function () {
     return VortexClientABC;
 }());
 exports.VortexClientABC = VortexClientABC;
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/VortexClientABC.js.map
+//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/VortexClientABC.js.map

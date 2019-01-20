@@ -201,4 +201,4 @@ var _WorkerController = /** @class */ (function () {
     _WorkerController._promisesNum = 1;
     return _WorkerController;
 }());
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/websql/WebSqlNativeScriptThreadedAdaptorService.js.map
+//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/websql/WebSqlNativeScriptThreadedAdaptorService.js.map

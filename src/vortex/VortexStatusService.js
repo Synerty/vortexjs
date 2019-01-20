@@ -82,4 +82,4 @@ var VortexStatusService = /** @class */ (function () {
     return VortexStatusService;
 }());
 exports.VortexStatusService = VortexStatusService;
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/VortexStatusService.js.map
+//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/VortexStatusService.js.map

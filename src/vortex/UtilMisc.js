@@ -121,4 +121,4 @@ exports.deepEqual = require('deep-equal');
 exports.deepCopy = require('deep-copy');
 // https://www.npmjs.com/package/json-stable-stringify
 exports.jsonOrderedStringify = require('json-stable-stringify');
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/UtilMisc.js.map
+//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/UtilMisc.js.map

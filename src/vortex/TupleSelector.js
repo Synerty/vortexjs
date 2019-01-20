@@ -52,4 +52,4 @@ var TupleSelector = /** @class */ (function (_super) {
     var TupleSelector_1;
 }(Tuple_1.Tuple));
 exports.TupleSelector = TupleSelector;
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/TupleSelector.js.map
+//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/TupleSelector.js.map

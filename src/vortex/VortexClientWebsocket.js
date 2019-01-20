@@ -142,4 +142,4 @@ var VortexClientWebsocket = /** @class */ (function (_super) {
     return VortexClientWebsocket;
 }(VortexClientABC_1.VortexClientABC));
 exports.VortexClientWebsocket = VortexClientWebsocket;
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/VortexClientWebsocket.js.map
+//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/VortexClientWebsocket.js.map

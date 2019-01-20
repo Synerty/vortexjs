@@ -172,4 +172,4 @@ var _VortexClientHttpConnection = /** @class */ (function () {
     _VortexClientHttpConnection.RECONNECT_SIZE_LIMIT = 20 * 1024 * 1024; // 20 megabytes
     return _VortexClientHttpConnection;
 }());
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/VortexClientHttp.js.map
+//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/VortexClientHttp.js.map

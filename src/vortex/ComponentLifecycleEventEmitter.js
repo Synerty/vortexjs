@@ -86,4 +86,4 @@ var CompLcObserver = /** @class */ (function () {
     };
     return CompLcObserver;
 }());
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/ComponentLifecycleEventEmitter.js.map
+//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/ComponentLifecycleEventEmitter.js.map

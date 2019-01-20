@@ -460,4 +460,4 @@ var TupleDataOfflineObserverService = /** @class */ (function (_super) {
     return TupleDataOfflineObserverService;
 }(ComponentLifecycleEventEmitter_1.ComponentLifecycleEventEmitter));
 exports.TupleDataOfflineObserverService = TupleDataOfflineObserverService;
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/observable-service/TupleDataOfflineObserverService.js.map
+//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/observable-service/TupleDataOfflineObserverService.js.map

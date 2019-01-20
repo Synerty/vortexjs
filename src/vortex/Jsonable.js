@@ -224,4 +224,4 @@ var Jsonable = /** @class */ (function (_super) {
     return Jsonable;
 }(SerialiseUtil_1.default));
 exports.default = Jsonable;
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/Jsonable.js.map
+//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/Jsonable.js.map

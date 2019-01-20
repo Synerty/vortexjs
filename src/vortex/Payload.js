@@ -78,4 +78,4 @@ var Payload = /** @class */ (function (_super) {
     return Payload;
 }(Jsonable_1.default));
 exports.Payload = Payload;
-//# sourceMappingURL=/Users/jchesney/project/vortexjs/src/vortex/Payload.js.map
+//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/Payload.js.map
