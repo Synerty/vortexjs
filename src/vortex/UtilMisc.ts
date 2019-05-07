@@ -17,7 +17,7 @@
 export function dictKeysFromObject(obj: {}, includeUnderscore = false): string[] {
     let keys = [];
     for (let k in obj) {
-        if ((!k.startsWith("_") || includeUnderscore)
+        if ((!k.startsWith('_') || includeUnderscore)
             && obj.hasOwnProperty(k) && typeof k !== 'function') {
             keys.push(k);
         }
@@ -38,7 +38,7 @@ export class AssertException {
 
     toString(): string {
         let self = this;
-        return "AssertException: " + self.message;
+        return 'AssertException: ' + self.message;
     }
 }
 
@@ -65,13 +65,13 @@ export function assert(exp: boolean, message: string | null = null): null {
  *
  */
 export function getFiltStr(filter: {}): string {
-    let filtStr = "";
+    let filtStr = '';
 
     for (let key in filter) {
         if (!filter.hasOwnProperty(key))
             continue;
 
-        filtStr += (filtStr.length ? "&" : "?") + key + "=" + filter[key];
+        filtStr += (filtStr.length ? '&' : '?') + key + '=' + filter[key];
     }
 
     return filtStr;
@@ -87,7 +87,7 @@ export function getFiltStr(filter: {}): string {
  */
 export function dateStr(): string {
     let d = new Date();
-    return d.toTimeString().split(" ")[0] + "." + d.getUTCMilliseconds() + ": ";
+    return d.toTimeString().split(' ')[0] + '.' + d.getUTCMilliseconds() + ': ';
 }
 
 
@@ -136,7 +136,8 @@ export function errToStr(err: any): string {
 
 export let extend = require('extend');
 export let deepEqual = require('deep-equal');
-export let deepCopy = require('deep-copy');
+// export let deepCopy = require('json-deep-copy');
+export let deepCopy = require('clonedeep');
 
 // https://www.npmjs.com/package/json-stable-stringify
 export let jsonOrderedStringify = require('json-stable-stringify');

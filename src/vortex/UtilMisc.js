@@ -18,7 +18,7 @@ function dictKeysFromObject(obj, includeUnderscore) {
     if (includeUnderscore === void 0) { includeUnderscore = false; }
     var keys = [];
     for (var k in obj) {
-        if ((!k.startsWith("_") || includeUnderscore)
+        if ((!k.startsWith('_') || includeUnderscore)
             && obj.hasOwnProperty(k) && typeof k !== 'function') {
             keys.push(k);
         }
@@ -34,7 +34,7 @@ var AssertException = /** @class */ (function () {
     }
     AssertException.prototype.toString = function () {
         var self = this;
-        return "AssertException: " + self.message;
+        return 'AssertException: ' + self.message;
     };
     return AssertException;
 }());
@@ -60,11 +60,11 @@ exports.assert = assert;
  *
  */
 function getFiltStr(filter) {
-    var filtStr = "";
+    var filtStr = '';
     for (var key in filter) {
         if (!filter.hasOwnProperty(key))
             continue;
-        filtStr += (filtStr.length ? "&" : "?") + key + "=" + filter[key];
+        filtStr += (filtStr.length ? '&' : '?') + key + '=' + filter[key];
     }
     return filtStr;
 }
@@ -77,7 +77,7 @@ exports.getFiltStr = getFiltStr;
  */
 function dateStr() {
     var d = new Date();
-    return d.toTimeString().split(" ")[0] + "." + d.getUTCMilliseconds() + ": ";
+    return d.toTimeString().split(' ')[0] + '.' + d.getUTCMilliseconds() + ': ';
 }
 exports.dateStr = dateStr;
 // ----------------------------------------------------------------------------
@@ -118,7 +118,8 @@ exports.errToStr = errToStr;
 /* Add a imports for these requires */
 exports.extend = require('extend');
 exports.deepEqual = require('deep-equal');
-exports.deepCopy = require('deep-copy');
+// export let deepCopy = require('json-deep-copy');
+exports.deepCopy = require('clonedeep');
 // https://www.npmjs.com/package/json-stable-stringify
 exports.jsonOrderedStringify = require('json-stable-stringify');
 //# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/UtilMisc.js.map
