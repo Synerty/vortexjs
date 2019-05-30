@@ -22,5 +22,5 @@ export { TupleActionPushOfflineService } from "./src/vortex/action-service/Tuple
 export { TupleActionPushOfflineSingletonService } from "./src/vortex/action-service/TupleActionPushOfflineSingletonService";
 export { TupleActionProcessorNameService, TupleActionProcessorService } from "./src/vortex/action-service/TupleActionProcessorService";
 export { TupleActionProcessorDelegateABC } from "./src/vortex/action-service/TupleActionProcessorDelegate";
-export { assert, extend } from "./src/vortex/UtilMisc";
+export { assert, extend, deepCopy, deepEqual, jsonOrderedStringify } from "./src/vortex/UtilMisc";
 import "./src/vortex/UtilArray";

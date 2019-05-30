@@ -70,5 +70,8 @@ exports.TupleActionProcessorDelegateABC = TupleActionProcessorDelegate_1.TupleAc
 var UtilMisc_1 = require("./src/vortex/UtilMisc");
 exports.assert = UtilMisc_1.assert;
 exports.extend = UtilMisc_1.extend;
+exports.deepCopy = UtilMisc_1.deepCopy;
+exports.deepEqual = UtilMisc_1.deepEqual;
+exports.jsonOrderedStringify = UtilMisc_1.jsonOrderedStringify;
 require("./src/vortex/UtilArray");
 //# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/index.js.map

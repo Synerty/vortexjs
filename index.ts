@@ -55,5 +55,5 @@ export {
 export {TupleActionProcessorDelegateABC} from "./src/vortex/action-service/TupleActionProcessorDelegate";
 
 // Utility functions
-export {assert, extend} from "./src/vortex/UtilMisc";
+export {assert, extend, deepCopy, deepEqual, jsonOrderedStringify} from "./src/vortex/UtilMisc";
 import "./src/vortex/UtilArray";
