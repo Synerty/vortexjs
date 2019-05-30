@@ -115,11 +115,49 @@ function errToStr(err) {
 }
 exports.errToStr = errToStr;
 // ----------------------------------------------------------------------------
+/** Deep Clone
+ * @param data: Deep Clone an entire JSON data structure
+ *
+ * @return A clone of the data
+ */
+function deepCopy(data) {
+    // If the data is null or undefined then we return undefined
+    if (data === null || data === undefined)
+        return undefined;
+    // Get the data type and store it
+    var dataType = Object.prototype.toString.call(data).slice(8, -1);
+    // DATE
+    if (dataType == "Date") {
+        var clonedDate = new Date();
+        clonedDate.setTime(data.getTime());
+        return clonedDate;
+    }
+    // OBJECT
+    if (dataType == "Object") {
+        var copiedObject = {};
+        for (var _i = 0, _a = Object.keys(data); _i < _a.length; _i++) {
+            var key = _a[_i];
+            copiedObject[key] = deepCopy(data[key]);
+        }
+        return copiedObject;
+    }
+    // ARRAY
+    if (dataType == "Array") {
+        var copiedArray = [];
+        for (var _b = 0, data_1 = data; _b < data_1.length; _b++) {
+            var item = data_1[_b];
+            copiedArray.push(deepCopy(item));
+        }
+        return copiedArray;
+    }
+    return data;
+}
+exports.deepCopy = deepCopy;
+;
+// ----------------------------------------------------------------------------
 /* Add a imports for these requires */
 exports.extend = require('extend');
 exports.deepEqual = require('deep-equal');
-// export let deepCopy = require('json-deep-copy');
-exports.deepCopy = require('clonedeep');
 // https://www.npmjs.com/package/json-stable-stringify
 exports.jsonOrderedStringify = require('json-stable-stringify');
 //# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/UtilMisc.js.map
