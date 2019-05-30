@@ -130,14 +130,58 @@ export function errToStr(err: any): string {
     return err.toString();
 }
 
+
+// ----------------------------------------------------------------------------
+
+/** Deep Clone
+ * @param data: Deep Clone an entire JSON data structure
+ *
+ * @return A clone of the data
+ */
+export function deepCopy(data) {
+    // If the data is null or undefined then we return undefined
+    if (data === null || data === undefined)
+        return undefined;
+
+    // Get the data type and store it
+    const dataType = Object.prototype.toString.call(data).slice(8, -1);
+
+    // DATE
+    if (dataType == "Date") {
+        let clonedDate = new Date();
+        clonedDate.setTime(data.getTime());
+        return clonedDate;
+    }
+
+    // OBJECT
+    if (dataType == "Object") {
+        let copiedObject = {};
+
+        for (let key of Object.keys(data))
+            copiedObject[key] = deepCopy(data[key]);
+
+        return copiedObject;
+    }
+
+    // ARRAY
+    if (dataType == "Array") {
+        let copiedArray = [];
+
+        for (let item of data)
+            copiedArray.push(deepCopy(item));
+
+        return copiedArray;
+    }
+
+    return data;
+};
+
 // ----------------------------------------------------------------------------
 
 /* Add a imports for these requires */
 
 export let extend = require('extend');
 export let deepEqual = require('deep-equal');
-// export let deepCopy = require('json-deep-copy');
-export let deepCopy = require('clonedeep');
 
 // https://www.npmjs.com/package/json-stable-stringify
 export let jsonOrderedStringify = require('json-stable-stringify');
