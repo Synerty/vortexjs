@@ -34,6 +34,9 @@ if (Array.prototype.add == null) {
     Array.prototype.add = function (objectOrArray) {
         if (objectOrArray == null)
             return this;
+        // If for some reasons they are trying to add us to our self, throw an exception.
+        if (objectOrArray === this)
+            throw new Error("Array.add, I was passed myself, i can't add my self to myself.");
         if (objectOrArray instanceof Array) {
             for (var i = 0; i < objectOrArray.length; ++i)
                 this.push(objectOrArray[i]);
@@ -48,6 +51,9 @@ if (Array.prototype.equals == null) {
         // if the other array is a false value, return
         if (array == null)
             return false;
+        // compare object instances
+        if (this === array)
+            return true;
         // compare lengths - can save a lot of time
         if (this.length !== array.length)
             return false;
