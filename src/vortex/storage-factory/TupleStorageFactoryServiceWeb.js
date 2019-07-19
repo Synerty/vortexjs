@@ -27,6 +27,7 @@ var TupleStorageNullService_1 = require("../storage/TupleStorageNullService");
 var TupleStorageFactoryService_1 = require("./TupleStorageFactoryService");
 var IndexedDb_1 = require("../storage/IndexedDb");
 var TupleActionStorageWebSqlService_1 = require("../action-storage/TupleActionStorageWebSqlService");
+var TupleActionStorageIndexedDbService_1 = require("../action-storage/TupleActionStorageIndexedDbService");
 // import {TupleActionStorageIndexedDbService} from "../action-storage/TupleActionStorageIndexedDbService";
 var TupleStorageFactoryServiceWeb = /** @class */ (function (_super) {
     __extends(TupleStorageFactoryServiceWeb, _super);
@@ -37,43 +38,36 @@ var TupleStorageFactoryServiceWeb = /** @class */ (function (_super) {
         // Prefer Web SQL
         if (this.webSqlFactory.supportsWebSql()
             && !this.webSqlFactory.hasStorageLimitations()) {
-            console.log("TupleStorageFactoryService: Choosing WebSQL Storage");
+            console.log('TupleStorageFactoryService: Choosing WebSQL Storage');
             return new TupleStorageWebSqlService_1.TupleStorageWebSqlService(this.webSqlFactory, name);
         }
         // Fallback to Indexed DB, It gives mega space on mobile iOS
         if (IndexedDb_1.supportsIndexedDb()) {
-            console.log("TupleStorageFactoryService: Choosing IndexedDB Storage");
+            console.log('TupleStorageFactoryService: Choosing IndexedDB Storage');
             return new TupleStorageIndexedDbService_1.TupleStorageIndexedDbService(name);
         }
         // Otheriwse, the null service just silently does nothing.
-        console.log("TupleStorageFactoryService: Choosing Null Storage");
+        console.log('TupleStorageFactoryService: Choosing Null Storage');
         return new TupleStorageNullService_1.TupleStorageNullService(name);
     };
     TupleStorageFactoryServiceWeb.prototype.createActionStorage = function () {
-        console.log("TupleStorageFactoryService: FORCING WebSQL Storage");
-        return new TupleActionStorageWebSqlService_1.TupleActionStorageWebSqlService(this.webSqlFactory);
-        /*
-            // Prefer Web SQL
-            if (this.webSqlFactory.supportsWebSql()
-                && !this.webSqlFactory.hasStorageLimitations()) {
-                console.log("TupleStorageFactoryService: Choosing WebSQL Storage");
-                return new TupleActionStorageWebSqlService(this.webSqlFactory);
-            }
-
-            // Fallback to Indexed DB, It gives mega space on mobile iOS
-            if (supportsIndexedDb()) {
-                console.log("TupleStorageFactoryService: Choosing IndexedDB Storage");
-                return new TupleActionStorageIndexedDbService();
-            }
-
-            // Otheriwse, raise an exception.
-            console.log("TupleStorageFactoryService: Choosing Null Storage");
-            throw new Error("Failed to choose a suitable storage backend for" +
-                " offline TupleActions");
-
-            // Maybe we could have an in memory tuple action cache, but it wouldn't be the
-            // same.
-            */
+        // Prefer Web SQL
+        if (this.webSqlFactory.supportsWebSql()
+            && !this.webSqlFactory.hasStorageLimitations()) {
+            console.log('TupleStorageFactoryService: Choosing WebSQL Storage');
+            return new TupleActionStorageWebSqlService_1.TupleActionStorageWebSqlService(this.webSqlFactory);
+        }
+        // Fallback to Indexed DB, It gives mega space on mobile iOS
+        if (IndexedDb_1.supportsIndexedDb()) {
+            console.log('TupleStorageFactoryService: Choosing IndexedDB Storage');
+            return new TupleActionStorageIndexedDbService_1.TupleActionStorageIndexedDbService();
+        }
+        // Otheriwse, raise an exception.
+        console.log('TupleStorageFactoryService: Choosing Null Storage');
+        throw new Error('Failed to choose a suitable storage backend for' +
+            ' offline TupleActions');
+        // Maybe we could have an in memory tuple action cache, but it wouldn't be the
+        // same.
     };
     TupleStorageFactoryServiceWeb = __decorate([
         core_1.Injectable(),

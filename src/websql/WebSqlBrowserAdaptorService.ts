@@ -15,7 +15,11 @@ export class WebSqlBrowserFactoryService implements WebSqlFactoryService {
     }
 
     supportsWebSql(): boolean {
-        return openDatabase != null;
+        try {
+            return openDatabase != null;
+        } catch (e) {
+            return false;
+        }
     }
 
     createWebSql(dbName: string, dbSchema: string[]): WebSqlService {

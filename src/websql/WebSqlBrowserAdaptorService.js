@@ -33,7 +33,12 @@ var WebSqlBrowserFactoryService = /** @class */ (function () {
         return iOS;
     };
     WebSqlBrowserFactoryService.prototype.supportsWebSql = function () {
-        return openDatabase != null;
+        try {
+            return openDatabase != null;
+        }
+        catch (e) {
+            return false;
+        }
     };
     WebSqlBrowserFactoryService.prototype.createWebSql = function (dbName, dbSchema) {
         return new WebSqlBrowserAdaptorService(dbName, dbSchema);
