@@ -133,12 +133,30 @@ export function errToStr(err: any): string {
 
 // ----------------------------------------------------------------------------
 
+interface ignoreDictType {
+    [name: string]: any
+};
+
 /** Deep Clone
  * @param data: Deep Clone an entire JSON data structure
+ * @param ignoreFieldNames: An array of field names not to copy.
  *
  * @return A clone of the data
  */
-export function deepCopy(data) {
+
+export function deepCopy(data, ignoreFieldNames: string[] | null = null) {
+    const dict: ignoreDictType = {};
+    if (ignoreFieldNames != null
+        && Object.prototype.toString.call(ignoreFieldNames).slice(8, -1) == 'Array') {
+        for (const fieldName of ignoreFieldNames)
+            dict[fieldName] = true;
+    }
+    return _deepCopy(data, dict);
+
+}
+
+function _deepCopy(data, ignoreFieldNames: ignoreDictType) {
+
     // If the data is null or undefined then we return undefined
     if (data === null || data === undefined)
         return undefined;
@@ -147,28 +165,31 @@ export function deepCopy(data) {
     const dataType = Object.prototype.toString.call(data).slice(8, -1);
 
     // DATE
-    if (dataType == "Date") {
-        let clonedDate = new Date();
+    if (dataType == 'Date') {
+        const clonedDate = new Date();
         clonedDate.setTime(data.getTime());
         return clonedDate;
     }
 
     // OBJECT
-    if (dataType == "Object") {
+    if (dataType == 'Object') {
         let copiedObject = {};
 
-        for (let key of Object.keys(data))
-            copiedObject[key] = deepCopy(data[key]);
+        for (const key of Object.keys(data)) {
+            if (ignoreFieldNames != null && ignoreFieldNames[key] === true)
+                continue;
+            copiedObject[key] = _deepCopy(data[key], ignoreFieldNames);
+        }
 
         return copiedObject;
     }
 
     // ARRAY
-    if (dataType == "Array") {
+    if (dataType == 'Array') {
         let copiedArray = [];
 
-        for (let item of data)
-            copiedArray.push(deepCopy(item));
+        for (const item of data)
+            copiedArray.push(_deepCopy(item, ignoreFieldNames));
 
         return copiedArray;
     }

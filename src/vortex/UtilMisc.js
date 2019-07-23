@@ -114,45 +114,60 @@ function errToStr(err) {
     return err.toString();
 }
 exports.errToStr = errToStr;
-// ----------------------------------------------------------------------------
+;
 /** Deep Clone
  * @param data: Deep Clone an entire JSON data structure
+ * @param ignoreFieldNames: An array of field names not to copy.
  *
  * @return A clone of the data
  */
-function deepCopy(data) {
+function deepCopy(data, ignoreFieldNames) {
+    if (ignoreFieldNames === void 0) { ignoreFieldNames = null; }
+    var dict = {};
+    if (ignoreFieldNames != null
+        && Object.prototype.toString.call(ignoreFieldNames).slice(8, -1) == 'Array') {
+        for (var _i = 0, ignoreFieldNames_1 = ignoreFieldNames; _i < ignoreFieldNames_1.length; _i++) {
+            var fieldName = ignoreFieldNames_1[_i];
+            dict[fieldName] = true;
+        }
+    }
+    return _deepCopy(data, dict);
+}
+exports.deepCopy = deepCopy;
+function _deepCopy(data, ignoreFieldNames) {
     // If the data is null or undefined then we return undefined
     if (data === null || data === undefined)
         return undefined;
     // Get the data type and store it
     var dataType = Object.prototype.toString.call(data).slice(8, -1);
     // DATE
-    if (dataType == "Date") {
+    if (dataType == 'Date') {
         var clonedDate = new Date();
         clonedDate.setTime(data.getTime());
         return clonedDate;
     }
     // OBJECT
-    if (dataType == "Object") {
+    if (dataType == 'Object') {
         var copiedObject = {};
         for (var _i = 0, _a = Object.keys(data); _i < _a.length; _i++) {
             var key = _a[_i];
-            copiedObject[key] = deepCopy(data[key]);
+            if (ignoreFieldNames != null && ignoreFieldNames[key] === true)
+                continue;
+            copiedObject[key] = _deepCopy(data[key], ignoreFieldNames);
         }
         return copiedObject;
     }
     // ARRAY
-    if (dataType == "Array") {
+    if (dataType == 'Array') {
         var copiedArray = [];
         for (var _b = 0, data_1 = data; _b < data_1.length; _b++) {
             var item = data_1[_b];
-            copiedArray.push(deepCopy(item));
+            copiedArray.push(_deepCopy(item, ignoreFieldNames));
         }
         return copiedArray;
     }
     return data;
 }
-exports.deepCopy = deepCopy;
 ;
 // ----------------------------------------------------------------------------
 /* Add a imports for these requires */

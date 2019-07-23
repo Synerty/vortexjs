@@ -53,10 +53,11 @@ export declare function bind(obj: any, method: any): any;
 export declare function errToStr(err: any): string;
 /** Deep Clone
  * @param data: Deep Clone an entire JSON data structure
+ * @param ignoreFieldNames: An array of field names not to copy.
  *
  * @return A clone of the data
  */
-export declare function deepCopy(data: any): any;
+export declare function deepCopy(data: any, ignoreFieldNames?: string[] | null): any;
 export declare let extend: any;
 export declare let deepEqual: any;
 export declare let jsonOrderedStringify: any;
