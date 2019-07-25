@@ -53,6 +53,7 @@ var TupleOfflineStorageService = /** @class */ (function () {
         return this.transaction(true)
             .then(function (tx) {
             return tx.saveTuples(tupleSelector, tuples)
+                // Call the TX Close when the save promise is resolved
                 .then(function () {
                 // Don't add the close to the promise chain
                 tx.close()
@@ -64,6 +65,7 @@ var TupleOfflineStorageService = /** @class */ (function () {
         return this.transaction(true)
             .then(function (tx) {
             return tx.saveTuplesEncoded(tupleSelector, vortexMsg)
+                // Call the TX Close when the save promise is resolved
                 .then(function () {
                 // Don't add the close to the promise chain
                 tx.close()
@@ -102,4 +104,4 @@ var TupleOfflineStorageService = /** @class */ (function () {
     return TupleOfflineStorageService;
 }());
 exports.TupleOfflineStorageService = TupleOfflineStorageService;
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/storage/TupleOfflineStorageService.js.map
+//# sourceMappingURL=TupleOfflineStorageService.js.map

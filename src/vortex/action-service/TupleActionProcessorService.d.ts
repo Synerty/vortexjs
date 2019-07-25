@@ -30,7 +30,7 @@ export declare class TupleActionProcessorService extends ComponentLifecycleEvent
     /** Process the Payload / Tuple Action
      *
      */
-    private _process(payload);
-    private callback(tuples, replyFilt, tupleName);
-    private errback(err, replyFilt, tupleName);
+    private _process;
+    private callback;
+    private errback;
 }

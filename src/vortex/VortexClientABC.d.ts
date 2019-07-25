@@ -30,8 +30,8 @@ export declare abstract class VortexClientABC {
     reconnect(): void;
     protected beat(): void;
     protected restartTimer(): void;
-    private clearBeatTimer();
-    private dead();
+    private clearBeatTimer;
+    private dead;
     /**
      * Receive
      * This should only be called only from VortexConnection

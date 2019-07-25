@@ -13,7 +13,7 @@ var SerialiseUtil = /** @class */ (function () {
     }
     SerialiseUtil.prototype.toStr = function (obj) {
         var self = this;
-        if (obj["toISOString"] != null)
+        if (obj["toISOString"] != null) // instanceof Date or moment
             return moment(obj).format(SerialiseUtil.ISO8601);
         if (obj.constructor === Boolean)
             return obj ? SerialiseUtil.V_TRUE : SerialiseUtil.V_FALSE;
@@ -134,4 +134,4 @@ var SerialiseUtil = /** @class */ (function () {
     return SerialiseUtil;
 }());
 exports.default = SerialiseUtil;
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/SerialiseUtil.js.map
+//# sourceMappingURL=SerialiseUtil.js.map

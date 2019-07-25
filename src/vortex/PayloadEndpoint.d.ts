@@ -18,7 +18,7 @@ export declare class PayloadEndpoint {
      * from PayloadIO, which will tell it to stop processing further endpoints.
      */
     process(payloadEnvelope: PayloadEnvelope): null | string;
-    private checkFilt(leftFilt, rightFilt);
-    private checkDate(payload);
+    private checkFilt;
+    private checkDate;
     shutdown(): void;
 }

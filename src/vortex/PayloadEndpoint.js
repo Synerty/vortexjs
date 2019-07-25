@@ -6,8 +6,8 @@ require("./UtilArray");
 var rxjs_1 = require("rxjs");
 var PayloadEndpoint = /** @class */ (function () {
     function PayloadEndpoint(component, filter, processLatestOnly) {
-        if (processLatestOnly === void 0) { processLatestOnly = false; }
         var _this = this;
+        if (processLatestOnly === void 0) { processLatestOnly = false; }
         var self = this;
         self._filt = filter;
         self._lastPayloadDate = null;
@@ -111,4 +111,4 @@ var PayloadEndpoint = /** @class */ (function () {
     return PayloadEndpoint;
 }());
 exports.PayloadEndpoint = PayloadEndpoint;
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/PayloadEndpoint.js.map
+//# sourceMappingURL=PayloadEndpoint.js.map

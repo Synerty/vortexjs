@@ -26,4 +26,4 @@ var PayloadDelegateABC = /** @class */ (function () {
     return PayloadDelegateABC;
 }());
 exports.PayloadDelegateABC = PayloadDelegateABC;
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/payload/PayloadDelegateABC.js.map
+//# sourceMappingURL=PayloadDelegateABC.js.map

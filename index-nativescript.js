@@ -8,4 +8,4 @@ var WebSqlNativeScriptThreadedAdaptorService_1 = require("./src/websql/WebSqlNat
 exports.WebSqlNativeScriptThreadedFactoryService = WebSqlNativeScriptThreadedAdaptorService_1.WebSqlNativeScriptThreadedFactoryService;
 var TupleStorageFactoryServiceNs_1 = require("./src/vortex/storage-factory/TupleStorageFactoryServiceNs");
 exports.TupleStorageFactoryServiceNs = TupleStorageFactoryServiceNs_1.TupleStorageFactoryServiceNs;
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/index-nativescript.js.map
+//# sourceMappingURL=index-nativescript.js.map

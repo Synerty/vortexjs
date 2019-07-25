@@ -87,4 +87,4 @@ var WebSqlService = /** @class */ (function () {
     return WebSqlService;
 }());
 exports.WebSqlService = WebSqlService;
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/websql/WebSqlService.js.map
+//# sourceMappingURL=WebSqlService.js.map

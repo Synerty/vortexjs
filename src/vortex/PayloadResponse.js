@@ -32,9 +32,9 @@ var PayloadResponse = /** @class */ (function () {
      * @param resultCheck: Should the result of the payload response be checked.
      */
     function PayloadResponse(vortexService, payloadEnvelope, timeout, resultCheck) {
+        var _this = this;
         if (timeout === void 0) { timeout = PayloadResponse.RESPONSE_TIMEOUT_SECONDS; }
         if (resultCheck === void 0) { resultCheck = true; }
-        var _this = this;
         this.payloadEnvelope = payloadEnvelope;
         this.timeout = timeout;
         this.resultCheck = resultCheck;
@@ -131,4 +131,4 @@ var PayloadResponse = /** @class */ (function () {
     return PayloadResponse;
 }());
 exports.PayloadResponse = PayloadResponse;
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/PayloadResponse.js.map
+//# sourceMappingURL=PayloadResponse.js.map

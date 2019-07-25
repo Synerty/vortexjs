@@ -53,4 +53,4 @@ var TupleDataObserverService = /** @class */ (function () {
     return TupleDataObserverService;
 }());
 exports.TupleDataObserverService = TupleDataObserverService;
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/observable-service/TupleDataObserverService.js.map
+//# sourceMappingURL=TupleDataObserverService.js.map

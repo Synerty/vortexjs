@@ -1,8 +1,11 @@
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -89,7 +92,7 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
     PayloadDelegateNs.prototype.pushPromise = function () {
         var callNumber = PayloadDelegateNs._promisesNum++;
         // Roll it over
-        if (PayloadDelegateNs._promisesNum > 10000)
+        if (PayloadDelegateNs._promisesNum > 10000) // 10 thousand
             PayloadDelegateNs._promisesNum = 1;
         var promise = new Promise(function (resolve, reject) {
             PayloadDelegateNs._promises[callNumber] = {
@@ -138,4 +141,4 @@ var PayloadDelegateNs = /** @class */ (function (_super) {
     return PayloadDelegateNs;
 }(PayloadDelegateABC_1.PayloadDelegateABC));
 exports.PayloadDelegateNs = PayloadDelegateNs;
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/payload/PayloadDelegateNs.js.map
+//# sourceMappingURL=PayloadDelegateNs.js.map

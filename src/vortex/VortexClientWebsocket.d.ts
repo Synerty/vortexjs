@@ -12,11 +12,11 @@ export declare class VortexClientWebsocket extends VortexClientABC {
     send(payloadEnvelope: PayloadEnvelope | PayloadEnvelope[]): Promise<void>;
     reconnect(): void;
     protected sendVortexMsg(vortexMsgs: string[]): void;
-    private sendMessages();
+    private sendMessages;
     protected shutdown(): void;
-    private createSocket();
-    private onMessage(event);
-    private onOpen(event);
-    private onClose(event);
-    private onError(event);
+    private createSocket;
+    private onMessage;
+    private onOpen;
+    private onClose;
+    private onError;
 }

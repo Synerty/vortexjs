@@ -36,8 +36,8 @@ var TupleLoaderEventEnum;
  */
 var TupleLoader = /** @class */ (function () {
     function TupleLoader(vortex, vortexStatusService, component, filterUpdateCallable, balloonMsg) {
-        if (balloonMsg === void 0) { balloonMsg = null; }
         var _this = this;
+        if (balloonMsg === void 0) { balloonMsg = null; }
         this.vortex = vortex;
         this.vortexStatusService = vortexStatusService;
         this.component = component;
@@ -292,4 +292,4 @@ var TupleLoader = /** @class */ (function () {
     return TupleLoader;
 }());
 exports.TupleLoader = TupleLoader;
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/TupleLoader.js.map
+//# sourceMappingURL=TupleLoader.js.map

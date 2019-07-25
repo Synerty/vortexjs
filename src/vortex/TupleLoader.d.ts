@@ -9,7 +9,7 @@ import { VortexStatusService } from "./VortexStatusService";
 export declare enum TupleLoaderEventEnum {
     Load = 0,
     Save = 1,
-    Delete = 2,
+    Delete = 2
 }
 /**
  * Filter Update callable.
@@ -81,7 +81,7 @@ export declare class TupleLoader {
      *
      */
     save(tuples?: Tuple[] | any[] | null): Promise<Payload>;
-    private saveOrLoad(type, tuples?);
+    private saveOrLoad;
     /**
      * Delete
      *
@@ -91,8 +91,8 @@ export declare class TupleLoader {
      *
      */
     del(tuples?: any[] | Tuple[] | null): Promise<Payload>;
-    private processPayloadEnvelope(payloadEnvelope);
-    private resetTimer();
-    private setupTimer();
-    private operationTimeout(showBaloon?);
+    private processPayloadEnvelope;
+    private resetTimer;
+    private setupTimer;
+    private operationTimeout;
 }

@@ -27,5 +27,5 @@ export declare abstract class WebSqlService {
     abstract transaction(): Promise<WebSqlTransaction>;
     runSql(sql: string, bindParams?: any[]): Promise<boolean>;
     querySql(sql: string, bindParams?: any[]): Promise<any[]>;
-    private openTransRunSql(sql, bindParams);
+    private openTransRunSql;
 }

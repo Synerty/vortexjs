@@ -28,4 +28,4 @@ var PayloadIO = /** @class */ (function () {
 }());
 exports.PayloadIO = PayloadIO;
 exports.payloadIO = new PayloadIO();
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/PayloadIO.js.map
+//# sourceMappingURL=PayloadIO.js.map

@@ -59,4 +59,4 @@ function payloadEnvelopeEncode(params) {
 function payloadEnvelopeDecode(params) {
     return base64.decode(params["vortexStr"]);
 }
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/payload/PayloadDelegateNsWorker.js.map
+//# sourceMappingURL=PayloadDelegateNsWorker.js.map

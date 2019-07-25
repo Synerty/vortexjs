@@ -6,4 +6,4 @@ var WebSqlBrowserAdaptorService_1 = require("./src/websql/WebSqlBrowserAdaptorSe
 exports.WebSqlBrowserFactoryService = WebSqlBrowserAdaptorService_1.WebSqlBrowserFactoryService;
 var TupleStorageFactoryServiceWeb_1 = require("./src/vortex/storage-factory/TupleStorageFactoryServiceWeb");
 exports.TupleStorageFactoryServiceWeb = TupleStorageFactoryServiceWeb_1.TupleStorageFactoryServiceWeb;
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/index-browser.js.map
+//# sourceMappingURL=index-browser.js.map

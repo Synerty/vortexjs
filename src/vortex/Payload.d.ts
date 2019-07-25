@@ -29,8 +29,8 @@ export declare class Payload extends Jsonable {
      */
     constructor(filt?: {}, tuples?: Array<Tuple | any>, date?: Date | null);
     static setWorkerDelegate(delegate: PayloadDelegateABC): void;
-    private _fromJson(jsonStr);
-    private _toJson();
+    private _fromJson;
+    private _toJson;
     static fromEncodedPayload(encodedPayloadStr: string): Promise<Payload>;
     toEncodedPayload(): Promise<string>;
     makePayloadEnvelope(): Promise<any>;

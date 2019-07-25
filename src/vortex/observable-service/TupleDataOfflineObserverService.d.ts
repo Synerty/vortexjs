@@ -104,11 +104,11 @@ export declare class TupleDataOfflineObserverService extends ComponentLifecycleE
      * @param tuples: The new data to store
      */
     updateOfflineState(tupleSelector: TupleSelector, tuples: Tuple[]): Promise<void>;
-    private cleanupDeadCaches();
-    private vortexOnlineChanged();
-    private receivePayload(payload, encodedPayload);
-    private tellServerWeWantData(tupleSelectors, disableCache?, unsubscribe?);
-    private notifyObservers(cachedData, tupleSelector, tuples);
-    private notifyObserversAndStore(cachedData, tupleSelector, tuples, encodedPayload?);
-    private storeDataLocally(tupleSelector, tuples, encodedPayload?);
+    private cleanupDeadCaches;
+    private vortexOnlineChanged;
+    private receivePayload;
+    private tellServerWeWantData;
+    private notifyObservers;
+    private notifyObserversAndStore;
+    private storeDataLocally;
 }

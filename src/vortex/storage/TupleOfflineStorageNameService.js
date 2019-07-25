@@ -21,4 +21,4 @@ var TupleOfflineStorageNameService = /** @class */ (function () {
     return TupleOfflineStorageNameService;
 }());
 exports.TupleOfflineStorageNameService = TupleOfflineStorageNameService;
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/storage/TupleOfflineStorageNameService.js.map
+//# sourceMappingURL=TupleOfflineStorageNameService.js.map

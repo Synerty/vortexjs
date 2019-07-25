@@ -39,4 +39,4 @@ if (String.prototype.isPrintable == null) {
         return re.test(this);
     };
 }
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/UtilString.js.map
+//# sourceMappingURL=UtilString.js.map

@@ -1,8 +1,11 @@
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -119,7 +122,7 @@ var VortexClientWebsocket = /** @class */ (function (_super) {
             if (_this.isReady) {
                 readyCount++;
             }
-            if (readyCount >= 4) {
+            if (readyCount >= 4) { // Must be ready 4 times in a row
                 _this.vortexStatusService.setOnline(true);
                 _this.sendMessages();
                 return;
@@ -142,4 +145,4 @@ var VortexClientWebsocket = /** @class */ (function (_super) {
     return VortexClientWebsocket;
 }(VortexClientABC_1.VortexClientABC));
 exports.VortexClientWebsocket = VortexClientWebsocket;
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/VortexClientWebsocket.js.map
+//# sourceMappingURL=VortexClientWebsocket.js.map

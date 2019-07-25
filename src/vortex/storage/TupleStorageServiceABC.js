@@ -22,4 +22,4 @@ var TupleStorageServiceABC = /** @class */ (function () {
     return TupleStorageServiceABC;
 }());
 exports.TupleStorageServiceABC = TupleStorageServiceABC;
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/storage/TupleStorageServiceABC.js.map
+//# sourceMappingURL=TupleStorageServiceABC.js.map

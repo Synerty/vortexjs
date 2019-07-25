@@ -29,15 +29,15 @@ global.onmessage = function (postedArg) {
     var callNumber = params["callNumber"];
     try {
         switch (call) {
-            case CALL_DB_OPEN:// Open DB
+            case CALL_DB_OPEN: // Open DB
                 return openDb(callNumber, params["dbName"], params["dbSchema"], params["dbVersion"]);
-            case CALL_DB_CLOSE:// Close DB
+            case CALL_DB_CLOSE: // Close DB
                 if (!db)
                     return;
                 db.close();
                 db = null;
                 return postResult(callNumber, null);
-            case CALL_DB_EXECUTE:// Execute SQL
+            case CALL_DB_EXECUTE: // Execute SQL
                 return executeSql(callNumber, params["sql"], params["bindParams"]);
         }
     }
@@ -72,4 +72,4 @@ function executeSql(callNumber, sql, bindParams) {
         .then(function (result) { return postResult(callNumber, result); })
         .catch(function (err) { return postError(callNumber, err); });
 }
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/websql/WebSqlNativeScriptThreadedAdaptorWorker.js.map
+//# sourceMappingURL=WebSqlNativeScriptThreadedAdaptorWorker.js.map

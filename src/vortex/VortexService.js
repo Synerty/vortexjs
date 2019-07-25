@@ -118,6 +118,7 @@ var VortexService = /** @class */ (function () {
     VortexService.prototype.createTupleLoader = function (component, filterUpdateCallable) {
         return new TupleLoader_1.TupleLoader(this.vortex, this.vortexStatusService, component, filterUpdateCallable, this.balloonMsg);
     };
+    var VortexService_1;
     VortexService.vortexUrl = '/vortex';
     VortexService.vortexClientName = '';
     VortexService = VortexService_1 = __decorate([
@@ -126,7 +127,6 @@ var VortexService = /** @class */ (function () {
             ng2_balloon_msg_1.Ng2BalloonMsgService])
     ], VortexService);
     return VortexService;
-    var VortexService_1;
 }());
 exports.VortexService = VortexService;
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/VortexService.js.map
+//# sourceMappingURL=VortexService.js.map

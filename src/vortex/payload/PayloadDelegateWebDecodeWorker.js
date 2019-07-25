@@ -6,4 +6,4 @@ registerPromiseWorker(function (vortexStr) {
     var compressedData = atob(vortexStr);
     return pako.inflate(compressedData, { to: "string" });
 });
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/payload/PayloadDelegateWebDecodeWorker.js.map
+//# sourceMappingURL=PayloadDelegateWebDecodeWorker.js.map

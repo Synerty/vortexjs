@@ -6,4 +6,4 @@ registerPromiseWorker(function (payloadJson) {
     var compressedData = pako.deflate(payloadJson, { to: "string" });
     return btoa(compressedData);
 });
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/payload/PayloadDelegateWebEncodeWorker.js.map
+//# sourceMappingURL=PayloadDelegateWebEncodeWorker.js.map

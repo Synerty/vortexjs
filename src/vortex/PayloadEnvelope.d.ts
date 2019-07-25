@@ -8,8 +8,8 @@ import { Payload } from "./Payload";
  */
 export declare class PayloadEnvelope extends Jsonable {
     private static workerDelegate;
-    static readonly vortexUuidKey: string;
-    static readonly vortexNameKey: string;
+    static readonly vortexUuidKey = "__vortexUuid__";
+    static readonly vortexNameKey = "__vortexName__";
     filt: {};
     encodedPayload: string | null;
     result: string | {} | null;
@@ -26,8 +26,8 @@ export declare class PayloadEnvelope extends Jsonable {
     static setWorkerDelegate(delegate: PayloadDelegateABC): void;
     isEmpty(): boolean;
     decodePayload(): Promise<Payload>;
-    private _fromJson(jsonStr);
-    private _toJson();
+    private _fromJson;
+    private _toJson;
     static fromVortexMsg(vortexStr: string): Promise<PayloadEnvelope>;
     toVortexMsg(): Promise<string>;
 }

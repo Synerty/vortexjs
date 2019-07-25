@@ -14,5 +14,5 @@ export declare class TupleActionPushOfflineSingletonService {
     private SEND_FAIL_RETRY_BACKOFF;
     constructor(vortexService: VortexService, vortexStatus: VortexStatusService, factoryService: TupleStorageFactoryService);
     queueAction(scope: string, tupleAction: TupleActionABC, payload: Payload): Promise<void>;
-    private sendNextAction();
+    private sendNextAction;
 }

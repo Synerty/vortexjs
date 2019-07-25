@@ -23,18 +23,18 @@
   "homepage": "https://github.com/Synerty/vortexjs#readme",
   "private": false,
   "dependencies": {
-    "@angular/common": "^6.0.0",
-    "@angular/core": "^6.0.0",
-    "@angular/router": "^6.0.0",
-    "@synerty/ng2-balloon-msg": "^0.4.0",
+    "@angular/common": "^8.0.0",
+    "@angular/core": "^8.0.0",
+    "@angular/router": "^8.0.0",
+    "@synerty/ng2-balloon-msg": "^0.4.3",
     "@types/deep-equal": "^0.0.30",
     "base-64": "^0.1.0",
-    "core-js": "^2.4.1",
+    "core-js": "^2.6.9",
     "deep-equal": "^1.0.1",
-    "extend": "^3.0.0",
-    "moment": "^2.18.1",
-    "pako": "^1.0.6",
+    "extend": "^3.0.2",
+    "moment": "^2.24.0",
+    "pako": "^1.0.10",
     "promise-worker": "^1.1.1",
-    "rxjs": "^6.2.1"
+    "rxjs": "^6.5.2"
   }
 }

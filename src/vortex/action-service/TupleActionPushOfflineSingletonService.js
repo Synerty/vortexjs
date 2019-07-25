@@ -78,6 +78,7 @@ var TupleActionPushOfflineSingletonService = /** @class */ (function () {
         this.sendingTuple = true;
         // Get the next tuple from the persistent queue
         this.storage.loadNextAction()
+            // If this was successful?
             .then(function (sendPayload) {
             // Is the end the end of the queue?
             if (sendPayload == null) {
@@ -105,6 +106,7 @@ var TupleActionPushOfflineSingletonService = /** @class */ (function () {
                 });
             });
         })
+            // Or catch and handle any of the errors from either loading or sending
             .catch(function (err) {
             _this.lastSendFailTime = Date.now();
             var errStr = UtilMisc_1.errToStr(err);
@@ -123,4 +125,4 @@ var TupleActionPushOfflineSingletonService = /** @class */ (function () {
     return TupleActionPushOfflineSingletonService;
 }());
 exports.TupleActionPushOfflineSingletonService = TupleActionPushOfflineSingletonService;
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/action-service/TupleActionPushOfflineSingletonService.js.map
+//# sourceMappingURL=TupleActionPushOfflineSingletonService.js.map

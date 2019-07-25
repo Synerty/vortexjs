@@ -1,8 +1,11 @@
 "use strict";
 var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
     return function (d, b) {
         extendStatics(d, b);
         function __() { this.constructor = d; }
@@ -44,12 +47,12 @@ var TupleSelector = /** @class */ (function (_super) {
         var args = JSON.parse(jsonStr);
         return new TupleSelector_1(args.name, args.selector);
     };
+    var TupleSelector_1;
     TupleSelector = TupleSelector_1 = __decorate([
         Tuple_1.addTupleType,
         __metadata("design:paramtypes", [String, Object])
     ], TupleSelector);
     return TupleSelector;
-    var TupleSelector_1;
 }(Tuple_1.Tuple));
 exports.TupleSelector = TupleSelector;
-//# sourceMappingURL=/Users/jchesney/dev-peek-util/vortexjs/src/vortex/TupleSelector.js.map
+//# sourceMappingURL=TupleSelector.js.map
