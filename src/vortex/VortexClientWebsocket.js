@@ -65,7 +65,7 @@ var VortexClientWebsocket = /** @class */ (function (_super) {
     VortexClientWebsocket.prototype.createSocket = function () {
         var _this = this;
         // If we're already connecting, then do nothing
-        if (this.socket && this.socket.readyState === this.Socket.CONNECTING)
+        if (!this.closed && this.socket && this.socket.readyState === this.Socket.CONNECTING)
             return;
         // If we're open then close
         if (this.socket && this.socket.readyState === this.Socket.OPEN)

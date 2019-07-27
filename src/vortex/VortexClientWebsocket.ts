@@ -72,7 +72,7 @@ export class VortexClientWebsocket extends VortexClientABC {
 
     private createSocket(): void {
         // If we're already connecting, then do nothing
-        if (this.socket && this.socket.readyState === this.Socket.CONNECTING)
+        if (!this.closed && this.socket && this.socket.readyState === this.Socket.CONNECTING)
             return;
 
         // If we're open then close
