@@ -73,10 +73,15 @@ export class VortexClientWebsocket extends VortexClientABC {
     private createSocket(): void {
         // If we're already connecting, then do nothing
         if (this.socket && this.socket.readyState === this.Socket.CONNECTING) {
-            if (this.closed)
-                this.socket.close();
-            else
+            if (!this.closed)
                 return;
+            try {
+                console.log("Aborting WebSocket connection attempt," +
+                    " this is probably because of Vortex reconnection");
+                this.socket.close();
+            } catch (e) {
+                // pass
+            }
         }
 
         // If we're open then close
