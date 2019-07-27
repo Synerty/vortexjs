@@ -1,7 +1,7 @@
-import {VortexClientABC} from "./VortexClientABC";
-import {VortexStatusService} from "./VortexStatusService";
-import {getFiltStr} from "./UtilMisc";
-import {PayloadEnvelope} from "./PayloadEnvelope";
+import {VortexClientABC} from './VortexClientABC';
+import {VortexStatusService} from './VortexStatusService';
+import {getFiltStr} from './UtilMisc';
+import {PayloadEnvelope} from './PayloadEnvelope';
 
 // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
 
@@ -15,7 +15,7 @@ export class VortexClientWebsocket extends VortexClientABC {
     private Socket = WebSocket || MozWebSocket;
     private socket: WebSocket | null = null;
 
-    private lastReconnectDate: number = Date.parse("01-Jan-2017");
+    private lastReconnectDate: number = Date.parse('01-Jan-2017');
 
     private unsentBuffer: string[] = [];
 
@@ -33,7 +33,7 @@ export class VortexClientWebsocket extends VortexClientABC {
     // OVERRIDE Send
     send(payloadEnvelope: PayloadEnvelope | PayloadEnvelope[]): Promise<void> {
         if (!this.isReady) {
-            throw new Error("Websocked vortex is not online.");
+            throw new Error('Websocked vortex is not online.');
         }
 
         return super.send(payloadEnvelope);
@@ -42,7 +42,7 @@ export class VortexClientWebsocket extends VortexClientABC {
     // OVERRIDE reconnect
     reconnect(): void {
         if (this.closed)
-            throw new Error("An attempt was made to reconnect a closed vortex");
+            throw new Error('An attempt was made to reconnect a closed vortex');
 
         this.restartTimer();
         this.createSocket();
@@ -72,8 +72,12 @@ export class VortexClientWebsocket extends VortexClientABC {
 
     private createSocket(): void {
         // If we're already connecting, then do nothing
-        if (!this.closed && this.socket && this.socket.readyState === this.Socket.CONNECTING)
-            return;
+        if (this.socket && this.socket.readyState === this.Socket.CONNECTING) {
+            if (this.closed)
+                this.socket.close();
+            else
+                return;
+        }
 
         // If we're open then close
         if (this.socket && this.socket.readyState === this.Socket.OPEN)
@@ -85,7 +89,7 @@ export class VortexClientWebsocket extends VortexClientABC {
 
         // If the vortex is shutdown then don't reconnect
         if (this.closed) {
-            this.vortexStatusService.logInfo("WebSocket, Vortex is shutdown");
+            this.vortexStatusService.logInfo('WebSocket, Vortex is shutdown');
             return;
         }
 
@@ -101,14 +105,14 @@ export class VortexClientWebsocket extends VortexClientABC {
 
         // Prepare the args to send
         let args = {
-            "vortexUuid": this.uuid,
-            "vortexName": this.name
+            'vortexUuid': this.uuid,
+            'vortexName': this.name
         };
 
         // Construct + open the socket
         this.vortexStatusService.logInfo(`WebSocket, connecting to ${this.url}`);
         this.socket = new this.Socket(this.url + getFiltStr(args), []);
-        this.socket.binaryType = "arraybuffer";
+        this.socket.binaryType = 'arraybuffer';
         this.socket.addEventListener('open', event => this.onOpen(event));
         this.socket.addEventListener('message', event => this.onMessage(event));
         this.socket.addEventListener('close', event => this.onClose(event));
@@ -117,8 +121,8 @@ export class VortexClientWebsocket extends VortexClientABC {
 
     private onMessage(event) {
         if (event.data.length == null) {
-            this.vortexStatusService.logError("WebSocket, We've received a websocket binary message," +
-                " we expect a unicode");
+            this.vortexStatusService.logError('WebSocket, We\'ve received a websocket binary message,' +
+                ' we expect a unicode');
             return;
         }
 
@@ -138,7 +142,7 @@ export class VortexClientWebsocket extends VortexClientABC {
         let readyCount = 0;
         let check = () => {
             if (this.isReady) {
-              readyCount++;
+                readyCount++;
             }
             if (readyCount >= 4) { // Must be ready 4 times in a row
                 this.vortexStatusService.setOnline(true);
@@ -153,14 +157,14 @@ export class VortexClientWebsocket extends VortexClientABC {
     }
 
     private onClose(event) {
-        this.vortexStatusService.logInfo("WebSocket, closed");
+        this.vortexStatusService.logInfo('WebSocket, closed');
         if (!(this.socket && this.socket.readyState === this.Socket.OPEN))
             this.vortexStatusService.setOnline(false);
         // The base class will reconnect
     }
 
     private onError(event) {
-        this.vortexStatusService.logError(event.error ? event.error : "WebSocket, No error message");
+        this.vortexStatusService.logError(event.error ? event.error : 'WebSocket, No error message');
         // onClose will get called as well
     }
 

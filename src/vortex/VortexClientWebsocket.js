@@ -22,7 +22,7 @@ var VortexClientWebsocket = /** @class */ (function (_super) {
         var _this = _super.call(this, vortexStatusService, url, vortexClientName) || this;
         _this.Socket = WebSocket || MozWebSocket;
         _this.socket = null;
-        _this.lastReconnectDate = Date.parse("01-Jan-2017");
+        _this.lastReconnectDate = Date.parse('01-Jan-2017');
         _this.unsentBuffer = [];
         return _this;
     }
@@ -36,14 +36,14 @@ var VortexClientWebsocket = /** @class */ (function (_super) {
     // OVERRIDE Send
     VortexClientWebsocket.prototype.send = function (payloadEnvelope) {
         if (!this.isReady) {
-            throw new Error("Websocked vortex is not online.");
+            throw new Error('Websocked vortex is not online.');
         }
         return _super.prototype.send.call(this, payloadEnvelope);
     };
     // OVERRIDE reconnect
     VortexClientWebsocket.prototype.reconnect = function () {
         if (this.closed)
-            throw new Error("An attempt was made to reconnect a closed vortex");
+            throw new Error('An attempt was made to reconnect a closed vortex');
         this.restartTimer();
         this.createSocket();
     };
@@ -65,8 +65,12 @@ var VortexClientWebsocket = /** @class */ (function (_super) {
     VortexClientWebsocket.prototype.createSocket = function () {
         var _this = this;
         // If we're already connecting, then do nothing
-        if (!this.closed && this.socket && this.socket.readyState === this.Socket.CONNECTING)
-            return;
+        if (this.socket && this.socket.readyState === this.Socket.CONNECTING) {
+            if (this.closed)
+                this.socket.close();
+            else
+                return;
+        }
         // If we're open then close
         if (this.socket && this.socket.readyState === this.Socket.OPEN)
             this.socket.close();
@@ -74,7 +78,7 @@ var VortexClientWebsocket = /** @class */ (function (_super) {
         this.vortexStatusService.setOnline(false);
         // If the vortex is shutdown then don't reconnect
         if (this.closed) {
-            this.vortexStatusService.logInfo("WebSocket, Vortex is shutdown");
+            this.vortexStatusService.logInfo('WebSocket, Vortex is shutdown');
             return;
         }
         // Don't continually reconnect
@@ -86,13 +90,13 @@ var VortexClientWebsocket = /** @class */ (function (_super) {
         this.lastReconnectDate = Date.now();
         // Prepare the args to send
         var args = {
-            "vortexUuid": this.uuid,
-            "vortexName": this.name
+            'vortexUuid': this.uuid,
+            'vortexName': this.name
         };
         // Construct + open the socket
         this.vortexStatusService.logInfo("WebSocket, connecting to " + this.url);
         this.socket = new this.Socket(this.url + UtilMisc_1.getFiltStr(args), []);
-        this.socket.binaryType = "arraybuffer";
+        this.socket.binaryType = 'arraybuffer';
         this.socket.addEventListener('open', function (event) { return _this.onOpen(event); });
         this.socket.addEventListener('message', function (event) { return _this.onMessage(event); });
         this.socket.addEventListener('close', function (event) { return _this.onClose(event); });
@@ -101,8 +105,8 @@ var VortexClientWebsocket = /** @class */ (function (_super) {
     VortexClientWebsocket.prototype.onMessage = function (event) {
         var _this = this;
         if (event.data.length == null) {
-            this.vortexStatusService.logError("WebSocket, We've received a websocket binary message," +
-                " we expect a unicode");
+            this.vortexStatusService.logError('WebSocket, We\'ve received a websocket binary message,' +
+                ' we expect a unicode');
             return;
         }
         // If the server sends us a '.', that's a heart beat, return it.
@@ -132,13 +136,13 @@ var VortexClientWebsocket = /** @class */ (function (_super) {
         check();
     };
     VortexClientWebsocket.prototype.onClose = function (event) {
-        this.vortexStatusService.logInfo("WebSocket, closed");
+        this.vortexStatusService.logInfo('WebSocket, closed');
         if (!(this.socket && this.socket.readyState === this.Socket.OPEN))
             this.vortexStatusService.setOnline(false);
         // The base class will reconnect
     };
     VortexClientWebsocket.prototype.onError = function (event) {
-        this.vortexStatusService.logError(event.error ? event.error : "WebSocket, No error message");
+        this.vortexStatusService.logError(event.error ? event.error : 'WebSocket, No error message');
         // onClose will get called as well
     };
     VortexClientWebsocket.RECONNECT_BACKOFF = 5000; // milliseconds

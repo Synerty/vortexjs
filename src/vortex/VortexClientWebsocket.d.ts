@@ -1,6 +1,6 @@
-import { VortexClientABC } from "./VortexClientABC";
-import { VortexStatusService } from "./VortexStatusService";
-import { PayloadEnvelope } from "./PayloadEnvelope";
+import { VortexClientABC } from './VortexClientABC';
+import { VortexStatusService } from './VortexStatusService';
+import { PayloadEnvelope } from './PayloadEnvelope';
 export declare class VortexClientWebsocket extends VortexClientABC {
     private static readonly RECONNECT_BACKOFF;
     private Socket;
