@@ -24,3 +24,4 @@ export { TupleActionProcessorNameService, TupleActionProcessorService } from "./
 export { TupleActionProcessorDelegateABC } from "./src/vortex/action-service/TupleActionProcessorDelegate";
 export { assert, extend, deepCopy, deepEqual, jsonOrderedStringify } from "./src/vortex/UtilMisc";
 import "./src/vortex/UtilArray";
+export * from "./src/vortex/UtilSort";

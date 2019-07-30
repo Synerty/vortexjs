@@ -74,4 +74,5 @@ exports.deepCopy = UtilMisc_1.deepCopy;
 exports.deepEqual = UtilMisc_1.deepEqual;
 exports.jsonOrderedStringify = UtilMisc_1.jsonOrderedStringify;
 require("./src/vortex/UtilArray");
+__export(require("./src/vortex/UtilSort"));
 //# sourceMappingURL=index.js.map
