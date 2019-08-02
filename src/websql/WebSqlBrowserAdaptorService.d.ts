@@ -1,4 +1,4 @@
-import { WebSqlFactoryService, WebSqlService } from "./WebSqlService";
+import { WebSqlFactoryService, WebSqlService } from './WebSqlService';
 export declare class WebSqlBrowserFactoryService implements WebSqlFactoryService {
     hasStorageLimitations(): boolean;
     supportsWebSql(): boolean;

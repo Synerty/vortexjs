@@ -1,6 +1,10 @@
-import {Injectable} from "@angular/core";
-import {WebSqlFactoryService, WebSqlService, WebSqlTransaction} from "./WebSqlService";
+import {Injectable} from '@angular/core';
+import {WebSqlFactoryService, WebSqlService, WebSqlTransaction} from './WebSqlService';
+
 declare let openDatabase: any;
+
+const RETRY_NO_SPACE = 'there was not enough remaining storage space';
+const RETRY_DISK_ERROR = 'unable to begin transaction (3850 disk I/O error)';
 
 @Injectable()
 export class WebSqlBrowserFactoryService implements WebSqlFactoryService {
@@ -9,7 +13,7 @@ export class WebSqlBrowserFactoryService implements WebSqlFactoryService {
         // iOS safari supports up to a 50mb limit, MAX.
         // In this case, IndexedDB should be used.
         // https://stackoverflow.com/questions/9038625/detect-if-device-is-ios
-        let iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window["MSStream"];
+        let iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window['MSStream'];
         // Other conditions
         return iOS;
     }
@@ -50,7 +54,7 @@ class WebSqlBrowserAdaptorService extends WebSqlService {
                 return;
             }
 
-            this.db = openDatabase(this.dbName, "1", this.dbName, 4 * 1024 * 1024);
+            this.db = openDatabase(this.dbName, '1', this.dbName, 4 * 1024 * 1024);
             if (this.schemaInstalled) {
                 resolve();
                 return;
@@ -126,8 +130,7 @@ class WebSqlBrowserTransactionAdaptor implements WebSqlTransaction {
                 // Bug in Safari (at least), when the user approves the storage space
                 // The WebSQL still gets the exception
                 // "there was not enough remaining storage space, or the storage quota was reached and the user declined to allow more space"
-                let noSpaceMsg = "there was not enough remaining storage space";
-                if (retries >= 0 && err.message.indexOf(noSpaceMsg) !== -1) {
+                if (retries >= 0 && WebSqlBrowserTransactionAdaptor.checkRetryMessage(err.message)) {
                     this.retryExecuteSql(retries - 1, sql, bindParams, resolve, reject);
                     return;
                 }
@@ -138,6 +141,13 @@ class WebSqlBrowserTransactionAdaptor implements WebSqlTransaction {
             }
         );
 
+    }
+
+    public static checkRetryMessage(message: string): boolean {
+        if (message.indexOf(RETRY_NO_SPACE) !== -1)
+            return true;
+
+        return message.indexOf(RETRY_DISK_ERROR) !== -1;
     }
 
 }

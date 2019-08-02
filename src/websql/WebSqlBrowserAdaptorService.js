@@ -24,6 +24,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@angular/core");
 var WebSqlService_1 = require("./WebSqlService");
+var RETRY_NO_SPACE = 'there was not enough remaining storage space';
+var RETRY_DISK_ERROR = 'unable to begin transaction (3850 disk I/O error)';
 var WebSqlBrowserFactoryService = /** @class */ (function () {
     function WebSqlBrowserFactoryService() {
     }
@@ -31,7 +33,7 @@ var WebSqlBrowserFactoryService = /** @class */ (function () {
         // iOS safari supports up to a 50mb limit, MAX.
         // In this case, IndexedDB should be used.
         // https://stackoverflow.com/questions/9038625/detect-if-device-is-ios
-        var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window["MSStream"];
+        var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window['MSStream'];
         // Other conditions
         return iOS;
     };
@@ -77,7 +79,7 @@ var WebSqlBrowserAdaptorService = /** @class */ (function (_super) {
                 resolve();
                 return;
             }
-            _this.db = openDatabase(_this.dbName, "1", _this.dbName, 4 * 1024 * 1024);
+            _this.db = openDatabase(_this.dbName, '1', _this.dbName, 4 * 1024 * 1024);
             if (_this.schemaInstalled) {
                 resolve();
                 return;
@@ -148,14 +150,18 @@ var WebSqlBrowserTransactionAdaptor = /** @class */ (function () {
             // Bug in Safari (at least), when the user approves the storage space
             // The WebSQL still gets the exception
             // "there was not enough remaining storage space, or the storage quota was reached and the user declined to allow more space"
-            var noSpaceMsg = "there was not enough remaining storage space";
-            if (retries >= 0 && err.message.indexOf(noSpaceMsg) !== -1) {
+            if (retries >= 0 && WebSqlBrowserTransactionAdaptor.checkRetryMessage(err.message)) {
                 _this.retryExecuteSql(retries - 1, sql, bindParams, resolve, reject);
                 return;
             }
             // Otherwise, REJECT
             reject(err);
         });
+    };
+    WebSqlBrowserTransactionAdaptor.checkRetryMessage = function (message) {
+        if (message.indexOf(RETRY_NO_SPACE) !== -1)
+            return true;
+        return message.indexOf(RETRY_DISK_ERROR) !== -1;
     };
     return WebSqlBrowserTransactionAdaptor;
 }());
