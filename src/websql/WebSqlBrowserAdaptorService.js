@@ -26,6 +26,11 @@ var core_1 = require("@angular/core");
 var WebSqlService_1 = require("./WebSqlService");
 var RETRY_NO_SPACE = 'there was not enough remaining storage space';
 var RETRY_DISK_ERROR = 'unable to begin transaction (3850 disk I/O error)';
+function random() {
+    var min = 0;
+    var max = 150;
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
 var WebSqlBrowserFactoryService = /** @class */ (function () {
     function WebSqlBrowserFactoryService() {
     }
@@ -74,12 +79,25 @@ var WebSqlBrowserAdaptorService = /** @class */ (function (_super) {
     }
     WebSqlBrowserAdaptorService.prototype.open = function () {
         var _this = this;
-        return new Promise(function (resolve, reject) {
+        var retries = 5;
+        var callback = function (resolve, reject) {
             if (_this.isOpen()) {
                 resolve();
                 return;
             }
-            _this.db = openDatabase(_this.dbName, '1', _this.dbName, 4 * 1024 * 1024);
+            try {
+                _this.db = openDatabase(_this.dbName, '1', _this.dbName, 4 * 1024 * 1024);
+            }
+            catch (err) {
+                if (retries >= 0 && WebSqlBrowserTransactionAdaptor.checkRetryMessage(err.message)) {
+                    retries--;
+                    setTimeout(function () { return callback(resolve, reject); }, 100 + random());
+                    return;
+                }
+                // Otherwise, REJECT
+                reject(err);
+                return;
+            }
             if (_this.schemaInstalled) {
                 resolve();
                 return;
@@ -90,7 +108,8 @@ var WebSqlBrowserAdaptorService = /** @class */ (function (_super) {
                 throw new Error(err);
             })
                 .then(function () { return resolve(); });
-        });
+        };
+        return new Promise(callback);
     };
     WebSqlBrowserAdaptorService.prototype.isOpen = function () {
         return this.db != null;
@@ -102,13 +121,24 @@ var WebSqlBrowserAdaptorService = /** @class */ (function (_super) {
         var _this = this;
         if (!this.isOpen())
             throw new Error("SQLDatabase " + this.dbName + " is not open");
-        return new Promise(function (resolve, reject) {
+        var retries = 5;
+        var callback = function (resolve, reject) {
             _this.db.transaction(function (t) {
                 resolve(new WebSqlBrowserTransactionAdaptor(t));
             }, function (tx, err) {
-                reject(err == null ? tx : err);
+                err = err == null ? tx : err; // Sometimes tx is the err
+                // Solve the issue for :
+                // unable to begin transaction (3850 disk I/O error)
+                if (retries >= 0 && WebSqlBrowserTransactionAdaptor.checkRetryMessage(err.message)) {
+                    retries--;
+                    setTimeout(function () { return callback(resolve, reject); }, 100 + random());
+                    return;
+                }
+                // Otherwise, REJECT
+                reject(err);
             });
-        });
+        };
+        return new Promise(callback);
     };
     WebSqlBrowserAdaptorService = __decorate([
         core_1.Injectable(),
@@ -151,7 +181,9 @@ var WebSqlBrowserTransactionAdaptor = /** @class */ (function () {
             // The WebSQL still gets the exception
             // "there was not enough remaining storage space, or the storage quota was reached and the user declined to allow more space"
             if (retries >= 0 && WebSqlBrowserTransactionAdaptor.checkRetryMessage(err.message)) {
-                _this.retryExecuteSql(retries - 1, sql, bindParams, resolve, reject);
+                setTimeout(function () {
+                    _this.retryExecuteSql(retries - 1, sql, bindParams, resolve, reject);
+                }, 100 + random());
                 return;
             }
             // Otherwise, REJECT

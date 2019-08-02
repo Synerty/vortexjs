@@ -6,6 +6,13 @@ declare let openDatabase: any;
 const RETRY_NO_SPACE = 'there was not enough remaining storage space';
 const RETRY_DISK_ERROR = 'unable to begin transaction (3850 disk I/O error)';
 
+
+function random(): number {
+    const min = 0;
+    const max = 150;
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 @Injectable()
 export class WebSqlBrowserFactoryService implements WebSqlFactoryService {
 
@@ -48,13 +55,27 @@ class WebSqlBrowserAdaptorService extends WebSqlService {
     }
 
     open(): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+        let retries = 5;
+        const callback = (resolve, reject) => {
             if (this.isOpen()) {
                 resolve();
                 return;
             }
 
-            this.db = openDatabase(this.dbName, '1', this.dbName, 4 * 1024 * 1024);
+            try {
+                this.db = openDatabase(this.dbName, '1', this.dbName, 4 * 1024 * 1024);
+            } catch (err) {
+                if (retries >= 0 && WebSqlBrowserTransactionAdaptor.checkRetryMessage(err.message)) {
+                    retries--;
+                    setTimeout(() => callback(resolve, reject), 100 + random());
+                    return;
+                }
+
+                // Otherwise, REJECT
+                reject(err);
+                return
+            }
+
             if (this.schemaInstalled) {
                 resolve();
                 return;
@@ -66,7 +87,9 @@ class WebSqlBrowserAdaptorService extends WebSqlService {
                     throw new Error(err);
                 })
                 .then(() => resolve());
-        });
+        };
+
+        return new Promise<void>(callback);
     }
 
     isOpen(): boolean {
@@ -81,13 +104,28 @@ class WebSqlBrowserAdaptorService extends WebSqlService {
         if (!this.isOpen())
             throw new Error(`SQLDatabase ${this.dbName} is not open`);
 
-        return new Promise<WebSqlTransaction>((resolve, reject) => {
+        let retries = 5;
+
+        const callback = (resolve, reject) => {
             this.db.transaction((t) => {
                 resolve(new WebSqlBrowserTransactionAdaptor(t));
             }, (tx, err) => {
-                reject(err == null ? tx : err);
+                err = err == null ? tx : err; // Sometimes tx is the err
+
+                // Solve the issue for :
+                // unable to begin transaction (3850 disk I/O error)
+                if (retries >= 0 && WebSqlBrowserTransactionAdaptor.checkRetryMessage(err.message)) {
+                    retries--;
+                    setTimeout(() => callback(resolve, reject), 100 + random());
+                    return;
+                }
+
+                // Otherwise, REJECT
+                reject(err);
             });
-        });
+        };
+
+        return new Promise<WebSqlTransaction>(callback);
     }
 }
 
@@ -131,7 +169,9 @@ class WebSqlBrowserTransactionAdaptor implements WebSqlTransaction {
                 // The WebSQL still gets the exception
                 // "there was not enough remaining storage space, or the storage quota was reached and the user declined to allow more space"
                 if (retries >= 0 && WebSqlBrowserTransactionAdaptor.checkRetryMessage(err.message)) {
-                    this.retryExecuteSql(retries - 1, sql, bindParams, resolve, reject);
+                    setTimeout(() => {
+                        this.retryExecuteSql(retries - 1, sql, bindParams, resolve, reject);
+                    }, 100 + random());
                     return;
                 }
 
