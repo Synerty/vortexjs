@@ -11,7 +11,7 @@ export declare class TupleActionStorageIndexedDbService extends TupleActionStora
     private openInProgressPromise;
     constructor();
     storeAction(scope: string, tupleAction: TupleActionABC, payload: Payload): Promise<void>;
-    loadNextAction(): Promise<Payload>;
+    loadNextAction(): Promise<Payload | null>;
     countActions(): Promise<number>;
     deleteAction(scope: string, actionUuid: number): Promise<void>;
     open(): Promise<void>;

@@ -1,12 +1,12 @@
-import {Injectable} from "@angular/core";
-import {VortexStatusService} from "../VortexStatusService";
-import {TupleActionABC} from "../TupleAction";
-import {Tuple} from "../Tuple";
-import {VortexService} from "../VortexService";
-import {PayloadResponse} from "../PayloadResponse";
-import {Payload} from "../Payload";
-import {extend} from "../UtilMisc";
-import {PayloadEnvelope} from "../PayloadEnvelope";
+import {Injectable} from '@angular/core';
+import {VortexStatusService} from '../VortexStatusService';
+import {TupleActionABC} from '../TupleAction';
+import {Tuple} from '../Tuple';
+import {VortexService} from '../VortexService';
+import {PayloadResponse} from '../PayloadResponse';
+import {Payload} from '../Payload';
+import {extend} from '../UtilMisc';
+import {PayloadEnvelope} from '../PayloadEnvelope';
 
 
 @Injectable()
@@ -36,7 +36,7 @@ export class TupleActionPushService {
      */
     pushAction(tupleAction: TupleActionABC): Promise<Tuple[]> {
         if (!this.vortexStatus.snapshot.isOnline)
-            return Promise.reject("Vortex is offline");
+            return Promise.reject('Vortex is offline');
 
         let promise: any = this.makePayload(tupleAction)
             .makePayloadEnvelope();
@@ -61,11 +61,14 @@ export class TupleActionPushService {
      *
      */
     protected makePayload(tupleAction: TupleActionABC): Payload {
+        if (tupleAction == null) {
+            throw new Error('pushAction: tupleAction is null');
+        }
 
         let payload = new Payload();
 
         payload.filt = extend({
-            key: "tupleActionProcessorName",
+            key: 'tupleActionProcessorName',
             name: this.tupleActionProcessorName.name
         }, this.tupleActionProcessorName.additionalFilt);
 

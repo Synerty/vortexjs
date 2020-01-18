@@ -7,7 +7,7 @@ export declare class TupleActionStorageWebSqlService extends TupleActionStorageS
     private webSql;
     constructor(webSqlFactory: WebSqlFactoryService);
     storeAction(scope: string, tupleAction: TupleActionABC, payload: Payload): Promise<void>;
-    loadNextAction(): Promise<Payload>;
+    loadNextAction(): Promise<Payload | null>;
     countActions(): Promise<number>;
     deleteAction(scope: string, actionUuid: number): Promise<void>;
 }

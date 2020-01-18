@@ -46,7 +46,8 @@ export class TupleActionPushOfflineSingletonService {
 
 
     queueAction(scope: string, tupleAction: TupleActionABC, payload: Payload): Promise<void> {
-        return this.storage.storeAction(scope, tupleAction, payload)
+        return this.storage
+            .storeAction(scope, tupleAction, payload)
             .then(() => {
                 this.vortexStatus.incrementQueuedActionCount();
                 this.sendNextAction();

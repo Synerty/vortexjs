@@ -7,7 +7,7 @@ export abstract class TupleActionStorageServiceABC {
 
     abstract storeAction(scope: string, tupleAction: TupleActionABC, payload: Payload): Promise<void> ;
 
-    abstract loadNextAction(): Promise<Payload> ;
+    abstract loadNextAction(): Promise<Payload | null> ;
 
     abstract countActions(): Promise<number> ;
 

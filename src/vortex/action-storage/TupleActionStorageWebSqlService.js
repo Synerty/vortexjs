@@ -55,7 +55,7 @@ var TupleActionStorageWebSqlService = /** @class */ (function (_super) {
         return this.webSql.querySql(sql, bindParams)
             .then(function (rows) {
             if (rows.length === 0) {
-                return;
+                return null;
             }
             var row1 = rows[0];
             return Payload_1.Payload.fromEncodedPayload(row1.payload);

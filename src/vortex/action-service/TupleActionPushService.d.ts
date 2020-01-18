@@ -1,8 +1,8 @@
-import { VortexStatusService } from "../VortexStatusService";
-import { TupleActionABC } from "../TupleAction";
-import { Tuple } from "../Tuple";
-import { VortexService } from "../VortexService";
-import { Payload } from "../Payload";
+import { VortexStatusService } from '../VortexStatusService';
+import { TupleActionABC } from '../TupleAction';
+import { Tuple } from '../Tuple';
+import { VortexService } from '../VortexService';
+import { Payload } from '../Payload';
 export declare class TupleActionPushNameService {
     name: string;
     additionalFilt: {};

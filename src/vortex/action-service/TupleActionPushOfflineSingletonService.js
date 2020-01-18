@@ -44,7 +44,8 @@ var TupleActionPushOfflineSingletonService = /** @class */ (function () {
     }
     TupleActionPushOfflineSingletonService.prototype.queueAction = function (scope, tupleAction, payload) {
         var _this = this;
-        return this.storage.storeAction(scope, tupleAction, payload)
+        return this.storage
+            .storeAction(scope, tupleAction, payload)
             .then(function () {
             _this.vortexStatus.incrementQueuedActionCount();
             _this.sendNextAction();

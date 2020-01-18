@@ -44,7 +44,7 @@ export class TupleActionStorageWebSqlService extends TupleActionStorageServiceAB
             });
     }
 
-    loadNextAction(): Promise<Payload> {
+    loadNextAction(): Promise<Payload | null> {
         let sql = `SELECT payload
                     FROM ${tableName}
                     ORDER BY id
@@ -54,7 +54,7 @@ export class TupleActionStorageWebSqlService extends TupleActionStorageServiceAB
         return this.webSql.querySql(sql, bindParams)
             .then((rows: any[]) => {
                 if (rows.length === 0) {
-                    return;
+                    return null;
                 }
 
                 let row1 = rows[0];

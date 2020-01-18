@@ -46,7 +46,7 @@ export class TupleActionStorageIndexedDbService extends TupleActionStorageServic
             .then((tx) => {
                 let store = tx.objectStore(ACTION_STORE);
 
-                return new Payload({}, [tupleAction]).toEncodedPayload()
+                return payload.toEncodedPayload()
                     .then((vortexMsg) => {
 
                         let item: TupleActionStorageStructI = {
@@ -83,7 +83,7 @@ export class TupleActionStorageIndexedDbService extends TupleActionStorageServic
         return <Promise<void> > retval;
     }
 
-    loadNextAction(): Promise<Payload> {
+    loadNextAction(): Promise<Payload | null> {
 
 
         return this.transaction(false)
@@ -104,7 +104,7 @@ export class TupleActionStorageIndexedDbService extends TupleActionStorageServic
                     response.onsuccess = (ev) => {
                         let cursor = response.result || ev.target.result;
                         if (!!cursor == false) {
-                            resolve(new Payload());
+                            resolve(null);
                             return;
                         }
 
