@@ -68,7 +68,7 @@ var TupleActionStorageIndexedDbService = /** @class */ (function (_super) {
                         reject(UtilMisc_1.dateStr() + " IndexedDB: saveTuples \"put\" error");
                         throw new IndexedDb_1.IDBException("Put error");
                     });
-                    response.oncomplete = function () {
+                    response.onsuccess = function () {
                         var timeTaken = now() - startTime;
                         console.log(UtilMisc_1.dateStr() + " IndexedDB: storeAction"
                             + (" took " + timeTaken + "ms (in thread)"));
@@ -90,7 +90,7 @@ var TupleActionStorageIndexedDbService = /** @class */ (function (_super) {
                     reject(UtilMisc_1.dateStr() + " IndexedDB: saveTuples \"put\" error");
                     throw new IndexedDb_1.IDBException("Put error");
                 });
-                response.oncomplete = function (ev) {
+                response.onsuccess = function (ev) {
                     var cursor = response.result || ev.target.result;
                     if (!!cursor == false) {
                         resolve(new Payload_1.Payload());
@@ -122,7 +122,7 @@ var TupleActionStorageIndexedDbService = /** @class */ (function (_super) {
                     reject(UtilMisc_1.dateStr() + " IndexedDB: saveTuples \"put\" error");
                     throw new IndexedDb_1.IDBException("Put error");
                 });
-                response.oncomplete = function () {
+                response.onsuccess = function () {
                     resolve(response.result);
                 };
             });
@@ -140,7 +140,7 @@ var TupleActionStorageIndexedDbService = /** @class */ (function (_super) {
                     reject(UtilMisc_1.dateStr() + " IndexedDB: saveTuples \"put\" error");
                     throw new IndexedDb_1.IDBException("Put error");
                 });
-                response.oncomplete = function () {
+                response.onsuccess = function () {
                     resolve();
                 };
             });

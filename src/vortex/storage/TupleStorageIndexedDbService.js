@@ -204,7 +204,7 @@ var TupleIndexedDbTransaction = /** @class */ (function () {
                 reject(UtilMisc_1.dateStr() + " IndexedDB: saveTuples \"put\" error");
                 throw new IndexedDb_1.IDBException("Put error");
             });
-            response.oncomplete = function () {
+            response.onsuccess = function () {
                 var timeTaken = now() - startTime;
                 console.log(UtilMisc_1.dateStr() + " IndexedDB: saveTuples"
                     + (" took " + timeTaken + "ms (in thread)")
@@ -231,7 +231,7 @@ var TupleIndexedDbTransaction = /** @class */ (function () {
                 reject(UtilMisc_1.dateStr() + " IndexedDB: deleteTuples \"delete\" error");
                 throw new IndexedDb_1.IDBException("Put error");
             });
-            response.oncomplete = function () {
+            response.onsuccess = function () {
                 var timeTaken = now() - startTime;
                 console.log(UtilMisc_1.dateStr() + " IndexedDB: deleteTuples"
                     + (" took " + timeTaken + "ms (in thread)"));

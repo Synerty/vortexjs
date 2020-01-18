@@ -71,7 +71,7 @@ export class TupleActionStorageIndexedDbService extends TupleActionStorageServic
                                 throw new IDBException("Put error");
                             });
 
-                            response.oncomplete = () => {
+                            response.onsuccess = () => {
                                 let timeTaken = now() - startTime;
                                 console.log(`${dateStr()} IndexedDB: storeAction`
                                     + ` took ${timeTaken}ms (in thread)`);
@@ -101,7 +101,7 @@ export class TupleActionStorageIndexedDbService extends TupleActionStorageServic
                         throw new IDBException("Put error");
                     });
 
-                    response.oncomplete = (ev) => {
+                    response.onsuccess = (ev) => {
                         let cursor = response.result || ev.target.result;
                         if (!!cursor == false) {
                             resolve(new Payload());
@@ -142,7 +142,7 @@ export class TupleActionStorageIndexedDbService extends TupleActionStorageServic
                         throw new IDBException("Put error");
                     });
 
-                    response.oncomplete = () => {
+                    response.onsuccess = () => {
                         resolve(response.result);
                     };
                 });
@@ -167,7 +167,7 @@ export class TupleActionStorageIndexedDbService extends TupleActionStorageServic
                         throw new IDBException("Put error");
                     });
 
-                    response.oncomplete = () => {
+                    response.onsuccess = () => {
                         resolve();
                     };
                 });

@@ -245,7 +245,7 @@ class TupleIndexedDbTransaction implements TupleStorageTransaction {
                 throw new IDBException("Put error");
             });
 
-            response.oncomplete = () => {
+            response.onsuccess = () => {
                 let timeTaken = now() - startTime;
                 console.log(`${dateStr()} IndexedDB: saveTuples`
                     + ` took ${timeTaken}ms (in thread)`
@@ -279,7 +279,7 @@ class TupleIndexedDbTransaction implements TupleStorageTransaction {
                 throw new IDBException("Put error");
             });
 
-            response.oncomplete = () => {
+            response.onsuccess = () => {
                 let timeTaken = now() - startTime;
                 console.log(`${dateStr()} IndexedDB: deleteTuples`
                     + ` took ${timeTaken}ms (in thread)`);
