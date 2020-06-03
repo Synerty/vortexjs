@@ -38,14 +38,17 @@ var TupleSelector = /** @class */ (function (_super) {
     }
     TupleSelector_1 = TupleSelector;
     TupleSelector.prototype.toOrderedJsonStr = function () {
+        var fieldJsonDict = this.toJsonField(this.selector);
         return UtilMisc_1.jsonOrderedStringify({
             'name': this.name,
-            'selector': this.selector
+            'selector': fieldJsonDict
         });
     };
     TupleSelector.fromJsonStr = function (jsonStr) {
-        var args = JSON.parse(jsonStr);
-        return new TupleSelector_1(args.name, args.selector);
+        var data = JSON.parse(jsonStr);
+        var newTs = new TupleSelector_1(data.name, {});
+        newTs.selector = newTs.fromJsonField(data.selector);
+        return newTs;
     };
     var TupleSelector_1;
     TupleSelector = TupleSelector_1 = __decorate([

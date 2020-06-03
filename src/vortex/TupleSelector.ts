@@ -16,14 +16,17 @@ export class TupleSelector extends Tuple {
     }
 
     toOrderedJsonStr(): string {
+        const fieldJsonDict = this.toJsonField(this.selector);
         return jsonOrderedStringify({
             'name': this.name,
-            'selector': this.selector
+            'selector': fieldJsonDict
         });
     }
 
     static fromJsonStr(jsonStr: string): TupleSelector {
-        let args = JSON.parse(jsonStr);
-        return new TupleSelector(args.name, args.selector);
+        const data = JSON.parse(jsonStr);
+        const newTs = new TupleSelector(data.name, {});
+        newTs.selector = newTs.fromJsonField(data.selector);
+        return newTs;
     }
 }
