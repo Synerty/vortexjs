@@ -9,7 +9,7 @@ export declare class PayloadEndpoint {
     private _lastPayloadDate;
     private _processLatestOnly;
     constructor(component: ComponentLifecycleEventEmitter, filter: IPayloadFilt, processLatestOnly?: boolean);
-    readonly observable: Observable<PayloadEnvelope>;
+    get observable(): Observable<PayloadEnvelope>;
     /**
      * Process Payload
      * Check if the payload is meant for us then process it.

@@ -59,7 +59,7 @@ export declare class TupleLoader {
     /**
      * @property: The tuple observable to subscribe to.
      */
-    readonly observable: Observable<Tuple[] | any[]>;
+    get observable(): Observable<Tuple[] | any[]>;
     filterChangeCheck(): void;
     /**
      * Load Loads the data from a server
