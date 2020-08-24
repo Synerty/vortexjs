@@ -78,3 +78,8 @@ jspm_packages
 # Leave these files in, they are needed for the npm publish
 #src/vortex/**/*.js
 #src/vortex/**/*.js.map
+
+# Yalc
+yalc.lock
+.yalc
+.yalc/
