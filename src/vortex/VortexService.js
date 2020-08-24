@@ -118,12 +118,13 @@ var VortexService = /** @class */ (function () {
     VortexService.prototype.createTupleLoader = function (component, filterUpdateCallable) {
         return new TupleLoader_1.TupleLoader(this.vortex, this.vortexStatusService, component, filterUpdateCallable, this.balloonMsg);
     };
-    var VortexService_1, _a;
+    var VortexService_1;
     VortexService.vortexUrl = '/vortex';
     VortexService.vortexClientName = '';
     VortexService = VortexService_1 = __decorate([
         core_1.Injectable(),
-        __metadata("design:paramtypes", [VortexStatusService_1.VortexStatusService, typeof (_a = typeof ng2_balloon_msg_1.Ng2BalloonMsgService !== "undefined" && ng2_balloon_msg_1.Ng2BalloonMsgService) === "function" ? _a : Object])
+        __metadata("design:paramtypes", [VortexStatusService_1.VortexStatusService,
+            ng2_balloon_msg_1.Ng2BalloonMsgService])
     ], VortexService);
     return VortexService;
 }());
