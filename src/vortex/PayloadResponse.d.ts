@@ -62,5 +62,5 @@ export declare class PayloadResponse {
      * @returns True if this payload has been tagged by a PayloadResponse class
      */
     static isResponsePayloadEnvelope(payloadEnvelope: PayloadEnvelope): boolean;
-    readonly status: any;
+    get status(this: any): any;
 }

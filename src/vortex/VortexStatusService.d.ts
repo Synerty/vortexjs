@@ -11,7 +11,7 @@ export declare class VortexStatusService {
     errors: Subject<string>;
     private wasOnline;
     constructor(zone: NgZone);
-    readonly snapshot: VortexStatusServiceSnapshot;
+    get snapshot(): VortexStatusServiceSnapshot;
     setOnline(online: boolean): void;
     queuedActionCount: Subject<number>;
     lastQueuedTupleActions: number;

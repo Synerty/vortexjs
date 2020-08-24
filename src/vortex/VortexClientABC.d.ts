@@ -20,10 +20,11 @@ export declare abstract class VortexClientABC {
      */
     constructor(vortexStatusService: VortexStatusService, url: string, vortexClientName: string);
     static makeUuid(): string;
-    readonly url: string;
-    readonly uuid: string;
-    readonly name: string;
-    closed: boolean;
+    get url(): string;
+    get uuid(): string;
+    get name(): string;
+    get closed(): boolean;
+    set closed(value: boolean);
     send(payloadEnvelope: PayloadEnvelope | PayloadEnvelope[]): Promise<void>;
     protected abstract sendVortexMsg(vortexMsgs: string[]): void;
     protected abstract shutdown(): void;

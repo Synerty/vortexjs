@@ -1,14 +1,12 @@
 import SerialiseUtil from "./SerialiseUtil";
 import Jsonable from "./Jsonable";
-import {deepEqual, dictKeysFromObject} from "./UtilMisc";
-
+import { deepEqual, dictKeysFromObject } from "./UtilMisc";
 
 export interface TupleChangeI {
     fieldName: string;
     oldValue: any;
     newValue: any;
 }
-
 
 /** Tuples implementation details.
  *
@@ -33,14 +31,7 @@ export class Tuple extends Jsonable {
         super();
         let self = this;
         self.__rst = SerialiseUtil.T_RAPUI_TUPLE;
-
-        // Instantiate the correct class
-        if (self._tupleType === undefined && TUPLE_TYPES[tupleType] !== undefined) {
-            self._tupleType = tupleType;
-            TUPLE_TYPES[tupleType].call(self);
-        } else {
-            self._tupleType = tupleType;
-        }
+        self._tupleType = tupleType;
     }
 
     _tupleName(): string {
@@ -61,23 +52,21 @@ export class Tuple extends Jsonable {
         for (let key of dictKeysFromObject(this)) {
             let old_ = this._ctrs[key];
             let new_ = this[key];
-            if (deepEqual(old_, new_))
-                continue;
+            if (deepEqual(old_, new_)) continue;
 
             changes.push({
-                "fieldName": key,
-                "oldValue": old_,
-                "newValue": new_
+                fieldName: key,
+                oldValue: old_,
+                newValue: new_,
             });
         }
 
         if (reset) {
-            this._setChangeTracking(true)
+            this._setChangeTracking(true);
         }
 
-        return changes
+        return changes;
     }
-
 }
 
 interface ITuple {

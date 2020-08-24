@@ -37,14 +37,7 @@ var Tuple = /** @class */ (function (_super) {
         _this._ctrs = null;
         var self = _this;
         self.__rst = SerialiseUtil_1.default.T_RAPUI_TUPLE;
-        // Instantiate the correct class
-        if (self._tupleType === undefined && exports.TUPLE_TYPES[tupleType] !== undefined) {
-            self._tupleType = tupleType;
-            exports.TUPLE_TYPES[tupleType].call(self);
-        }
-        else {
-            self._tupleType = tupleType;
-        }
+        self._tupleType = tupleType;
         return _this;
     }
     Tuple.prototype._tupleName = function () {
@@ -68,9 +61,9 @@ var Tuple = /** @class */ (function (_super) {
             if (UtilMisc_1.deepEqual(old_, new_))
                 continue;
             changes.push({
-                "fieldName": key,
-                "oldValue": old_,
-                "newValue": new_
+                fieldName: key,
+                oldValue: old_,
+                newValue: new_,
             });
         }
         if (reset) {
