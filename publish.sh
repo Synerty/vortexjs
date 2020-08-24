@@ -36,7 +36,7 @@ echo "Setting version to $VER"
 
 
 echo "Updating package version"
-npm version $VER
+npm version $VER --allow-same-version
 
 echo "Pushing to Git"
 git push

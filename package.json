@@ -26,7 +26,7 @@
     "@angular/common": "^9.1.12",
     "@angular/core": "^9.1.12",
     "@angular/router": "^9.1.12",
-    "@synerty/ng2-balloon-msg": "^0.6.0",
+    "@synerty/ng2-balloon-msg": "^9.0.0",
     "@types/deep-equal": "^0.0.30",
     "base-64": "^0.1.0",
     "core-js": "^3.6.5",
