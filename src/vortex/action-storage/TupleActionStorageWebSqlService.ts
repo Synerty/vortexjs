@@ -1,4 +1,4 @@
-import {Injectable} from "@angular/core";
+import {Inject, Injectable} from '@angular/core';
 import {TupleActionABC} from "../TupleAction";
 import {WebSqlFactoryService, WebSqlService} from "../../websql/WebSqlService";
 import {Payload} from "../Payload";
@@ -17,12 +17,13 @@ const databaseSchema = [
         UNIQUE (scope, uuid)
      )`];
 
-
 @Injectable()
 export class TupleActionStorageWebSqlService extends TupleActionStorageServiceABC {
     private webSql: WebSqlService;
 
-    constructor(private webSqlFactory: WebSqlFactoryService) {
+    constructor(
+        @Inject(WebSqlFactoryService) private webSqlFactory,
+    ) {
         super();
 
         this.webSql = webSqlFactory.createWebSql(datbaseName, databaseSchema);

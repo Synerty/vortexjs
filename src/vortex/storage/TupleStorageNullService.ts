@@ -1,6 +1,6 @@
 import {TupleSelector} from "../TupleSelector";
-import {Tuple} from "../Tuple";
-import {Injectable} from "@angular/core";
+import {Tuple} from "../exports";
+import {Inject, Injectable} from '@angular/core';
 import {TupleStorageServiceABC, TupleStorageTransaction} from "./TupleStorageServiceABC";
 import {TupleOfflineStorageNameService} from "./TupleOfflineStorageNameService";
 import {dateStr} from "../UtilMisc";
@@ -9,7 +9,9 @@ import {dateStr} from "../UtilMisc";
 
 @Injectable()
 export class TupleStorageNullService extends TupleStorageServiceABC {
-    constructor(name: TupleOfflineStorageNameService) {
+    constructor(
+        @Inject(TupleOfflineStorageNameService) public name
+    ) {
         super(name);
     }
 

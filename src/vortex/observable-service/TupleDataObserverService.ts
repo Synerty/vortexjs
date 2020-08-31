@@ -1,6 +1,6 @@
-import {Injectable} from "@angular/core";
+import {Inject, Injectable} from '@angular/core';
 import {Observable, Subject} from "rxjs";
-import {Tuple} from "../Tuple";
+import {Tuple} from "../exports";
 import {TupleSelector} from "../TupleSelector";
 import {
     TupleDataObservableNameService,
@@ -9,12 +9,12 @@ import {
 
 export {TupleDataObservableNameService} from "./TupleDataOfflineObserverService";
 
-
 @Injectable()
 export class TupleDataObserverService {
-
-    constructor(private delegate: TupleDataOfflineObserverService,
-                private tupleDataObservableName: TupleDataObservableNameService) {
+    constructor(
+        @Inject(TupleDataOfflineObserverService) private delegate,
+        @Inject(TupleDataObservableNameService) private tupleDataObservableName,
+    ) {
         let delegateName = delegate._nameService();
         if (!this.tupleDataObservableName.equals(delegateName)) {
             throw new Error("ERROR: The TupleDataObserverService was injected"
@@ -23,14 +23,11 @@ export class TupleDataObserverService {
                 + " ensure TupleDataOfflineObserverService is provided first."
             );
         }
-
-
     }
 
     pollForTuples(tupleSelector: TupleSelector, useCache: boolean = true): Promise<Tuple[]> {
         return this.delegate.pollForTuples(tupleSelector, useCache);
     }
-
 
     /** Subscribe to Tuple Selector
      *

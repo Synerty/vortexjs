@@ -4,9 +4,9 @@ import {
     WebSqlTransaction
 } from "../../websql/WebSqlService";
 import {TupleSelector} from "../TupleSelector";
-import {Tuple} from "../Tuple";
+import {Tuple} from "../exports";
 import {Payload} from "../Payload";
-import {Injectable} from "@angular/core";
+import {Inject, Injectable} from '@angular/core';
 import {TupleStorageServiceABC, TupleStorageTransaction} from "./TupleStorageServiceABC";
 import {TupleOfflineStorageNameService} from "./TupleOfflineStorageNameService";
 import {dateStr} from "../UtilMisc";
@@ -51,8 +51,10 @@ export class TupleStorageWebSqlService extends TupleStorageServiceABC {
     private webSql: WebSqlService;
     private openInProgressPromise: Promise<void> | null = null;
 
-    constructor(webSqlFactory: WebSqlFactoryService,
-                name: TupleOfflineStorageNameService) {
+    constructor(
+        @Inject(WebSqlFactoryService) private webSqlFactory,
+        @Inject(TupleOfflineStorageNameService) public name,
+    ) {
         super(name);
         this.webSql = webSqlFactory.createWebSql(this.dbName, [createTable]);
     }

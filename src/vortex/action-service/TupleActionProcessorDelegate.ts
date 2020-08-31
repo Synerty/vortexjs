@@ -1,5 +1,5 @@
 import {TupleActionABC} from "../TupleAction";
-import {Tuple} from "../Tuple";
+import {Tuple} from "../exports";
 
 
 export abstract class TupleActionProcessorDelegateABC {

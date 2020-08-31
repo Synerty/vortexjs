@@ -1,4 +1,4 @@
-import {addTupleType, Tuple, TupleChangeI} from "./Tuple";
+import {addTupleType, Tuple, TupleChangeI} from "./exports";
 import {TupleSelector} from "./TupleSelector";
 
 

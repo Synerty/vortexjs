@@ -1,10 +1,10 @@
-import SerialiseUtil from "./SerialiseUtil";
-import Jsonable from "./Jsonable";
+import {SerialiseUtil} from "./exports";
 import {assert} from "./UtilMisc";
 import "./UtilArray";
 import {PayloadDelegateABC} from "./payload/PayloadDelegateABC";
 import {PayloadDelegateInMainWeb} from "./payload/PayloadDelegateInMainWeb";
 import {Payload} from "./Payload";
+import {Jsonable} from './exports';
 
 
 // ----------------------------------------------------------------------------
@@ -93,8 +93,9 @@ export class PayloadEnvelope extends Jsonable {
     }
 
     static fromVortexMsg(vortexStr: string): Promise<PayloadEnvelope> {
-        return PayloadEnvelope.workerDelegate.decodeEnvelope(vortexStr)
+        const result = PayloadEnvelope.workerDelegate.decodeEnvelope(vortexStr)
             .then((jsonStr) => new PayloadEnvelope()._fromJson(jsonStr));
+        return result;
     }
 
     toVortexMsg(): Promise<string> {

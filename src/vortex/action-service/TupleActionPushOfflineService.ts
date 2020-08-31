@@ -1,7 +1,7 @@
-import {Injectable} from "@angular/core";
+import {Inject, Injectable} from '@angular/core';
 import {VortexStatusService} from "../VortexStatusService";
 import {TupleActionABC} from "../TupleAction";
-import {Tuple} from "../Tuple";
+import {Tuple} from "../exports";
 import {
     TupleActionPushNameService,
     TupleActionPushService
@@ -11,15 +11,14 @@ import {TupleActionPushOfflineSingletonService} from "./TupleActionPushOfflineSi
 
 @Injectable()
 export class TupleActionPushOfflineService extends TupleActionPushService {
-
-    constructor(tupleActionName: TupleActionPushNameService,
-                vortexService: VortexService,
-                vortexStatus: VortexStatusService,
-                private singleton: TupleActionPushOfflineSingletonService) {
+    constructor(
+        @Inject(TupleActionPushNameService) public tupleActionName,
+        @Inject(VortexService) public vortexService,
+        @Inject(VortexStatusService) public vortexStatus,
+        @Inject(TupleActionPushOfflineSingletonService) public singleton,
+    ) {
         super(tupleActionName, vortexService, vortexStatus);
-
     }
-
 
     pushAction(tupleAction: TupleActionABC): Promise<Tuple[]> {
         let payload = this.makePayload(tupleAction);
@@ -27,6 +26,5 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
             .queueAction(this.tupleActionProcessorName.name, tupleAction, payload)
             .then(() => []);
     }
-
 }
 

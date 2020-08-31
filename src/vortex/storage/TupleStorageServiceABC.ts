@@ -1,5 +1,5 @@
-import {Injectable} from "@angular/core";
-import {Tuple} from "../Tuple";
+import {Inject, Injectable} from '@angular/core';
+import {Tuple} from "../exports";
 import {TupleSelector} from "../TupleSelector";
 import {TupleOfflineStorageNameService} from "./TupleOfflineStorageNameService";
 
@@ -25,15 +25,13 @@ export interface TupleStorageTransaction {
     close(): Promise<void>;
 }
 
-
-@Injectable()
 export abstract class TupleStorageServiceABC {
-
     protected dbName: string;
 
-    constructor(name: TupleOfflineStorageNameService) {
+    constructor(
+        protected name: TupleOfflineStorageNameService
+    ) {
         this.dbName = name.name;
-
     }
 
     abstract open(): Promise<void>;
@@ -49,5 +47,4 @@ export abstract class TupleStorageServiceABC {
     // Considering that fact, The "TupleTransaction" api seems useless.
     // See TupleIndexedDbTransaction.saveTuples
     abstract transaction(forWrite: boolean): Promise<TupleStorageTransaction>;
-
 }

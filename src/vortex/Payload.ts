@@ -1,11 +1,9 @@
-import {Tuple} from "./Tuple";
-import SerialiseUtil from "./SerialiseUtil";
-import Jsonable from "./Jsonable";
 import {assert} from "./UtilMisc";
 import "./UtilArray";
 import {PayloadDelegateInMainWeb} from "./payload/PayloadDelegateInMainWeb";
 import {PayloadDelegateABC} from "./payload/PayloadDelegateABC";
-
+import {PayloadEnvelope} from './PayloadEnvelope'
+import {SerialiseUtil, Jsonable, Tuple} from './exports';
 
 // ----------------------------------------------------------------------------
 // Types
@@ -77,8 +75,9 @@ export class Payload extends Jsonable {
     }
 
     static fromEncodedPayload(encodedPayloadStr: string): Promise<Payload> {
-        return Payload.workerDelegate.decodeAndInflate(encodedPayloadStr)
-            .then((jsonStr) => new Payload()._fromJson(jsonStr));
+        const result = Payload.workerDelegate.decodeAndInflate(encodedPayloadStr)
+            .then((jsonStr) => new Payload()._fromJson(jsonStr))
+        return result;
     }
 
     toEncodedPayload(): Promise<string> {
@@ -87,9 +86,8 @@ export class Payload extends Jsonable {
     }
 
     makePayloadEnvelope(): Promise<any> {
-        let PayloadEnvelopeMod = require("./PayloadEnvelope");
         return this.toEncodedPayload()
-            .then(encodedThis => new PayloadEnvelopeMod.PayloadEnvelope(
+            .then(encodedThis => new PayloadEnvelope(
                 this.filt,
                 encodedThis,
                 this.date

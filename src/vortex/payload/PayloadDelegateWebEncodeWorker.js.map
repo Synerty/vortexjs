@@ -1,1 +1,0 @@
-{"version":3,"file":"PayloadDelegateWebEncodeWorker.js","sourceRoot":"","sources":["PayloadDelegateWebEncodeWorker.ts"],"names":[],"mappings":";;AAAA,2BAA6B;AAC7B,+DAAiE;AAEjE,qBAAqB,CAAC,UAAC,WAAmB;IACtC,IAAI,cAAc,GAAG,IAAI,CAAC,OAAO,CAAC,WAAW,EAAE,EAAC,EAAE,EAAE,QAAQ,EAAC,CAAC,CAAC;IAC/D,OAAO,IAAI,CAAC,cAAc,CAAC,CAAC;AAChC,CAAC,CAAC,CAAC"}

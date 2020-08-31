@@ -1,6 +1,5 @@
-import SerialiseUtil from "./SerialiseUtil";
-import Jsonable from "./Jsonable";
-import { deepEqual, dictKeysFromObject } from "./UtilMisc";
+import {deepEqual, dictKeysFromObject} from './UtilMisc';
+import {SerialiseUtil, addJsonableType, Jsonable} from './exports';
 
 export interface TupleChangeI {
     fieldName: string;
@@ -18,6 +17,7 @@ export interface TupleChangeI {
  * populated fields exist in the tuples when it deserialises it.
  *
  */
+@addJsonableType(SerialiseUtil.T_RAPUI_TUPLE)
 export class Tuple extends Jsonable {
     public _tupleType: string;
 
@@ -32,6 +32,15 @@ export class Tuple extends Jsonable {
         let self = this;
         self.__rst = SerialiseUtil.T_RAPUI_TUPLE;
         self._tupleType = tupleType;
+    }
+
+    static create(tupleType: string) {
+        if (TUPLE_TYPES[tupleType] == null) {
+            return new Tuple(tupleType);
+        } else {
+            // Tuples set their own types, don't pass anything to the constructor
+            return new TUPLE_TYPES[tupleType]();
+        }
     }
 
     _tupleName(): string {
@@ -52,7 +61,9 @@ export class Tuple extends Jsonable {
         for (let key of dictKeysFromObject(this)) {
             let old_ = this._ctrs[key];
             let new_ = this[key];
-            if (deepEqual(old_, new_)) continue;
+            if (deepEqual(old_, new_)) {
+                continue;
+            }
 
             changes.push({
                 fieldName: key,
@@ -70,7 +81,7 @@ export class Tuple extends Jsonable {
 }
 
 interface ITuple {
-    new (name: string | null): Tuple;
+    new(name: string | null): Tuple;
 }
 
 export let TUPLE_TYPES = {};

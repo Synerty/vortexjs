@@ -1,4 +1,4 @@
-import {Injectable} from "@angular/core";
+import {Inject, Injectable} from '@angular/core';
 
 
 @Injectable()
@@ -30,9 +30,10 @@ export abstract class WebSqlService {
     protected db: any;
     protected schemaInstalled: boolean = false;
 
-    constructor(protected dbName: string, protected dbSchema: string[]) {
-
-    }
+    constructor(
+        @Inject("") protected dbName: string,
+        @Inject([]) protected dbSchema: string[]
+    ) { }
 
     protected installSchema(): Promise<void> {
         // Open Transaction promise

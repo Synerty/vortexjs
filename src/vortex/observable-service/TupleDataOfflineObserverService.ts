@@ -1,8 +1,8 @@
-import {Injectable} from "@angular/core";
+import {Inject, Injectable} from '@angular/core';
 import {Observable, Subject} from "rxjs";
 import {filter, takeUntil} from "rxjs/operators";
 import {VortexService} from "../VortexService";
-import {Tuple} from "../Tuple";
+import {Tuple} from "../exports";
 import {TupleSelector} from "../TupleSelector";
 import {IPayloadFilt, Payload} from "../Payload";
 import {PayloadEndpoint} from "../PayloadEndpoint";
@@ -14,11 +14,11 @@ import * as moment from "moment";
 import {PayloadEnvelope} from "../PayloadEnvelope";
 import {TupleOfflineStorageService} from "../storage/TupleOfflineStorageService";
 
-@Injectable()
 export class TupleDataObservableNameService {
-    constructor(public name: string, public additionalFilt = {}) {
-
-    }
+    constructor(
+        public name: string,
+        public additionalFilt: any = {}
+    ) { }
 
     equals(other: TupleDataObservableNameService): boolean {
         if (other == null)
@@ -32,7 +32,6 @@ export class TupleDataObservableNameService {
         return `${this.name}:${JSON.stringify(this.additionalFilt)}`;
     }
 }
-
 
 export class CachedSubscribedData {
     subject: Subject<Tuple[]> = new Subject<Tuple[]>();
@@ -109,15 +108,16 @@ export class CachedSubscribedData {
 
 @Injectable()
 export class TupleDataOfflineObserverService extends ComponentLifecycleEventEmitter {
-
     private endpoint: PayloadEndpoint;
     private filt: IPayloadFilt;
     private cacheByTupleSelector: { [tupleSelector: string]: CachedSubscribedData } = {};
 
-    constructor(private vortexService: VortexService,
-                private vortexStatusService: VortexStatusService,
-                private tupleDataObservableName: TupleDataObservableNameService,
-                private tupleOfflineStorageService: TupleOfflineStorageService) {
+    constructor(
+        @Inject(VortexService) private vortexService,
+        @Inject(VortexStatusService) private vortexStatusService,
+        @Inject(TupleDataObservableNameService) private tupleDataObservableName,
+        @Inject(TupleOfflineStorageService) private tupleOfflineStorageService,
+    ) {
         super();
 
         this.filt = extend({

@@ -1,22 +1,15 @@
-import {Injectable} from "@angular/core";
+import {Inject, Injectable} from '@angular/core';
 import {dateStr} from "../UtilMisc";
 import {TupleStorageServiceABC, TupleStorageTransaction} from "./TupleStorageServiceABC";
 import {TupleOfflineStorageNameService} from "./TupleOfflineStorageNameService";
 import {TupleSelector} from "../TupleSelector";
-import {Tuple} from "../Tuple";
+import {Tuple} from "../exports";
 import {Payload} from "../Payload";
 import {indexedDB, addIndexedDbHandlers, IDBException} from "./IndexedDb";
-
-
-// ----------------------------------------------------------------------------
-
-
-// ----------------------------------------------------------------------------
 
 function now(): any {
     return new Date();
 }
-
 
 const TUPLE_STORE = "tuples";
 
@@ -36,11 +29,10 @@ export class TupleStorageIndexedDbService extends TupleStorageServiceABC {
     db: any;
     private openInProgressPromise: Promise<void> | null = null;
 
-
-    constructor(name: TupleOfflineStorageNameService) {
+    constructor(
+        @Inject(TupleOfflineStorageNameService) public name
+    ) {
         super(name);
-
-
     }
 
     // ----------------------------------------------------------------------------

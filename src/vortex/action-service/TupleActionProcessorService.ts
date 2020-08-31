@@ -4,15 +4,14 @@ import {assert, extend} from "../UtilMisc";
 import {VortexService} from "../VortexService";
 import {ComponentLifecycleEventEmitter} from "../ComponentLifecycleEventEmitter";
 import {VortexStatusService} from "../VortexStatusService";
-import {Injectable} from "@angular/core";
+import {Inject, Injectable} from '@angular/core';
 import {PayloadEnvelope} from "../PayloadEnvelope";
 
-
-@Injectable()
 export class TupleActionProcessorNameService {
-    constructor(public name: string, public additionalFilt = {}) {
-
-    }
+    constructor(
+        public name: string,
+        public additionalFilt: any = {}
+    ) { }
 }
 
 @Injectable()
@@ -20,11 +19,13 @@ export class TupleActionProcessorService extends ComponentLifecycleEventEmitter 
     private _tupleProcessorsByTupleName = {};
     private defaultDelegate: null | TupleActionProcessorDelegateABC = null;
 
-
-    constructor(private tupleActionProcessorName: TupleActionProcessorNameService,
-                private vortexService: VortexService,
-                private vortexStatusService: VortexStatusService) {
+    constructor(
+        @Inject(TupleActionProcessorNameService) private tupleActionProcessorName,
+        @Inject(VortexService) private vortexService,
+        @Inject(VortexStatusService) private vortexStatusService,
+    ) {
         super();
+
         let filt = extend({
             name: tupleActionProcessorName.name,
             key: "tupleActionProcessorName"
@@ -37,7 +38,6 @@ export class TupleActionProcessorService extends ComponentLifecycleEventEmitter 
                     .then((payload: Payload) => this._process(payload))
                     .catch(e => console.log(`TupleActionProcessorService:Error decoding payload ${e}`));
             });
-
     }
 
     /** Add Tuple Action Processor Delegate
@@ -63,7 +63,6 @@ export class TupleActionProcessorService extends ComponentLifecycleEventEmitter 
     setDefaultDelegate(delegate: TupleActionProcessorDelegateABC) {
         this.defaultDelegate = delegate;
     }
-
 
     /** Process the Payload / Tuple Action
      *
@@ -96,13 +95,11 @@ export class TupleActionProcessorService extends ComponentLifecycleEventEmitter 
         promise.catch(err => this.errback(err, payload.filt, tupleName));
     }
 
-
     private callback(tuples, replyFilt: {}, tupleName: string) {
         let payload = new Payload(replyFilt, tuples);
 
         this.vortexService.sendPayload(payload);
     }
-
 
     private errback(err: string, replyFilt: {}, tupleName: string) {
 
@@ -115,5 +112,4 @@ export class TupleActionProcessorService extends ComponentLifecycleEventEmitter 
 
         this.vortexService.sendPayloadEnvelope(payloadEnvelope);
     }
-
 }

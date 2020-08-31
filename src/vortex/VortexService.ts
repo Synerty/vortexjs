@@ -1,6 +1,6 @@
 import {IPayloadFilt, Payload} from "./Payload";
-import {Injectable} from "@angular/core";
-import {Tuple} from "./Tuple";
+import {Injectable, Inject} from "@angular/core";
+import {Tuple} from "./exports";
 import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
 import {Observable} from "rxjs";
 import {PayloadEndpoint} from "./PayloadEndpoint";
@@ -18,9 +18,10 @@ export class VortexService {
     private static vortexUrl: string | null  = '/vortex';
     private static vortexClientName: string = '';
 
-    constructor(private vortexStatusService: VortexStatusService,
-                private balloonMsg: Ng2BalloonMsgService) {
-
+    constructor(
+        @Inject(VortexStatusService) private vortexStatusService,
+        @Inject(Ng2BalloonMsgService) private balloonMsg,
+    ) {
         this.reconnect();
     }
 

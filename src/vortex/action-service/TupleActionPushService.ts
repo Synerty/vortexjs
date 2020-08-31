@@ -1,29 +1,27 @@
-import {Injectable} from '@angular/core';
+import {Inject, Injectable, forwardRef} from '@angular/core';
 import {VortexStatusService} from '../VortexStatusService';
 import {TupleActionABC} from '../TupleAction';
-import {Tuple} from '../Tuple';
+import {Tuple} from '../exports';
 import {VortexService} from '../VortexService';
 import {PayloadResponse} from '../PayloadResponse';
 import {Payload} from '../Payload';
 import {extend} from '../UtilMisc';
 import {PayloadEnvelope} from '../PayloadEnvelope';
 
-
-@Injectable()
 export class TupleActionPushNameService {
-    constructor(public name: string, public additionalFilt = {}) {
-
-    }
+    constructor(
+        public name: string,
+        public additionalFilt: any = {}
+    ) { }
 }
-
 
 @Injectable()
 export class TupleActionPushService {
-
-    constructor(protected tupleActionProcessorName: TupleActionPushNameService,
-                protected vortexService: VortexService,
-                protected vortexStatus: VortexStatusService) {
-    }
+    constructor(
+        @Inject(forwardRef(() => TupleActionPushNameService)) public tupleActionProcessorName,
+        @Inject(forwardRef(() => VortexService)) public vortexService,
+        @Inject(forwardRef(() => VortexStatusService)) public vortexStatus,
+    ) { }
 
     /** Push Action
      *
@@ -52,7 +50,6 @@ export class TupleActionPushService {
         promise = promise.then((payload: Payload) => payload.tuples);
 
         return promise;
-
     }
 
     /** Make Payload
@@ -76,5 +73,4 @@ export class TupleActionPushService {
 
         return payload;
     }
-
 }

@@ -1,4 +1,4 @@
-import {Injectable} from "@angular/core";
+import {Inject, Injectable} from '@angular/core';
 import {VortexStatusService} from "../VortexStatusService";
 import {TupleActionABC} from "../TupleAction";
 import {Payload} from "../Payload";
@@ -10,7 +10,6 @@ import {TupleActionStorageServiceABC} from "../action-storage/TupleActionStorage
 import {PayloadEnvelope} from "../PayloadEnvelope";
 import {filter} from "rxjs/operators";
 
-
 @Injectable()
 export class TupleActionPushOfflineSingletonService {
     private storage: TupleActionStorageServiceABC;
@@ -21,10 +20,11 @@ export class TupleActionPushOfflineSingletonService {
     private SERVER_PROCESSING_TIMEOUT = 5000;// milliseconds
     private SEND_FAIL_RETRY_BACKOFF = 5000; // milliseconds
 
-    constructor(private vortexService: VortexService,
-                private vortexStatus: VortexStatusService,
-                factoryService: TupleStorageFactoryService) {
-
+    constructor(
+        @Inject(VortexService) private vortexService,
+        @Inject(VortexStatusService) private vortexStatus,
+        @Inject(TupleStorageFactoryService) private factoryService,
+    ) {
         this.storage = factoryService.createActionStorage();
 
         // This is a global service, there is no point unsubscribing it
@@ -138,6 +138,5 @@ export class TupleActionPushOfflineSingletonService {
                 return null; // Handle the error
             });
     }
-
 }
 

@@ -1,6 +1,6 @@
 import {TupleSelector} from "../TupleSelector";
-import {Tuple} from "../Tuple";
-import {Injectable} from "@angular/core";
+import {Tuple} from "../exports";
+import {Inject, Injectable} from '@angular/core';
 import {TupleStorageFactoryService} from "../storage-factory/TupleStorageFactoryService";
 import {
     TupleStorageServiceABC,
@@ -13,10 +13,11 @@ import {TupleOfflineStorageNameService} from "./TupleOfflineStorageNameService";
 export class TupleOfflineStorageService {
     private storage: TupleStorageServiceABC;
 
-    constructor(storageFactory: TupleStorageFactoryService,
-                tupleOfflineStorageServiceName: TupleOfflineStorageNameService) {
+    constructor(
+        @Inject(TupleStorageFactoryService) private storageFactory,
+        @Inject(TupleOfflineStorageNameService) private tupleOfflineStorageServiceName
+    ) {
         this.storage = storageFactory.create(tupleOfflineStorageServiceName);
-
     }
 
     transaction(forWrite: boolean): Promise<TupleStorageTransaction> {

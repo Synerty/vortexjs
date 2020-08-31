@@ -1,4 +1,4 @@
-import {Injectable, NgZone} from "@angular/core";
+import {Inject, Injectable, NgZone} from '@angular/core';
 import {Subject} from "rxjs";
 import {dateStr, bind} from "./UtilMisc";
 
@@ -21,7 +21,7 @@ export class VortexStatusService {
 
     private wasOnline: boolean = false;
 
-    constructor(private zone: NgZone) {
+    constructor(@Inject(NgZone) private zone) {
 
     }
 

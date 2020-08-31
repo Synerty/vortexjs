@@ -15,7 +15,6 @@ function random(): number {
 
 @Injectable()
 export class WebSqlBrowserFactoryService implements WebSqlFactoryService {
-
     hasStorageLimitations(): boolean {
         // iOS safari supports up to a 50mb limit, MAX.
         // In this case, IndexedDB should be used.
@@ -47,10 +46,11 @@ export class WDBException {
     }
 }
 
-@Injectable()
 class WebSqlBrowserAdaptorService extends WebSqlService {
-
-    constructor(protected dbName: string, protected dbSchema: string[]) {
+    constructor(
+        protected dbName: string,
+        protected dbSchema: string[],
+    ) {
         super(dbName, dbSchema);
     }
 

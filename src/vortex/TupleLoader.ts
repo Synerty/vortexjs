@@ -4,7 +4,7 @@ import {PayloadEndpoint} from "./PayloadEndpoint";
 import {EventEmitter} from "@angular/core";
 import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
 import {SERVER_RESPONSE_TIMEOUT, VortexClientABC} from "./VortexClientABC";
-import {Tuple} from "./Tuple";
+import {Tuple} from "./exports";
 import {plDeleteKey} from "./PayloadFilterKeys";
 import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
 import {bind, deepEqual, extend} from "./UtilMisc";
@@ -66,7 +66,7 @@ export class TupleLoader {
     private lastPayloadFilt: IPayloadFilt | null = null;
     private lastTuples: any[] | Tuple[] | null = null;
 
-    private timer: number | null = null;
+    private timer: any | number | null = null;
 
     private lastPromise: IPromiseCallbacks | null = null;
 

@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {WebSqlFactoryService} from '../../websql/WebSqlService';
 import {TupleStorageServiceABC} from '../storage/TupleStorageServiceABC';
 import {TupleOfflineStorageNameService} from '../storage/TupleOfflineStorageNameService';
@@ -15,7 +15,9 @@ import {TupleActionStorageIndexedDbService} from '../action-storage/TupleActionS
 
 @Injectable()
 export class TupleStorageFactoryServiceWeb extends TupleStorageFactoryService {
-    constructor(webSqlFactory: WebSqlFactoryService) {
+    constructor(
+        @Inject(WebSqlFactoryService) public webSqlFactory
+    ) {
         super(webSqlFactory);
     }
 

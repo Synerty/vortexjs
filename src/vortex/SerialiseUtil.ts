@@ -5,14 +5,10 @@
  */
 
 import {dictKeysFromObject} from "./UtilMisc";
-
-
 import * as moment from "moment";
 let base64 = require('base-64');
 
-
-export default class SerialiseUtil {
-
+export class SerialiseUtil {
     public static readonly T_RAPUI_TUPLE = "rt";
     public static readonly T_RAPUI_PAYLOAD = "rp";
     public static readonly T_RAPUI_PAYLOAD_ENVELOPE = "rpe";
@@ -25,15 +21,11 @@ export default class SerialiseUtil {
     public static readonly T_DATETIME = "datetime";
     public static readonly T_DICT = "dict";
     public static readonly T_LIST = "list";
-
     public static readonly V_NULL = "null";
     public static readonly V_TRUE = "1";
     public static readonly V_FALSE = "0";
-
     public static readonly ISO8601_PY = "%Y-%m-%d %H:%M:%S.%f%z";
-
     public static readonly ISO8601 = "YYYY-MM-DD HH:mm:ss.SSSSSSZZ";
-
 
     // Rapui Serialised Type -  Shortened for memory constraints.
     protected __rst: string;
@@ -80,17 +72,13 @@ export default class SerialiseUtil {
         if (value == null)
             return SerialiseUtil.V_NULL;
 
-        let TupleMod = require("./Tuple");
-        let PayloadMod = require("./Payload");
-        let PayloadEnvelopeMod = require("./PayloadEnvelope");
-
-        if (value instanceof TupleMod.Tuple)
+        if (value.__rst === SerialiseUtil.T_RAPUI_TUPLE)
             return SerialiseUtil.T_RAPUI_TUPLE;
 
-        if (value instanceof PayloadMod.Payload)
+        if (value.__rst === SerialiseUtil.T_RAPUI_PAYLOAD)
             return SerialiseUtil.T_RAPUI_PAYLOAD;
 
-        if (value instanceof PayloadEnvelopeMod.PayloadEnvelope)
+        if (value.__rst === SerialiseUtil.T_RAPUI_PAYLOAD_ENVELOPE)
             return SerialiseUtil.T_RAPUI_PAYLOAD_ENVELOPE;
 
         if (value instanceof Date)
@@ -113,7 +101,6 @@ export default class SerialiseUtil {
 
         alert("toRapuiType - UNKNOWN TYPE");
     }
-
 
     rapuiEquals(obj1: any, obj2: any,
                 obj1FieldNames: string[],
@@ -179,7 +166,6 @@ export default class SerialiseUtil {
 
             }
         }
-
         return true;
     }
 }
