@@ -5,6 +5,9 @@ PACKAGE="vortexjs"
 set -o nounset
 set -o errexit
 
+echo "Compiling TypeScript"
+tsc || true
+
 if [ -n "$(git status --porcelain)" ]; then
     echo "There are uncomitted changes, please make sure all changes are comitted" >&2
     exit 1
@@ -39,8 +42,11 @@ echo "Pushing to Git"
 git push
 git push --tags
 
+# Build the angular package
+npm run packagr
+
 echo "Publishing to NPM"
-npm publish --access=public
+(cd dist && npm publish --access=public)
 
 
 echo
