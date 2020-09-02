@@ -12,13 +12,13 @@ https://github.com/Synerty/vortexpy
 
 # Example Usage
 
-There are some unit tests under src/app/[dir], these may be usefull for further reference.
+There are some unit tests under src/app/[dir], these may be useful for further reference.
 
 ## Add the providers to the main app module
 
     
     import {VortexService} from "@synerty/vortex";
-    import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
+    import {BalloonMsgService} from "@synerty/peek-plugin-base-js";
     
     ...
     
@@ -26,19 +26,19 @@ There are some unit tests under src/app/[dir], these may be usefull for further 
                 ...
             imports: [
                 ...
-                Ng2BalloonMsgModule
+                BalloonMsgService
                 ...
             ],
             ...
-            providers: [VortexService, Ng2BalloonMsgService]
+            providers: [VortexService, BalloonMsgService]
             ...
 
-## Add ng2-balloon-msg tag
+## Add the balloon-msg-queue-component tag
 
-Add the `ng2-balloon-msg` to your app component HTML file. This allows TupleLoader to
-diplay balloon style messages to the user.
+Add the `balloon-msg-queue-component` to your app component HTML file. This allows TupleLoader to
+display balloon style messages to the user.
 
-    <ng2-balloon-msg></ng2-balloon-msg>
+    <balloon-msg-queue-component></balloon-msg-queue-component>
 
 
 ## Send tuples to the server
