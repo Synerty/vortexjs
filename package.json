@@ -1,7 +1,7 @@
 {
   "name": "@synerty/vortexjs",
-  "version": "1.4.0",
-  "description": "Custom observable data serialisation and routing based on Angular2",
+  "version": "2.0.0",
+  "description": "Custom observable data serialisation and routing based on Angular 2+",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -26,7 +26,7 @@
     "@angular/common": "^9.1.12",
     "@angular/core": "^9.1.12",
     "@angular/router": "^9.1.12",
-    "@synerty/ng2-balloon-msg": "^9.0.0",
+    "@synerty/peek-plugin-base-js": "^9.1.0",
     "@types/deep-equal": "^0.0.30",
     "base-64": "^0.1.0",
     "core-js": "^3.6.5",
@@ -38,6 +38,13 @@
     "rxjs": "^6.5.2"
   },
   "devDependencies": {
-    "@types/node": "^14.0.27"
+    "@angular/compiler": "^9.1.12",
+    "@angular/compiler-cli": "^9.1.12",
+    "@types/node": "^14.0.27",
+    "ng-packagr": "10.1.0",
+    "typescript": "3.8.3"
+  },
+  "scripts": {
+    "packagr": "ng-packagr -p ng-package.json"
   }
 }

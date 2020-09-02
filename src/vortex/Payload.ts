@@ -1,11 +1,9 @@
-import {Tuple} from "./Tuple";
-import SerialiseUtil from "./SerialiseUtil";
-import Jsonable from "./Jsonable";
-import {assert} from "./UtilMisc";
-import "./UtilArray";
-import {PayloadDelegateInMainWeb} from "./payload/PayloadDelegateInMainWeb";
-import {PayloadDelegateABC} from "./payload/PayloadDelegateABC";
-
+import { assert } from "./UtilMisc"
+import "./UtilArray"
+import { PayloadDelegateInMainWeb } from "./payload/PayloadDelegateInMainWeb"
+import { PayloadDelegateABC } from "./payload/PayloadDelegateABC"
+import { PayloadEnvelope } from "./PayloadEnvelope"
+import { Jsonable, SerialiseUtil, Tuple } from "./exports"
 
 // ----------------------------------------------------------------------------
 // Types
@@ -16,7 +14,7 @@ import {PayloadDelegateABC} from "./payload/PayloadDelegateABC";
  */
 export interface IPayloadFilt {
     key: string;
-
+    
     [more: string]: any;
 }
 
@@ -28,13 +26,13 @@ export interface IPayloadFilt {
  * This class is serialised and transferred over the vortex to the server.
  */
 export class Payload extends Jsonable {
-
-    private static workerDelegate = new PayloadDelegateInMainWeb();
-
-    filt: {};
-    tuples: Array<Tuple | any>;
-    date: Date | null = null;
-
+    
+    private static workerDelegate = new PayloadDelegateInMainWeb()
+    
+    filt: {}
+    tuples: Array<Tuple | any>
+    date: Date | null = null
+    
     /**
      * Payload
      * This class is serialised and tranferred over the vortex to the server.
@@ -43,57 +41,59 @@ export class Payload extends Jsonable {
      * different location @depreciated
      * @param date The date for this envelope, it should match the payload.
      */
-    constructor(filt: {} = {},
-                tuples: Array<Tuple | any> = [],
-                date: Date | null = null) {
-        super();
-
-        this.__rst = SerialiseUtil.T_RAPUI_PAYLOAD;
-
-        this.filt = filt;
-        this.tuples = tuples;
-        this.date = date == null ? new Date() : this.date;
-
+    constructor(
+        filt: {} = {},
+        tuples: Array<Tuple | any> = [],
+        date: Date | null = null
+    ) {
+        super()
+        
+        this.__rst = SerialiseUtil.T_RAPUI_PAYLOAD
+        
+        this.filt = filt
+        this.tuples = tuples
+        this.date = date == null ? new Date() : this.date
+        
     }
-
+    
     static setWorkerDelegate(delegate: PayloadDelegateABC) {
-        Payload.workerDelegate = delegate;
+        Payload.workerDelegate = delegate
     }
-
+    
     // -------------------------------------------
     // JSON Related method
-
+    
     private _fromJson(jsonStr: string): Promise<Payload> {
         return Promise.resolve(JSON.parse(jsonStr))
             .then((jsonDict) => {
-                assert(jsonDict[Jsonable.JSON_CLASS_TYPE] === this.__rst);
-                return this.fromJsonDict(jsonDict);
-            });
+                assert(jsonDict[Jsonable.JSON_CLASS_TYPE] === this.__rst)
+                return this.fromJsonDict(jsonDict)
+            })
     }
-
+    
     private _toJson(): Promise<string> {
         return Promise.resolve(this.toJsonDict())
-            .then((jsonDict) => JSON.stringify(jsonDict));
+            .then((jsonDict) => JSON.stringify(jsonDict))
     }
-
+    
     static fromEncodedPayload(encodedPayloadStr: string): Promise<Payload> {
-        return Payload.workerDelegate.decodeAndInflate(encodedPayloadStr)
-            .then((jsonStr) => new Payload()._fromJson(jsonStr));
+        const result = Payload.workerDelegate.decodeAndInflate(encodedPayloadStr)
+            .then((jsonStr) => new Payload()._fromJson(jsonStr))
+        return result
     }
-
+    
     toEncodedPayload(): Promise<string> {
         return this._toJson()
-            .then((jsonStr) => Payload.workerDelegate.deflateAndEncode(jsonStr));
+            .then((jsonStr) => Payload.workerDelegate.deflateAndEncode(jsonStr))
     }
-
+    
     makePayloadEnvelope(): Promise<any> {
-        let PayloadEnvelopeMod = require("./PayloadEnvelope");
         return this.toEncodedPayload()
-            .then(encodedThis => new PayloadEnvelopeMod.PayloadEnvelope(
+            .then(encodedThis => new PayloadEnvelope(
                 this.filt,
                 encodedThis,
                 this.date
-            ));
+            ))
     }
-
+    
 }

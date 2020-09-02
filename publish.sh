@@ -5,9 +5,6 @@ PACKAGE="vortexjs"
 set -o nounset
 set -o errexit
 
-echo "Compiling TypeScript"
-tsc
-
 if [ -n "$(git status --porcelain)" ]; then
     echo "There are uncomitted changes, please make sure all changes are comitted" >&2
     exit 1

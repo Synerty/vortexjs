@@ -1,38 +1,37 @@
-
-
-
-
 // ----------------------------------------------------------------------------
 // Typescript date - date fooler
 export function now(): any {
-  return new Date();
+    return new Date()
 }
 
-export function logLong(message: string, start: any, payload: any | null = null) {
-  let duration = now() - start;
-  let desc = '';
-
-  // You get 5ms to do what you need before i call the performance cops.
-  if (duration < 10)
-    return;
-
-  if (payload != null) {
-    desc = ', ' + JSON.stringify(payload.filt);
-  }
-
-  // console.log(`${message}, took ${duration}${desc}`);
+export function logLong(
+    message: string,
+    start: any,
+    payload: any | null = null
+) {
+    let duration = now() - start
+    let desc = ""
+    
+    // You get 5ms to do what you need before i call the performance cops.
+    if (duration < 10)
+        return
+    
+    if (payload != null) {
+        desc = ", " + JSON.stringify(payload.filt)
+    }
+    
+    // console.log(`${message}, took ${duration}${desc}`);
 }
-
 
 // ----------------------------------------------------------------------------
 export abstract class PayloadDelegateABC {
-
-  abstract deflateAndEncode(payloadJson : string) : Promise<string> ;
-
-  abstract encodeEnvelope(payloadJson : string) : Promise<string> ;
-
-  abstract decodeAndInflate(vortexStr : string) : Promise<string> ;
-
-  abstract decodeEnvelope(vortexStr : string) : Promise<string> ;
-
+    
+    abstract deflateAndEncode(payloadJson: string): Promise<string> ;
+    
+    abstract encodeEnvelope(payloadJson: string): Promise<string> ;
+    
+    abstract decodeAndInflate(vortexStr: string): Promise<string> ;
+    
+    abstract decodeEnvelope(vortexStr: string): Promise<string> ;
+    
 }

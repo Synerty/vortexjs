@@ -1,17 +1,16 @@
-import {Observable, Subject} from "rxjs";
-import {IPayloadFilt, Payload} from "./Payload";
-import {PayloadEndpoint} from "./PayloadEndpoint";
-import {EventEmitter} from "@angular/core";
-import {ComponentLifecycleEventEmitter} from "./ComponentLifecycleEventEmitter";
-import {SERVER_RESPONSE_TIMEOUT, VortexClientABC} from "./VortexClientABC";
-import {Tuple} from "./Tuple";
-import {plDeleteKey} from "./PayloadFilterKeys";
-import {Ng2BalloonMsgService} from "@synerty/ng2-balloon-msg";
-import {bind, deepEqual, extend} from "./UtilMisc";
-import {PayloadEnvelope} from "./PayloadEnvelope";
-import {VortexStatusService} from "./VortexStatusService";
-import {first, takeUntil} from "rxjs/operators";
-
+import { Observable, Subject } from "rxjs"
+import { IPayloadFilt, Payload } from "./Payload"
+import { PayloadEndpoint } from "./PayloadEndpoint"
+import { EventEmitter } from "@angular/core"
+import { ComponentLifecycleEventEmitter } from "./ComponentLifecycleEventEmitter"
+import { SERVER_RESPONSE_TIMEOUT, VortexClientABC } from "./VortexClientABC"
+import { Tuple } from "./exports"
+import { plDeleteKey } from "./PayloadFilterKeys"
+import { BalloonMsgService } from "@synerty/peek-plugin-base-js"
+import { bind, deepEqual, extend } from "./UtilMisc"
+import { PayloadEnvelope } from "./PayloadEnvelope"
+import { VortexStatusService } from "./VortexStatusService"
+import { first, takeUntil } from "rxjs/operators"
 
 // ------------------
 // Some private structures
@@ -53,7 +52,7 @@ export interface IFilterUpdateCallable {
  * @param: filterUpdateCallable A IFilterUpdateCallable callable that returns null
  * or an IPayloadFilter
  *
- * @param: balloonMsg The Ng2BalloonMsgService
+ * @param: balloonMsgService
  *
  * Manual changes can be triggerd as follows.
  * * "load()"
@@ -61,91 +60,88 @@ export interface IFilterUpdateCallable {
  * * "del()"
  */
 export class TupleLoader {
-    private filterUpdateCallable: IFilterUpdateCallable;
-
-    private lastPayloadFilt: IPayloadFilt | null = null;
-    private lastTuples: any[] | Tuple[] | null = null;
-
-    private timer: number | null = null;
-
-    private lastPromise: IPromiseCallbacks | null = null;
-
-    event: EventEmitter<TupleLoaderEventEnum> = new EventEmitter<TupleLoaderEventEnum>();
-
-    private endpoint: PayloadEndpoint | null = null;
-
-    private _observable: Subject<Tuple[] | any[]>;
-
-
-    constructor(private vortex: VortexClientABC,
-                private vortexStatusService: VortexStatusService,
-                private component: ComponentLifecycleEventEmitter,
-                filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt,
-                private balloonMsg: Ng2BalloonMsgService | null = null) {
-
+    event: EventEmitter<TupleLoaderEventEnum> = new EventEmitter<TupleLoaderEventEnum>()
+    private filterUpdateCallable: IFilterUpdateCallable
+    private lastPayloadFilt: IPayloadFilt | null = null
+    private lastTuples: any[] | Tuple[] | null = null
+    private timer: any | number | null = null
+    private lastPromise: IPromiseCallbacks | null = null
+    private endpoint: PayloadEndpoint | null = null
+    
+    constructor(
+        private vortex: VortexClientABC,
+        private vortexStatusService: VortexStatusService,
+        private component: ComponentLifecycleEventEmitter,
+        filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt,
+        private balloonMsgService: BalloonMsgService | null = null
+    ) {
+        
         if (filterUpdateCallable instanceof Function) {
-            this.filterUpdateCallable = filterUpdateCallable;
-        } else {
+            this.filterUpdateCallable = filterUpdateCallable
+        }
+        else {
             this.filterUpdateCallable = (() => {
                 return filterUpdateCallable
-            });
+            })
         }
-
+        
         // Regiseter for the angular docheck
         this.component.doCheckEvent
             .pipe(takeUntil(this.component.onDestroyEvent))
-            .subscribe(() => this.filterChangeCheck());
-
+            .subscribe(() => this.filterChangeCheck())
+        
         // Create the observable object
-        this._observable = new Subject();
-
+        this._observable = new Subject()
+        
         // Remove all observers when the component is destroyed.
         this.component.onDestroyEvent
             .pipe(first())
-            .subscribe(() => this._observable.complete());
+            .subscribe(() => this._observable.complete())
     }
-
+    
+    private _observable: Subject<Tuple[] | any[]>
+    
     /**
      * @property: The tuple observable to subscribe to.
      */
     get observable(): Observable<Tuple[] | any[]> {
-        return this._observable;
+        return this._observable
     }
-
+    
     filterChangeCheck(): void {
-        if (!this.vortexStatusService.snapshot.isOnline)
-            return;
-
+        if (!this.vortexStatusService.snapshot.isOnline) {
+            return
+        }
+        
         // Create a copy
-        let newFilter = extend({}, this.filterUpdateCallable());
-
+        let newFilter = extend({}, this.filterUpdateCallable())
+        
         if (newFilter == null) {
             if (this.endpoint != null) {
-                this.endpoint.shutdown();
-                this.endpoint = null;
+                this.endpoint.shutdown()
+                this.endpoint = null
             }
-
-            this.lastTuples = null;
-            this.lastPayloadFilt = null;
-            return;
+            
+            this.lastTuples = null
+            this.lastPayloadFilt = null
+            return
         }
-
-
+        
         if (this.lastPayloadFilt != null &&
             deepEqual(newFilter, this.lastPayloadFilt, {strict: true})) {
-            return;
+            return
         }
-
-        this.lastPayloadFilt = newFilter;
-        this.endpoint = new PayloadEndpoint(this.component, this.lastPayloadFilt, true);
+        
+        this.lastPayloadFilt = newFilter
+        this.endpoint = new PayloadEndpoint(this.component, this.lastPayloadFilt, true)
         this.endpoint.observable
             .subscribe((payloadEnvelope: PayloadEnvelope) => {
-                this.processPayloadEnvelope(payloadEnvelope);
-            });
-
-        this.vortex.send(new PayloadEnvelope(this.lastPayloadFilt));
+                this.processPayloadEnvelope(payloadEnvelope)
+            })
+        
+        this.vortex.send(new PayloadEnvelope(this.lastPayloadFilt))
     }
-
+    
     /**
      * Load Loads the data from a server
      *
@@ -153,9 +149,9 @@ export class TupleLoader {
      *
      */
     load() {
-        return this.saveOrLoad(TupleLoaderEventEnum.Load);
+        return this.saveOrLoad(TupleLoaderEventEnum.Load)
     }
-
+    
     /**
      * Save
      *
@@ -169,96 +165,9 @@ export class TupleLoader {
      *
      */
     save(tuples: Tuple[] | any[] | null = null): Promise<Payload> {
-        return this.saveOrLoad(TupleLoaderEventEnum.Save, tuples);
+        return this.saveOrLoad(TupleLoaderEventEnum.Save, tuples)
     }
-
-    private saveOrLoad(type: TupleLoaderEventEnum,
-                       tuples: any[] | Tuple[] | null = null): Promise<Payload> {
-
-        // I'm not sure if the promise is set straight away, so at least null out
-        // the last one.
-        this.lastPromise = null;
-
-        // Initialise the promise
-        let promise = new Promise<Payload>((resolve, reject) =>
-            this.lastPromise = {
-                type: type,
-                resolve: resolve,
-                reject: reject
-            }
-        );
-
-        // Check if there is already a load or save in progress
-        if (this.setupTimer() !== true) {
-            setTimeout(() => {
-                this.lastPromise.reject("Another save or load is still in progress.");
-                this.lastPromise = null;
-            }, 0);
-            return promise;
-        }
-
-        if (type === TupleLoaderEventEnum.Load) {
-            // Force a filter update and reload
-            this.lastPayloadFilt = null;
-            this.filterChangeCheck();
-
-            // If there was no filter update, fail
-            if (this.lastPayloadFilt == null) {
-                this.lastPromise.reject(
-                    "There is no payload filter provided, load failed");
-                this.lastPromise = null;
-                return promise;
-            }
-
-        } else if (type === TupleLoaderEventEnum.Save) {
-            if (tuples != null)
-                this.lastTuples = tuples;
-
-            // Check if we have tuples to save.
-            if (this.lastTuples == null) {
-                this.lastPromise.reject(
-                    "No tuples to save. " +
-                    " Provide one to with the save(tuples) call or load some first " +
-                    " with the filterUpdateCallable");
-                this.lastPromise = null;
-                return promise;
-            }
-
-            // Save the tuples
-            new Payload(this.lastPayloadFilt, this.lastTuples)
-                .makePayloadEnvelope()
-                .then((pe: PayloadEnvelope) => this.vortex.send(pe))
-                .catch(e => `TupleLoader, failed to save tuples ${e}`);
-
-
-        } else if (type === TupleLoaderEventEnum.Delete) {
-            // Check if we have tuples to save.
-            if (tuples == null || tuples.length == null) {
-                this.lastPromise.reject(
-                    "No tuples to delete. " +
-                    " Provide one or more with the del(tuples) call");
-                this.lastPromise = null;
-                return promise;
-            }
-
-            // Set the delete key. The server will delete objects with this set.
-            let filt = extend({}, this.lastPayloadFilt);
-            filt[plDeleteKey] = true;
-
-            // Save the tuples
-            new Payload(filt, tuples)
-                .makePayloadEnvelope()
-                .then((pe: PayloadEnvelope) => this.vortex.send(pe))
-                .catch(e => `TupleLoader, failed to delete tuples ${e}`);
-
-        } else {
-            throw new Error(`Type ${type} is not implemented.`);
-        }
-
-        // Return the promise
-        return promise;
-    }
-
+    
     /**
      * Delete
      *
@@ -268,96 +177,195 @@ export class TupleLoader {
      *
      */
     del(tuples: any[] | Tuple[] | null = null): Promise<Payload> {
-        let promise = this.saveOrLoad(TupleLoaderEventEnum.Delete, tuples);
-
-        return promise;
-
+        let promise = this.saveOrLoad(TupleLoaderEventEnum.Delete, tuples)
+        
+        return promise
+        
     }
-
-    private processPayloadEnvelope(payloadEnvelope: PayloadEnvelope) {
-
-        if (this.timer) {
-            clearTimeout(this.timer);
-            this.timer = null;
+    
+    private saveOrLoad(
+        type: TupleLoaderEventEnum,
+        tuples: any[] | Tuple[] | null = null
+    ): Promise<Payload> {
+        
+        // I'm not sure if the promise is set straight away, so at least null out
+        // the last one.
+        this.lastPromise = null
+        
+        // Initialise the promise
+        let promise = new Promise<Payload>((
+            resolve,
+            reject
+            ) =>
+                this.lastPromise = {
+                    type: type,
+                    resolve: resolve,
+                    reject: reject
+                }
+        )
+        
+        // Check if there is already a load or save in progress
+        if (this.setupTimer() !== true) {
+            setTimeout(() => {
+                this.lastPromise.reject("Another save or load is still in progress.")
+                this.lastPromise = null
+            }, 0)
+            return promise
         }
-
+        
+        if (type === TupleLoaderEventEnum.Load) {
+            // Force a filter update and reload
+            this.lastPayloadFilt = null
+            this.filterChangeCheck()
+            
+            // If there was no filter update, fail
+            if (this.lastPayloadFilt == null) {
+                this.lastPromise.reject(
+                    "There is no payload filter provided, load failed")
+                this.lastPromise = null
+                return promise
+            }
+            
+        }
+        else if (type === TupleLoaderEventEnum.Save) {
+            if (tuples != null) {
+                this.lastTuples = tuples
+            }
+            
+            // Check if we have tuples to save.
+            if (this.lastTuples == null) {
+                this.lastPromise.reject(
+                    "No tuples to save. " +
+                    " Provide one to with the save(tuples) call or load some first " +
+                    " with the filterUpdateCallable")
+                this.lastPromise = null
+                return promise
+            }
+            
+            // Save the tuples
+            new Payload(this.lastPayloadFilt, this.lastTuples)
+                .makePayloadEnvelope()
+                .then((pe: PayloadEnvelope) => this.vortex.send(pe))
+                .catch(e => `TupleLoader, failed to save tuples ${e}`)
+            
+        }
+        else if (type === TupleLoaderEventEnum.Delete) {
+            // Check if we have tuples to save.
+            if (tuples == null || tuples.length == null) {
+                this.lastPromise.reject(
+                    "No tuples to delete. " +
+                    " Provide one or more with the del(tuples) call")
+                this.lastPromise = null
+                return promise
+            }
+            
+            // Set the delete key. The server will delete objects with this set.
+            let filt = extend({}, this.lastPayloadFilt)
+            filt[plDeleteKey] = true
+            
+            // Save the tuples
+            new Payload(filt, tuples)
+                .makePayloadEnvelope()
+                .then((pe: PayloadEnvelope) => this.vortex.send(pe))
+                .catch(e => `TupleLoader, failed to delete tuples ${e}`)
+            
+        }
+        else {
+            throw new Error(`Type ${type} is not implemented.`)
+        }
+        
+        // Return the promise
+        return promise
+    }
+    
+    private processPayloadEnvelope(payloadEnvelope: PayloadEnvelope) {
+        
+        if (this.timer) {
+            clearTimeout(this.timer)
+            this.timer = null
+        }
+        
         // No result, means this was a load
         if (payloadEnvelope.result == null) {
             try {
-                this.event.emit(TupleLoaderEventEnum.Load);
-            } catch (e) {
-                console.log("TupleLoader - Load event emit error");
-                console.error(e);
+                this.event.emit(TupleLoaderEventEnum.Load)
             }
-
+            catch (e) {
+                console.log("TupleLoader - Load event emit error")
+                console.error(e)
+            }
+            
             // Result, means this was a save
-        } else if (payloadEnvelope.result === true) {
+        }
+        else if (payloadEnvelope.result === true) {
             try {
                 if (payloadEnvelope.filt.hasOwnProperty(plDeleteKey)) {
-                    this.event.emit(TupleLoaderEventEnum.Delete);
-                } else {
-                    this.event.emit(TupleLoaderEventEnum.Save);
+                    this.event.emit(TupleLoaderEventEnum.Delete)
                 }
-            } catch (e) {
-                console.log("TupleLoader - Save/Delete event emit error");
-                console.error(e);
+                else {
+                    this.event.emit(TupleLoaderEventEnum.Save)
+                }
             }
-
-
+            catch (e) {
+                console.log("TupleLoader - Save/Delete event emit error")
+                console.error(e)
+            }
+            
             // Else, treat this as a failure
-        } else {
+        }
+        else {
             if (this.lastPromise) {
-                this.lastPromise.reject(payloadEnvelope.result.toString());
-                this.lastPromise = null;
+                this.lastPromise.reject(payloadEnvelope.result.toString())
+                this.lastPromise = null
             }
-
-            this.balloonMsg && this.balloonMsg.showError(payloadEnvelope.result.toString());
-
-            return;
+            
+            this.balloonMsgService && this.balloonMsgService.showError(payloadEnvelope.result.toString())
+            
+            return
         }
-
+        
         if (this.lastPromise) {
-            this.lastPromise.resolve(payloadEnvelope);
-            this.lastPromise = null;
+            this.lastPromise.resolve(payloadEnvelope)
+            this.lastPromise = null
         }
-
+        
         payloadEnvelope.decodePayload()
             .then((payload: Payload) => {
-                this.lastTuples = payload.tuples;
-                this._observable.next(payload.tuples);
+                this.lastTuples = payload.tuples
+                this._observable.next(payload.tuples)
             })
-            .catch(e => console.log(`TupleLoader failed to decode payload ${e}`));
+            .catch(e => console.log(`TupleLoader failed to decode payload ${e}`))
     }
-
+    
     private resetTimer(): void {
-        this.operationTimeout(false);
+        this.operationTimeout(false)
     }
-
+    
     private setupTimer(): boolean {
-        let self = this;
+        let self = this
         if (self.timer != null) {
-            this.balloonMsg && this.balloonMsg.showWarning(
-                "We're already processing a request, Action failed");
-            return false;
+            this.balloonMsgService && this.balloonMsgService.showWarning(
+                "We're already processing a request, Action failed")
+            return false
         }
-
+        
         self.timer = setTimeout(bind(self, self.operationTimeout),
-            SERVER_RESPONSE_TIMEOUT);
-        return true;
+            SERVER_RESPONSE_TIMEOUT)
+        return true
     }
-
+    
     private operationTimeout(showBaloon: boolean = true): void {
-        this.timer = null;
-
-        let msg: string = "The server failed to respond, operaton timed out";
-
+        this.timer = null
+        
+        let msg: string = "The server failed to respond, operaton timed out"
+        
         if (this.lastPromise) {
-            msg = `${this.lastPromise.type} Failed, Response Timed out`;
-            this.lastPromise.reject(msg);
-            this.lastPromise = null;
+            msg = `${this.lastPromise.type} Failed, Response Timed out`
+            this.lastPromise.reject(msg)
+            this.lastPromise = null
         }
-
-        showBaloon && this.balloonMsg && this.balloonMsg.showError(msg);
+        
+        showBaloon && this.balloonMsgService && this.balloonMsgService.showError(msg)
     }
 }
 

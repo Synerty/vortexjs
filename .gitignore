@@ -83,3 +83,7 @@ jspm_packages
 yalc.lock
 .yalc
 .yalc/
+
+# Dist and source files
+dist/
+built/

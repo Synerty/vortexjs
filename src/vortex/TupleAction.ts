@@ -1,6 +1,5 @@
-import {addTupleType, Tuple, TupleChangeI} from "./Tuple";
-import {TupleSelector} from "./TupleSelector";
-
+import { addTupleType, Tuple, TupleChangeI } from "./exports"
+import { TupleSelector } from "./TupleSelector"
 
 /** Tuple Action Base Class
  *
@@ -12,14 +11,14 @@ import {TupleSelector} from "./TupleSelector";
  *
  * */
 export class TupleActionABC extends Tuple {
-    uuid: number = Date.now() + Math.random();
-    dateTime = new Date();
-
+    uuid: number = Date.now() + Math.random()
+    dateTime = new Date()
+    
     constructor(tupleName: string) {
-        super(tupleName);
-
+        super(tupleName)
+        
     }
-
+    
 }
 
 /** Tuple Generic Action
@@ -33,16 +32,15 @@ export class TupleActionABC extends Tuple {
  * */
 @addTupleType
 export class TupleGenericAction extends TupleActionABC {
-    key: string | null = null;
-    data: any = null;
-
+    key: string | null = null
+    data: any = null
+    
     constructor() {
-        super("vortex.TupleGenericAction");
-
+        super("vortex.TupleGenericAction")
+        
     }
-
+    
 }
-
 
 /** Tuple Update Action
  *
@@ -56,13 +54,13 @@ export class TupleGenericAction extends TupleActionABC {
  * */
 @addTupleType
 export class TupleUpdateAction extends TupleActionABC {
-    tupleSelector: TupleSelector = new TupleSelector(null, {});
-    tupleChanges: TupleChangeI[] = [];
-    data: any = null;
-
+    tupleSelector: TupleSelector = new TupleSelector(null, {})
+    tupleChanges: TupleChangeI[] = []
+    data: any = null
+    
     constructor() {
-        super("vortex.TupleUpdateAction");
-
+        super("vortex.TupleUpdateAction")
+        
     }
-
+    
 }

@@ -1,6 +1,5 @@
-import SerialiseUtil from "./SerialiseUtil";
-import Jsonable from "./Jsonable";
-import { deepEqual, dictKeysFromObject } from "./UtilMisc";
+import { deepEqual, dictKeysFromObject } from "./UtilMisc"
+import { addJsonableType, Jsonable, SerialiseUtil } from "./exports"
 
 export interface TupleChangeI {
     fieldName: string;
@@ -18,64 +17,77 @@ export interface TupleChangeI {
  * populated fields exist in the tuples when it deserialises it.
  *
  */
+@addJsonableType(SerialiseUtil.T_RAPUI_TUPLE)
 export class Tuple extends Jsonable {
-    public _tupleType: string;
-
+    public _tupleType: string
+    
     // Change Tracking Enabled - Shortened for memory conservation
-    private _ct: boolean = false;
-
+    private _ct: boolean = false
+    
     // Change Tracking Reference State - Shortened for memory conservation
-    private _ctrs: Tuple | null = null;
-
+    private _ctrs: Tuple | null = null
+    
     constructor(tupleType: string | null = null) {
-        super();
-        let self = this;
-        self.__rst = SerialiseUtil.T_RAPUI_TUPLE;
-        self._tupleType = tupleType;
+        super()
+        let self = this
+        self.__rst = SerialiseUtil.T_RAPUI_TUPLE
+        self._tupleType = tupleType
     }
-
+    
+    static create(tupleType: string) {
+        if (TUPLE_TYPES[tupleType] == null) {
+            return new Tuple(tupleType)
+        }
+        else {
+            // Tuples set their own types, don't pass anything to the constructor
+            return new TUPLE_TYPES[tupleType]()
+        }
+    }
+    
     _tupleName(): string {
-        return this._tupleType;
+        return this._tupleType
     }
-
+    
     // ---------------
     // Start change detection code
-
+    
     _setChangeTracking(on: boolean = true) {
-        this._ctrs = new Tuple();
-        this._ctrs.fromJsonDict(this.toJsonDict());
-        this._ct = on;
+        this._ctrs = new Tuple()
+        this._ctrs.fromJsonDict(this.toJsonDict())
+        this._ct = on
     }
-
+    
     _detectedChanges(reset: boolean = true): TupleChangeI[] {
-        let changes = [];
+        let changes = []
         for (let key of dictKeysFromObject(this)) {
-            let old_ = this._ctrs[key];
-            let new_ = this[key];
-            if (deepEqual(old_, new_)) continue;
-
+            let old_ = this._ctrs[key]
+            let new_ = this[key]
+            if (deepEqual(old_, new_)) {
+                continue
+            }
+            
             changes.push({
                 fieldName: key,
                 oldValue: old_,
                 newValue: new_,
-            });
+            })
         }
-
+        
         if (reset) {
-            this._setChangeTracking(true);
+            this._setChangeTracking(true)
         }
-
-        return changes;
+        
+        return changes
     }
 }
 
 interface ITuple {
-    new (name: string | null): Tuple;
+    new(name: string | null): Tuple;
 }
 
-export let TUPLE_TYPES = {};
+export let TUPLE_TYPES = {}
 
 export function addTupleType(_Class: Function) {
-    let inst = new (<any>_Class)();
-    TUPLE_TYPES[inst._tupleType] = _Class;
+    let inst = new (<any>_Class)()
+    TUPLE_TYPES[inst._tupleType] = _Class
 }
