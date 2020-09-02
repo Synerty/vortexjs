@@ -1,13 +1,10 @@
-import {Inject, Injectable} from '@angular/core';
-import {VortexStatusService} from "../VortexStatusService";
-import {TupleActionABC} from "../TupleAction";
-import {Tuple} from "../exports";
-import {
-    TupleActionPushNameService,
-    TupleActionPushService
-} from "./TupleActionPushService";
-import {VortexService} from "../VortexService";
-import {TupleActionPushOfflineSingletonService} from "./TupleActionPushOfflineSingletonService";
+import { Inject, Injectable } from "@angular/core"
+import { VortexStatusService } from "../VortexStatusService"
+import { TupleActionABC } from "../TupleAction"
+import { Tuple } from "../exports"
+import { TupleActionPushNameService, TupleActionPushService } from "./TupleActionPushService"
+import { VortexService } from "../VortexService"
+import { TupleActionPushOfflineSingletonService } from "./TupleActionPushOfflineSingletonService"
 
 @Injectable()
 export class TupleActionPushOfflineService extends TupleActionPushService {
@@ -17,14 +14,14 @@ export class TupleActionPushOfflineService extends TupleActionPushService {
         @Inject(VortexStatusService) public vortexStatus,
         @Inject(TupleActionPushOfflineSingletonService) public singleton,
     ) {
-        super(tupleActionName, vortexService, vortexStatus);
+        super(tupleActionName, vortexService, vortexStatus)
     }
-
+    
     pushAction(tupleAction: TupleActionABC): Promise<Tuple[]> {
-        let payload = this.makePayload(tupleAction);
+        let payload = this.makePayload(tupleAction)
         return this.singleton
             .queueAction(this.tupleActionProcessorName.name, tupleAction, payload)
-            .then(() => []);
+            .then(() => [])
     }
 }
 

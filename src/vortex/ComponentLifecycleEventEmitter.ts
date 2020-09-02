@@ -1,13 +1,12 @@
-import {EventEmitter, OnDestroy, OnInit, DoCheck} from "@angular/core";
+import { DoCheck, EventEmitter, OnDestroy, OnInit } from "@angular/core"
 
 // Post to here if it works
 // http://stackoverflow.com/questions/34743069/angular2-ngondestroy-emit-event
 
-export class ComponentLifecycleEventEmitter implements
-    OnDestroy, DoCheck {
-    onDestroyEvent: EventEmitter<string> = new EventEmitter<string>();
-    doCheckEvent: EventEmitter<string> = new EventEmitter<string>();
-
+export class ComponentLifecycleEventEmitter implements OnDestroy, DoCheck {
+    onDestroyEvent: EventEmitter<string> = new EventEmitter<string>()
+    doCheckEvent: EventEmitter<string> = new EventEmitter<string>()
+    
     /** Angular2 On Destroy
      *
      * Cleanup just before Angular destroys the directive/component.
@@ -16,21 +15,21 @@ export class ComponentLifecycleEventEmitter implements
      * Called just before Angular destroys the directive/component.
      */
     ngOnDestroy() {
-        this.onDestroyEvent.emit("OnDestroy");
-
-        if (this.onDestroyEvent['observers'] != null) {
-            for (let observer of this.onDestroyEvent['observers']) {
-                observer["unsubscribe"]();
+        this.onDestroyEvent.emit("OnDestroy")
+        
+        if (this.onDestroyEvent["observers"] != null) {
+            for (let observer of this.onDestroyEvent["observers"]) {
+                observer["unsubscribe"]()
             }
         }
-
-        if (this.doCheckEvent['observers'] != null) {
-            for (let observer of this.doCheckEvent['observers']) {
-                observer["unsubscribe"]();
+        
+        if (this.doCheckEvent["observers"] != null) {
+            for (let observer of this.doCheckEvent["observers"]) {
+                observer["unsubscribe"]()
             }
         }
     }
-
+    
     /**
      * Angular2 Do Check
      *
@@ -40,7 +39,7 @@ export class ComponentLifecycleEventEmitter implements
      * run, immediately after ngOnChanges and ngOnInit.
      */
     ngDoCheck(): void {
-        this.doCheckEvent.emit("DoCheck");
+        this.doCheckEvent.emit("DoCheck")
     }
 }
 
@@ -52,10 +51,10 @@ export class ComponentLifecycleEventEmitter implements
  */
 export class MyComponent extends ComponentLifecycleEventEmitter implements OnInit {
     constructor() {
-        super();
-
+        super()
+        
     }
-
+    
     ngOnInit(): void {
     }
 }
@@ -66,14 +65,14 @@ export class MyComponent extends ComponentLifecycleEventEmitter implements OnIni
 class CompLcObserver {
     constructor(private myComp: ComponentLifecycleEventEmitter) {
         let subscription = this.myComp.onDestroyEvent.subscribe(() => {
-                this.shutdown();
-                subscription.unsubscribe();
+                this.shutdown()
+                subscription.unsubscribe()
             }
-        );
+        )
     }
-
+    
     private shutdown() {
-        console.log("I shall die now!");
+        console.log("I shall die now!")
     }
 }
 

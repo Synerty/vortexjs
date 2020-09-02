@@ -1,3 +1,4 @@
 export class TupleOfflineStorageNameService {
-    constructor(public name: string) { }
+    constructor(public name: string) {
+    }
 }
