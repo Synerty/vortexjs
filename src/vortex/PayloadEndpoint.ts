@@ -2,7 +2,7 @@ import { payloadIO } from "./PayloadIO"
 import { IPayloadFilt } from "./Payload"
 import { assert, dictKeysFromObject } from "./UtilMisc"
 import "./UtilArray"
-import { ComponentLifecycleEventEmitter } from "./ComponentLifecycleEventEmitter"
+import { LifeCycleEmitter } from "@synerty/peek-plugin-base-js"
 import { Observable, Subject } from "rxjs"
 import { PayloadEnvelope } from "./PayloadEnvelope"
 
@@ -14,7 +14,7 @@ export class PayloadEndpoint {
     private _processLatestOnly: boolean
     
     constructor(
-        component: ComponentLifecycleEventEmitter,
+        component: LifeCycleEmitter,
         filter: IPayloadFilt,
         processLatestOnly: boolean = false
     ) {

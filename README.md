@@ -104,23 +104,23 @@ display balloon style messages to the user.
     
 ## Listen to data from the server
 
-To receive data from the server, the Component must extend `ComponentLifecycleEventEmitter`
+To receive data from the server, the Component must extend `LifeCycleEmitter`
 
 
     ...
-    import {..., ComponentLifecycleEventEmitter } from "@synerty/vortex";
+    import {..., LifeCycleEmitter } from "@synerty/peek-plugin-base-js";
     
     @Component({
        ...
     })
-    export class ExampleComponent extends ComponentLifecycleEventEmitter implements OnInit {
+    export class ExampleComponent extends LifeCycleEmitter implements OnInit {
     ...
 
 Example code for listening with a `PayloadEndpoint`
 
-    import {Component, OnInit} from "@angular/core";
-    import {VortexService, Tuple, Payload,
-               ComponentLifecycleEventEmitter } from "@synerty/vortex";
+    import { Component, OnInit } from "@angular/core"
+    import { VortexService, Tuple, Payload } from "@synerty/vortex"
+    import { LifeCycleEmitter } from "@synerty/peek-plugin-base-js"
 
     // Declare a custom Tuple Type, with constructor params
     class BreifExampleTuple extends Tuple {
@@ -133,7 +133,7 @@ Example code for listening with a `PayloadEndpoint`
         selector: 'app-example',
         template: '<div></div>'
     })
-    export class ExampleComponent extends ComponentLifecycleEventEmitter implements OnInit {
+    export class ExampleComponent extends LifeCycleEmitter implements OnInit {
 
         private tuples:Array<BreifExampleTuple> = [];
 
@@ -176,16 +176,16 @@ The TupleLoader has the following functionality :
 the data
 * Sends tuples back to the server to be created, updated and deleted.
 * Handles server response timeouts
-* Shows errors (via @synerty/ng2-balloon-msg)
+* Shows errors (import BalloonMsgService from @synerty/peek-plugin-base-js)
 
-To receive data from the server, the Component must extend ComponentLifecycleEventEmitter,
+To receive data from the server, the Component must extend LifeCycleEmitter,
 see PayloadEndpoint section above.
 
 Example code for working with a TupleLoader
 
-    import {Component, OnInit} from "@angular/core";
-    import {VortexService, Tuple, TupleLoader,
-               ComponentLifecycleEventEmitter } from "@synerty/vortex";
+    import { Component, OnInit } from "@angular/core"
+    import { VortexService, Tuple, TupleLoader } from "@synerty/vortex"
+    import { LifeCycleEmitter } from "@synerty/peek-plugin-base-js"
 
     // Declare a custom Tuple Type, with constructor params
     class BreifExampleTuple extends Tuple {
@@ -198,7 +198,7 @@ Example code for working with a TupleLoader
         selector: 'app-example',
         template: '<div></div>'
     })
-    export class ExampleComponent extends ComponentLifecycleEventEmitter implements OnInit {
+    export class ExampleComponent extends LifeCycleEmitter implements OnInit {
 
         private tuples:Array<BreifExampleTuple> = [];
 

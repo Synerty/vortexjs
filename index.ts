@@ -10,7 +10,6 @@ export {
     SerialiseUtil,
     Jsonable,
 } from "./src/vortex/exports"
-export { ComponentLifecycleEventEmitter } from "./src/vortex/ComponentLifecycleEventEmitter"
 export * from "./src/vortex/PayloadFilterKeys"
 // WebSQL
 export { WebSqlFactoryService, WebSqlService } from "./src/websql/WebSqlService"

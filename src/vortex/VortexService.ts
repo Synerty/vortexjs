@@ -1,7 +1,7 @@
 import { IPayloadFilt, Payload } from "./Payload"
 import { Inject, Injectable } from "@angular/core"
 import { Tuple } from "./exports"
-import { ComponentLifecycleEventEmitter } from "./ComponentLifecycleEventEmitter"
+import { LifeCycleEmitter } from "@synerty/peek-plugin-base-js"
 import { Observable } from "rxjs"
 import { PayloadEndpoint } from "./PayloadEndpoint"
 import { IFilterUpdateCallable, TupleLoader } from "./TupleLoader"
@@ -133,7 +133,7 @@ export class VortexService {
     }
     
     createEndpointObservable(
-        component: ComponentLifecycleEventEmitter,
+        component: LifeCycleEmitter,
         filter: IPayloadFilt,
         processLatestOnly: boolean = false
     ): Observable<PayloadEnvelope> {
@@ -143,7 +143,7 @@ export class VortexService {
     }
     
     createEndpoint(
-        component: ComponentLifecycleEventEmitter,
+        component: LifeCycleEmitter,
         filter: IPayloadFilt,
         processLatestOnly: boolean = false
     ): PayloadEndpoint {
@@ -151,7 +151,7 @@ export class VortexService {
     }
     
     createTupleLoader(
-        component: ComponentLifecycleEventEmitter,
+        component: LifeCycleEmitter,
         filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt
     ) {
         return new TupleLoader(this.vortex,

@@ -2,14 +2,14 @@ import {Component, OnInit} from "@angular/core";
 import {TestTuple} from "../tuple/tuple.component";
 import {VortexService} from "../../vortex/VortexService";
 import {TupleLoader} from "../../vortex/TupleLoader";
-import {ComponentLifecycleEventEmitter} from "../../vortex/ComponentLifecycleEventEmitter";
+import { LifeCycleEmitter } from "@synerty/peek-plugin-base-js"
 
 @Component({
     selector: 'app-tuple-loader',
     templateUrl: './tuple-loader.component.html',
     styleUrls: ['./tuple-loader.component.css']
 })
-export class TupleLoaderComponent extends ComponentLifecycleEventEmitter implements OnInit {
+export class TupleLoaderComponent extends LifeCycleEmitter {
     tuples: Array<TestTuple>;
     loader: TupleLoader;
     tupleId: number = 1;
@@ -32,13 +32,9 @@ export class TupleLoaderComponent extends ComponentLifecycleEventEmitter impleme
 
     }
 
-    ngOnInit() {
-    }
-
     addNew() {
         let newTuple = new TestTuple();
         newTuple.aString = `New Tuple #${this.tuples.length}`;
         this.tuples.push(newTuple);
     }
-
 }
