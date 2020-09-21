@@ -17,12 +17,20 @@ export { WebSqlFactoryService, WebSqlService } from "./src/websql/WebSqlService"
 // Tuple Storage Factory
 // This should choose the best method of storage
 // This is plumbing, use TupleOfflineStorageService instead.
-export { TupleStorageFactoryService } from "./src/vortex/storage-factory/TupleStorageFactoryService"
-export { TupleStorageServiceABC } from "./src/vortex/storage/TupleStorageServiceABC"
+export {
+    TupleStorageFactoryService
+} from "./src/vortex/storage-factory/TupleStorageFactoryService"
+export {
+    TupleStorageServiceABC
+} from "./src/vortex/storage/TupleStorageServiceABC"
 
 // Offline Tuple
-export { TupleOfflineStorageService } from "./src/vortex/storage/TupleOfflineStorageService"
-export { TupleOfflineStorageNameService } from "./src/vortex/storage/TupleOfflineStorageNameService"
+export {
+    TupleOfflineStorageService
+} from "./src/vortex/storage/TupleOfflineStorageService"
+export {
+    TupleOfflineStorageNameService
+} from "./src/vortex/storage/TupleOfflineStorageNameService"
 
 // Tuple Data Observable
 export { TupleSelector } from "./src/vortex/TupleSelector"
@@ -32,7 +40,9 @@ export {
 } from "./src/vortex/observable-service/TupleDataObserverService"
 
 // Offline and Observable
-export { TupleDataOfflineObserverService } from "./src/vortex/observable-service/TupleDataOfflineObserverService"
+export {
+    TupleDataOfflineObserverService
+} from "./src/vortex/observable-service/TupleDataOfflineObserverService"
 
 // Tuple Actions Pushers
 export {
@@ -44,7 +54,9 @@ export {
     TupleActionPushService,
     TupleActionPushNameService
 } from "./src/vortex/action-service/TupleActionPushService"
-export { TupleActionPushOfflineService } from "./src/vortex/action-service/TupleActionPushOfflineService"
+export {
+    TupleActionPushOfflineService
+} from "./src/vortex/action-service/TupleActionPushOfflineService"
 export {
     TupleActionPushOfflineSingletonService
 } from "./src/vortex/action-service/TupleActionPushOfflineSingletonService"
@@ -54,18 +66,20 @@ export {
     TupleActionProcessorNameService,
     TupleActionProcessorService
 } from "./src/vortex/action-service/TupleActionProcessorService"
-export { TupleActionProcessorDelegateABC } from "./src/vortex/action-service/TupleActionProcessorDelegate"
+export {
+    TupleActionProcessorDelegateABC
+} from "./src/vortex/action-service/TupleActionProcessorDelegate"
 
 // Utility functions
-export { assert, extend, deepCopy, deepEqual, jsonOrderedStringify } from "./src/vortex/UtilMisc"
+export {
+    assert, extend, deepCopy, deepEqual, jsonOrderedStringify
+} from "./src/vortex/UtilMisc"
 import "./src/vortex/UtilArray"
-
 export * from "./src/vortex/UtilSort"
-
 export { PayloadDelegateWeb } from "./src/vortex/payload/PayloadDelegateWeb"
-
-export { WebSqlBrowserFactoryService } from "./src/websql/WebSqlBrowserAdaptorService"
-
+export {
+    WebSqlBrowserFactoryService
+} from "./src/websql/WebSqlBrowserAdaptorService"
 export {
     TupleStorageFactoryServiceWeb
 } from "./src/vortex/storage-factory/TupleStorageFactoryServiceWeb"
