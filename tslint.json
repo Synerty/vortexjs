@@ -63,11 +63,11 @@
     ],
     "quotemark": [
       true,
-      "single"
+      "double"
     ],
     "radix": true,
     "semicolon": [
-      "always"
+      "never"
     ],
     "triple-equals": [
       true,

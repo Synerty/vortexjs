@@ -1,1 +1,0 @@
-../../../index-browser.ts
