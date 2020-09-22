@@ -6,7 +6,7 @@ import { Tuple } from "../exports"
 import { TupleSelector } from "../TupleSelector"
 import { IPayloadFilt, Payload } from "../Payload"
 import { PayloadEndpoint } from "../PayloadEndpoint"
-import { LifeCycleEmitter } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
 import { dictKeysFromObject, extend } from "../UtilMisc"
 import { VortexStatusService } from "../VortexStatusService"
 import { PayloadResponse } from "../PayloadResponse"
@@ -108,7 +108,7 @@ export class CachedSubscribedData {
 }
 
 @Injectable()
-export class TupleDataOfflineObserverService extends LifeCycleEmitter {
+export class TupleDataOfflineObserverService extends NgLifeCycleEvents {
     private endpoint: PayloadEndpoint
     private filt: IPayloadFilt
     private cacheByTupleSelector: { [tupleSelector: string]: CachedSubscribedData } = {}

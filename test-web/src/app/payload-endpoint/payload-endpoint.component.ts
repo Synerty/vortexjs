@@ -1,7 +1,7 @@
 import {Component, OnInit} from "@angular/core";
 import {Payload} from "../../vortex/Payload";
 import {PayloadEndpoint} from "../../vortex/PayloadEndpoint";
-import { LifeCycleEmitter } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
 import {payloadIO} from "../../vortex/PayloadIO";
 import {assert} from "../../vortex/UtilMisc";
 
@@ -11,7 +11,7 @@ import {assert} from "../../vortex/UtilMisc";
     templateUrl: './payload-endpoint.component.html',
     styleUrls: ['./payload-endpoint.component.css']
 })
-export class PayloadEndpointComponent extends LifeCycleEmitter implements OnInit {
+export class PayloadEndpointComponent extends NgLifeCycleEvents implements OnInit {
 
     _deliveredPayload = null;
     _payloadEndpoint = null;

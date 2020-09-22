@@ -2,7 +2,7 @@ import { Payload } from "../Payload"
 import { TupleActionProcessorDelegateABC } from "./TupleActionProcessorDelegate"
 import { assert, extend } from "../UtilMisc"
 import { VortexService } from "../VortexService"
-import { LifeCycleEmitter } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
 import { VortexStatusService } from "../VortexStatusService"
 import { Inject, Injectable } from "@angular/core"
 import { PayloadEnvelope } from "../PayloadEnvelope"
@@ -16,7 +16,7 @@ export class TupleActionProcessorNameService {
 }
 
 @Injectable()
-export class TupleActionProcessorService extends LifeCycleEmitter {
+export class TupleActionProcessorService extends NgLifeCycleEvents {
     private _tupleProcessorsByTupleName = {}
     private defaultDelegate: null | TupleActionProcessorDelegateABC = null
     

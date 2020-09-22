@@ -2,7 +2,7 @@ import { Observable, Subject } from "rxjs"
 import { IPayloadFilt, Payload } from "./Payload"
 import { PayloadEndpoint } from "./PayloadEndpoint"
 import { EventEmitter } from "@angular/core"
-import { LifeCycleEmitter } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
 import { SERVER_RESPONSE_TIMEOUT, VortexClientABC } from "./VortexClientABC"
 import { Tuple } from "./exports"
 import { plDeleteKey } from "./PayloadFilterKeys"
@@ -71,7 +71,7 @@ export class TupleLoader {
     constructor(
         private vortex: VortexClientABC,
         private vortexStatusService: VortexStatusService,
-        private component: LifeCycleEmitter,
+        private component: NgLifeCycleEvents,
         filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt,
         private balloonMsgService: BalloonMsgService | null = null
     ) {

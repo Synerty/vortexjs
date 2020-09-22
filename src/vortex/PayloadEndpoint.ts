@@ -2,19 +2,17 @@ import { payloadIO } from "./PayloadIO"
 import { IPayloadFilt } from "./Payload"
 import { assert, dictKeysFromObject } from "./UtilMisc"
 import "./UtilArray"
-import { LifeCycleEmitter } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
 import { Observable, Subject } from "rxjs"
 import { PayloadEnvelope } from "./PayloadEnvelope"
 
 export class PayloadEndpoint {
-    private _observable: Subject<PayloadEnvelope>
-    
     private _filt: { key: string }
     private _lastPayloadDate: Date | null
     private _processLatestOnly: boolean
     
     constructor(
-        component: LifeCycleEmitter,
+        component: NgLifeCycleEvents,
         filter: IPayloadFilt,
         processLatestOnly: boolean = false
     ) {
@@ -44,6 +42,8 @@ export class PayloadEndpoint {
         
         this._observable = new Subject<PayloadEnvelope>()
     }
+    
+    private _observable: Subject<PayloadEnvelope>
     
     get observable(): Observable<PayloadEnvelope> {
         return this._observable
@@ -75,6 +75,16 @@ export class PayloadEndpoint {
         }
         
         return null
+    };
+    
+    shutdown() {
+        let self = this
+        payloadIO.remove(self)
+        if (this._observable["observers"] != null) {
+            for (let observer of this._observable["observers"]) {
+                observer["unsubscribe"]()
+            }
+        }
     };
     
     private checkFilt(
@@ -130,16 +140,6 @@ export class PayloadEndpoint {
         }
         
         return true
-    };
-    
-    shutdown() {
-        let self = this
-        payloadIO.remove(self)
-        if (this._observable["observers"] != null) {
-            for (let observer of this._observable["observers"]) {
-                observer["unsubscribe"]()
-            }
-        }
     };
     
 }

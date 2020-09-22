@@ -84,3 +84,5 @@ export {
     TupleStorageFactoryServiceWeb
 } from "./src/vortex/storage-factory/TupleStorageFactoryServiceWeb"
 
+export { STOP_PROCESSING } from "./src/vortex/PayloadIO"
+

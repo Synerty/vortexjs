@@ -104,23 +104,23 @@ display balloon style messages to the user.
     
 ## Listen to data from the server
 
-To receive data from the server, the Component must extend `LifeCycleEmitter`
+To receive data from the server, the Component must extend `NgLifeCycleEvents`
 
 
     ...
-    import {..., LifeCycleEmitter } from "@synerty/peek-plugin-base-js";
+    import {..., NgLifeCycleEvents } from "@synerty/peek-plugin-base-js";
     
     @Component({
        ...
     })
-    export class ExampleComponent extends LifeCycleEmitter implements OnInit {
+    export class ExampleComponent extends NgLifeCycleEvents implements OnInit {
     ...
 
 Example code for listening with a `PayloadEndpoint`
 
     import { Component, OnInit } from "@angular/core"
     import { VortexService, Tuple, Payload } from "@synerty/vortex"
-    import { LifeCycleEmitter } from "@synerty/peek-plugin-base-js"
+    import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
 
     // Declare a custom Tuple Type, with constructor params
     class BreifExampleTuple extends Tuple {
@@ -133,7 +133,7 @@ Example code for listening with a `PayloadEndpoint`
         selector: 'app-example',
         template: '<div></div>'
     })
-    export class ExampleComponent extends LifeCycleEmitter implements OnInit {
+    export class ExampleComponent extends NgLifeCycleEvents implements OnInit {
 
         private tuples:Array<BreifExampleTuple> = [];
 
@@ -178,14 +178,14 @@ the data
 * Handles server response timeouts
 * Shows errors (import BalloonMsgService from @synerty/peek-plugin-base-js)
 
-To receive data from the server, the Component must extend LifeCycleEmitter,
+To receive data from the server, the Component must extend NgLifeCycleEvents,
 see PayloadEndpoint section above.
 
 Example code for working with a TupleLoader
 
     import { Component, OnInit } from "@angular/core"
     import { VortexService, Tuple, TupleLoader } from "@synerty/vortex"
-    import { LifeCycleEmitter } from "@synerty/peek-plugin-base-js"
+    import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
 
     // Declare a custom Tuple Type, with constructor params
     class BreifExampleTuple extends Tuple {
@@ -198,7 +198,7 @@ Example code for working with a TupleLoader
         selector: 'app-example',
         template: '<div></div>'
     })
-    export class ExampleComponent extends LifeCycleEmitter implements OnInit {
+    export class ExampleComponent extends NgLifeCycleEvents implements OnInit {
 
         private tuples:Array<BreifExampleTuple> = [];
 

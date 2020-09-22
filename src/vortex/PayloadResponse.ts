@@ -2,7 +2,7 @@ import { VortexClientABC } from "./VortexClientABC"
 import { IPayloadFilt } from "./Payload"
 import { dateStr } from "./UtilMisc"
 import { VortexService } from "./VortexService"
-import { LifeCycleEmitter } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
 import { PayloadEnvelope } from "./PayloadEnvelope"
 import { takeUntil } from "rxjs/operators"
 
@@ -41,8 +41,7 @@ export class PayloadResponse {
     private _messageId: string = VortexClientABC.makeUuid()
     private _status: string = this.PROCESSING
     
-    private _lcEmitter: LifeCycleEmitter
-        = new LifeCycleEmitter()
+    private _lcEmitter: NgLifeCycleEvents = new NgLifeCycleEvents()
     
     private promise: Promise<PayloadEnvelope>
     

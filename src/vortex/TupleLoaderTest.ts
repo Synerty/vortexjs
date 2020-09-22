@@ -1,8 +1,8 @@
 import { TupleLoader } from "./TupleLoader"
-import { LifeCycleEmitter } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
 import { VortexService } from "./VortexService"
 
-export class Ang2TupleLoaderTest extends LifeCycleEmitter {
+export class Ang2TupleLoaderTest extends NgLifeCycleEvents {
     
     tuples: any[] = []
     id: number | null = null
