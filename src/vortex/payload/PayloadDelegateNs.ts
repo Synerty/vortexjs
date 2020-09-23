@@ -29,15 +29,7 @@ export class PayloadDelegateNs extends PayloadDelegateABC {
     // noinspection JSMethodCanBeStatic
     private createWorker(): Worker {
         let worker: Worker
-        // --------------------------------------------------------------------
-        if (global.TNS_WEBPACK) {
-            let Worker = require("nativescript-worker-loader!./PayloadDelegateNsWorker.js")
-            worker = new Worker()
-        }
-        else {
-            worker = new Worker("./PayloadDelegateNsWorker.js")
-        }
-        
+        worker = new Worker("./PayloadDelegateNsWorker.js")
         worker.onmessage = PayloadDelegateNs.onMessage
         worker.onerror = PayloadDelegateNs.onError
         return worker

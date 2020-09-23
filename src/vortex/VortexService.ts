@@ -28,7 +28,7 @@ export class VortexService {
     /**
      * Set Vortex URL
      *
-     * This method should not be used except in rare cases, such as a NativeScript app.
+     * This method should not be used except in rare cases, such as an ios or android app.
      *
      * @param url: The new URL for the vortex to use.
      */
