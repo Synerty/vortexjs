@@ -151,7 +151,7 @@ export class PayloadResponse {
         return payloadEnvelope.filt.hasOwnProperty(PayloadResponse.messageIdKey)
     }
     
-    get status(this) {
+    get status() {
         return this._status
     }
 }

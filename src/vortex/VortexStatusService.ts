@@ -21,9 +21,7 @@ export class VortexStatusService {
     
     private wasOnline: boolean = false
     
-    constructor(@Inject(NgZone) private zone) {
-    
-    }
+    constructor(@Inject(NgZone) private zone: NgZone) {}
     
     get snapshot(): VortexStatusServiceSnapshot {
         return {

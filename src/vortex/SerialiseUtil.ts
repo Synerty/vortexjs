@@ -38,10 +38,10 @@ export class SerialiseUtil {
             return moment(obj)
                 .format(SerialiseUtil.ISO8601)
         
-        if (obj.constructor === Boolean)
+        if (typeof obj.constructor === "boolean")
             return obj ? SerialiseUtil.V_TRUE : SerialiseUtil.V_FALSE
         
-        if (obj.constructor === String)
+        if (typeof obj.constructor === "string")
             return obj
         
         return obj.toString()
