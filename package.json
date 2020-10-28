@@ -1,6 +1,6 @@
 {
   "name": "@synerty/vortexjs",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Custom observable data serialisation and routing based on Angular 2+",
   "main": "index.js",
   "repository": {
