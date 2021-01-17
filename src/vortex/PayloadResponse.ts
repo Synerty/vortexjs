@@ -2,7 +2,7 @@ import { VortexClientABC } from "./VortexClientABC"
 import { IPayloadFilt } from "./Payload"
 import { dateStr } from "./UtilMisc"
 import { VortexService } from "./VortexService"
-import { NgLifeCycleEvents } from "@synerty/vortexjs"
+import { NgLifeCycleEvents } from "../util/NgLifeCycleEvents"
 import { PayloadEnvelope } from "./PayloadEnvelope"
 import { takeUntil } from "rxjs/operators"
 

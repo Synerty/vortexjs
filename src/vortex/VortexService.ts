@@ -1,7 +1,6 @@
 import { IPayloadFilt, Payload } from "./Payload"
 import { Inject, Injectable } from "@angular/core"
 import { Tuple } from "./exports"
-import { NgLifeCycleEvents } from "@synerty/vortexjs"
 import { Observable } from "rxjs"
 import { PayloadEndpoint } from "./PayloadEndpoint"
 import { IFilterUpdateCallable, TupleLoader } from "./TupleLoader"
@@ -10,6 +9,7 @@ import { VortexClientABC } from "./VortexClientABC"
 import { VortexClientHttp } from "./VortexClientHttp"
 import { VortexClientWebsocket } from "./VortexClientWebsocket"
 import { PayloadEnvelope } from "./PayloadEnvelope"
+import { NgLifeCycleEvents } from "../util/NgLifeCycleEvents"
 
 @Injectable()
 export class VortexService {

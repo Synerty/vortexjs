@@ -1,5 +1,5 @@
 import { TupleLoader } from "./TupleLoader"
-import { NgLifeCycleEvents } from "@synerty/vortexjs"
+import { NgLifeCycleEvents } from "../util/NgLifeCycleEvents"
 import { VortexService } from "./VortexService"
 
 export class Ang2TupleLoaderTest extends NgLifeCycleEvents {

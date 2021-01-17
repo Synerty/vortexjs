@@ -25,16 +25,6 @@ if git tag | grep -q "${VER}"; then
     exit 1
 fi
 
-echo "Setting version to $VER"
-
-# Update the setup.py
-#sed -i "s;^package_version.*=.*;package_version = '${VER}';"  setup.py
-
-# Update the package version
-#sed -i "s;.*version.*=.*;__version__ = '${VER}';" ${PACKAGE}/__init__.py
-#sed -i "s;.*version.*=.*;__version__ = '${VER}';" docs/conf.py
-
-
 echo "Updating package version"
 npm version $VER --allow-same-version
 
@@ -43,6 +33,12 @@ git push
 git push --tags
 
 # Build the angular package
+NG_VER="~10.2.0"
+TS_VER="~4.0.0"
+npm install -g ng-packagr
+npm install -g @angular/compiler-cli@${NG_VER}
+npm install -g @angular/compiler@${NG_VER}
+npm install -g typescript@${TS_VER}
 npm run packagr
 
 echo "Publishing to NPM"
