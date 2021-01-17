@@ -1,16 +1,15 @@
-import { Observable, Subject } from "rxjs"
-import { IPayloadFilt, Payload } from "./Payload"
-import { PayloadEndpoint } from "./PayloadEndpoint"
-import { EventEmitter } from "@angular/core"
-import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
-import { SERVER_RESPONSE_TIMEOUT, VortexClientABC } from "./VortexClientABC"
-import { Tuple } from "./exports"
-import { plDeleteKey } from "./PayloadFilterKeys"
-import { BalloonMsgService } from "@synerty/peek-plugin-base-js"
-import { bind, deepEqual, extend } from "./UtilMisc"
-import { PayloadEnvelope } from "./PayloadEnvelope"
-import { VortexStatusService } from "./VortexStatusService"
-import { first, takeUntil } from "rxjs/operators"
+import {Observable, Subject} from "rxjs"
+import {IPayloadFilt, Payload} from "./Payload"
+import {PayloadEndpoint} from "./PayloadEndpoint"
+import {EventEmitter} from "@angular/core"
+import {NgLifeCycleEvents} from "@synerty/vortexjs"
+import {SERVER_RESPONSE_TIMEOUT, VortexClientABC} from "./VortexClientABC"
+import {Tuple} from "./exports"
+import {plDeleteKey} from "./PayloadFilterKeys"
+import {bind, deepEqual, extend} from "./UtilMisc"
+import {PayloadEnvelope} from "./PayloadEnvelope"
+import {VortexStatusService} from "./VortexStatusService"
+import {first, takeUntil} from "rxjs/operators"
 
 // ------------------
 // Some private structures
@@ -52,8 +51,6 @@ export interface IFilterUpdateCallable {
  * @param: filterUpdateCallable A IFilterUpdateCallable callable that returns null
  * or an IPayloadFilter
  *
- * @param: balloonMsgService
- *
  * Manual changes can be triggerd as follows.
  * * "load()"
  * * "save()"
@@ -72,8 +69,7 @@ export class TupleLoader {
         private vortex: VortexClientABC,
         private vortexStatusService: VortexStatusService,
         private component: NgLifeCycleEvents,
-        filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt,
-        private balloonMsgService: BalloonMsgService | null = null
+        filterUpdateCallable: IFilterUpdateCallable | IPayloadFilt
     ) {
         
         if (filterUpdateCallable instanceof Function) {
@@ -319,7 +315,7 @@ export class TupleLoader {
                 this.lastPromise = null
             }
             
-            this.balloonMsgService && this.balloonMsgService.showError(payloadEnvelope.result.toString())
+            this.vortexStatusService.logError(payloadEnvelope.result.toString())
             
             return
         }
@@ -344,7 +340,7 @@ export class TupleLoader {
     private setupTimer(): boolean {
         let self = this
         if (self.timer != null) {
-            this.balloonMsgService && this.balloonMsgService.showWarning(
+            this.vortexStatusService.logWarning(
                 "We're already processing a request, Action failed")
             return false
         }
@@ -365,7 +361,7 @@ export class TupleLoader {
             this.lastPromise = null
         }
         
-        showBaloon && this.balloonMsgService && this.balloonMsgService.showError(msg)
+        showBaloon && this.vortexStatusService.logError(msg)
     }
 }
 

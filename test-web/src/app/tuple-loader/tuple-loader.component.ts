@@ -2,7 +2,7 @@ import {Component, OnInit} from "@angular/core";
 import {TestTuple} from "../tuple/tuple.component";
 import {VortexService} from "../../vortex/VortexService";
 import {TupleLoader} from "../../vortex/TupleLoader";
-import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents } from "@synerty/vortexjs"
 
 @Component({
     selector: 'app-tuple-loader',

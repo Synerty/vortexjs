@@ -1,7 +1,7 @@
 import {Component, OnInit} from "@angular/core";
 import {Payload} from "../../vortex/Payload";
 import {PayloadEndpoint} from "../../vortex/PayloadEndpoint";
-import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents } from "@synerty/vortexjs"
 import {payloadIO} from "../../vortex/PayloadIO";
 import {assert} from "../../vortex/UtilMisc";
 

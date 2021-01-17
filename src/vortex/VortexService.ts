@@ -1,11 +1,10 @@
 import { IPayloadFilt, Payload } from "./Payload"
 import { Inject, Injectable } from "@angular/core"
 import { Tuple } from "./exports"
-import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents } from "@synerty/vortexjs"
 import { Observable } from "rxjs"
 import { PayloadEndpoint } from "./PayloadEndpoint"
 import { IFilterUpdateCallable, TupleLoader } from "./TupleLoader"
-import { BalloonMsgService } from "@synerty/peek-plugin-base-js"
 import { VortexStatusService } from "./VortexStatusService"
 import { VortexClientABC } from "./VortexClientABC"
 import { VortexClientHttp } from "./VortexClientHttp"
@@ -20,7 +19,6 @@ export class VortexService {
     
     constructor(
         @Inject(VortexStatusService) private vortexStatusService,
-        @Inject(BalloonMsgService) private balloonMsgService,
     ) {
         this.reconnect()
     }
@@ -157,8 +155,7 @@ export class VortexService {
         return new TupleLoader(this.vortex,
             this.vortexStatusService,
             component,
-            filterUpdateCallable,
-            this.balloonMsgService
+            filterUpdateCallable
         )
     }
 }

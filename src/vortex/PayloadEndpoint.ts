@@ -2,7 +2,7 @@ import { payloadIO } from "./PayloadIO"
 import { IPayloadFilt } from "./Payload"
 import { assert, dictKeysFromObject } from "./UtilMisc"
 import "./UtilArray"
-import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
+import { NgLifeCycleEvents } from "@synerty/vortexjs"
 import { Observable, Subject } from "rxjs"
 import { PayloadEnvelope } from "./PayloadEnvelope"
 

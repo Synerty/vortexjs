@@ -1,3 +1,4 @@
+
 export { VortexService } from "./src/vortex/VortexService"
 export { VortexStatusService } from "./src/vortex/VortexStatusService"
 export { TupleLoader, IFilterUpdateCallable } from "./src/vortex/TupleLoader"
@@ -85,4 +86,6 @@ export {
 } from "./src/vortex/storage-factory/TupleStorageFactoryServiceWeb"
 
 export { STOP_PROCESSING } from "./src/vortex/PayloadIO"
+
+export { NgLifeCycleEvents } from "./src/util/NgLifeCycleEvents"
 

@@ -26,7 +26,6 @@
     "@angular/common": "^10.2.0",
     "@angular/core": "^10.2.0",
     "@angular/router": "^10.2.0",
-    "@synerty/peek-plugin-base-js": "^10.0.0",
     "@types/deep-equal": "^0.0.30",
     "base-64": "^0.1.0",
     "core-js": "^3.6.5",

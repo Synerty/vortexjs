@@ -3,9 +3,10 @@ import { Subject } from "rxjs"
 import { bind, dateStr } from "./UtilMisc"
 
 // Node compatibility
-let logDebug = console.debug ? bind(console, console.debug) : bind(console, console.log)
-let logInfo = bind(console, console.log)
-let logError = console.error ? bind(console, console.error) : bind(console, console.log)
+const logDebug = console.debug ? bind(console, console.debug) : bind(console, console.log)
+const logInfo = bind(console, console.log)
+const logError = console.error ? bind(console, console.error) : bind(console, console.log)
+const logWarning = console.warn ? bind(console, console.warn) : bind(console, console.log)
 
 export interface VortexStatusServiceSnapshot {
     isOnline: boolean;
@@ -17,6 +18,7 @@ export class VortexStatusService {
     
     isOnline: Subject<boolean> = new Subject<boolean>()
     info: Subject<string> = new Subject<string>()
+    warning: Subject<string> = new Subject<string>()
     errors: Subject<string> = new Subject<string>()
     
     private wasOnline: boolean = false
@@ -62,11 +64,18 @@ export class VortexStatusService {
             this.queuedActionCount.next(count)
         })
     }
-    
+
     logInfo(message: string) {
         logInfo(dateStr() + "Vortex Status - info: " + message)
         this.zone.run(() => {
             this.info.next(message)
+        })
+    }
+
+    logWarning(message: string) {
+        logWarning(dateStr() + "Vortex Status - warning: " + message)
+        this.zone.run(() => {
+            this.warning.next(message)
         })
     }
     

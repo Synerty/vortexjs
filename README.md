@@ -17,8 +17,7 @@ There are some unit tests under src/app/[dir], these may be useful for further r
 ## Add the providers to the main app module
 
     
-    import {VortexService} from "@synerty/vortex";
-    import {BalloonMsgService} from "@synerty/peek-plugin-base-js";
+    import {VortexService, VortexStatusService} from "@synerty/vortex";
     
     ...
     
@@ -26,11 +25,9 @@ There are some unit tests under src/app/[dir], these may be useful for further r
                 ...
             imports: [
                 ...
-                BalloonMsgService
-                ...
             ],
             ...
-            providers: [VortexService, BalloonMsgService]
+            providers: [VortexService, VortexStatusService]
             ...
 
 ## Add the balloon-msg-queue-component tag
@@ -108,7 +105,7 @@ To receive data from the server, the Component must extend `NgLifeCycleEvents`
 
 
     ...
-    import {..., NgLifeCycleEvents } from "@synerty/peek-plugin-base-js";
+    import {..., NgLifeCycleEvents } from "@synerty/vortexjs";
     
     @Component({
        ...
@@ -120,7 +117,7 @@ Example code for listening with a `PayloadEndpoint`
 
     import { Component, OnInit } from "@angular/core"
     import { VortexService, Tuple, Payload } from "@synerty/vortex"
-    import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
+    import { NgLifeCycleEvents } from "@synerty/vortexjs"
 
     // Declare a custom Tuple Type, with constructor params
     class BreifExampleTuple extends Tuple {
@@ -185,7 +182,7 @@ Example code for working with a TupleLoader
 
     import { Component, OnInit } from "@angular/core"
     import { VortexService, Tuple, TupleLoader } from "@synerty/vortex"
-    import { NgLifeCycleEvents } from "@synerty/peek-plugin-base-js"
+    import { NgLifeCycleEvents } from "@synerty/vortexjs"
 
     // Declare a custom Tuple Type, with constructor params
     class BreifExampleTuple extends Tuple {
