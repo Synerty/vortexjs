@@ -117,26 +117,7 @@ export class VortexClientWebsocket extends VortexClientABC {
 
         // Construct + open the socket
         this.vortexStatusService.logInfo(`WebSocket, connecting to ${this.url}`)
-        try {
-            this.socket = new this.Socket(this.url + getFiltStr(args), [])
-        } catch (err) {
-            // If the a single page application is logged out,
-            // any request to the HTTP service for any path gets the login screen.
-            // This will be successfully responded to with 200.
-            // This will handle that, however the server should be fixed to redirect
-            // to a login page instead.
-            if (err.toString().indexOf("Unexpected response code: 200") !== -1) {
-                this.vortexStatusService.logError(
-                    "Vortex Websocket got response code 200," +
-                    " The user has potentially been logged out," +
-                    " Vortex will reload the page"
-                )
-                setTimeout(() => location.reload(), 2000);
-            } else {
-                // Rethrow the error
-                throw(err);
-            }
-        }
+        this.socket = new this.Socket(this.url + getFiltStr(args), [])
         this.socket.binaryType = "arraybuffer"
         this.socket.addEventListener("open", event => this.onOpen(event))
         this.socket.addEventListener("message", event => this.onMessage(event))
@@ -191,6 +172,18 @@ export class VortexClientWebsocket extends VortexClientABC {
     private onError(event) {
         this.vortexStatusService.logError(event.error ? event.error : "WebSocket, No error message")
         // onClose will get called as well
+    
+        // If the a single page application is logged out,
+        // any request to the HTTP service for any path gets the login screen.
+        // This will be successfully responded to with 200.
+        // This will handle that, however the server should be fixed to redirect
+        // to a login page instead.
+        if (event.error?.toString().indexOf("Unexpected response code: 200") !== -1) {
+            this.vortexStatusService.logError("Vortex Websocket got response code 200," +
+                " The user has potentially been logged out," +
+                " Vortex will reload the page");
+            setTimeout(() => location.reload(), 100);
+        }
     }
 
 }
